@@ -70,6 +70,7 @@ int main(){
 		}
 
 		GameStateManager::FrameEnd();
+
 		if(updatedFrame){
 			BeginFrame();
 			if (!GameStateManager::isLoading)
