@@ -18,8 +18,6 @@ namespace Rendering{
 	extern glm::mat4 screenMat;
 	extern glm::vec4 tintColor;
 
-	extern Material* lastMaterial;
-
 	void Init();
 	void Update();
 	void Cleanup();

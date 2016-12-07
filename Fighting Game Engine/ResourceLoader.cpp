@@ -5,6 +5,8 @@
 #include "Shader.h"
 #include "Texture.h"
 #include "PostEffect.h"
+#include "Object.h"
+#include "Transform.h"
 #include "CommonUtilIncludes.hpp"
 #include "InputManager.h"
 #include "InputDevice.h"
@@ -129,6 +131,58 @@ void ResourceLoader::LoadControlSettings(FS::path path, std::unordered_map<Input
 		}
 	}
 }
+
+void ResourceLoader::LoadObjects(FS::path path, std::map<int, Object*>* objects){
+	std::vector<std::string> lines = ReturnFileLines(path, true);
+	if (lines.size() == 0 || (lines.size() == 1 && lines[0] == "ERROR")){
+		std::cout << "Unable to load object file.\n";
+		return;
+	}
+	objects->clear();
+	Object* cobj = nullptr;
+	bool pushedObject = true;
+	for (unsigned int i = 0; i < lines.size(); ++i){
+		if (lines[i] == "" || lines[i].substr(0, 2) == "//")
+			continue;
+		if (lines[i] == "#OBJECT_BEGIN"){
+			if (!pushedObject)
+				delete cobj;
+			cobj = new Object();
+			pushedObject = false;
+		}
+		else if (lines[i] == "#OBJECT_END"){
+			pushedObject = true;
+			if (cobj != nullptr)
+				objects->insert(std::pair<int, Object*>(cobj->id, cobj));
+		}
+		else{
+			std::vector<std::string> spl;
+			boost::split(spl, lines[i], boost::is_any_of("="), boost::token_compress_on);
+			std::vector<std::string> spl2;
+			if (spl[0] == "name")
+				cobj->name = spl[1];
+			else if (spl[0] == "mesh")
+				cobj->mesh = Resource::GetMesh(spl[1], false);
+			else if (spl[0] == "material")
+				cobj->material = Resource::GetMaterial(spl[1],true);
+			else if (spl[0] == "position"){
+				boost::split(spl2, spl[1], boost::is_any_of(","), boost::token_compress_on);
+				cobj->transform->position = glm::ivec2(boost::lexical_cast<int>(spl2[0]), boost::lexical_cast<int>(spl2[1]));
+			}
+			else if (spl[0] == "scale"){
+				boost::split(spl2, spl[1], boost::is_any_of(","), boost::token_compress_on);
+				cobj->transform->scale = glm::ivec2(boost::lexical_cast<int>(spl2[0]), boost::lexical_cast<int>(spl2[1]));
+			}
+			else if (spl[0] == "id")
+				cobj->id = boost::lexical_cast<int>(spl[1]); 
+			else if (spl[0] == "depth")
+				cobj->transform->depth = boost::lexical_cast<int>(spl[1]);
+			else if (spl[0] == "render")
+				cobj->render = spl[1] == "t";
+		}
+	}
+}
+
 void ResourceLoader::LoadPostEffect(FS::path path, std::vector<std::pair<int, Material*>>* elements, bool* cbBefore, bool* cbAfter,int* order) {
 	std::vector<std::string> lines = ReturnFileLines(path, true);
 	if (lines.size() == 0 || (lines.size() == 1 && lines[0] == "ERROR")){

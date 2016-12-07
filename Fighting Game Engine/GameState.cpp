@@ -29,6 +29,9 @@ void GameState::LoadResources(){
 			if (rfl[i].substr(0, 2) != "//")
 				Resource::GetTexture(rfl[i]);
 
+		ResourceLoader::LoadObjects(dataPath.string() + "/SceneObjects.txt", &objects);
+
+
 		postEffectsOrder = ResourceLoader::ReturnFileLines(dataPath.string() + "/PostEffectsOrder.txt", true);
 		if (postEffectsOrder.size()>0 && postEffectsOrder[0] != "ERROR"){
 			for (unsigned int i = 0; i < postEffectsOrder.size(); ++i)
@@ -91,8 +94,14 @@ void GameState::Cleanup(){
 }
 
 void GameState::RenderObjects(){
-	for (unsigned int i = 0; i < objects.size(); ++i)
-		objects[i]->Render();
+	for (auto i = objects.begin(); i != objects.end();++i)
+		i->second->Render();
+}
+
+const Object* GameState::FindObject(std::string name){
+	for (auto i = objects.begin(); i != objects.end(); ++i)
+	if (i->second->name == name)
+		return i->second;
 }
 
 GameState::GameState(FS::path path){

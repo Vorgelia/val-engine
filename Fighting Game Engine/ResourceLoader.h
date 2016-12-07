@@ -9,6 +9,7 @@ class Material;
 enum class InputButton;
 enum class InputDirection;
 class InputEvent;
+class Object;
 namespace ResourceLoader{
 	std::string LoadTextResource(int id,std::string type="TEXT");
 	std::vector<unsigned char> LoadBinaryResource(int id, std::string type);
@@ -19,4 +20,5 @@ namespace ResourceLoader{
 	void LoadMaterial(FS::path path, Shader** shader, unsigned char* properties, std::map<std::string, GLfloat>* uniformFloats, std::map<std::string, MaterialTexture>* uniformTextures, std::map<std::string, glm::vec4>* uniformVectors);
 	void LoadPostEffect(FS::path path, std::vector<std::pair<int, Material* >>* elements, bool* cbBefore, bool* cbAfter,int* order);
 	void LoadControlSettings(FS::path path, std::unordered_map<InputDirection, InputEvent>* dir, std::unordered_map<InputButton, InputEvent>* bt);
+	void LoadObjects(FS::path path, std::map<int, Object*>* objects);
 }

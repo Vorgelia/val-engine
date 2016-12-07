@@ -12,7 +12,14 @@ Object::Object(std::string name, glm::vec2 pos,glm::vec2 scale, Mesh* mesh, Mate
 	this->id = id;
 	this->render = true;
 }
-
+Object::Object(){
+	this->name = "UNINITIALIZED";
+	this->mesh = nullptr;
+	this->material = nullptr;
+	this->transform = new Transform();
+	this->id = id;
+	this->render = true;
+}
 void Object::Render(){
 	if (render)
 		Rendering::DrawMesh(transform,mesh,material);

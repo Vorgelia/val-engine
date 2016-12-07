@@ -31,12 +31,13 @@ Important defines:
 	Resource.cpp: VE_CREATE_DEFAULT_RESOURCES
 	InputDevice.cpp: INPUT_BUFFER_INIT
 					 INPUT_BUFFER_MID
+	Rendering.cpp:   VE_AUX_BUFFER_AMOUNT
+					 VE_WORLD_SCALE
 */
 
 #include "SystemIncludes.hpp"
 #include "FGIncludes.hpp"
 
-#include "resource1.h"
 void GLInit();
 void GLCleanup();
 void EngineInit();

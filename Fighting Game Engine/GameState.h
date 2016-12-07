@@ -8,7 +8,7 @@ protected:
 	bool _loaded;
 public:
 
-	std::vector<Object*> objects;
+	std::map<int,Object*> objects;
 	FS::path dataPath;
 
 	std::vector<std::string> postEffectsOrder;
@@ -27,6 +27,7 @@ public:
 	virtual void Cleanup();
 	virtual std::string GameState::Serialize();
 	virtual void GameState::Deserialize(std::string data);
+	virtual const Object* FindObject(std::string name);
 	GameState(FS::path path);
 	virtual ~GameState();
 };

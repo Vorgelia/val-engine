@@ -5,12 +5,13 @@
 #include "CommonUtilIncludes.hpp"
 #include "Screen.h"
 #include "Time.h"
+#include "Transform.h"
 #include "InputManager.h"
 #include "InputFrame.h"
 #include "InputDevice.h"
 #include "InputMotion.h"
 void GS_Menu::FrameEnd(){
-	Rendering::DrawScreenMesh(glm::vec4(0, 0, 1920, 1080), Resource::GetMesh("Meshes/Base/screenQuad.vm"), std::vector<Texture*>{ Resource::GetTexture("Textures/tex.png") }, Resource::GetMaterial("Materials/Base/Screen.vmat"));
+	//Rendering::DrawScreenMesh(glm::vec4(0, 0, 1920, 1080), Resource::GetMesh("Meshes/Base/screenQuad.vm"), std::vector<Texture*>{ Resource::GetTexture("Textures/tex.png") }, Resource::GetMaterial("Materials/Base/Screen.vmat"));
 }
 
 void GS_Menu::GUI(){
@@ -21,20 +22,24 @@ void GS_Menu::GUI(){
 		Rendering::DrawScreenText(glm::vec4(0, 1080-200, 1920, 60), 140, "SO MUCH VIDEOGAME", nullptr,TextAlignment::Center);
 
 
-	if (Time::timeSinceLoad < 1){
-		Rendering::tintColor.a = (float)(1.0-(Time::timeSinceLoad));
-		Rendering::DrawScreenMesh(glm::vec4(0, 0, 1920, 1080), (Mesh*)nullptr, {Resource::GetTexture("black")},(Material*)nullptr);
-	}
 	int ind = 0;
 	for (auto i = InputManager::inputDevices.begin(); i != InputManager::inputDevices.end(); ++i){
 		Rendering::DrawScreenText(glm::vec4(0, 60 + ind * 30, 100, 100), 24, std::to_string(i->first) + ":" + std::to_string(i->second->LastBufferInput()->buttonStates) + ":" + std::to_string(i->second->LastBufferInput()->axisState), nullptr);
 		++ind;
 	}
+
+	if (Time::timeSinceLoad < 1){
+		Rendering::tintColor.a = (float)(1.0 - (Time::timeSinceLoad));
+		Rendering::DrawScreenMesh(glm::vec4(0, 0, 1920, 1080), (Mesh*)nullptr, { Resource::GetTexture("black") }, (Material*)nullptr);
+	}
+
+	//Transform tr = Transform(glm::ivec2(0,0),glm::quat(),glm::vec2(100*glm::sin(Time::time),100));
+	//Rendering::DrawMesh(&tr, Resource::GetMesh("Meshes/Base/quad.vm"), Resource::GetMaterial("Materials/Base/Screen.vmat"));
+
 }
 InputMotion qcf = {
-	InputMotionComponent({}, 2, 0, 20, false),
-	InputMotionComponent({}, 6, 0, 20, true),
-	InputMotionComponent({}, 4, 0, 20, false),
+	InputMotionComponent({}, (unsigned char)InputDirection::Left, 60, 20, false),
+	InputMotionComponent({}, 4, 0, 10, false),
 	InputMotionComponent({ InputButtonEvent((unsigned char)InputButton::Light, InputType::Pressed) }, 0, 0, 1, false)
 };
 void GS_Menu::Update(){

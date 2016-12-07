@@ -1,0 +1,10 @@
+#OBJECT_BEGIN
+id=1
+name=Test Object
+mesh=Meshes/Base/quad.vm
+material=Materials/Menu/Menu_Test.vmat
+position=0,0
+scale=800,400
+depth=0
+render=t
+#OBJECT_END

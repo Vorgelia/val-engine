@@ -13,5 +13,5 @@ uniform float ve_depth;
 void main(){
 	out_uv=uv;
 	out_normal=normal;
-	gl_Position=ve_matrix_mvp*vec4(vertex.xy,0,1);
+	gl_Position=ve_matrix_mvp*vec4(vertex.xy,ve_depth,1);
 }

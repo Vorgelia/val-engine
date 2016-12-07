@@ -12,7 +12,8 @@
 #include "Resource.h"
 #include "GLStateTrack.h"
 #include "PostEffect.h"
-#define AUX_BUFFER_AMOUNT 3
+#define VE_AUX_BUFFER_AMOUNT 3
+#define VE_WORLD_SCALE 3
 namespace Rendering{
 	FrameBuffer* mainBuffer;
 	std::vector<FrameBuffer*> auxBuffers;
@@ -20,15 +21,14 @@ namespace Rendering{
 	glm::mat4 orthoMat;
 	glm::mat4 screenMat;
 	glm::vec4 tintColor;
-	static Material* lastMaterial=nullptr;
 }
 void Rendering::Init(){
 	mainBuffer = new FrameBuffer(Screen::size, 3, true, GL_RGBA, glm::vec4(0, 0, 0, 1));
-	auxBuffers.reserve(AUX_BUFFER_AMOUNT);
-	for (unsigned int i = 0; i < AUX_BUFFER_AMOUNT; ++i){
+	auxBuffers.reserve(VE_AUX_BUFFER_AMOUNT);
+	for (unsigned int i = 0; i < VE_AUX_BUFFER_AMOUNT; ++i){
 		auxBuffers.push_back(new FrameBuffer(Screen::size, 3,false,GL_RGBA16F));
 	}
-	orthoMat = glm::ortho(-960.0,960.0,-540.0,540.0,-1.0,2.0);
+	orthoMat = glm::ortho(-960.0*VE_WORLD_SCALE, 960.0*VE_WORLD_SCALE, -540.0*VE_WORLD_SCALE, 540.0*VE_WORLD_SCALE, -1.0, 2.0);
 	screenMat = glm::ortho(0.0, 1920.0, 1080.0, 0.0,-1.0,2.0);
 	cameras.push_back(Camera(glm::vec2(0,0),&orthoMat));
 }
@@ -38,7 +38,7 @@ void Rendering::Update(){
 	if (Screen::isDirty){
 		mainBuffer->resolution = Screen::size;
 		mainBuffer->Update();
-		for (unsigned int i = 0; i < AUX_BUFFER_AMOUNT; ++i){
+		for (unsigned int i = 0; i < VE_AUX_BUFFER_AMOUNT; ++i){
 			auxBuffers[i]->resolution = Screen::size;
 			auxBuffers[i]->Update();
 		}
@@ -47,7 +47,7 @@ void Rendering::Update(){
 
 void Rendering::Cleanup(){
 	delete mainBuffer;
-	for (unsigned int i = 0; i < AUX_BUFFER_AMOUNT; ++i){
+	for (unsigned int i = 0; i < VE_AUX_BUFFER_AMOUNT; ++i){
 		delete auxBuffers[i];
 	}
 }
@@ -95,7 +95,6 @@ void Rendering::DrawPostEffect(PostEffect* pf){
 			GLState::BindFramebuffer(Rendering::auxBuffers[pf->elementChain[pi].first]->id);
 
 		Material* cMat = (pf->elementChain[pi].second);
-
 		if (cMat == nullptr){
 			std::cout << "Skipping PostEffect stage " << pi << std::endl;
 			continue;
@@ -173,7 +172,7 @@ void Rendering::DrawScreenMesh(glm::vec4 rect, Mesh* mesh, std::vector<std::pair
 	GLState::BindVertexArray(cMesh->vao);
 	GLState::UseProgram(cShad->id);
 	int textureIndex = 0;
-	if (mat != nullptr&&mat!=lastMaterial){
+	if (mat != nullptr){
 		for (auto iter = mat->uniformFloats.begin(); iter != mat->uniformFloats.end(); ++iter){
 			
 			glUniform1f(mat->shader->UniformLocation(iter->first), iter->second);
@@ -203,20 +202,20 @@ void Rendering::DrawScreenMesh(glm::vec4 rect, Mesh* mesh, std::vector<std::pair
 			++dfInd;
 		}
 	}
-	if (lastMaterial != mat){
-		glm::mat4 modelMat = glm::translate(glm::mat4(), glm::vec3(rect.x, rect.y + rect.w, 0));
-		modelMat = glm::scale(modelMat, glm::vec3(rect.z, -rect.w, 1));
 
-		glm::mat4 mvpmat = Rendering::screenMat*modelMat;
+	glm::mat4 modelMat = glm::translate(glm::mat4(), glm::vec3(rect.x, rect.y + rect.w, 0));
+	modelMat = glm::scale(modelMat, glm::vec3(rect.z, -rect.w, 1));
+
+	glm::mat4 mvpmat = Rendering::screenMat*modelMat;
 
 
-		glUniformMatrix4fv(cShad->UniformLocation("ve_matrix_model"), 1, false, glm::value_ptr(modelMat));
-		glUniformMatrix4fv(cShad->UniformLocation("ve_matrix_projection"), 1, false, glm::value_ptr(Rendering::screenMat));
-		glUniformMatrix4fv(cShad->UniformLocation("ve_matrix_mvp"), 1, false, glm::value_ptr(mvpmat));
-		BindEngineUniforms(cShad);
-	}
+	glUniformMatrix4fv(cShad->UniformLocation("ve_matrix_model"), 1, false, glm::value_ptr(modelMat));
+	glUniformMatrix4fv(cShad->UniformLocation("ve_matrix_projection"), 1, false, glm::value_ptr(Rendering::screenMat));
+	glUniformMatrix4fv(cShad->UniformLocation("ve_matrix_mvp"), 1, false, glm::value_ptr(mvpmat));
+	BindEngineUniforms(cShad);
+	
 	glUniform4f(cShad->UniformLocation("ve_tintColor"), tintColor.x, tintColor.y, tintColor.z, tintColor.w);
-	if (mat != nullptr&&lastMaterial != mat)
+	if (mat != nullptr)
 		mat->ApplyProperties();
 	else
 		Resource::GetMaterial("Materials/Base/Screen.vmat")->ApplyProperties();
@@ -231,38 +230,36 @@ void Rendering::DrawMesh(Transform* transform, Mesh* mesh, Material* mat, Camera
 	}
 	Camera* cCam = (camera == nullptr ? &cameras[0] : camera);
 	GLState::BindVertexArray(mesh->vao);
-	if (lastMaterial != mat){
 		
-		GLState::UseProgram(mat->shader->id);
+	GLState::UseProgram(mat->shader->id);
 
 
-		for (auto iter = mat->uniformFloats.begin(); iter != mat->uniformFloats.end(); ++iter){
-			glUniform1f(mat->shader->UniformLocation(iter->first), iter->second);
-		}
-		for (auto iter = mat->uniformVectors.begin(); iter != mat->uniformVectors.end(); ++iter){
-			glUniform4f(mat->shader->UniformLocation(iter->first), iter->second.x, iter->second.y, iter->second.z, iter->second.w);
-		}
-		int textureIndex = 0;
-		for (auto iter = mat->uniformTextures.begin(); iter != mat->uniformTextures.end(); ++iter){
-			GLState::BindTexture((iter->second.ref)->id, textureIndex);
-			glUniform1i(mat->shader->UniformLocation(iter->first), textureIndex);
-			glUniform4f(mat->shader->UniformLocation(iter->first + ("_params")), iter->second.params.x, iter->second.params.y, iter->second.params.z, iter->second.params.w);
-			glUniform4f(mat->shader->UniformLocation(iter->first + ("_size")), iter->second.ref->size.x, iter->second.ref->size.y, iter->second.ref->size.z, iter->second.ref->size.w);
-			++textureIndex;
-		}
-
-		glUniformMatrix4fv(mat->shader->UniformLocation("ve_matrix_model"), 1, false, glm::value_ptr(transform->ModelMatrix()));
-		glUniformMatrix4fv(mat->shader->UniformLocation("ve_matrix_view"), 1, false, glm::value_ptr(cCam->ViewMatrix()));
-		glUniformMatrix4fv(mat->shader->UniformLocation("ve_matrix_projection"), 1, false, glm::value_ptr(*(cCam->projectionMatrix)));
-		glUniformMatrix4fv(mat->shader->UniformLocation("ve_matrix_mvp"), 1, false, glm::value_ptr(*(cCam->projectionMatrix)*cCam->ViewMatrix()*transform->ModelMatrix()));
-
-
-		BindEngineUniforms(mat->shader);
-		glUniform1f(mat->shader->UniformLocation("ve_depth"), transform->depth);
-
-		mat->ApplyProperties();
+	for (auto iter = mat->uniformFloats.begin(); iter != mat->uniformFloats.end(); ++iter){
+		glUniform1f(mat->shader->UniformLocation(iter->first), iter->second);
 	}
-	lastMaterial = mat;
+	for (auto iter = mat->uniformVectors.begin(); iter != mat->uniformVectors.end(); ++iter){
+		glUniform4f(mat->shader->UniformLocation(iter->first), iter->second.x, iter->second.y, iter->second.z, iter->second.w);
+	}
+	int textureIndex = 0;
+	for (auto iter = mat->uniformTextures.begin(); iter != mat->uniformTextures.end(); ++iter){
+		GLState::BindTexture((iter->second.ref)->id, textureIndex);
+		glUniform1i(mat->shader->UniformLocation(iter->first), textureIndex);
+		glUniform4f(mat->shader->UniformLocation(iter->first + ("_params")), iter->second.params.x, iter->second.params.y, iter->second.params.z, iter->second.params.w);
+		glUniform4f(mat->shader->UniformLocation(iter->first + ("_size")), iter->second.ref->size.x, iter->second.ref->size.y, iter->second.ref->size.z, iter->second.ref->size.w);
+		++textureIndex;
+	}
+
+	glUniformMatrix4fv(mat->shader->UniformLocation("ve_matrix_model"), 1, false, glm::value_ptr(transform->ModelMatrix()));
+	glUniformMatrix4fv(mat->shader->UniformLocation("ve_matrix_view"), 1, false, glm::value_ptr(cCam->ViewMatrix()));
+	glUniformMatrix4fv(mat->shader->UniformLocation("ve_matrix_projection"), 1, false, glm::value_ptr(*(cCam->projectionMatrix)));
+	glUniformMatrix4fv(mat->shader->UniformLocation("ve_matrix_mvp"), 1, false, glm::value_ptr(*(cCam->projectionMatrix)*cCam->ViewMatrix()*transform->ModelMatrix()));
+
+
+	BindEngineUniforms(mat->shader);
+	glUniform1f(mat->shader->UniformLocation("ve_depth"), transform->depth);
+
+	mat->ApplyProperties();
+
 	glDrawElements(GL_TRIANGLES, mesh->elementAmount,GL_UNSIGNED_INT,0);
 }
 
@@ -354,7 +351,6 @@ void Rendering::InitTextDrawing(){
 	glUniformMatrix4fv(cShad->UniformLocation("ve_matrix_projection"), 1, false, glm::value_ptr(Rendering::screenMat));
 	
 	Resource::GetMaterial("Materials/Base/Screen.vmat")->ApplyProperties();
-
 	
 }
 void Rendering::DrawTextCharacter(glm::vec4 rect,glm::vec4 params, Texture* tex){
