@@ -1,0 +1,237 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Header Files\IncludeLists">
+      <UniqueIdentifier>{5eba43cb-9827-4311-9232-3cc2b0cc0846}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\GL">
+      <UniqueIdentifier>{8ce192c5-2989-49bf-b4c8-e37b2b7b2d1f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\FG">
+      <UniqueIdentifier>{a87446ba-8e9e-4121-b6f6-719f60ec81ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Rendering">
+      <UniqueIdentifier>{fd68cf88-a494-440d-bb81-b69d87f31c7f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\FG">
+      <UniqueIdentifier>{9ff2559f-15a9-4e73-8ebd-646934d32039}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Rendering">
+      <UniqueIdentifier>{952fa30b-0a91-44c9-bdbc-84c32fdd04a0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\GL">
+      <UniqueIdentifier>{443a4747-4d4b-47d7-b615-9a41fcb245ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Resource">
+      <UniqueIdentifier>{76e766fb-bf89-4072-b010-055d3903996f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Resource">
+      <UniqueIdentifier>{2ac95473-739c-4074-ae52-75d712ff8ab6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\FG\States">
+      <UniqueIdentifier>{127b0c24-dbdb-4662-b875-bd4bdb045520}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\FG\States">
+      <UniqueIdentifier>{ce5d2442-744a-456e-9785-eae75a39425f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\FG\Input">
+      <UniqueIdentifier>{3a2665ec-2e60-48b7-9248-f7022b9ddc52}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\FG\Input">
+      <UniqueIdentifier>{b4436c84-b5f1-4cb3-8e61-6979cc375585}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Screen.cpp">
+      <Filter>Source Files\FG</Filter>
+    </ClCompile>
+    <ClCompile Include="Time.cpp">
+      <Filter>Source Files\FG</Filter>
+    </ClCompile>
+    <ClCompile Include="Rendering.cpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader.cpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="GLStateTrack.cpp">
+      <Filter>Source Files\GL</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceLoader.cpp">
+      <Filter>Source Files\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="CachedMesh.cpp">
+      <Filter>Source Files\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="FrameBuffer.cpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Material.cpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Transform.cpp">
+      <Filter>Source Files\FG</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource.cpp">
+      <Filter>Source Files\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="Font.cpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="PostEffect.cpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Profiler.cpp">
+      <Filter>Source Files\FG</Filter>
+    </ClCompile>
+    <ClCompile Include="Object.cpp">
+      <Filter>Source Files\FG</Filter>
+    </ClCompile>
+    <ClCompile Include="GameState.cpp">
+      <Filter>Source Files\FG</Filter>
+    </ClCompile>
+    <ClCompile Include="GameStateManager.cpp">
+      <Filter>Source Files\FG</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="GS_Intro.cpp">
+      <Filter>Source Files\FG\States</Filter>
+    </ClCompile>
+    <ClCompile Include="GS_Menu.cpp">
+      <Filter>Source Files\FG\States</Filter>
+    </ClCompile>
+    <ClCompile Include="InputManager.cpp">
+      <Filter>Source Files\FG\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="InputDevice.cpp">
+      <Filter>Source Files\FG\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="InputFrame.cpp">
+      <Filter>Source Files\FG\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="InputEvent.cpp">
+      <Filter>Source Files\FG\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="InputMotion.cpp">
+      <Filter>Source Files\FG\Input</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="FGIncludes.hpp">
+      <Filter>Header Files\IncludeLists</Filter>
+    </ClInclude>
+    <ClInclude Include="GLStateTrack.h">
+      <Filter>Header Files\GL</Filter>
+    </ClInclude>
+    <ClInclude Include="Screen.h">
+      <Filter>Header Files\FG</Filter>
+    </ClInclude>
+    <ClInclude Include="Time.h">
+      <Filter>Header Files\FG</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader.h">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Rendering.h">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceLoader.h">
+      <Filter>Header Files\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="SystemIncludes.hpp">
+      <Filter>Header Files\IncludeLists</Filter>
+    </ClInclude>
+    <ClInclude Include="CommonUtilIncludes.hpp">
+      <Filter>Header Files\IncludeLists</Filter>
+    </ClInclude>
+    <ClInclude Include="CachedMesh.h">
+      <Filter>Header Files\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="FrameBuffer.h">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Transform.h">
+      <Filter>Header Files\FG</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>Header Files\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="Font.h">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="PostEffect.h">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Profiler.h">
+      <Filter>Header Files\FG</Filter>
+    </ClInclude>
+    <ClInclude Include="Object.h">
+      <Filter>Header Files\FG</Filter>
+    </ClInclude>
+    <ClInclude Include="GameState.h">
+      <Filter>Header Files\FG</Filter>
+    </ClInclude>
+    <ClInclude Include="GameStateManager.h">
+      <Filter>Header Files\FG</Filter>
+    </ClInclude>
+    <ClInclude Include="GSIncludes.hpp">
+      <Filter>Header Files\IncludeLists</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="GS_Intro.h">
+      <Filter>Header Files\FG\States</Filter>
+    </ClInclude>
+    <ClInclude Include="GS_Menu.h">
+      <Filter>Header Files\FG\States</Filter>
+    </ClInclude>
+    <ClInclude Include="InputManager.h">
+      <Filter>Header Files\FG\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="InputDevice.h">
+      <Filter>Header Files\FG\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="InputFrame.h">
+      <Filter>Header Files\FG\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="InputEvent.h">
+      <Filter>Header Files\FG\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="InputMotion.h">
+      <Filter>Header Files\FG\Input</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
