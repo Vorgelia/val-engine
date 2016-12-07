@@ -52,6 +52,42 @@
     <Filter Include="Source Files\FG\Input">
       <UniqueIdentifier>{b4436c84-b5f1-4cb3-8e61-6979cc375585}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\Fonts">
+      <UniqueIdentifier>{a5dc5a84-6179-46bd-bc9e-c5cbdac91f76}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Materials">
+      <UniqueIdentifier>{80c6740c-692d-4d02-84da-6b413cc3ef7e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Materials\Base">
+      <UniqueIdentifier>{ff96a66e-a6bf-4273-9775-54da6a786253}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Meshes">
+      <UniqueIdentifier>{7089c340-7730-478f-9734-5cd48eb83b8c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Meshes\Base">
+      <UniqueIdentifier>{cf1c1028-4269-4df3-8b35-ff0163e863ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\PostEffects">
+      <UniqueIdentifier>{1b94fd97-217c-4fdc-b254-1ed40274f379}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Settings">
+      <UniqueIdentifier>{aee7876e-ea2d-4c2e-a033-e062568aceda}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Settings\Input">
+      <UniqueIdentifier>{1bb3ad5b-5759-4f96-9ceb-2db3ce72c65e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Materials\Intro">
+      <UniqueIdentifier>{7d3ca6a1-d9af-4326-9fb0-c7e73ca91d7b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Shaders">
+      <UniqueIdentifier>{c52735ba-4dad-4c2b-a79b-47f36050f8c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Textures">
+      <UniqueIdentifier>{bbc25830-7f45-45a9-a275-81a7f36431d1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Textures\Intro">
+      <UniqueIdentifier>{cce49813-dc4b-40c6-af73-21484adb3cd7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -137,6 +173,9 @@
     </ClCompile>
     <ClCompile Include="InputMotion.cpp">
       <Filter>Source Files\FG\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceInitializer.cpp">
+      <Filter>Source Files\Resource</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -233,5 +272,91 @@
     <ClInclude Include="InputMotion.h">
       <Filter>Header Files\FG\Input</Filter>
     </ClInclude>
+    <ClInclude Include="ResourceInitializer.h">
+      <Filter>Header Files\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="resource1.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Fighting Game Engine.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Materials\Base\Screen.vmat">
+      <Filter>Resource Files\Materials\Base</Filter>
+    </None>
+    <None Include="Resources\Materials\Base\Screen_BasePostFX.vmat">
+      <Filter>Resource Files\Materials\Base</Filter>
+    </None>
+    <None Include="Resources\Materials\Base\Screen_FB.vmat">
+      <Filter>Resource Files\Materials\Base</Filter>
+    </None>
+    <None Include="Resources\Materials\Base\Screen_Text.vmat">
+      <Filter>Resource Files\Materials\Base</Filter>
+    </None>
+    <None Include="Resources\Meshes\Base\quad.vm">
+      <Filter>Resource Files\Meshes\Base</Filter>
+    </None>
+    <None Include="Resources\Meshes\Base\screenQuad.vm">
+      <Filter>Resource Files\Meshes\Base</Filter>
+    </None>
+    <None Include="Resources\Materials\Base\Object2D.vmat">
+      <Filter>Resource Files\Materials\Base</Filter>
+    </None>
+    <None Include="Resources\PostEffects\BasePostFX.vfx">
+      <Filter>Resource Files\PostEffects</Filter>
+    </None>
+    <None Include="Resources\Settings\Input\Keyboard.vi">
+      <Filter>Resource Files\Settings\Input</Filter>
+    </None>
+    <None Include="Resources\Settings\Input\Default.vi">
+      <Filter>Resource Files\Settings\Input</Filter>
+    </None>
+    <None Include="Resources\Materials\Intro\Intro_Screen.vmat">
+      <Filter>Resource Files\Materials\Intro</Filter>
+    </None>
+    <None Include="Resources\Shaders\Base\2D.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="Resources\Shaders\Base\2D.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="Resources\Shaders\Base\BasePostProcessing.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="Resources\Shaders\Base\BasePostProcessing.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="Resources\Shaders\Base\Screen.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="Resources\Shaders\Base\Screen.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="Resources\Shaders\Base\Screen_Text.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="Resources\Shaders\Base\Screen_Text.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="Resources\Fonts\Amble.ttf">
+      <Filter>Resource Files\Fonts</Filter>
+    </Font>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Resources\Textures\tex.png">
+      <Filter>Resource Files\Textures</Filter>
+    </Image>
+    <Image Include="Resources\Textures\Intro\Intro.png">
+      <Filter>Resource Files\Textures\Intro</Filter>
+    </Image>
+    <Image Include="Resources\fritz.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

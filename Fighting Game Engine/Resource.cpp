@@ -7,6 +7,13 @@
 #include "Texture.h"
 #include "PostEffect.h"
 #include "Font.h"
+#include "ResourceInitializer.h"
+
+//If the following define exists, the engine will create some default resource files if the folder structure is missing.
+//I opt to create and then read files rather than reading directly from the resources because the generated files have comments in them that explain how they work
+//They are also easier to just modify instead of writing new ones from scratch
+#define VE_CREATE_DEFAULT_RESOURCES
+
 namespace Resource{
 	std::map<std::string, CachedMesh*> cachedMeshes;
 	std::map<std::string, Mesh*> meshes;
@@ -27,6 +34,12 @@ void Resource::Init(){
 		1, 0, 1, 1,  0, 0, 0, 1,
 		0, 0, 0, 1,  1, 0, 1, 1
 	};
+#ifdef VE_CREATE_DEFAULT_RESOURCES
+	if (!FS::exists("Meshes/") || !FS::exists("Shaders/") || !FS::exists("Settings/") || !FS::exists("States/")){
+		std::cout << "-----\n\n\nFile structure invalid. Creating default resources.\n\n\n-----" << std::endl;
+		ResourceInitializer::Init();
+	}
+#endif
 	baseTextures.insert(std::pair<std::string, Texture*>("base_texture", new Texture("base_texture", pixels, glm::ivec2(2, 2), GL_RGBA, GL_NEAREST, GL_REPEAT)));
 	pixels = { 0, 0, 0, 1 };
 	baseTextures.insert(std::pair<std::string, Texture*>("black",new Texture("black",pixels,glm::ivec2(1,1),GL_RGBA,GL_NEAREST,GL_REPEAT)));

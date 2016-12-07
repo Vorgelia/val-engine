@@ -1,5 +1,6 @@
 #pragma once
 #include "CommonUtilIncludes.hpp"
+
 class CachedMesh;
 class Mesh;
 class Texture;

@@ -18,18 +18,20 @@ Libraries planned to be used:
 Structured to depend on global variables and functions in namespaces.
 Having global access to things like Input, Time, OpenGL states, etc was the most intuitive decision.
 Somewhat error-prone for group projects, but more than manageable and convenient for a one-person project.
-Also included are unnecessary attempts at extensive memory management as personal exercises.
+Also included are unnecessary attempts at memory management as personal exercises.
 
 Variables and getters/setters begin with lowercase. Classes, namespaces, functions, etc begin with uppercase.
 
-Input is a bit of a mess. I tried to multithread it until i figured out glfw input polling 
-
-TODO: Clean up includes. Change default function parameters to be defined in .h and not .cpp
-TODO: Potentially replace namespaces with static classes.
+TODO: Clean up includes. Change default function parameters to be defined in .h and not .cpp.
 TODO: Change some class variables to be private with getters.
-TODO: Replace some instances of map with unordered_map
+TODO: Replace some instances of map with unordered_map.
+TODO: Rewrite input polling for proper handling of unrendered frames and multithreading.
+----
+Important defines:
+	Resource.cpp: VE_CREATE_DEFAULT_RESOURCES
+	InputDevice.cpp: INPUT_BUFFER_INIT
+					 INPUT_BUFFER_MID
 */
-
 
 #include "SystemIncludes.hpp"
 #include "FGIncludes.hpp"

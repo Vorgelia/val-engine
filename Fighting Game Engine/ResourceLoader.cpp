@@ -12,8 +12,8 @@
 #include "InputFrame.h"
 //Probably my least favourite part of making this engine is importing files.
 //The code always looks like a mess but at least i don't have to touch it after making it.
-std::string LoadTextResource(int id){//Copypasta text resource loading. Could probably be optimized.
-	HRSRC hResource = FindResource(NULL,MAKEINTRESOURCE(id),(LPCSTR)"TEXT");
+std::string ResourceLoader::LoadTextResource(int id,std::string type){//Copypasta text resource loading. Could probably be optimized.
+	HRSRC hResource = FindResource(NULL,MAKEINTRESOURCE(id),(LPCSTR)type.c_str());
 	if (hResource == 0){
 		std::cout << "Error finding resource " << id << std::endl;
 		return "ERROR";
@@ -37,8 +37,9 @@ std::string ResourceLoader::ReturnFile(FS::path dir){
 	ifs.close();
 	return content;
 }
-
+//Bit of a weird function to put in ResourceLoader, buuuut considering this is where a ton of file management happens, it felt the most natural.
 bool ResourceLoader::SaveFile(FS::path dir,std::string content,int flags){
+	boost::algorithm::erase_all(content, "\r");
 	std::ofstream ofs(dir.c_str(), flags);
 	if (!ofs.is_open()){
 		std::cout << "Failed to write to file: " << dir.c_str() << std::endl;

@@ -1,0 +1,18 @@
+//Getting tired of this yet?
+//Light = 1,Medium = 2,Heavy = 4,Buttons = 7,	Shield = 8,Any = 15,Select = 16,Start = 32
+#BUTTONS
+//Mapped input: is axis, ID, direction, deadzone
+//Yes, even buttons have deadzones. I'm lazy.
+1:f,85,1,0.5
+2:f,73,1,0.5
+4:f,79,1,0.5
+8:f,32,1,0.5
+9:f,80,1,0.5
+16:f,258,1,0.5
+32:f,257,1,0.5
+//Up=1,Down=2,Right=4,Left=8
+#AXES
+1:f,87,1,0.5
+2:f,83,1,0.5
+4:f,68,1,0.5
+8:f,65,1,0.5

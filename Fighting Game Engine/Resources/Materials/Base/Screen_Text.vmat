@@ -1,0 +1,5 @@
+#PROPERTIES
+	properties=12
+	shader=Shaders/Base/Screen_Text
+#UNIFORM_VEC4
+	ve_color=1,1,1,1

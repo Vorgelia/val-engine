@@ -1,0 +1,5 @@
+#PROPERTIES
+	properties=8
+	shader=Shaders/Base/BasePostProcessing
+#UNIFORM_TEX
+	tex0=base_texture

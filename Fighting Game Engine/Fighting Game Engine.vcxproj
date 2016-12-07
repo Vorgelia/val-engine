@@ -91,6 +91,7 @@
     <ClCompile Include="Profiler.cpp" />
     <ClCompile Include="Rendering.cpp" />
     <ClCompile Include="Resource.cpp" />
+    <ClCompile Include="ResourceInitializer.cpp" />
     <ClCompile Include="ResourceLoader.cpp" />
     <ClCompile Include="Screen.cpp" />
     <ClCompile Include="Shader.cpp" />
@@ -123,6 +124,8 @@
     <ClInclude Include="Profiler.h" />
     <ClInclude Include="Rendering.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="resource1.h" />
+    <ClInclude Include="ResourceInitializer.h" />
     <ClInclude Include="ResourceLoader.h" />
     <ClInclude Include="Screen.h" />
     <ClInclude Include="Shader.h" />
@@ -130,6 +133,38 @@
     <ClInclude Include="Time.h" />
     <ClInclude Include="SystemIncludes.hpp" />
     <ClInclude Include="Transform.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Fighting Game Engine.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="Resources\Fonts\Amble.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Materials\Base\Object2D.vmat" />
+    <None Include="Resources\Materials\Base\Screen.vmat" />
+    <None Include="Resources\Materials\Base\Screen_BasePostFX.vmat" />
+    <None Include="Resources\Materials\Base\Screen_FB.vmat" />
+    <None Include="Resources\Materials\Base\Screen_Text.vmat" />
+    <None Include="Resources\Materials\Intro\Intro_Screen.vmat" />
+    <None Include="Resources\Meshes\Base\quad.vm" />
+    <None Include="Resources\Meshes\Base\screenQuad.vm" />
+    <None Include="Resources\PostEffects\BasePostFX.vfx" />
+    <None Include="Resources\Settings\Input\Default.vi" />
+    <None Include="Resources\Settings\Input\Keyboard.vi" />
+    <None Include="Resources\Shaders\Base\2D.frag" />
+    <None Include="Resources\Shaders\Base\2D.vert" />
+    <None Include="Resources\Shaders\Base\BasePostProcessing.frag" />
+    <None Include="Resources\Shaders\Base\BasePostProcessing.vert" />
+    <None Include="Resources\Shaders\Base\Screen.frag" />
+    <None Include="Resources\Shaders\Base\Screen.vert" />
+    <None Include="Resources\Shaders\Base\Screen_Text.frag" />
+    <None Include="Resources\Shaders\Base\Screen_Text.vert" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Resources\fritz.ico" />
+    <Image Include="Resources\Textures\Intro\Intro.png" />
+    <Image Include="Resources\Textures\tex.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

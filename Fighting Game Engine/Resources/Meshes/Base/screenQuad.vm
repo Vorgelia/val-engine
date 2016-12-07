@@ -1,0 +1,15 @@
+//Bet your favourite format doesn't support useless comments.
+//Vertex attributes (int-int)
+#ATTRIBS
+0-2,1-2
+//Vertices. Separated by attribs with whitespace that will get deleted anyway
+//(XY,UV,Normal)
+#VERTICES
+0,0 , 0,0
+1,0 , 0.999999,0
+0,1 , 0,0.999999
+1,1 , 0.999999,0.999999
+//Elements, forming triangles
+#ELEMENTS
+0,1,3
+0,3,2
