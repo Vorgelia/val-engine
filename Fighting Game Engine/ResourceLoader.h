@@ -11,6 +11,7 @@ enum class InputDirection;
 class InputEvent;
 namespace ResourceLoader{
 	std::string LoadTextResource(int id,std::string type="TEXT");
+	std::vector<unsigned char> LoadBinaryResource(int id, std::string type);
 	std::string ReturnFile(FS::path dir);
 	std::vector<std::string> ReturnFileLines(FS::path dir,bool removeWhitespace);
 	bool SaveFile(FS::path dir, std::string content, int flags = std::ios::out | std::ios::trunc);

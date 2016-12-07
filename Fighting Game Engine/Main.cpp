@@ -36,6 +36,7 @@ Important defines:
 #include "SystemIncludes.hpp"
 #include "FGIncludes.hpp"
 
+#include "resource1.h"
 void GLInit();
 void GLCleanup();
 void EngineInit();
@@ -48,6 +49,7 @@ int main(){
 	setlocale(LC_NUMERIC, "C");
 	GLInit();
 	EngineInit();
+
 
 	while (!glfwWindowShouldClose(Screen::window)){
 

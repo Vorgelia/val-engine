@@ -29,6 +29,22 @@ std::string ResourceLoader::LoadTextResource(int id,std::string type){//Copypast
 	int size = SizeofResource(NULL, hResource) / sizeof(char);
 	return std::string(sText).substr(0, size);
 }
+std::vector<unsigned char> ResourceLoader::LoadBinaryResource(int id, std::string type){
+	HRSRC hResource = FindResource(NULL, MAKEINTRESOURCE(id), (LPCSTR)type.c_str());
+	if (hResource == 0){
+		std::cout << "Error finding resource " << id << std::endl;
+		return std::vector<unsigned char>();
+	}
+	HGLOBAL hLoadedResource = LoadResource(NULL, hResource);
+	if (hLoadedResource == 0){
+		std::cout << "Error loading resource " << id << std::endl;
+		return std::vector<unsigned char>();
+	}
+	LPVOID pdata = LockResource(hLoadedResource);
+	LPBYTE sData = (LPBYTE)pdata;
+	int size = SizeofResource(NULL, hResource) / sizeof(unsigned char);
+	return std::vector<unsigned char>((unsigned char*)sData, (unsigned char*)sData[size]);
+}
 std::string ResourceLoader::ReturnFile(FS::path dir){
 	if (!FS::exists(dir))
 		return "ERROR";

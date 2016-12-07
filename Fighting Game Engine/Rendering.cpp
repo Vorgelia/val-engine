@@ -307,7 +307,7 @@ void Rendering::DrawScreenText(glm::vec4 rect,GLuint size, std::string text, Fon
 		}
 		currentLine = 0;
 		cursor = glm::ivec2(rect.x, rect.y);
-		if (alignment != TextAlignment::Left)
+		if (alignment != TextAlignment::Left&&lineIndents.size()>0)
 			cursor.x += (int)glm::round(lineIndents[0]);
 		
 	}
