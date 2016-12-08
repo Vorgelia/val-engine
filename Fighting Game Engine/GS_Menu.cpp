@@ -19,7 +19,7 @@ void GS_Menu::GUI(){
 	Rendering::DrawScreenText(glm::vec4(0, 30, 100, 100), 24, std::to_string(std::max(((int)(Time::updateRate * 100))*0.01, 1.0)), nullptr);
 	
 	if ((int)(Time::time*4)%2==1)
-		Rendering::DrawScreenText(glm::vec4(0, 1080-200, 1920, 60), 140, "SO MUCH VIDEOGAME", nullptr,TextAlignment::Center);
+		Rendering::DrawScreenText(glm::vec4(0, 1080-200, 1920, 60), 140, "VIDEOGAME", nullptr,TextAlignment::Center);
 
 
 	int ind = 0;
@@ -33,9 +33,6 @@ void GS_Menu::GUI(){
 		Rendering::tintColor.a = (float)(1.0 - (Time::timeSinceLoad));
 		Rendering::DrawScreenMesh(glm::vec4(0, 0, 1920, 1080), (Mesh*)nullptr, { Resource::GetTexture("black") }, (Material*)nullptr);
 	}
-
-	//Transform tr = Transform(glm::ivec2(0,0),glm::quat(),glm::vec2(100*glm::sin(Time::time),100));
-	//Rendering::DrawMesh(&tr, Resource::GetMesh("Meshes/Base/quad.vm"), Resource::GetMaterial("Materials/Base/Screen.vmat"));
 
 }
 InputMotion qcf = {
