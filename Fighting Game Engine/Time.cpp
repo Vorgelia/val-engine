@@ -1,4 +1,5 @@
 #include "Time.h"
+//Variables related to keeping track of various time-related concepts.
 namespace Time{
 	double deltaTime;
 	double smoothDeltaTime;

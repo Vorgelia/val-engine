@@ -1,7 +1,9 @@
 #include "CachedMesh.h"
 #include "Mesh.h"
 #include "ResourceLoader.h"
-
+//Cached meshes are just raw vertex data that are stored in memory before being turned into meshes.
+//Helps with duplicating or editing meshes in realtime.
+//Probably unnecessary.
 VertexAttribute::VertexAttribute(VertexAttributeLocation ind, GLint len){
 	index = ind;
 	length = len;

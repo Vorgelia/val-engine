@@ -3,6 +3,8 @@
 #include "resource1.h"
 #include "ResourceInitializer.h"
 void ResourceInitializer::Init(){
+	//Create some folders, paste some files from the resources in them.
+	//Resources like textures and fonts don't work at the moment.
 	FS::create_directory("Materials/");
 	FS::create_directory("Materials/Base");
 	FS::create_directory("Materials/Intro");

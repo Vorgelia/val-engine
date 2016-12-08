@@ -51,5 +51,4 @@ Material::Material(std::string name, Shader* shader, unsigned char properties, s
 Material::Material(FS::path path){
 	name = path.string();
 	ResourceLoader::LoadMaterial(path,&shader,&properties,&uniformFloats,&uniformTextures,&uniformVectors);
-
 }

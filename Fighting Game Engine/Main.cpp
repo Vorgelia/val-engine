@@ -2,7 +2,7 @@
 Val Engine
 	by Vorgelia
 	-@Vorgelia
-
+	https://valerie-laine-dev.com
 Specialized for Fighting Games
 
 Libraries used:
@@ -21,11 +21,15 @@ Somewhat error-prone for group projects, but more than manageable and convenient
 Also included are unnecessary attempts at memory management as personal exercises.
 
 Variables and getters/setters begin with lowercase. Classes, namespaces, functions, etc begin with uppercase.
-
+----Arbitrary to-do list----
+-Engine Features
+TODO: Rewrite input polling for proper handling of unrendered frames and multithreading.
+TODO: Add error detection to resource parsing.
+-Cleanup and Efficiency
 TODO: Clean up includes. Change default function parameters to be defined in .h and not .cpp.
 TODO: Change some class variables to be private with getters.
 TODO: Replace some instances of map with unordered_map.
-TODO: Rewrite input polling for proper handling of unrendered frames and multithreading.
+TODO: Abstract circular list in InputDevice into its own class
 ----
 Important defines:
 	Resource.cpp: VE_CREATE_DEFAULT_RESOURCES

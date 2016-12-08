@@ -5,6 +5,8 @@
 #include "Resource.h"
 #include "Time.h"
 #include "Screen.h"
+//GameState variables are this engine's equivalent to levels. Why they were not named levels, who knows.
+//The Unity style callbacks sort of betray my Unity background 
 void GameState::LoadResources(){
 	_loaded = false;
 	_initialized = false;

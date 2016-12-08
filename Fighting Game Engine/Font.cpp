@@ -48,7 +48,6 @@ Font::Font(FS::path p)
 			cursor.y += TEXT_SIZE;
 			if (cursor.y >= FONT_ATLAS_SIZE){
 				cursor = glm::ivec2(0, 0);
-				//std::cout <<"AAAAAAAAAA------\n\n"<< (int)c<<std::endl<<pixels.size()<<std::endl;
 				//SOIL_save_image("Atlas.bmp", SOIL_SAVE_TYPE_BMP, FONT_ATLAS_SIZE, FONT_ATLAS_SIZE,1,&pixels[0]);
 				atlases.push_back(new Texture("Atlas" + std::to_string(atlases.size() + 1), pixels, glm::ivec2(FONT_ATLAS_SIZE, FONT_ATLAS_SIZE), GL_RED, GL_LINEAR, GL_CLAMP_TO_EDGE,true));
 				pixels.clear();
@@ -57,7 +56,7 @@ Font::Font(FS::path p)
 		}
 			
 		for (int j = face->glyph->bitmap.rows-1; j >=0; --j){
-			for (int i = 0; i < face->glyph->bitmap.width; ++i){
+			for (int i = 0; i < face->glyph->bitmap.width; ++i){//Invert the pixels vertically.
 				pixels[((cursor.y + j)*(FONT_ATLAS_SIZE)) + (cursor.x + i)] = face->glyph->bitmap.buffer[j*face->glyph->bitmap.width + i];
 			}
 		}

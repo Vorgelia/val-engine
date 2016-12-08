@@ -13,10 +13,13 @@
 #include "GLStateTrack.h"
 #include "PostEffect.h"
 #define VE_AUX_BUFFER_AMOUNT 3
+//Auxiliary buffers are framebuffers used for multipass post processing effects.
 #define VE_WORLD_SCALE 3
+//World scale controls how many world units map correspond to one pixel. Object positions are integers for consistency.
 namespace Rendering{
 	FrameBuffer* mainBuffer;
 	std::vector<FrameBuffer*> auxBuffers;
+	//I don't quite remember why i added support for multiple cameras. It's probably never going to be used.
 	std::vector<Camera> cameras;
 	glm::mat4 orthoMat;
 	glm::mat4 screenMat;
@@ -51,12 +54,12 @@ void Rendering::Cleanup(){
 		delete auxBuffers[i];
 	}
 }
-
+//Default engine uniforms for passing time and screen parameters.
 void Rendering::BindEngineUniforms(Shader* shader){
 	glUniform4f(shader->UniformLocation("ve_time"), (GLfloat)Time::time, (GLfloat)Time::deltaTime, (GLfloat)1.0 / (GLfloat)Time::deltaTime, (GLfloat)Time::frameCount);
 	glUniform4f(shader->UniformLocation("ve_screen"), (GLfloat)Screen::size.x, (GLfloat)Screen::size.y, Screen::invSize.x, Screen::invSize.y);
 }
-
+//The following functions mostly just convert calls with different kinds of data into a standard DrawScreenMesh call.
 void Rendering::DrawScreenMesh(glm::vec4 rect, Mesh* mesh, std::vector<Texture*> textures, Material* mat, glm::vec4 params){
 	std::vector<std::pair<GLuint, glm::vec4>> txtr;
 	for (unsigned int i = 0; i < textures.size(); ++i)
@@ -75,7 +78,7 @@ void Rendering::DrawScreenMesh(glm::vec4 rect, Mesh* mesh, Material* mat){
 	DrawScreenMesh(rect, mesh, std::vector<Texture*>(), mat);
 
 }
-
+//Post effects are a good enough place to explain the entire rendering process. It doesn't change much for the rest of the functions.
 void Rendering::DrawPostEffect(PostEffect* pf){
 	if (pf == nullptr)
 		return;
@@ -83,7 +86,7 @@ void Rendering::DrawPostEffect(PostEffect* pf){
 	GLState::BindVertexArray(cMesh->vao);
 	tintColor = glm::vec4(1, 1, 1, 1);
 	for (unsigned int pi = 0; pi < pf->elementChain.size(); ++pi){
-		//glFinish();//Super important. Prevents IO on buffers that haven't had their effects finish rendering.
+		//glFinish();//Prevents IO on buffers that haven't had their effects finish rendering. Omitted for testing.
 		if (pf->elementChain[pi].second == nullptr){
 			GLState::BindFramebuffer(Rendering::mainBuffer->id);
 			DrawScreenMesh(glm::vec4(0, 0, 1920, 1080), nullptr, Rendering::auxBuffers[pf->elementChain[pi].first], Resource::GetMaterial("Materials/Base/Screen_FB.vmat"));
@@ -101,7 +104,7 @@ void Rendering::DrawPostEffect(PostEffect* pf){
 		}
 		GLState::UseProgram(cMat->shader->id);
 		int textureIndex = 0;
-		
+		//Bind uniforms specified in the material.
 		for (auto iter = cMat->uniformFloats.begin(); iter != cMat->uniformFloats.end(); ++iter){
 			glUniform1f(cMat->shader->UniformLocation(iter->first), iter->second);
 		}
@@ -109,16 +112,20 @@ void Rendering::DrawPostEffect(PostEffect* pf){
 			glUniform4f(cMat->shader->UniformLocation(iter->first), iter->second.x, iter->second.y, iter->second.z, iter->second.w);
 		}
 		for (auto iter = cMat->uniformTextures.begin(); iter != cMat->uniformTextures.end(); ++iter){
-			if (cMat->shader->UniformLocation(iter->first) > -1){
+			if (cMat->shader->UniformLocation(iter->first) > -1){//Only bind a texture and its other variables if it's going to be used in the shader
 				GLState::BindTexture((iter->second.ref)->id, textureIndex);
 				glUniform1i(cMat->shader->UniformLocation(iter->first), textureIndex);
 				glUniform4f(cMat->shader->UniformLocation(iter->first + ("_params")), iter->second.params.x, iter->second.params.y, iter->second.params.z, iter->second.params.w);
 				glUniform4f(cMat->shader->UniformLocation(iter->first + ("_size")), iter->second.ref->size.x, iter->second.ref->size.y, iter->second.ref->size.z, iter->second.ref->size.w);
+				//Params are used for cropping the texture, size passes information about the texture itself.
 				++textureIndex;
 			}
 		}
+		//Bind the texture components of every buffer, so they can be accessible from the shader.
 		BindBufferUniforms(cMat->shader, &textureIndex);
 		BindEngineUniforms(cMat->shader);
+
+		//Generate an MVP matrix for fullscreen projection
 
 		glm::mat4 modelMat = glm::translate(glm::mat4(), glm::vec3(0, 1080, 0));
 		modelMat = glm::scale(modelMat, glm::vec3(1920, -1080, 1));
@@ -129,6 +136,7 @@ void Rendering::DrawPostEffect(PostEffect* pf){
 		glUniformMatrix4fv(cMat->shader->UniformLocation("ve_matrix_projection"), 1, false, glm::value_ptr(Rendering::screenMat));
 		glUniformMatrix4fv(cMat->shader->UniformLocation("ve_matrix_mvp"), 1, false, glm::value_ptr(mvpmat));
 
+		//Apply material properties like ZWrite, ZTest, Blending, etc.
 		if (cMat != nullptr)
 			cMat->ApplyProperties();
 		glDrawElements(GL_TRIANGLES, cMesh->elementAmount, GL_UNSIGNED_INT, 0);
@@ -341,7 +349,7 @@ void Rendering::DrawScreenText(glm::vec4 rect,GLuint size, std::string text, Fon
 	}
 }
 void Rendering::InitTextDrawing(){
-
+	//Initialize states for text drawing to minimize unnecessary state changes.
 	Shader* cShad = Resource::GetShader("Shaders/Base/Screen_Text");
 	Mesh* cMesh = Resource::GetMesh("Meshes/Base/screenQuad.vm");
 
@@ -354,6 +362,8 @@ void Rendering::InitTextDrawing(){
 	
 }
 void Rendering::DrawTextCharacter(glm::vec4 rect,glm::vec4 params, Texture* tex){
+	//Draw individual text characters while assuming things set by InitTextDrawing are still bound.
+	//So much more optimization coule be put into this.
 	Shader* cShad = Resource::GetShader("Shaders/Base/Screen_Text");
 	Mesh* cMesh = Resource::GetMesh("Meshes/Base/screenQuad.vm");
 

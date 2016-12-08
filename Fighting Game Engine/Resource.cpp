@@ -40,6 +40,7 @@ void Resource::Init(){
 		ResourceInitializer::Init();
 	}
 #endif
+	//Initialization of base resources. These will not be unloaded throughout the program, but they can be overriden per GameState.
 	baseTextures.insert(std::pair<std::string, Texture*>("base_texture", new Texture("base_texture", pixels, glm::ivec2(2, 2), GL_RGBA, GL_NEAREST, GL_REPEAT)));
 	pixels = { 0, 0, 0, 1 };
 	baseTextures.insert(std::pair<std::string, Texture*>("black",new Texture("black",pixels,glm::ivec2(1,1),GL_RGBA,GL_NEAREST,GL_REPEAT)));
@@ -58,7 +59,7 @@ void Resource::Init(){
 }
 
 void Resource::Update(){
-
+	//?
 }
 
 Font* Resource::GetFont(FS::path path){
@@ -75,7 +76,9 @@ Font* Resource::GetFont(FS::path path){
 	}
 	return rf;
 }
-
+//The way these functions work is similar. If the resource exists in the per GameState resources, retrieve a pointer to it.
+//Else, if the resource exists in the base resources, do the same.
+//Else, attempt to load the resource, caching it as nullptr if it doesn't exist, so no further loading attempts are made.
 Texture* Resource::GetTexture(FS::path path){
 	Texture* rt;
 	if (textures.count(path.string()) > 0){
@@ -86,7 +89,7 @@ Texture* Resource::GetTexture(FS::path path){
 	}
 	else{
 		if (!FS::exists(path))
-			return nullptr;
+			return textures[path.string()]=nullptr;
 		rt = new Texture(path.string(), path, GL_RGBA, SOIL_LOAD_RGBA, GL_NEAREST, GL_REPEAT);
 		if (path.parent_path().leaf().string() == "Base")
 			baseTextures.insert(std::pair<std::string, Texture*>(path.string(), rt));
@@ -109,7 +112,7 @@ PostEffect* Resource::GetPostEffect(FS::path path){
 		rp = Resource::postEffects[path.string()];
 	else{
 		if (!FS::exists(path))
-			return nullptr;
+			return Resource::postEffects[path.string()]=nullptr;
 		rp = new PostEffect(path.string());
 		Resource::postEffects.insert(std::pair<std::string, PostEffect*>(path.string(), rp));
 		std::cout << "Loading Post Effect " << path.string() << std::endl;
@@ -128,7 +131,7 @@ Shader* Resource::GetShader(std::string name){
 		rs = Resource::shaders[name];
 	else{
 		if (!FS::exists(name+".vert")||!FS::exists(name+".frag"))
-			return nullptr;
+			return Resource::shaders[name]=nullptr;
 		rs = new Shader(name, { ShaderAttachment(ResourceLoader::ReturnFile(name + ".vert"), GL_VERTEX_SHADER), ShaderAttachment(ResourceLoader::ReturnFile(name + ".frag"), GL_FRAGMENT_SHADER) });
 		Resource::shaders.insert(std::pair<std::string, Shader*>(name, rs));
 		std::cout << "Loading Shader " << name << std::endl;
@@ -176,7 +179,7 @@ Material* Resource::GetMaterial(FS::path path, bool duplicate){
 	}
 	else{
 		if (!FS::exists(path))
-			return nullptr;
+			return materials[path.string()]=nullptr;
 		rm = new Material(path.string());
 		if (path.parent_path().leaf().string() == "Base")
 			baseMaterials.insert(std::pair<std::string, Material*>(path.string(), rm));
@@ -202,7 +205,7 @@ Mesh* Resource::GetMesh(FS::path path, bool editable){
 	}
 	else{
 		if (!FS::exists(path))
-			return nullptr;
+			return meshes[path.string()] = nullptr;
 
 		if (cachedMeshes.count(path.string()) == 0)
 			cachedMeshes[path.string()] = new CachedMesh(path);
@@ -229,14 +232,17 @@ void Resource::Unload(){
 	//Clear all meshes before clearing cached meshes.
 	//Code is structured so that Meshes send messages to their cached meshes for memory management
 	for (auto i = cachedMeshes.begin(); i != cachedMeshes.end(); ++i){
+		if (i->second!=nullptr)
 		delete i->second;
 	}
 	cachedMeshes.clear();
 	for (auto i = textures.begin(); i != textures.end(); ++i){
+		if (i->second != nullptr)
 		delete i->second;
 	}
 	textures.clear();
 	for (auto i = materials.begin(); i != materials.end(); ++i){
+		if (i->second != nullptr)
 		delete i->second;
 	}
 	materials.clear();
@@ -244,27 +250,33 @@ void Resource::Unload(){
 
 void Resource::Cleanup(){
 	for (auto i = baseMeshes.begin(); i != baseMeshes.end(); ++i){
+		if (i->second != nullptr)
 		delete i->second;
 	}
 	baseMeshes.clear();
 	Unload();
 	for (auto i = baseMaterials.begin(); i != baseMaterials.end(); ++i){
+		if (i->second != nullptr)
 		delete i->second;
 	}
 	baseMaterials.clear();
 	for (auto i = shaders.begin(); i != shaders.end(); ++i){
+		if (i->second != nullptr)
 		delete i->second;
 	}
 	shaders.clear();
 	for (auto i = baseTextures.begin(); i != baseTextures.end(); ++i){
+		if (i->second != nullptr)
 		delete i->second;
 	}
 	baseTextures.clear();
 	for (auto i = fonts.begin(); i != fonts.end(); ++i){
+		if (i->second != nullptr)
 		delete i->second;
 	}
 	fonts.clear();
 	for (auto i = postEffects.begin(); i != postEffects.end(); ++i){
+		if (i->second != nullptr)
 		delete i->second;
 	}
 	postEffects.clear();

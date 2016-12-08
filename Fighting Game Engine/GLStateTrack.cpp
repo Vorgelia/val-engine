@@ -1,6 +1,6 @@
 #include "GLStateTrack.h"
 
-//Keeps track of current OpenGL states and prevents duplicate changes for performance improvement
+//Keeps track of current OpenGL states and prevents duplicate changes for performance improvements.
 namespace GLState{
 	GLuint activeTexture;
 	GLuint boundShader;

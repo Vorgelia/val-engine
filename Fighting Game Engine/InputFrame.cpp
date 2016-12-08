@@ -11,6 +11,7 @@ InputFrame::InputFrame(){
 	this->axisState = 0;
 	//used = false;
 }
+//Inverse is used for p2 side characters
 InputFrame InputFrame::inverse(){
 	InputFrame rif(this->buttonStates,this->axisState);
 	if ((rif.axisState&((int)InputDirection::Left | (int)InputDirection::Right)) > 0)

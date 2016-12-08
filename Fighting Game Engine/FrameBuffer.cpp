@@ -52,6 +52,7 @@ void  FrameBuffer::Update(){
 		}
 		//I don't remember if i have to do this for framebuffers. I'm doing it anyway.
 		//glGenerateMipmap(GL_TEXTURE_2D);
+		//I guess i'm not doing it after all and it works for now.
 		if (!_valid){
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, textures[i], 0);
 			attachments.push_back(GL_COLOR_ATTACHMENT0 + i);

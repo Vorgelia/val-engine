@@ -3,8 +3,13 @@
 #include "Time.h"
 #include "Screen.h"
 #include "InputMotion.h"
+
+//1200 keeps track of the last 20 seconds of inputs, but it can easily be increased if that's not enough
+#define VE_INPUT_BUFFER_SIZE 1200
+
 InputDevice::InputDevice(int deviceID){
 	this->_deviceID = deviceID;
+	//Device IDs map to GLFW device IDs, with two extra ones. -1 for keyboard and -2 for inactive
 	if (deviceID == -2)
 		this->_deviceName = std::string("Inactive");
 	else{
@@ -14,9 +19,13 @@ InputDevice::InputDevice(int deviceID){
 			this->_deviceName = std::string(glfwGetJoystickName(deviceID));
 		ResourceLoader::LoadControlSettings("Settings/Input/" + this->_deviceName + ".vi", &(this->directionMap), &(this->buttonMap));
 	}
-	_inputBuffer.resize(1200);
-	_bufferEnd = 1200;
+	_inputBuffer.resize(VE_INPUT_BUFFER_SIZE);
+	//_bufferEnd here is used to implement a circular buffer. This could have been abstracted into a class of its own.
+	_bufferEnd = VE_INPUT_BUFFER_SIZE;
+	
 }
+//Helper function for evaluating whether a specific input event is occuring.
+//Needed to abstract checking for buttons and axes to a single function with boolean output.
 bool InputDevice::EvaluateInput(InputEvent ie){
 	if (this->_deviceID == -2){
 		return false;
@@ -33,10 +42,13 @@ bool InputDevice::EvaluateInput(InputEvent ie){
 		}
 	}
 }
-//Input leniency
+//Default input leniency. We want the first input of every move to only count if it's the latest one by default.
 #define INPUT_BUFFER_INIT 1
 #define INPUT_BUFFER_MID 8
 std::string debugString;
+//This function is fairly simple. It checks if a specific motion has been performed by validating every part of the motion based on the distance of its beginning.
+//For a quarter circle forward L, it would check if L has been pressed, then the distance between L and a forward input, then the distance between the forward input to the down-forward input, etc
+//The distance checking is abstracted in the InputMotionDistance function.
 bool InputDevice::EvaluateMotion(InputMotion motion,bool inverse){
 	if (motion.size() == 0)
 		return false;
@@ -76,19 +88,26 @@ bool InputDevice::EvaluateMotion(InputMotion motion,bool inverse){
 	std::cout << "MotionDebug: " << Time::frameCount << std::endl << debugString << "--FAILED OUTSIDE--\n--------" << std::endl;
 	return false;
 }
-
+//This function checks the distance from an input's beginning by checking back in the buffer until the specified input exceeds its necessary duration and stops being valid.
+//For instance, holding forward in a quarter circle forward for 4 frames means the input is valid and turns invalid in a 10f window, and therefore it's valid.
+//Max buffer is used as an early out to prevent from checking too far if we're going to discard based on distance being too high anyway
 int InputDevice::InputMotionDistance(int currentIndex, InputMotionComponent motionComp,int maxBuffer,bool firstInput){
 	int cind = currentIndex;
 	int duration = 0;
 	do{
+		//Look back into the buffer and check if motionComp is valid for that frame. If it is, increase the duration of the input.
+		//If the duration is over the needed duration, keep checking to see when the input started
 		if (InputMotionFrameCheck(&motionComp, cind)){
 			debugString += "--Valid Frame " + std::to_string(cind) + " dur:" + std::to_string(duration + 1) + "|" + std::to_string((int)inputBuffer(cind)->axisState) + "," + std::to_string((int)inputBuffer(cind)->buttonStates) + "\n";
 			++duration;
 			if (duration >= motionComp.minDuration){
+				//Unless it's the first component in the input. We want, say, quarter circles to count even if the player was holding down for a long time before completing the motion
+				//Or, charging back to count for all the frames after back has been held for the needed duration.
 				if (firstInput){
 					debugString += "---Last Input: Early Out\n";
 					return 0;
 				}
+				//To prevent different inputs being counted as the same with motions not marked strict, change the checks to return false if the input changes at all.
 				if (motionComp.direction != 0){
 					motionComp.direction = inputBuffer(cind)->axisState;
 					motionComp.strict = true;
@@ -96,7 +115,7 @@ int InputDevice::InputMotionDistance(int currentIndex, InputMotionComponent moti
 			}
 			--cind;
 		}
-		else{
+		else{//Only consider returning if the motion is invalid, which means we only check if the input has been valid after it's over
 			debugString += "--Invalid Frame " + std::to_string(cind) + " dur:" + std::to_string(duration) + "|" + std::to_string((int)inputBuffer(cind)->axisState) + "," + std::to_string((int)inputBuffer(cind)->buttonStates) + "\n";
 			if (duration >= motionComp.minDuration){
 				return glm::max(glm::abs(currentIndex - cind) - motionComp.minDuration + 1, 1);
@@ -107,11 +126,11 @@ int InputDevice::InputMotionDistance(int currentIndex, InputMotionComponent moti
 			}
 		}
 	} while (glm::abs(currentIndex - cind) - motionComp.minDuration <= maxBuffer);
-	return -1;
+	return -1;//-1 is used for invalid results.
 }
 bool InputDevice::InputMotionFrameCheck(InputMotionComponent* motionComp, int index){
 	InputFrame* inpf = inputBuffer(index);//Current checked frame
-	InputFrame* inpfp = inputBuffer(index - 1);//Current checked frame -1, to check for button presses
+	InputFrame* inpfp = inputBuffer(index - 1);//Current checked frame -1, to check for button events
 
 	if (motionComp->direction != 0){
 		if ((inpf->axisState&motionComp->direction) == 0)
@@ -136,6 +155,7 @@ bool InputDevice::InputMotionFrameCheck(InputMotionComponent* motionComp, int in
 	}
 	return true;
 }
+//Abstraction for getting a valid input in the circular buffer. Should, again, probably have been abstracted in its own class.
 InputFrame* InputDevice::inputBuffer(int index){
 	if (index < 0){
 		return &_inputBuffer[_inputBuffer.size()-1 - index%_inputBuffer.size()];
@@ -200,11 +220,13 @@ void InputDevice::PollInput(){
 }
 void InputDevice::PushInputsToBuffer(){
 	for (unsigned int i = 0; i < cachedInputFrames.size(); ++i){
-		_inputBuffer[(this->_bufferEnd % 1200)] = cachedInputFrames[i];
-		this->_bufferEnd = 1200 + ((this->_bufferEnd + 1) % 1200);
+		_inputBuffer[(this->_bufferEnd % VE_INPUT_BUFFER_SIZE)] = cachedInputFrames[i];
+		this->_bufferEnd = VE_INPUT_BUFFER_SIZE + ((this->_bufferEnd + 1) % VE_INPUT_BUFFER_SIZE);
 	}
 	cachedInputFrames.clear();
 }
+//Default settings are saved per input device type. This means your fightstick can remember its settings even if you plug it out.
+//Of course, support for temporary changes should be available in a finished product.
 std::string InputDevice::Serialize(){
 	std::string str = "#BUTTONS\n";
 	for (auto i = this->buttonMap.begin(); i != this->buttonMap.end(); ++i)

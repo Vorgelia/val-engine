@@ -13,7 +13,7 @@ void GameStateManager::LoadState(int stl){
 	std::cout << "----\n\n\nLS: " << stl << "\n\n\n----"<<std::endl;
 	_stateToLoad = stl;
 }
-
+//The game states are managed here. This is where state loading and cleanup, as well as their per-state callbacks are handled.
 void GameStateManager::FrameEnd(){
 	if (_stateToLoad > -1){
 		if (currentState > -1){
@@ -37,6 +37,7 @@ void GameStateManager::Update(){
 
 void GameStateManager::Init(){
 	//Instantiate all the game states
+	//I kind of want to move this somewhere less obscure to make it easier to configure.
 	states.push_back(new GS_Intro("States/Intro"));
 	states.push_back(new GS_Menu("States/Menu"));
 	currentState = -1;

@@ -31,7 +31,7 @@ std::string ResourceLoader::LoadTextResource(int id,std::string type){//Copypast
 	int size = SizeofResource(NULL, hResource) / sizeof(char);
 	return std::string(sText).substr(0, size);
 }
-std::vector<unsigned char> ResourceLoader::LoadBinaryResource(int id, std::string type){
+std::vector<unsigned char> ResourceLoader::LoadBinaryResource(int id, std::string type){//Doesn't work, completely unused.
 	HRSRC hResource = FindResource(NULL, MAKEINTRESOURCE(id), (LPCSTR)type.c_str());
 	if (hResource == 0){
 		std::cout << "Error finding resource " << id << std::endl;
@@ -47,7 +47,7 @@ std::vector<unsigned char> ResourceLoader::LoadBinaryResource(int id, std::strin
 	int size = SizeofResource(NULL, hResource) / sizeof(unsigned char);
 	return std::vector<unsigned char>((unsigned char*)sData, (unsigned char*)sData[size]);
 }
-std::string ResourceLoader::ReturnFile(FS::path dir){
+std::string ResourceLoader::ReturnFile(FS::path dir){//Abstraction for turning a file into a string.
 	if (!FS::exists(dir))
 		return "ERROR";
 	std::ifstream ifs(dir.c_str());
@@ -67,7 +67,7 @@ bool ResourceLoader::SaveFile(FS::path dir,std::string content,int flags){
 	ofs.close();
 	return true;
 }
-
+//Abstraction for turning a file into an array of its lines. Heavily used in parsing.
 std::vector<std::string> ResourceLoader::ReturnFileLines(FS::path dir, bool removeWhitespace = false){
 	std::cout << "--Resource: Loading File" << dir << std::endl;
 	if (!FS::exists(dir))
@@ -90,6 +90,9 @@ std::vector<std::string> ResourceLoader::ReturnFileLines(FS::path dir, bool remo
 }
 //I lied. Parsing files that i wrote to be simple to parse is fun.
 //For some reason i'm using pointers to components instead of pointers to objects. Don't ask me why, but i stuck with it.
+//Most of these parsers work in similar ways.
+//Lines beginning with // are comments, #DIRECTIVES change where the data goes, the data itself is split on = and ,
+//Little to no error detection. That really needs to be changed.
 void ResourceLoader::LoadControlSettings(FS::path path, std::unordered_map<InputDirection, InputEvent>* dir, std::unordered_map<InputButton,InputEvent>* bt){
 	std::vector<std::string> lines;
 	

@@ -10,14 +10,14 @@ namespace InputManager{
 	int p2Device;
 	bool stopInputs=false;
 }
-
+//Update list of valid input devices and have them poll for inputs
 void InputManager::Update(){
 	glfwPollEvents();
 
 	for (int i = GLFW_JOYSTICK_1; i < GLFW_JOYSTICK_LAST; ++i){
 		if (glfwJoystickPresent(i)==GLFW_TRUE && (inputDevices.count(i) == 0)){
 			inputDevices.insert(std::pair<int, InputDevice*>(i, new InputDevice(i)));
-			p2Device = i;
+			p2Device = i;//For testing. Remove later.
 		}
 		else if (glfwJoystickPresent(i) == GLFW_FALSE && (inputDevices.count(i) > 0)){
 			delete inputDevices[i];

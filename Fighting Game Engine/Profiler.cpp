@@ -1,5 +1,7 @@
 #include "Profiler.h"
 #include "Time.h"
+//This profiler implementation is fairly simple. Just check the time that passed between profiler calls.
+//Structure modelled after Unity's Profiler.BeginSample and Profiler.EndSample.
 namespace Profiler{
 	std::unordered_map<std::string, double> elements;
 	glm::vec2 stateChanges;
