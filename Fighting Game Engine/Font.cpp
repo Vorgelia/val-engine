@@ -56,7 +56,7 @@ Font::Font(FS::path p)
 		}
 			
 		for (int j = face->glyph->bitmap.rows-1; j >=0; --j){
-			for (int i = 0; i < face->glyph->bitmap.width; ++i){//Invert the pixels vertically.
+			for (unsigned int i = 0; i < face->glyph->bitmap.width; ++i){//Invert the pixels vertically.
 				pixels[((cursor.y + j)*(FONT_ATLAS_SIZE)) + (cursor.x + i)] = face->glyph->bitmap.buffer[j*face->glyph->bitmap.width + i];
 			}
 		}

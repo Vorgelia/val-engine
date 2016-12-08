@@ -24,7 +24,8 @@ void GS_Menu::GUI(){
 
 	int ind = 0;
 	for (auto i = InputManager::inputDevices.begin(); i != InputManager::inputDevices.end(); ++i){
-		Rendering::DrawScreenText(glm::vec4(0, 60 + ind * 30, 100, 100), 24, std::to_string(i->first) + ":" + std::to_string(i->second->LastBufferInput()->buttonStates) + ":" + std::to_string(i->second->LastBufferInput()->axisState), nullptr);
+		if (i->second!=nullptr)
+			Rendering::DrawScreenText(glm::vec4(0, 60 + ind * 30, 100, 100), 24, std::to_string(i->first) + ":" + std::to_string(i->second->LastBufferInput()->buttonStates) + ":" + std::to_string(i->second->LastBufferInput()->axisState), nullptr);
 		++ind;
 	}
 
@@ -48,7 +49,8 @@ void GS_Menu::Update(){
 	}
 }
 void GS_Menu::GameUpdate(){
-	InputManager::inputDevices[0]->EvaluateMotion(qcf, false);
+	if (InputManager::inputDevices[0]!=nullptr)
+		InputManager::inputDevices[0]->EvaluateMotion(qcf, false);
 }
 GS_Menu::GS_Menu(FS::path path) :GameState(path){
 }

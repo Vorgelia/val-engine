@@ -125,10 +125,10 @@ void ResourceLoader::LoadControlSettings(FS::path path, std::unordered_map<Input
 			boost::split(spl2, spl[1], boost::is_any_of(","), boost::token_compress_on);
 			switch (readState){
 			case 0:
-				bt->insert(std::pair<InputButton, InputEvent>((InputButton)boost::lexical_cast<int>(spl[0]), InputEvent(boost::lexical_cast<int>(spl2[1]), spl2[0] == "t", boost::lexical_cast<int>(spl2[2]), boost::lexical_cast<float>(spl2[3]))));
+				bt->insert(std::pair<InputButton, InputEvent>((InputButton)boost::lexical_cast<int>(spl[0]), InputEvent(boost::lexical_cast<int>(spl2[1]), spl2[0] == "t", boost::lexical_cast<float>(spl2[2]), boost::lexical_cast<float>(spl2[3]))));
 				break;
 			case 1:
-				dir->insert(std::pair<InputDirection, InputEvent>((InputDirection)boost::lexical_cast<int>(spl[0]), InputEvent(boost::lexical_cast<int>(spl2[1]), spl2[0] == "t", boost::lexical_cast<int>(spl2[2]), boost::lexical_cast<float>(spl2[3]))));
+				dir->insert(std::pair<InputDirection, InputEvent>((InputDirection)boost::lexical_cast<int>(spl[0]), InputEvent(boost::lexical_cast<int>(spl2[1]), spl2[0] == "t", boost::lexical_cast<float>(spl2[2]), boost::lexical_cast<float>(spl2[3]))));
 				break;
 			}
 		}
@@ -179,7 +179,7 @@ void ResourceLoader::LoadObjects(FS::path path, std::map<int, Object*>* objects)
 			else if (spl[0] == "id")
 				cobj->id = boost::lexical_cast<int>(spl[1]); 
 			else if (spl[0] == "depth")
-				cobj->transform->depth = boost::lexical_cast<int>(spl[1]);
+				cobj->transform->depth = boost::lexical_cast<float>(spl[1]);
 			else if (spl[0] == "render")
 				cobj->render = spl[1] == "t";
 		}

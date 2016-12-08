@@ -104,6 +104,7 @@ const Object* GameState::FindObject(std::string name){
 	for (auto i = objects.begin(); i != objects.end(); ++i)
 	if (i->second->name == name)
 		return i->second;
+	return nullptr;
 }
 
 GameState::GameState(FS::path path){

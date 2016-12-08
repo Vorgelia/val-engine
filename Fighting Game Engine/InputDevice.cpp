@@ -58,7 +58,7 @@ bool InputDevice::EvaluateMotion(InputMotion motion,bool inverse){
 	for (int i = motion.size() - 1; i >= 0; ){
 		debugString += "Checking frame: " + std::to_string(bufferIndex) + "\n";
 		debugString += "-Requirements: " + std::to_string((int)motion[i].direction) + ":";
-		for (int bti = 0; bti < motion[i].buttons.size(); ++bti){
+		for (unsigned int bti = 0; bti < motion[i].buttons.size(); ++bti){
 			debugString += std::to_string((int)motion[i].buttons[0].first)+",";
 		}
 		debugString += '\n';
