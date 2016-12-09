@@ -20,9 +20,9 @@ Transform::Transform(){
 	this->depth = 0;
 }
 glm::mat4 Transform::ModelMatrix(){
-	glm::mat4 model;
-	model=glm::translate(model, glm::vec3((float)position.x / (1.0 + depth), (float)position.y / (1.0 + depth), 1.0 - 1.0 / (1 + depth)));
-	model = glm::scale(model, glm::vec3(scale.x, scale.y, 1));
-	model *= glm::mat4_cast(rotation);
-	return model;
+	glm::mat4 tl, rot, sc;
+	tl = glm::translate(glm::mat4(), glm::vec3((float)position.x / (1.0 + depth), (float)position.y / (1.0 + depth), 1.0 - 1.0 / (1.0 + glm::abs(depth))));
+	rot = glm::mat4_cast(rotation);
+	sc = glm::scale(glm::mat4(), glm::vec3(this->scale.x, this->scale.y, 1));
+	return tl*rot*sc;
 }
