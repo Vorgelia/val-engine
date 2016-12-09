@@ -3,9 +3,12 @@
 class Hitbox
 {
 public:
-	glm::ivec4 rect;//X,Y,Width,Height
-
+	glm::vec4 rect;//Center X, Center Y, Width/2, Height/2
 	bool Overlap(Hitbox* hitbox);
-	Hitbox(glm::ivec4 rect);
-};
+	Hitbox flipped();
+	
+	Hitbox operator+(const glm::vec2 rhs);
 
+	static Hitbox FromTopLeft(glm::vec4 rect);
+	Hitbox(glm::vec4 rect);
+};

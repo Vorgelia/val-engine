@@ -21,8 +21,8 @@ glm::vec2 InputFrame::ToVector(){
 		rv.y -= 1;
 	return rv;
 }
-//Inverse is used for p2 side characters
-InputFrame InputFrame::inverse(){
+//Flipped is used for p2 side characters
+InputFrame InputFrame::flipped(){
 	InputFrame rif(this->buttonStates,this->axisState);
 	if ((rif.axisState&((unsigned char)InputDirection::Left | (unsigned char)InputDirection::Right)) > 0)
 		rif.axisState ^= ((unsigned char)InputDirection::Left | (unsigned char)InputDirection::Right);

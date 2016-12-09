@@ -6,7 +6,7 @@ public:
 	unsigned char buttonStates;
 	unsigned char axisState;
 	
-	InputFrame inverse();
+	InputFrame flipped();
 	glm::vec2 ToVector();
 	InputFrame(unsigned char buttonStates, unsigned char axisState);
 	InputFrame();

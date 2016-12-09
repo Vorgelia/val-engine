@@ -33,10 +33,12 @@ TODO: Replace some instances of map with unordered_map.
 ----
 Important defines:
 	Resource.cpp:    VE_CREATE_DEFAULT_RESOURCES
-	InputDevice.cpp: INPUT_BUFFER_INIT
-					 INPUT_BUFFER_MID
+	InputDevice.cpp: VE_INPUT_BUFFER_INIT
+					 VE_INPUT_BUFFER_MID
 	Rendering.cpp:   VE_AUX_BUFFER_AMOUNT
 					 VE_WORLD_SCALE
+	Time.h:			 VE_FRAME_TIME
+					 VE_FRAME_RATE
 */
 
 #include "SystemIncludes.hpp"

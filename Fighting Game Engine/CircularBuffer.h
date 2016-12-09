@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
-//Declaration
+//Declaration.
+//Circular buffers are containers with a fixed size but a variable end. It will always hold the last _buffer.size() entries, with older ones getting replaced by new ones.
 template <class T>
 class CircularBuffer
 {
@@ -8,29 +9,39 @@ class CircularBuffer
 	int _bufferEnd;
 public:
 
-	T* at(int index);
-	T* back();
-	T* end();
+	T* at(int index);//Relative to the beginning of the vector.
+	T* at_relative(int index);//Relative to the latest entry
+	T* back();//Latest entry
+	T* end();//Earliest entry, to be overwritten.
 	int position();
 
 	int InternalIndex(int index);
 
 	void Advance();
-	void Advance(T placedVar);
+	void Advance(T placedVar);//Quick helper function for adding an element and incrementing _bufferEnd
 	void SetPosition(int pos);
 	
-	void Resize(int size);
+	void Resize(int size);//Really simple resize function. Will not shift the elements to maintain order.
+
+	void Reset();//Helper function for returning all of the buffer's values to default.
 
 	CircularBuffer(int size);
 	~CircularBuffer();
 };
-//Definition.
-//C++ WHYYYYYYYYYYYYYYYYYYYYYYYYYY
+//Definition. Apparently i have to include this in the .h unless i want to manually type out every potential class it can be used with.
+//WHYYYYYYYYYYYYYYYYYYYYYYYYYY
 template <class T>
 T* CircularBuffer<T>::at(int index){
 	if (_buffer->size() == 0)
 		return nullptr;
 	return &_buffer->at(InternalIndex(index));
+}
+
+template <class T>
+T* CircularBuffer<T>::at_relative(int index){
+	if (_buffer->size() == 0)
+		return nullptr;
+	return &_buffer->at(InternalIndex(_bufferEnd-1+index));
 }
 
 template <class T>
@@ -79,6 +90,15 @@ int CircularBuffer<T>::position(){
 template <class T>
 void CircularBuffer<T>::Resize(int size){
 	_buffer->resize(size);
+	_bufferEnd = InternalIndex(_bufferEnd);
+}
+
+template <class T>
+void CircularBuffer<T>::Reset(){
+	for (auto i = _buffer->begin(); i < _buffer->end(); ++i){
+		(*i) = T();
+	}
+	_bufferEnd = 0;
 }
 
 template <class T>
