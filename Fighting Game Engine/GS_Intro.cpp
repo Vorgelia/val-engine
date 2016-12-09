@@ -22,7 +22,7 @@ void GS_Intro::GUI(){
 
 	int ind=0;
 	for (auto i = InputManager::inputDevices.begin(); i != InputManager::inputDevices.end(); ++i){
-		Rendering::DrawScreenText(glm::vec4(0, 60 + ind * 30, 100, 100), 24, std::to_string(i->first) + ":" + std::to_string(i->second->LastBufferInput()->buttonStates) + ":" + std::to_string(i->second->LastBufferInput()->axisState), nullptr);
+		Rendering::DrawScreenText(glm::vec4(0, 60 + ind * 30, 100, 100), 24, std::to_string(i->first) + ":" + std::to_string(i->second->inputBuffer->back()->buttonStates) + ":" + std::to_string(i->second->inputBuffer->back()->axisState), nullptr);
 		++ind;
 	}
 }
@@ -32,7 +32,7 @@ void GS_Intro::GameUpdate(){
 		GameStateManager::LoadState(1);
 	else{
 		for (auto i = InputManager::inputDevices.begin(); i != InputManager::inputDevices.end(); ++i)
-			if (i->second->LastBufferInput()->buttonStates > 0)
+			if (i->second->inputBuffer->back()->buttonStates > 0)
 				GameStateManager::LoadState(1);
 	}
 }

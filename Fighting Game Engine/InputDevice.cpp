@@ -19,10 +19,11 @@ InputDevice::InputDevice(int deviceID){
 			this->_deviceName = std::string(glfwGetJoystickName(deviceID));
 		ResourceLoader::LoadControlSettings("Settings/Input/" + this->_deviceName + ".vi", &(this->directionMap), &(this->buttonMap));
 	}
-	_inputBuffer.resize(VE_INPUT_BUFFER_SIZE);
-	//_bufferEnd here is used to implement a circular buffer. This could have been abstracted into a class of its own.
-	_bufferEnd = VE_INPUT_BUFFER_SIZE;
+	inputBuffer = new InputBuffer(VE_INPUT_BUFFER_SIZE);
 	
+}
+InputDevice::~InputDevice(){
+	delete inputBuffer;
 }
 //Helper function for evaluating whether a specific input event is occuring.
 //Needed to abstract checking for buttons and axes to a single function with boolean output.
@@ -53,7 +54,7 @@ bool InputDevice::EvaluateMotion(InputMotion motion,bool inverse){
 	if (motion.size() == 0)
 		return false;
 	int buf = motion.back().leniency > -1 ? motion.back().leniency : INPUT_BUFFER_INIT;
-	int bufferIndex = this->_bufferEnd - 1;
+	int bufferIndex = inputBuffer->position() - 1;
 	debugString = "";
 	for (int i = motion.size() - 1; i >= 0; ){
 		debugString += "Checking frame: " + std::to_string(bufferIndex) + "\n";
@@ -98,7 +99,7 @@ int InputDevice::InputMotionDistance(int currentIndex, InputMotionComponent moti
 		//Look back into the buffer and check if motionComp is valid for that frame. If it is, increase the duration of the input.
 		//If the duration is over the needed duration, keep checking to see when the input started
 		if (InputMotionFrameCheck(&motionComp, cind)){
-			debugString += "--Valid Frame " + std::to_string(cind) + " dur:" + std::to_string(duration + 1) + "|" + std::to_string((int)inputBuffer(cind)->axisState) + "," + std::to_string((int)inputBuffer(cind)->buttonStates) + "\n";
+			debugString += "--Valid Frame " + std::to_string(cind) + " dur:" + std::to_string(duration + 1) + "|" + std::to_string((int)inputBuffer->at(cind)->axisState) + "," + std::to_string((int)inputBuffer->at(cind)->buttonStates) + "\n";
 			++duration;
 			if (duration >= motionComp.minDuration){
 				//Unless it's the first component in the input. We want, say, quarter circles to count even if the player was holding down for a long time before completing the motion
@@ -109,14 +110,14 @@ int InputDevice::InputMotionDistance(int currentIndex, InputMotionComponent moti
 				}
 				//To prevent different inputs being counted as the same with motions not marked strict, change the checks to return false if the input changes at all.
 				if (motionComp.direction != 0){
-					motionComp.direction = inputBuffer(cind)->axisState;
+					motionComp.direction = inputBuffer->at(cind)->axisState;
 					motionComp.strict = true;
 				}
 			}
 			--cind;
 		}
 		else{//Only consider returning if the motion is invalid, which means we only check if the input has been valid after it's over
-			debugString += "--Invalid Frame " + std::to_string(cind) + " dur:" + std::to_string(duration) + "|" + std::to_string((int)inputBuffer(cind)->axisState) + "," + std::to_string((int)inputBuffer(cind)->buttonStates) + "\n";
+			debugString += "--Invalid Frame " + std::to_string(cind) + " dur:" + std::to_string(duration) + "|" + std::to_string((int)inputBuffer->at(cind)->axisState) + "," + std::to_string((int)inputBuffer->at(cind)->buttonStates) + "\n";
 			if (duration >= motionComp.minDuration){
 				return glm::max(glm::abs(currentIndex - cind) - motionComp.minDuration + 1, 1);
 			}
@@ -129,8 +130,8 @@ int InputDevice::InputMotionDistance(int currentIndex, InputMotionComponent moti
 	return -1;//-1 is used for invalid results.
 }
 bool InputDevice::InputMotionFrameCheck(InputMotionComponent* motionComp, int index){
-	InputFrame* inpf = inputBuffer(index);//Current checked frame
-	InputFrame* inpfp = inputBuffer(index - 1);//Current checked frame -1, to check for button events
+	InputFrame* inpf = inputBuffer->at(index);//Current checked frame
+	InputFrame* inpfp = inputBuffer->at(index - 1);//Current checked frame -1, to check for button events
 
 	if (motionComp->direction != 0){
 		if ((inpf->axisState&motionComp->direction) == 0)
@@ -154,14 +155,6 @@ bool InputDevice::InputMotionFrameCheck(InputMotionComponent* motionComp, int in
 		return false;
 	}
 	return true;
-}
-//Abstraction for getting a valid input in the circular buffer. Should, again, probably have been abstracted in its own class.
-InputFrame* InputDevice::inputBuffer(int index){
-	if (index < 0){
-		return &_inputBuffer[_inputBuffer.size()-1 - index%_inputBuffer.size()];
-	}
-	else
-		return &_inputBuffer[index%_inputBuffer.size()];
 }
 
 void InputDevice::UpdateJoyInputs(){
@@ -220,8 +213,7 @@ void InputDevice::PollInput(){
 }
 void InputDevice::PushInputsToBuffer(){
 	for (unsigned int i = 0; i < cachedInputFrames.size(); ++i){
-		_inputBuffer[(this->_bufferEnd % VE_INPUT_BUFFER_SIZE)] = cachedInputFrames[i];
-		this->_bufferEnd = VE_INPUT_BUFFER_SIZE + ((this->_bufferEnd + 1) % VE_INPUT_BUFFER_SIZE);
+		inputBuffer->Advance(cachedInputFrames[i]);
 	}
 	cachedInputFrames.clear();
 }
@@ -235,9 +227,6 @@ std::string InputDevice::Serialize(){
 	for (auto i = this->directionMap.begin(); i != this->directionMap.end(); ++i)
 		str += std::to_string((int)i->first) + ":" + (i->second.isAxis ? "t," : "f,") + std::to_string(i->second.inputID) + "," + std::to_string((int)glm::sign(i->second.inputValue)) + "\n";
 	return str;
-}
-InputFrame* InputDevice::LastBufferInput(){
-	return inputBuffer(this->_bufferEnd - 1);
 }
 std::string InputDevice::deviceName(){
 	return _deviceName;

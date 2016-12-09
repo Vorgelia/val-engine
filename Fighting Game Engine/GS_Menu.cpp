@@ -10,7 +10,11 @@
 #include "InputFrame.h"
 #include "InputDevice.h"
 #include "InputMotion.h"
+#include "CircularBuffer.h"
 #include "Camera.h"
+
+//This is where all of the testing ends up happening, which might explain why it's uncommented and a mess.
+
 void GS_Menu::FrameEnd(){
 	//Rendering::DrawScreenMesh(glm::vec4(0, 0, 1920, 1080), Resource::GetMesh("Meshes/Base/screenQuad.vm"), std::vector<Texture*>{ Resource::GetTexture("Textures/tex.png") }, Resource::GetMaterial("Materials/Base/Screen.vmat"));
 }
@@ -26,7 +30,7 @@ void GS_Menu::GUI(){
 	int ind = 0;
 	for (auto i = InputManager::inputDevices.begin(); i != InputManager::inputDevices.end(); ++i){
 		if (i->second!=nullptr)
-			Rendering::DrawScreenText(glm::vec4(0, 60 + ind * 30, 100, 100), 24, std::to_string(i->first) + ":" + std::to_string(i->second->LastBufferInput()->buttonStates) + ":" + std::to_string(i->second->LastBufferInput()->axisState), nullptr);
+			Rendering::DrawScreenText(glm::vec4(0, 60 + ind * 30, 100, 100), 24, std::to_string(i->first) + ":" + std::to_string(i->second->inputBuffer->back()->buttonStates) + ":" + std::to_string(i->second->inputBuffer->back()->axisState), nullptr);
 		++ind;
 	}
 
@@ -45,15 +49,12 @@ void GS_Menu::Update(){
 	if (glfwGetKey(Screen::window, GLFW_KEY_ESCAPE) == GLFW_PRESS){
 		glfwSetWindowShouldClose(Screen::window, GLFW_TRUE);
 	}
-	if (glfwGetKey(Screen::window, GLFW_KEY_D))
-		Rendering::cameras.at(0).position.x += 500.0f * Time::deltaTime;
-	else if (glfwGetKey(Screen::window, GLFW_KEY_A))
-		Rendering::cameras.at(0).position.x -= 500.0f * Time::deltaTime;
+	
 }
 void GS_Menu::GameUpdate(){
 	if (InputManager::inputDevices[0]!=nullptr)
 		InputManager::inputDevices[0]->EvaluateMotion(qcf, false);
-	
+	Rendering::cameras.at(0).position += InputManager::inputDevices[-1]->inputBuffer->back()->ToVector() * 500.0f * (float)VE_FRAME_TIME;
 }
 GS_Menu::GS_Menu(FS::path path) :GameState(path){
 }

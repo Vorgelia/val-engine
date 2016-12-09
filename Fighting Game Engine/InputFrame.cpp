@@ -4,17 +4,27 @@
 InputFrame::InputFrame(unsigned char buttonStates, unsigned char axisState){
 	this->buttonStates=buttonStates;
 	this->axisState = axisState;
-	//used = false;
 }
 InputFrame::InputFrame(){
 	this->buttonStates =0;
 	this->axisState = 0;
-	//used = false;
+}
+glm::vec2 InputFrame::ToVector(){
+	glm::vec2 rv;
+	if ((axisState & (unsigned char)InputDirection::Left) != 0)
+		rv.x -= 1;
+	if ((axisState & (unsigned char)InputDirection::Right) != 0)
+		rv.x += 1;
+	if ((axisState & (unsigned char)InputDirection::Up) != 0)
+		rv.y += 1;
+	if ((axisState & (unsigned char)InputDirection::Down) != 0)
+		rv.y -= 1;
+	return rv;
 }
 //Inverse is used for p2 side characters
 InputFrame InputFrame::inverse(){
 	InputFrame rif(this->buttonStates,this->axisState);
-	if ((rif.axisState&((int)InputDirection::Left | (int)InputDirection::Right)) > 0)
-		rif.axisState ^= ((int)InputDirection::Left | (int)InputDirection::Right);
+	if ((rif.axisState&((unsigned char)InputDirection::Left | (unsigned char)InputDirection::Right)) > 0)
+		rif.axisState ^= ((unsigned char)InputDirection::Left | (unsigned char)InputDirection::Right);
 	return rif;
 }

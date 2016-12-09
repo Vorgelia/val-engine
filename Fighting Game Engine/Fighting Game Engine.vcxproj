@@ -78,6 +78,7 @@
     <ClCompile Include="GLStateTrack.cpp" />
     <ClCompile Include="GS_Intro.cpp" />
     <ClCompile Include="GS_Menu.cpp" />
+    <ClCompile Include="Hitbox.cpp" />
     <ClCompile Include="InputDevice.cpp" />
     <ClCompile Include="InputEvent.cpp" />
     <ClCompile Include="InputFrame.cpp" />
@@ -102,6 +103,7 @@
   <ItemGroup>
     <ClInclude Include="CachedMesh.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="CircularBuffer.h" />
     <ClInclude Include="CommonUtilIncludes.hpp" />
     <ClInclude Include="FGIncludes.hpp" />
     <ClInclude Include="Font.h" />
@@ -112,6 +114,7 @@
     <ClInclude Include="GS_Intro.h" />
     <ClInclude Include="GSIncludes.hpp" />
     <ClInclude Include="GS_Menu.h" />
+    <ClInclude Include="Hitbox.h" />
     <ClInclude Include="InputDevice.h" />
     <ClInclude Include="InputEvent.h" />
     <ClInclude Include="InputFrame.h" />

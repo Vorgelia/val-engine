@@ -7,6 +7,9 @@
 #include "InputEvent.h"
 #include "InputFrame.h"
 
+#include "Hitbox.h"
+#include "CircularBuffer.h"
+
 #include "Transform.h"
 #include "Object.h"
 #include "GameState.h"
