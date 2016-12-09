@@ -12,5 +12,5 @@ uniform mat4 ve_matrix_projection;
 
 void main(){
 	out_uv=uv;
-	gl_Position=ve_matrix_mvp*vec4(vertex.xy,0.5,1);
+	gl_Position=ve_matrix_mvp*vec4(vertex.xy,0,1);
 }

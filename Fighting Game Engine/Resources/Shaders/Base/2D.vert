@@ -15,5 +15,5 @@ void main(){
 	out_uv=uv;
 	out_normal=normal;
 	gl_Position=ve_matrix_mvp*vec4(vertex.xy,0,1);
-	out_depth=ve_depth;
+	out_depth=(1+gl_Position.z)*0.5;
 }

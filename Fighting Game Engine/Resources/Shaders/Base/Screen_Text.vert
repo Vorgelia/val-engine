@@ -9,5 +9,5 @@ uniform mat4 ve_matrix_mvp;
 
 void main(){
 	out_uv=vec2(uv.x,uv.y);
-	gl_Position=ve_matrix_mvp*vec4(vertex.xy,0.5,1);
+	gl_Position=ve_matrix_mvp*vec4(vertex.xy,0,1);
 }

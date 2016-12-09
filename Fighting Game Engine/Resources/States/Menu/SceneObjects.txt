@@ -13,8 +13,8 @@ id=1
 name=Test Object
 mesh=Meshes/Base/quad.vm
 material=Materials/Menu/Menu_Test.vmat
-position=0,2200
-scale=2000,1200
-depth=2
+position=0,1000
+scale=3500,1800
+depth=4
 render=t
 #OBJECT_END
