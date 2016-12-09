@@ -1,10 +1,20 @@
 #OBJECT_BEGIN
-id=1
+id=2
 name=Test Object
 mesh=Meshes/Base/quad.vm
 material=Materials/Menu/Menu_Test.vmat
 position=0,0
 scale=800,400
 depth=0
+render=t
+#OBJECT_END
+#OBJECT_BEGIN
+id=1
+name=Test Object
+mesh=Meshes/Base/quad.vm
+material=Materials/Menu/Menu_Test.vmat
+position=0,2200
+scale=2000,1200
+depth=2
 render=t
 #OBJECT_END
