@@ -31,8 +31,8 @@ void Rendering::Init(){
 	for (unsigned int i = 0; i < VE_AUX_BUFFER_AMOUNT; ++i){
 		auxBuffers.push_back(new FrameBuffer(Screen::size, 3,false,GL_RGBA16F));
 	}
-	orthoMat = glm::ortho(-960.0*VE_WORLD_SCALE, 960.0*VE_WORLD_SCALE, -540.0*VE_WORLD_SCALE, 540.0*VE_WORLD_SCALE, -1.0, 2.0);
-	screenMat = glm::ortho(0.0, 1920.0, 1080.0, 0.0,-1.0,2.0);
+	orthoMat = glm::ortho(-960.0*VE_WORLD_SCALE, 960.0*VE_WORLD_SCALE, -540.0*VE_WORLD_SCALE, 540.0*VE_WORLD_SCALE, 0.0, 1.0);
+	screenMat = glm::ortho(0.0, 1920.0, 1080.0, 0.0, 0.0, 1.0);
 	cameras.push_back(Camera(glm::vec2(0,0),&orthoMat));
 }
 
