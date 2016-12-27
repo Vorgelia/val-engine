@@ -8,7 +8,7 @@
 #include "PostEffect.h"
 #include "Font.h"
 #include "ResourceInitializer.h"
-
+#include "DebugLog.h"
 //If the following define exists, the engine will create some default resource files if the folder structure is missing.
 //I opt to create and then read files rather than reading directly from the resources because the generated files have comments in them that explain how they work
 //They are also easier to just modify instead of writing new ones from scratch
@@ -36,7 +36,7 @@ void Resource::Init(){
 	};
 #ifdef VE_CREATE_DEFAULT_RESOURCES
 	if (!FS::exists("Meshes/") || !FS::exists("Shaders/") || !FS::exists("Settings/") || !FS::exists("States/")){
-		std::cout << "-----\n\n\nFile structure invalid. Creating default resources.\n\n\n-----" << std::endl;
+		DebugLog::Push("-----\n\n\nFile structure invalid. Creating default resources.\n\n\n-----");
 		ResourceInitializer::Init();
 	}
 #endif
@@ -72,7 +72,7 @@ Font* Resource::GetFont(FS::path path){
 			return nullptr;
 		rf = new Font(path);
 		fonts.insert(std::pair<std::string,Font*>(path.string(),rf));
-		std::cout << "Loading Font " << path.string() << std::endl;
+		DebugLog::Push("Loading Font: "+path.string(),1);
 	}
 	return rf;
 }
@@ -95,11 +95,11 @@ Texture* Resource::GetTexture(FS::path path){
 			baseTextures.insert(std::pair<std::string, Texture*>(path.string(), rt));
 		else
 			textures.insert(std::pair<std::string, Texture*>(path.string(), rt));
-		std::cout << "Loading Texture " << path.string() << std::endl;
+		DebugLog::Push("Loading Texture: " + path.string(), 1);
 	}
 	if (rt != nullptr)
 		return rt;
-	std::cout << "Returning null on Texture " << path.string() << std::endl;
+	DebugLog::Push("Failed to load texture: " + path.string());
 	return nullptr;
 }
 
@@ -115,10 +115,10 @@ PostEffect* Resource::GetPostEffect(FS::path path){
 			return Resource::postEffects[path.string()]=nullptr;
 		rp = new PostEffect(path.string());
 		Resource::postEffects.insert(std::pair<std::string, PostEffect*>(path.string(), rp));
-		std::cout << "Loading Post Effect " << path.string() << std::endl;
+		DebugLog::Push("Loading Post Effect: " + path.string(), 1);
 	}
 	if (rp==nullptr)
-		std::cout << "Returning null on Post Effect " << path.string() << std::endl;
+		DebugLog::Push("Failed to load Post Effect: "+path.string());
 	return rp;
 }
 
@@ -134,12 +134,12 @@ Shader* Resource::GetShader(std::string name){
 			return Resource::shaders[name]=nullptr;
 		rs = new Shader(name, { ShaderAttachment(ResourceLoader::ReturnFile(name + ".vert"), GL_VERTEX_SHADER), ShaderAttachment(ResourceLoader::ReturnFile(name + ".frag"), GL_FRAGMENT_SHADER) });
 		Resource::shaders.insert(std::pair<std::string, Shader*>(name, rs));
-		std::cout << "Loading Shader " << name << std::endl;
+		DebugLog::Push("Loading Shader: " + name, 1);
 	}
 	if (rs->valid())
 		return shaders[name];
 	else{
-		std::cout << "Returning null on Shader " << name << std::endl;
+		DebugLog::Push("Failed to loadShader: " + name);
 		return nullptr;
 	}
 }
@@ -185,10 +185,10 @@ Material* Resource::GetMaterial(FS::path path, bool duplicate){
 			baseMaterials.insert(std::pair<std::string, Material*>(path.string(), rm));
 		else
 			materials.insert(std::pair<std::string, Material*>(path.string(), rm));
-		std::cout << "Loading Material " << path.string() << std::endl;
+		DebugLog::Push("Loading Material: " + path.string(), 1);
 	}
 	if (rm==nullptr)
-		std::cout << "Returning null on Material " << path.string() << std::endl;
+		DebugLog::Push("Failed to load material: " + path.string());
 	return rm;
 }
 
@@ -209,7 +209,7 @@ Mesh* Resource::GetMesh(FS::path path, bool editable){
 
 		if (cachedMeshes.count(path.string()) == 0)
 			cachedMeshes[path.string()] = new CachedMesh(path);
-		std::cout << "Loading Mesh: " << path.string() << std::endl;
+		DebugLog::Push("Loading Mesh: " + path.string(), 1);
 		rm = new Mesh(path.string(), cachedMeshes[path.string()], editable);
 		if (path.parent_path().leaf().string() == "Base")
 			meshes.insert(std::pair<std::string, Mesh*>(path.string(), rm));
@@ -220,7 +220,7 @@ Mesh* Resource::GetMesh(FS::path path, bool editable){
 		delete rm;
 	else if (rm != nullptr)
 		return rm;
-	std::cout << "Returning null on Mesh " << path.string() << std::endl;
+	DebugLog::Push("Failed to load Mesh: " + path.string(), 1);
 	return nullptr;
 }
 

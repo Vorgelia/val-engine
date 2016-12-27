@@ -16,3 +16,9 @@
 #include "GameStateManager.h"
 #include "GSIncludes.hpp"
 #include <irrKlang\include\irrKlang.h>
+
+#include "ConnectionSocket.h"
+#include "NetworkEntity.h"
+#include "NetworkMessage.h"
+
+#include "DebugLog.h"

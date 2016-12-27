@@ -1,11 +1,11 @@
 #include "Mesh.h"
 #include "CachedMesh.h"
 #include "GLStateTrack.h"
-
+#include "DebugLog.h"
 Mesh::Mesh(std::string name, CachedMesh* meshData, bool editable = false){
 	this->name = name;
 	if (meshData == nullptr){
-		std::cout << "Null mesh data on " << name << std::endl;
+		DebugLog::Push("Null mesh data: " + name);
 		return;
 	}
 	meshData->RegisterOwner(this);
@@ -52,7 +52,7 @@ bool Mesh::valid(){
 }
 
 Mesh::~Mesh(){
-	std::cout << "Erasing " << this->name << std::endl;
+	DebugLog::Push("Erasing mesh: " + name);
 	if (meshData!=nullptr)
 		meshData->UnregisterOwner(this);
 }

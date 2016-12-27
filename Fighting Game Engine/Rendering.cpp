@@ -12,6 +12,7 @@
 #include "Resource.h"
 #include "GLStateTrack.h"
 #include "PostEffect.h"
+#include "DebugLog.h"
 #define VE_AUX_BUFFER_AMOUNT 3
 //Auxiliary buffers are framebuffers used for multipass post processing effects.
 #define VE_WORLD_SCALE 3
@@ -99,7 +100,7 @@ void Rendering::DrawPostEffect(PostEffect* pf){
 
 		Material* cMat = (pf->elementChain[pi].second);
 		if (cMat == nullptr){
-			std::cout << "Skipping PostEffect stage " << pi << std::endl;
+			DebugLog::Push("Skipping post effect stage: " + std::to_string(pi), 2);
 			continue;
 		}
 		GLState::UseProgram(cMat->shader->id);
@@ -233,7 +234,7 @@ void Rendering::DrawScreenMesh(glm::vec4 rect, Mesh* mesh, std::vector<std::pair
 
 void Rendering::DrawMesh(Transform* transform, Mesh* mesh, Material* mat, Camera* camera){
 	if (mesh==nullptr||!mesh->valid()){
-		std::cout << "Attempting to draw invalid mesh: " << mesh->name << std::endl;
+		DebugLog::Push("Attempting to draw invalid mesh: " + mesh->name, 2);
 		return;
 	}
 	Camera* cCam = (camera == nullptr ? &cameras[0] : camera);

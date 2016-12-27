@@ -24,8 +24,9 @@ Variables and getters/setters begin with lowercase. Classes, namespaces, functio
 
 ----Arbitrary to-do list----
 -Engine Features
-TODO: Rewrite input polling for proper handling of unrendered frames and multithreading. [INCREDIBLY IMPORTANT FOR NETWORKING]
+TODO: Find a way to multithread input so inputs are received and timed properly on sub-60FPS.
 TODO: Add error detection to resource parsing.
+TODO: Add error checking to Network classes.
 -Cleanup and Efficiency
 TODO: Clean up includes. Change default function parameters to be defined in .h and not .cpp.
 TODO: Change some class variables to be private with getters.
@@ -57,7 +58,6 @@ int main(){
 	GLInit();
 	EngineInit();
 
-
 	while (!glfwWindowShouldClose(Screen::window)){
 
 
@@ -88,7 +88,6 @@ int main(){
 			if (!GameStateManager::isLoading)
 				GameStateManager::states[GameStateManager::currentState]->RenderObjects();
 			EndFrame();
-
 			/*system("cls");
 			std::cout << "State:" << GameStateManager::currentState << std::endl;
 			std::cout << "Loading:" << GameStateManager::isLoading << std::endl;
@@ -167,17 +166,21 @@ void EndFrame(){
 	Screen::isDirty = false;	
 }
 inline void EngineInit(){
+	DebugLog::Init();
 	GLState::Init();
 	Resource::Init();
 	Rendering::Init();
 	GameStateManager::Init();
 	InputManager::Init();
+	DebugLog::Push("Log Test");
 }
 inline void EngineCleanup(){
+	InputManager::Cleanup();
 	GameStateManager::Cleanup();
 	Rendering::Cleanup();
 	Resource::Cleanup();
 	GLState::Cleanup();
+	DebugLog::Cleanup();
 }
 //--
 //Component Handling

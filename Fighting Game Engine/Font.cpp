@@ -1,6 +1,6 @@
 #include "Font.h"
 #include "Texture.h"
-
+#include "DebugLog.h"
 FT_Library Font::library;
 bool Font::init=false;
 
@@ -20,7 +20,7 @@ Font::Font(FS::path p)
 	if (!init){
 		init = FT_Init_FreeType(&library)==0;
 		if (!init){
-			std::cout << "Freetype: Could not init freetype." << std::endl;
+			DebugLog::Push("Unable to init Freetype",2);
 			return;
 		}
 	}
@@ -28,7 +28,7 @@ Font::Font(FS::path p)
 	name = p.string();
 	//Font loading
 	if (FT_New_Face(library, name.c_str(), 0, &face)){
-		std::cout << "Freetype: Could not load font "<<name << std::endl;
+		DebugLog::Push("Unable to load font: "+name, 2);
 		return;
 	}
 	FT_Set_Pixel_Sizes(face, 0, TEXT_SIZE);//Force the Y size to TEXT_SIZE, X size automatic.
@@ -39,7 +39,7 @@ Font::Font(FS::path p)
 	glm::ivec2 cursor=glm::ivec2(0,0);
 	for (GLubyte c = 0; c < 255; ++c){
 		if (FT_Load_Char(face, c, FT_LOAD_RENDER)){//Load character texture to face->glyph->bitmap
-			std::cout << "Freetype: Could not load character " << c << std::endl;
+			DebugLog::Push("Unable to load character: " + c, 2);
 			continue;
 		}
 		
@@ -71,7 +71,6 @@ Font::Font(FS::path p)
 			//std::cout <<"H params: "<< params.x << "," << params.y << "," << params.z << "," << params.w << std::endl;
 		}
 	}
-	//std::cout << "AAAAAAAAAA------\n\n" << pixels.size() << std::endl;
 	atlases.push_back(new Texture("Atlas"+std::to_string(atlases.size()+1), pixels, glm::ivec2(FONT_ATLAS_SIZE,FONT_ATLAS_SIZE), GL_RED, GL_LINEAR, GL_CLAMP_TO_EDGE,true));
 }
 Font::~Font(){

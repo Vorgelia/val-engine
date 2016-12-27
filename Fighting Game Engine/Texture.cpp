@@ -1,6 +1,6 @@
 #include "Texture.h"
 #include "GLStateTrack.h"
-
+#include "DebugLog.h"
 bool Texture::valid(){
 	return _valid;
 }
@@ -65,7 +65,7 @@ Texture::Texture(std::string nm, FS::path path, int format, int SOILformat = SOI
 	unsigned char* pixels = SOIL_load_image(path.string().c_str(), &dim.x, &dim.y, 0, SOILformat);
 	if (pixels == nullptr){
 		name = "error";
-		std::cout << "Texture load error:\n\t" << path.string() << "\n\t" << SOIL_last_result() << std::endl;
+		DebugLog::Push("Texture load error:\n\t-" + path.string() + "\n\t-" + SOIL_last_result());
 	}
 	else{
 		name = nm;
@@ -88,7 +88,7 @@ Texture::Texture(std::string nm, FS::path path, int format, int SOILformat = SOI
 
 void Texture::Create(std::vector<float> px){
 	if (px.size() == 0){
-		std::cout << "Invalid texture: " << this->name << std::endl;
+		DebugLog::Push("Invalid Texture: "+name);
 		return;
 	}
 	glGenTextures(1, &this->id);
@@ -105,7 +105,7 @@ void Texture::Create(std::vector<float> px){
 
 void Texture::Create(std::vector<unsigned char> px){
 	if (px.size() == 0){
-		std::cout << "Invalid texture: " << this->name << std::endl;
+		DebugLog::Push("Invalid Texture: " + name);
 		return;
 	}
 	glGenTextures(1, &this->id);

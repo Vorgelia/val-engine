@@ -12,17 +12,18 @@
 #include "InputDevice.h"
 #include "InputEvent.h"
 #include "InputFrame.h"
+#include "DebugLog.h"
 //Probably my least favourite part of making this engine is importing files.
 //The code always looks like a mess but at least i don't have to touch it after making it.
 std::string ResourceLoader::LoadTextResource(int id,std::string type){//Copypasta text resource loading. Could probably be optimized.
 	HRSRC hResource = FindResource(NULL,MAKEINTRESOURCE(id),(LPCSTR)type.c_str());
 	if (hResource == 0){
-		std::cout << "Error finding resource " << id << std::endl;
+		DebugLog::Push("Error finding resource " + std::to_string(id), 1);
 		return "ERROR";
 	}
 	HGLOBAL hLoadedResource = LoadResource(NULL, hResource);
 	if (hLoadedResource == 0){
-		std::cout << "Error loading resource " << id << std::endl;
+		DebugLog::Push("Error loading resource " + std::to_string(id), 1);
 		return "ERROR";
 	}
 	LPVOID pdata = LockResource(hLoadedResource);
@@ -34,12 +35,12 @@ std::string ResourceLoader::LoadTextResource(int id,std::string type){//Copypast
 std::vector<unsigned char> ResourceLoader::LoadBinaryResource(int id, std::string type){//Doesn't work, completely unused.
 	HRSRC hResource = FindResource(NULL, MAKEINTRESOURCE(id), (LPCSTR)type.c_str());
 	if (hResource == 0){
-		std::cout << "Error finding resource " << id << std::endl;
+		DebugLog::Push("Error finding resource " + std::to_string(id), 1);
 		return std::vector<unsigned char>();
 	}
 	HGLOBAL hLoadedResource = LoadResource(NULL, hResource);
 	if (hLoadedResource == 0){
-		std::cout << "Error loading resource " << id << std::endl;
+		DebugLog::Push("Error loading resource " + std::to_string(id), 1);
 		return std::vector<unsigned char>();
 	}
 	LPVOID pdata = LockResource(hLoadedResource);
@@ -60,7 +61,7 @@ bool ResourceLoader::SaveFile(FS::path dir,std::string content,int flags){
 	boost::algorithm::erase_all(content, "\r");
 	std::ofstream ofs(dir.c_str(), flags);
 	if (!ofs.is_open()){
-		std::cout << "Failed to write to file: " << dir.c_str() << std::endl;
+		DebugLog::Push("Failed to write to file " + dir.string(), 1);
 		return false;
 	}
 	ofs << content;
@@ -69,12 +70,12 @@ bool ResourceLoader::SaveFile(FS::path dir,std::string content,int flags){
 }
 //Abstraction for turning a file into an array of its lines. Heavily used in parsing.
 std::vector<std::string> ResourceLoader::ReturnFileLines(FS::path dir, bool removeWhitespace = false){
-	std::cout << "--Resource: Loading File" << dir << std::endl;
+	DebugLog::Push("--Resource: Loading file " + dir.string(), 1);
 	if (!FS::exists(dir))
 		return{ "ERROR" };
 	std::ifstream ifs(dir.c_str());
 	if (!ifs.is_open()){
-		std::cout << "Error opening file: " + dir.string()<<std::endl;
+		DebugLog::Push("Error opening file " + dir.string(), 1);
 		return{ "ERROR" };
 	}
 	std::string content((std::istreambuf_iterator<char>(ifs)),
@@ -103,7 +104,7 @@ void ResourceLoader::LoadControlSettings(FS::path path, std::unordered_map<Input
 	else
 		lines = ReturnFileLines(path);
 	if (lines.size() == 0 || (lines.size() == 1 && lines[0] == "ERROR")){
-		std::cout << "Unable to load input file.\n";
+		DebugLog::Push("Failed to open file " + path.string(), 1);
 		return;
 	}
 	dir->clear();
@@ -138,14 +139,14 @@ void ResourceLoader::LoadControlSettings(FS::path path, std::unordered_map<Input
 void ResourceLoader::LoadObjects(FS::path path, std::map<int, Object*>* objects){
 	std::vector<std::string> lines = ReturnFileLines(path, true);
 	if (lines.size() == 0 || (lines.size() == 1 && lines[0] == "ERROR")){
-		std::cout << "Unable to load object file.\n";
+		DebugLog::Push("Failed to open file " + path.string(), 1);
 		return;
 	}
 	objects->clear();
 	Object* cobj = nullptr;
 	bool pushedObject = true;
 	for (unsigned int i = 0; i < lines.size(); ++i){
-		if (lines[i] == "" || lines[i].substr(0, 2) == "//")
+		if (lines[i].size()<2 || lines[i].substr(0, 2) == "//")
 			continue;
 		if (lines[i] == "#OBJECT_BEGIN"){
 			if (!pushedObject)
@@ -189,7 +190,7 @@ void ResourceLoader::LoadObjects(FS::path path, std::map<int, Object*>* objects)
 void ResourceLoader::LoadPostEffect(FS::path path, std::vector<std::pair<int, Material*>>* elements, bool* cbBefore, bool* cbAfter,int* order) {
 	std::vector<std::string> lines = ReturnFileLines(path, true);
 	if (lines.size() == 0 || (lines.size() == 1 && lines[0] == "ERROR")){
-		std::cout << "Unable to load post effect.\n";
+		DebugLog::Push("Failed to open file " + path.string(), 1);
 		return;
 	}
 	elements->clear();
@@ -234,7 +235,7 @@ void ResourceLoader::LoadPostEffect(FS::path path, std::vector<std::pair<int, Ma
 void ResourceLoader::LoadMaterial(FS::path path, Shader** shader, unsigned char* properties, std::map<std::string, GLfloat>* uniformFloats,std::map<std::string, MaterialTexture>* uniformTextures,std::map<std::string, glm::vec4>* uniformVectors){
 	std::vector<std::string> lines = ReturnFileLines(path, true);
 	if (lines.size() == 0 || (lines.size() == 1 && lines[0] == "ERROR")){
-		std::cout << "Unable to load material.\n";
+		DebugLog::Push("Failed to open file " + path.string(),1);
 		return;
 	}
 	int readState = 0;//0 Properties, 1 Uniform Floats, 2 Uniform Vectors, 3 Uniform Textures
@@ -308,7 +309,7 @@ void ResourceLoader::LoadMeshVM(FS::path path, std::vector<float> **verts, std::
 	
 	std::vector<std::string> lines = ReturnFileLines(path, true);
 	if (lines.size() == 0||(lines.size() == 1 && lines[0] == "ERROR")){
-		std::cout << "	Mesh left uninitialized.\n";
+		DebugLog::Push("Failed to open file " + path.string(),1);
 		return;
 	}
 	int readState = 0; //0 Attribs, 1 Vertices, 2 Elements

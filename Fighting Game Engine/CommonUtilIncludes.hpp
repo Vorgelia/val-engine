@@ -1,14 +1,17 @@
 #pragma once
 //Everything in here should be accessible virtually everywhere.
 //System Utilities
+#include <winsock2.h>
 #include <windows.h>
 #include <iostream>
 #include <vector>
 #include <locale.h>
 #include <unordered_map>
 #include <map>
+#include <queue>
 #include <typeinfo>
 #include <thread>
+
 //OpenGL
 #define GLEW_STATIC
 #define GLFW_INCLUDE_GLU

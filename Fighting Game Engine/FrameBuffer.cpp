@@ -1,4 +1,5 @@
 #include "FrameBuffer.h"
+#include "DebugLog.h"
 #include "GLStateTrack.h"
 bool FrameBuffer::valid(){
 	return _valid;
@@ -15,7 +16,7 @@ bool FrameBuffer::Bind(){
 		GLState::BindFramebuffer(id);
 		return true;
 	}
-	std::cout << "Could not bind framebuffer" << std::endl;
+	DebugLog::Push("Failed to bind invalid framebuffer.");
 	return false;
 }
 
@@ -72,7 +73,7 @@ void  FrameBuffer::Update(){
 	glClearColor(clearColor.x, clearColor.y, clearColor.z, clearColor.w);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE){
-		std::cout << "Incomplete framebuffer" << std::endl;
+		DebugLog::Push("Framebuffer generation failed.", 2);
 	}
 	else
 		_valid = true;

@@ -1,5 +1,6 @@
 #include "Profiler.h"
 #include "Time.h"
+#include "DebugLog.h"
 //This profiler implementation is fairly simple. Just check the time that passed between profiler calls.
 //Structure modelled after Unity's Profiler.BeginSample and Profiler.EndSample.
 namespace Profiler{
@@ -22,5 +23,5 @@ void Profiler::Clear(){
 }
 void Profiler::Print(){
 	for (auto i = elements.begin(); i != elements.end(); ++i)
-		std::cout << Profiler::String(i->first) << std::endl;
+		DebugLog::Push(Profiler::String(i->first),0);
 }

@@ -94,6 +94,18 @@
     <Filter Include="Header Files\FG\Utilities">
       <UniqueIdentifier>{5cc4f0a9-7bb9-4e43-8ebe-99a9d58bdb13}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\FG\Networking">
+      <UniqueIdentifier>{1865e464-f120-4daf-82c0-d1c053d682dc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\FG\Networking">
+      <UniqueIdentifier>{fb16a9b8-c4f1-4763-a3b3-d58451dde0cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\FG\Debug">
+      <UniqueIdentifier>{5269803f-189b-4e74-b25b-3427902e2ce7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\FG\Debug">
+      <UniqueIdentifier>{2fe19260-8c7f-4706-a39e-5ccb3a267514}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -185,6 +197,21 @@
     </ClCompile>
     <ClCompile Include="Hitbox.cpp">
       <Filter>Source Files\FG\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="ConnectionSocket.cpp">
+      <Filter>Source Files\FG\Networking</Filter>
+    </ClCompile>
+    <ClCompile Include="NetworkMessage.cpp">
+      <Filter>Source Files\FG\Networking</Filter>
+    </ClCompile>
+    <ClCompile Include="NetworkEntity.cpp">
+      <Filter>Source Files\FG\Networking</Filter>
+    </ClCompile>
+    <ClCompile Include="DebugLog.cpp">
+      <Filter>Source Files\FG\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="LogItem.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -292,6 +319,21 @@
     </ClInclude>
     <ClInclude Include="Hitbox.h">
       <Filter>Header Files\FG\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="ConnectionSocket.h">
+      <Filter>Header Files\FG\Networking</Filter>
+    </ClInclude>
+    <ClInclude Include="NetworkMessage.h">
+      <Filter>Header Files\FG\Networking</Filter>
+    </ClInclude>
+    <ClInclude Include="NetworkEntity.h">
+      <Filter>Header Files\FG\Networking</Filter>
+    </ClInclude>
+    <ClInclude Include="DebugLog.h">
+      <Filter>Header Files\FG\Debug</Filter>
+    </ClInclude>
+    <ClInclude Include="LogItem.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

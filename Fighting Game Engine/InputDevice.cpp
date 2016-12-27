@@ -69,15 +69,15 @@ bool InputDevice::EvaluateMotion(InputMotion motion,bool inverse){
 			bufferIndex -= distance + motion[i].minDuration-1;
 			--i;
 			if (i <= -1){
-				std::cout << "MotionDebug: Frame " << Time::frameCount << std::endl << debugString << "--SUCCESS--\n--------" << std::endl;
+				//std::cout << "MotionDebug: Frame " << Time::frameCount << std::endl << debugString << "--SUCCESS--\n--------" << std::endl;
 				return true;
 			}
 			else
 				buf = motion[i].leniency > -1 ? motion[i].leniency : INPUT_BUFFER_MID;
 		}
 		else /*if(buf<=-1)*/{
-			if (i != motion.size() - 1)
-				std::cout << "MotionDebug: Frame " << Time::frameCount << std::endl << debugString << "--FAILED--\n--------" << std::endl;
+			//if (i != motion.size() - 1)
+				//std::cout << "MotionDebug: Frame " << Time::frameCount << std::endl << debugString << "--FAILED--\n--------" << std::endl;
 			return false;
 		}
 		/*else{
@@ -86,7 +86,7 @@ bool InputDevice::EvaluateMotion(InputMotion motion,bool inverse){
 			return false;
 		}*/
 	}
-	std::cout << "MotionDebug: " << Time::frameCount << std::endl << debugString << "--FAILED OUTSIDE--\n--------" << std::endl;
+	//std::cout << "MotionDebug: " << Time::frameCount << std::endl << debugString << "--FAILED OUTSIDE--\n--------" << std::endl;
 	return false;
 }
 //This function checks the distance from an input's beginning by checking back in the buffer until the specified input exceeds its necessary duration and stops being valid.
@@ -158,7 +158,7 @@ bool InputDevice::InputMotionFrameCheck(InputMotionComponent* motionComp, int in
 }
 
 void InputDevice::UpdateJoyInputs(){
-	int count;
+	int count=0;
 	const float* axes = glfwGetJoystickAxes(this->_deviceID,&count);
 	this->cachedJoyAxes = std::vector<float>(axes,axes+count);
 	const unsigned char* buttons = glfwGetJoystickButtons(this->_deviceID, &count);

@@ -1,7 +1,6 @@
 #include "Shader.h"
 #include "GLStateTrack.h"
-using std::string;
-
+#include "DebugLog.h"
 ShaderAttachment::ShaderAttachment(string code, GLenum type){
 	this->code=code;
 	this->type = type;
@@ -16,9 +15,9 @@ GLint Shader::UniformLocation(string str){
 	}
 	return uniformLocations[str];
 }
-Shader::Shader(string name, std::vector<ShaderAttachment> shaders){
+Shader::Shader(std::string name, std::vector<ShaderAttachment> shaders){
 	this->name = name;
-	std::cout << "Shader compilation [" << name.c_str() << "]:" << std::endl;
+	
 	this->shaders.reserve(shaders.size());
 	for (unsigned int i = 0; i < shaders.size(); ++i)
 		this->shaders.push_back(Shader::CreateShader(shaders[i].code,shaders[i].type));
@@ -27,7 +26,10 @@ Shader::Shader(string name, std::vector<ShaderAttachment> shaders){
 		_valid = false;
 	else
 		_valid = true;
-	std::cout << this->name << ": " << _valid << std::endl;
+
+	std::string debugString="Shader compilation [" + name + "]:\n";
+	debugString += this->name + ": " + (_valid ? "valid" : "invalid");
+	DebugLog::Push(debugString, 3);
 }
 
 Shader::operator GLuint(){
@@ -49,11 +51,9 @@ GLuint Shader::CreateShader(std::string code, GLenum type){
 	glGetShaderInfoLog(shader, 512, NULL, shaderLog);
 	glGetShaderiv(shader, GL_COMPILE_STATUS, &shaderStatus);
 	if (shaderStatus != GL_TRUE){
-		std::cout << "Shader compilation failure:\n" << shaderLog << std::endl;
+		DebugLog::Push("Shader compilation failure:\n" + std::string(shaderLog), 2);
 		return -1;
 	}
-	else
-		std::cout << "-Success\n";
 	return shader;
 }
 
