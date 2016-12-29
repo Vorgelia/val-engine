@@ -14,4 +14,10 @@ namespace GameStateManager{
 	void LoadState(int stl);
 	void FrameEnd();
 	void Cleanup();
+
+	void StateInit();
+	void StateUpdate();
+	void StateGameUpdate();
+	void StateRenderObjects();
+
 }

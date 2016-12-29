@@ -54,39 +54,56 @@ void BeginFrame();
 void EndFrame();
 
 int main(){
+	//We're setting the numeric locale to default C. Different locales have different ways of signifying decimal points, so converting text into variables can be unpredictable.
+	//This just makes it so that decimal point is always a dot, on both input and output.
 	setlocale(LC_NUMERIC, "C");
+	
 	GLInit();
 	EngineInit();
 
 	while (!glfwWindowShouldClose(Screen::window)){
+		//Aaand this is the main game loop. 
+		//There's two kinds of updates to keep track of. Loop updates, that just refer to a single iteration of the above loop running, and game updates, which refer to the fixed frame game state updates.
 
+		//This is a fighting game, so we want a fixed game update rate of 60 per second. This isn't as simple as it might sound since a loop update might take much more or much less than 1/60th of a second.
+		//The current approach is as follows: Check how long it's been since the last loop update, update enough times for that time to be less than 1/60th of a second.
 
-		UpdateComponents();
+		//It is crucial to note that every engine that isn't specialized on something as timing-precise as this one just updates as frequently as possible, while scaling timed operations
+		//by the amount of time that passed between frames. For instance, on a frame that takes 2/60 seconds:
+		//----OTHER ENGINE: Advance states like animations and movement at speed*2/60 -> render
+		//----VAL ENGINE: Advance states like animations and movement at speed*1/60 -> repeat once -> render
+		//And on a frame that takes 1/120 seconds.
+		//----OTHER ENGINE: Advance states at speed*1/120
+		//----VAL ENGINE: Do nothing until it's time to update, which is at another 1/120 seconds
 
-		bool updatedFrame = false;
+		//This is because fighting games are generally perceived as working on frames, with no middle states in between. It's easier for a designer to specify a move lasting 4 frames
+		//and have it concrete and easy to understand, rather than saying a move lasts 0.06666666 seconds and eeeeeh it depends on when we update.
+
+		//It's also of note that physics engines operate on fixed update rates just to maintain precision on lower framerates.
+
+		UpdateComponents();//Some parts of the engine like timekeeping have to update as frequently as possible, regardless of whether it's game update time.
+
+		bool updatedFrame = false;//This is a variable that keeps track of whether we've run a game update on this iteration. If we have, this will tell the engine to render at the end.
 		if (!GameStateManager::isLoading){
-			while (Time::lastUpdateTime + VE_FRAME_TIME <= Time::time){
+			while (Time::lastUpdateTime + VE_FRAME_TIME <= Time::time){//Run updates until running one would put us ahead of our current time
 				updatedFrame = true;
 				Time::frameCount += 1;
-				Time::lastUpdateTime += VE_FRAME_TIME;
+				Time::lastUpdateTime += VE_FRAME_TIME;//This is important. We don't set last update time to current time, but we just advance it by 1/60
+				//This means the while statement will run again if more than one frame was to be processed in between now and last loop update.
 				InputManager::Update();
-				if (!GameStateManager::isLoading){
-					if (!GameStateManager::states[GameStateManager::currentState]->initialized())
-						GameStateManager::states[GameStateManager::currentState]->Init();
-					GameStateManager::states[GameStateManager::currentState]->GameUpdate();
-				}
+				GameStateManager::StateInit();
+				GameStateManager::StateGameUpdate();//Send a game update callback
+
 			}
-			if (GameStateManager::states[GameStateManager::currentState]->initialized())
-				GameStateManager::states[GameStateManager::currentState]->Update();
+			GameStateManager::StateUpdate();//Send a loop update callback regardless of whether the previous loop ran
 		}
 
-		GameStateManager::FrameEnd();
+		GameStateManager::FrameEnd();//Checks if a level needs to be loaded and raises the necessary flags, as well as call the necessary resource management functions
 
 
 		if(updatedFrame){
 			BeginFrame();
-			if (!GameStateManager::isLoading)
-				GameStateManager::states[GameStateManager::currentState]->RenderObjects();
+			GameStateManager::StateRenderObjects();
 			EndFrame();
 			/*system("cls");
 			std::cout << "State:" << GameStateManager::currentState << std::endl;
@@ -124,6 +141,7 @@ inline void GLInit(){
 	glfwSetWindowPos(Screen::window, (int)(Screen::mode->width*0.5 - Screen::size.x*0.5), (int)(Screen::mode->height*0.5 - Screen::size.y*0.5));
 	glfwSetKeyCallback(Screen::window,InputManager::KeyCallback);
 	glfwSetWindowSizeCallback(Screen::window,Screen::OnResize);
+	//Vsync
 	glfwSwapInterval(0);
 	glewExperimental = true;
 	glewInit();
@@ -136,8 +154,9 @@ inline void GLCleanup(){
 //Engine Handling
 //--
 void BeginFrame(){
-	
+	//Not sure why this is here
 	glfwSwapInterval(0);
+	//Reset certain rendering parameters that might have been overriden in the last frame.
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glViewport(0, 0, Screen::size.x, Screen::size.y);
 	for (unsigned int i = 0; i <Rendering::auxBuffers.size(); ++i){
@@ -156,14 +175,16 @@ void EndFrame(){
 		GameStateManager::states[GameStateManager::currentState]->GUI();
 	}
 	//Rendering::DrawScreenText(glm::vec4(1920 - 64, 0, 64, 64), 64, std::to_string(GameStateManager::currentState), nullptr, TextAlignment::Right);
-	//Finally, render the main buffer to the default buffer
+
+	//Finally, render the main buffer to the default buffer.
+	//Set the viewport to what was calculated for a forced 16:9 aspect ratio
 	glViewport(Screen::viewportSize.x, Screen::viewportSize.y, Screen::viewportSize.z, Screen::viewportSize.w);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	Rendering::DrawScreenMesh(glm::vec4(0, 0, 1920, 1080), Resource::GetMesh("Meshes/Base/screenQuad.vm"), Rendering::mainBuffer, Resource::GetMaterial("Materials/Base/Screen_FB.vmat"));
 	glfwSwapBuffers(Screen::window);
-	Screen::isDirty = false;	
+	Screen::isDirty = false;//isDirty is set to true when the window has been resized. It's just a flag anything else can read to determine whether anything screen related should be changed
 }
 inline void EngineInit(){
 	DebugLog::Init();
@@ -172,7 +193,7 @@ inline void EngineInit(){
 	Rendering::Init();
 	GameStateManager::Init();
 	InputManager::Init();
-	DebugLog::Push("Log Test");
+	DebugLog::Push("Full Init");
 }
 inline void EngineCleanup(){
 	InputManager::Cleanup();

@@ -18,4 +18,3 @@ public:
 	Object();
 	~Object();
 };
-

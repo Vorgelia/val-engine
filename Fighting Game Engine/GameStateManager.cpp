@@ -48,3 +48,31 @@ void GameStateManager::Init(){
 void GameStateManager::Cleanup(){
 	Resource::Unload();
 }
+
+void GameStateManager::StateInit(){
+	if (currentState < 0||isLoading)
+		return;
+	if (!states[currentState]->initialized())
+		states[currentState]->Init();
+}
+
+void GameStateManager::StateUpdate(){
+	if (currentState < 0 || isLoading)
+		return;
+	if (states[currentState]->initialized())
+		states[currentState]->Update();
+}
+
+void GameStateManager::StateGameUpdate(){
+	if (currentState < 0 || isLoading)
+		return;
+	if (states[currentState]->initialized())
+		states[currentState]->GameUpdate();
+}
+
+void GameStateManager::StateRenderObjects(){
+	if (currentState < 0 || isLoading)
+		return;
+	if (states[currentState]->initialized())
+		states[currentState]->RenderObjects();
+}
