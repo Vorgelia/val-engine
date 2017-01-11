@@ -42,7 +42,7 @@ public:
 	static ConnectionSocket AcceptConnectionFrom(SOCKET sock);
 	bool Connect();
 	bool Initialize();
-	ConnectionSocket(unsigned long ip, int port);
+	ConnectionSocket(in_addr ip, int port);
 	ConnectionSocket();
 };
 

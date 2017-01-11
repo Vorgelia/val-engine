@@ -106,6 +106,12 @@
     <Filter Include="Header Files\FG\Debug">
       <UniqueIdentifier>{2fe19260-8c7f-4706-a39e-5ccb3a267514}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\FG\Characters">
+      <UniqueIdentifier>{f2fdefe9-8c7f-4369-a6da-19749600ca71}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\FG\Characters">
+      <UniqueIdentifier>{20190c51-8f38-47d7-91a0-be49bf78017c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -195,9 +201,6 @@
     <ClCompile Include="ResourceInitializer.cpp">
       <Filter>Source Files\Resource</Filter>
     </ClCompile>
-    <ClCompile Include="Hitbox.cpp">
-      <Filter>Source Files\FG\Utilities</Filter>
-    </ClCompile>
     <ClCompile Include="ConnectionSocket.cpp">
       <Filter>Source Files\FG\Networking</Filter>
     </ClCompile>
@@ -211,6 +214,21 @@
       <Filter>Source Files\FG\Debug</Filter>
     </ClCompile>
     <ClCompile Include="LogItem.cpp">
+      <Filter>Source Files\FG\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GameCharacter.cpp">
+      <Filter>Source Files\FG\Characters</Filter>
+    </ClCompile>
+    <ClCompile Include="CharacterState.cpp">
+      <Filter>Source Files\FG\Characters</Filter>
+    </ClCompile>
+    <ClCompile Include="CharacterFrame.cpp">
+      <Filter>Source Files\FG\Characters</Filter>
+    </ClCompile>
+    <ClCompile Include="CollisionBox.cpp">
+      <Filter>Source Files\FG\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="AttackData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -317,9 +335,6 @@
     <ClInclude Include="CircularBuffer.h">
       <Filter>Header Files\FG\Utilities</Filter>
     </ClInclude>
-    <ClInclude Include="Hitbox.h">
-      <Filter>Header Files\FG\Utilities</Filter>
-    </ClInclude>
     <ClInclude Include="ConnectionSocket.h">
       <Filter>Header Files\FG\Networking</Filter>
     </ClInclude>
@@ -333,6 +348,21 @@
       <Filter>Header Files\FG\Debug</Filter>
     </ClInclude>
     <ClInclude Include="LogItem.h">
+      <Filter>Header Files\FG\Debug</Filter>
+    </ClInclude>
+    <ClInclude Include="GameCharacter.h">
+      <Filter>Header Files\FG\Characters</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterState.h">
+      <Filter>Header Files\FG\Characters</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterFrame.h">
+      <Filter>Header Files\FG\Characters</Filter>
+    </ClInclude>
+    <ClInclude Include="CollisionBox.h">
+      <Filter>Header Files\FG\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="AttackData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

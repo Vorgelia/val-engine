@@ -80,7 +80,7 @@ Font* Resource::GetFont(FS::path path){
 //Else, if the resource exists in the base resources, do the same.
 //Else, attempt to load the resource, caching it as nullptr if it doesn't exist, so no further loading attempts are made.
 Texture* Resource::GetTexture(FS::path path){
-	Texture* rt;
+	Texture* rt=nullptr;
 	if (textures.count(path.string()) > 0){
 		rt = textures[path.string()];
 	}
@@ -88,115 +88,141 @@ Texture* Resource::GetTexture(FS::path path){
 		rt = baseTextures[path.string()];
 	}
 	else{
-		if (!FS::exists(path))
-			return textures[path.string()]=nullptr;
-		rt = new Texture(path.string(), path, GL_RGBA, SOIL_LOAD_RGBA, GL_NEAREST, GL_REPEAT);
+
+		try{
+			rt = new Texture(path.string(), path, GL_RGBA, SOIL_LOAD_RGBA, GL_NEAREST, GL_REPEAT);
+			DebugLog::Push("Loading Texture: " + path.string(), 1);
+		}
+		catch (ResourceError err){
+			DebugLog::Push(ResourceLoader::DecodeError(err) + "\n\t" + path.string());
+		}
+		catch (...){
+			DebugLog::Push("Resource: Unidentified Exception when loading file \n\t"+path.string());
+		}
+
 		if (path.parent_path().leaf().string() == "Base")
 			baseTextures.insert(std::pair<std::string, Texture*>(path.string(), rt));
 		else
 			textures.insert(std::pair<std::string, Texture*>(path.string(), rt));
-		DebugLog::Push("Loading Texture: " + path.string(), 1);
+		
 	}
-	if (rt != nullptr)
-		return rt;
-	DebugLog::Push("Failed to load texture: " + path.string());
-	return nullptr;
+
+	if (rt == nullptr)
+		DebugLog::Push("Failed to load texture: " + path.string());
+	return rt;
 }
 
 PostEffect* Resource::GetPostEffect(FS::path path){
-	if (path.string() == "" || path.string() == "ERROR")
-		return nullptr;
 
-	PostEffect* rp;
+	PostEffect* rp=nullptr;
 	if (Resource::postEffects.count(path.string()) > 0)
 		rp = Resource::postEffects[path.string()];
 	else{
-		if (!FS::exists(path))
-			return Resource::postEffects[path.string()]=nullptr;
-		rp = new PostEffect(path.string());
+
+		try{
+			rp = new PostEffect(path.string());
+			DebugLog::Push("Loading Post Effect: " + path.string(), 1);
+		}
+		catch (ResourceError err){
+			DebugLog::Push(ResourceLoader::DecodeError(err) + "\n\t" + path.string());
+		}
+		catch (...){
+			DebugLog::Push("Resource: Unidentified Exception when loading file \n\t" + path.string());
+		}
+
 		Resource::postEffects.insert(std::pair<std::string, PostEffect*>(path.string(), rp));
-		DebugLog::Push("Loading Post Effect: " + path.string(), 1);
+		
 	}
+
 	if (rp==nullptr)
 		DebugLog::Push("Failed to load Post Effect: "+path.string());
 	return rp;
 }
 
 Shader* Resource::GetShader(std::string name){
-	if (name == "" || name == "ERROR")
-		return nullptr;
 
-	Shader* rs;
+	Shader* rs=nullptr;
 	if (Resource::shaders.count(name) > 0)
 		rs = Resource::shaders[name];
 	else{
-		if (!FS::exists(name+".vert")||!FS::exists(name+".frag"))
-			return Resource::shaders[name]=nullptr;
-		rs = new Shader(name, { ShaderAttachment(ResourceLoader::ReturnFile(name + ".vert"), GL_VERTEX_SHADER), ShaderAttachment(ResourceLoader::ReturnFile(name + ".frag"), GL_FRAGMENT_SHADER) });
+
+		try{
+			rs = new Shader(name, { ShaderAttachment(ResourceLoader::ReturnFile(name + ".vert"), GL_VERTEX_SHADER), ShaderAttachment(ResourceLoader::ReturnFile(name + ".frag"), GL_FRAGMENT_SHADER) });
+			DebugLog::Push("Loading Shader: " + name, 1);
+		}
+		catch (ResourceError err){
+			DebugLog::Push(ResourceLoader::DecodeError(err) + " " + name);
+		}
+		catch (...){
+			DebugLog::Push("Resource: Unidentified Exception when loading file " + name);
+		}
+
 		Resource::shaders.insert(std::pair<std::string, Shader*>(name, rs));
-		DebugLog::Push("Loading Shader: " + name, 1);
+		
 	}
-	if (rs->valid())
+
+	if (rs!=nullptr&&rs->valid())
 		return shaders[name];
 	else{
-		DebugLog::Push("Failed to loadShader: " + name);
+		DebugLog::Push("Failed to load Shader: " + name);
 		return nullptr;
 	}
 }
 
-Material* Resource::GetMaterial(FS::path path, bool duplicate){
-	if (path.string() == "" || path.string() == "ERROR")
-		return nullptr;
+Material* Resource::GetMaterial(FS::path path){
+	Material* rm = nullptr;
 
-	Material* rm;
-	if (materials.count(path.string()) > 0){
-		if (!duplicate){
-			rm = materials[path.string()];
-		}
-		else{
-			int copyIndex = 0;
-			while (materials.count(path.string() + "_Copy" + std::to_string(copyIndex)) > 0){
-				++copyIndex;
-			}
-			rm = new Material(*materials[path.string()]);
-			rm->name = path.string() + "_Copy" + std::to_string(copyIndex);
-			materials.insert(std::pair<std::string, Material*>(path.string() + "_Copy" + std::to_string(copyIndex), rm));
-		}
+	if (Resource::materials.count(path.string()) > 0){
+		rm = Resource::materials[path.string()];
 	}
-	else if (baseMaterials.count(path.string()) > 0){
-		if (!duplicate){
-			rm = baseMaterials[path.string()];
-		}
-		else{
-			int copyIndex = 0;
-			while (materials.count(path.string() + "_Copy" + std::to_string(copyIndex)) > 0){
-				++copyIndex;
-			}
-			rm = new Material(*materials[path.string()]);
-			rm->name = path.string() + "_Copy" + std::to_string(copyIndex);
-			materials.insert(std::pair<std::string, Material*>(path.string() + "_Copy" + std::to_string(copyIndex), rm));
-		}
+	else if (Resource::baseMaterials.count(path.string()) > 0){
+		rm = Resource::baseMaterials[path.string()];
 	}
 	else{
-		if (!FS::exists(path))
-			return materials[path.string()]=nullptr;
-		rm = new Material(path.string());
+
+		try{
+			rm = new Material(path.string());
+			DebugLog::Push("Loading Material: " + path.string(), 1);
+		}
+		catch (ResourceError err){
+			DebugLog::Push(ResourceLoader::DecodeError(err) + "\n\t" + path.string());
+		}
+		catch (...){
+			DebugLog::Push("Resource: Unidentified Exception when loading file \n\t" + path.string());
+		}
+
 		if (path.parent_path().leaf().string() == "Base")
 			baseMaterials.insert(std::pair<std::string, Material*>(path.string(), rm));
 		else
 			materials.insert(std::pair<std::string, Material*>(path.string(), rm));
-		DebugLog::Push("Loading Material: " + path.string(), 1);
+		
 	}
+
 	if (rm==nullptr)
 		DebugLog::Push("Failed to load material: " + path.string());
 	return rm;
 }
 
-Mesh* Resource::GetMesh(FS::path path, bool editable){
-	if (path.string() == "" || path.string() == "ERROR")
+Material* Resource::CopyMaterial(Material* mat){
+	if (mat == nullptr)
 		return nullptr;
 
-	Mesh* rm;
+	int copyIndex = 0;
+	while (materials.count(mat->name + "_Copy" + std::to_string(copyIndex)) > 0){
+		++copyIndex;
+	}
+
+	Material* rm;
+	rm = new Material(*mat);
+	rm->name = mat->name + "_Copy" + std::to_string(copyIndex);
+
+	materials.insert(std::pair<std::string, Material*>(rm->name, rm));
+	return materials[rm->name];
+}
+
+Mesh* Resource::GetMesh(FS::path path, bool editable){
+
+	Mesh* rm=nullptr;
 	if (meshes.count(path.string()) > 0){
 		rm = meshes[path.string()];
 	}
@@ -204,24 +230,33 @@ Mesh* Resource::GetMesh(FS::path path, bool editable){
 		rm = baseMeshes[path.string()];
 	}
 	else{
-		if (!FS::exists(path))
-			return meshes[path.string()] = nullptr;
+		try{
+			if (cachedMeshes.count(path.string()) == 0)
+				cachedMeshes[path.string()] = new CachedMesh(path);
+			DebugLog::Push("Loading Mesh: " + path.string(), 1);
+			rm = new Mesh(path.string(), cachedMeshes[path.string()], editable);
+		}
+		catch (ResourceError err){
+			DebugLog::Push(ResourceLoader::DecodeError(err) + "\n\t" + path.string());
+		}
+		catch (...){
+			DebugLog::Push("Resource: Unidentified Exception when loading file \n\t" + path.string());
+		}
 
-		if (cachedMeshes.count(path.string()) == 0)
-			cachedMeshes[path.string()] = new CachedMesh(path);
-		DebugLog::Push("Loading Mesh: " + path.string(), 1);
-		rm = new Mesh(path.string(), cachedMeshes[path.string()], editable);
 		if (path.parent_path().leaf().string() == "Base")
 			meshes.insert(std::pair<std::string, Mesh*>(path.string(), rm));
 		else
 			baseMeshes.insert(std::pair<std::string, Mesh*>(path.string(), rm));
 	}
-	if (!rm->valid())
+
+	if (rm==nullptr)
+		DebugLog::Push("Failed to load Mesh: " + path.string(), 1);
+	else if (rm->valid() == false){
+		DebugLog::Push("Invalid Mesh: " + path.string());
 		delete rm;
-	else if (rm != nullptr)
-		return rm;
-	DebugLog::Push("Failed to load Mesh: " + path.string(), 1);
-	return nullptr;
+		rm = nullptr;
+	}
+	return rm;
 }
 
 void Resource::Unload(){

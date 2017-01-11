@@ -5,6 +5,7 @@
 #include "Resource.h"
 #include "Time.h"
 #include "Screen.h"
+#include "DebugLog.h"
 //GameState variables are this engine's equivalent to levels. Why they were not named levels, who knows.
 //The Unity style callbacks sort of betray my Unity background 
 void GameState::LoadResources(){
@@ -13,34 +14,80 @@ void GameState::LoadResources(){
 	if (!dataPath.empty()){
 		std::vector<std::string> rfl;
 
-		rfl = ResourceLoader::ReturnFileLines(dataPath.string()+"/MaterialResources.txt", true);
-		if (rfl.size()>0 && rfl[0] != "ERROR")
-		for (unsigned int i = 0; i < rfl.size(); ++i)
-			if (rfl[i].substr(0,2)!="//")
-				Resource::GetMaterial(rfl[i],true);//Materials also load their associated textures with them.
-
-		rfl = ResourceLoader::ReturnFileLines(dataPath.string() + "/MeshResources.txt", true);
-		if (rfl.size()>0 && rfl[0] != "ERROR")
-		for (unsigned int i = 0; i < rfl.size(); ++i)
-			if (rfl[i].substr(0, 2) != "//")
-				Resource::GetMesh(rfl[i]);
-
-		rfl = ResourceLoader::ReturnFileLines(dataPath.string() + "/TextureResources.txt", true);
-		if (rfl.size()>0 && rfl[0] != "ERROR")
-		for (unsigned int i = 0; i < rfl.size(); ++i)
-			if (rfl[i].substr(0, 2) != "//")
-				Resource::GetTexture(rfl[i]);
-
-		ResourceLoader::LoadObjects(dataPath.string() + "/SceneObjects.txt", &objects);
-
-
-		postEffectsOrder = ResourceLoader::ReturnFileLines(dataPath.string() + "/PostEffectsOrder.txt", true);
-		if (postEffectsOrder.size()>0 && postEffectsOrder[0] != "ERROR"){
-			for (unsigned int i = 0; i < postEffectsOrder.size(); ++i)
-				Resource::GetPostEffect(postEffectsOrder[i]);
+		//Load Materials
+		try{
+			rfl = ResourceLoader::ReturnFileLines(dataPath.string()+"/MaterialResources.txt", true);
+			for (unsigned int i = 0; i < rfl.size(); ++i)
+			if (rfl[i].substr(0, 2) != "//" && rfl[i] != "")
+					Resource::GetMaterial(rfl[i]);//Materials also load their associated textures with them.
 		}
-		else
+		catch (ResourceError err){
+			DebugLog::Push(ResourceLoader::DecodeError(err) + "\n\t" + dataPath.string() + "/MaterialResources.txt");
+		}
+		catch (...){
+			DebugLog::Push("Resource: Unidentified Exception when loading file \n\t" + dataPath.string() + "/MaterialResources.txt");
+		}
+
+		//Load Meshes
+		try{
+			rfl = ResourceLoader::ReturnFileLines(dataPath.string() + "/MeshResources.txt", true);
+			for (unsigned int i = 0; i < rfl.size(); ++i)
+			if (rfl[i].substr(0, 2) != "//" && rfl[i] != "")
+					Resource::GetMesh(rfl[i]);
+		}
+		catch (ResourceError err){
+			DebugLog::Push(ResourceLoader::DecodeError(err) + "\n\t" + dataPath.string() + "/MeshResources.txt");
+		}
+		catch (...){
+			DebugLog::Push("Resource: Unidentified Exception when loading file \n\t" + dataPath.string() + "/MeshResources.txt");
+		}
+
+		//Load Textures
+		try{
+			rfl = ResourceLoader::ReturnFileLines(dataPath.string() + "/TextureResources.txt", true);
+			for (unsigned int i = 0; i < rfl.size(); ++i)
+			if (rfl[i].substr(0, 2) != "//" && rfl[i] != "")
+					Resource::GetTexture(rfl[i]);
+		}
+		catch (ResourceError err){
+			DebugLog::Push(ResourceLoader::DecodeError(err) + "\n\t" + dataPath.string() + "/TextureResources.txt");
+		}
+		catch (...){
+			DebugLog::Push("Resource: Unidentified Exception when loading file \n\t" + dataPath.string() + "/TextureResources.txt");
+		}
+
+		//Load Scene Objects
+		try{
+			ResourceLoader::LoadObjects(dataPath.string() + "/SceneObjects.txt", &objects);
+		}
+		catch (ResourceError err){
+			DebugLog::Push(ResourceLoader::DecodeError(err) + "\n\t" + dataPath.string() + "/SceneObjects.txt");
+		}
+		catch (...){
+			DebugLog::Push("Resource: Unidentified Exception when loading file \n\t" + dataPath.string() + "/SceneObjects.txt");
+		}
+
+		//Load Post Effects
+		try{
+			try{
+				postEffectsOrder = ResourceLoader::ReturnFileLines(dataPath.string() + "/PostEffectsOrder.txt", true);
+				for (unsigned int i = 0; i < postEffectsOrder.size(); ++i)
+				if (postEffectsOrder[i] != "")
+					Resource::GetPostEffect(postEffectsOrder[i]);
+			}
+			catch (ResourceError err){
+				DebugLog::Push(ResourceLoader::DecodeError(err) + "\n\t" + dataPath.string() + "/PostEffectsOrder.txt");
+				throw;
+			}
+			catch (...){
+				DebugLog::Push("Resource: Unidentified Exception when loading file \n\t" + dataPath.string() + "/PostEffectsOrder.txt");
+				throw;
+			}
+		}
+		catch (...){
 			postEffectsOrder.clear();
+		}
+			
 	}
 	_loaded = true;
 }

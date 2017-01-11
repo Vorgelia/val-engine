@@ -13,18 +13,29 @@
 #include "InputEvent.h"
 #include "InputFrame.h"
 #include "DebugLog.h"
+
+
+//Turn a resource error into a readable string.
+std::string ResourceLoader::DecodeError(ResourceError error){
+	switch (error){
+	case ResourceError::FileUnavailable:
+		return "Resource Error 0: Could not find file.";
+	case ResourceError::FileUnreadable:
+		return "Resource Error 1: Could not open file.";
+	}
+	return "Resource: UnknownError " + std::to_string(static_cast<int>(error));
+}
+
 //Probably my least favourite part of making this engine is importing files.
 //The code always looks like a mess but at least i don't have to touch it after making it.
 std::string ResourceLoader::LoadTextResource(int id,std::string type){//Copypasta text resource loading. Could probably be optimized.
 	HRSRC hResource = FindResource(NULL,MAKEINTRESOURCE(id),(LPCSTR)type.c_str());
 	if (hResource == 0){
-		DebugLog::Push("Error finding resource " + std::to_string(id), 1);
-		return "ERROR";
+		throw ResourceError::FileUnavailable;
 	}
 	HGLOBAL hLoadedResource = LoadResource(NULL, hResource);
 	if (hLoadedResource == 0){
-		DebugLog::Push("Error loading resource " + std::to_string(id), 1);
-		return "ERROR";
+		throw ResourceError::FileUnreadable;
 	}
 	LPVOID pdata = LockResource(hLoadedResource);
 	LPBYTE sData = (LPBYTE)pdata;
@@ -35,13 +46,11 @@ std::string ResourceLoader::LoadTextResource(int id,std::string type){//Copypast
 std::vector<unsigned char> ResourceLoader::LoadBinaryResource(int id, std::string type){//Doesn't work, completely unused.
 	HRSRC hResource = FindResource(NULL, MAKEINTRESOURCE(id), (LPCSTR)type.c_str());
 	if (hResource == 0){
-		DebugLog::Push("Error finding resource " + std::to_string(id), 1);
-		return std::vector<unsigned char>();
+		throw ResourceError::FileUnavailable;
 	}
 	HGLOBAL hLoadedResource = LoadResource(NULL, hResource);
 	if (hLoadedResource == 0){
-		DebugLog::Push("Error loading resource " + std::to_string(id), 1);
-		return std::vector<unsigned char>();
+		throw ResourceError::FileUnreadable;
 	}
 	LPVOID pdata = LockResource(hLoadedResource);
 	LPBYTE sData = (LPBYTE)pdata;
@@ -50,8 +59,13 @@ std::vector<unsigned char> ResourceLoader::LoadBinaryResource(int id, std::strin
 }
 std::string ResourceLoader::ReturnFile(FS::path dir){//Abstraction for turning a file into a string.
 	if (!FS::exists(dir))
-		return "ERROR";
+		throw ResourceError::FileUnavailable;
+
 	std::ifstream ifs(dir.c_str());
+	if (!ifs.is_open()){
+		throw ResourceError::FileUnreadable;
+	}
+
 	std::string content((std::istreambuf_iterator<char>(ifs)), (std::istreambuf_iterator<char>()));
 	ifs.close();
 	return content;
@@ -61,8 +75,7 @@ bool ResourceLoader::SaveFile(FS::path dir,std::string content,int flags){
 	boost::algorithm::erase_all(content, "\r");
 	std::ofstream ofs(dir.c_str(), flags);
 	if (!ofs.is_open()){
-		DebugLog::Push("Failed to write to file " + dir.string(), 1);
-		return false;
+		throw ResourceError::FileUnreadable;
 	}
 	ofs << content;
 	ofs.close();
@@ -72,12 +85,14 @@ bool ResourceLoader::SaveFile(FS::path dir,std::string content,int flags){
 std::vector<std::string> ResourceLoader::ReturnFileLines(FS::path dir, bool removeWhitespace = false){
 	DebugLog::Push("--Resource: Loading file " + dir.string(), 1);
 	if (!FS::exists(dir))
-		return{ "ERROR" };
+		throw ResourceError::FileUnavailable;
+
 	std::ifstream ifs(dir.c_str());
+
 	if (!ifs.is_open()){
-		DebugLog::Push("Error opening file " + dir.string(), 1);
-		return{ "ERROR" };
+		throw ResourceError::FileUnreadable;
 	}
+
 	std::string content((std::istreambuf_iterator<char>(ifs)),
 		std::istreambuf_iterator<char>());
 	ifs.close();
@@ -103,10 +118,7 @@ void ResourceLoader::LoadControlSettings(FS::path path, std::unordered_map<Input
 	}
 	else
 		lines = ReturnFileLines(path);
-	if (lines.size() == 0 || (lines.size() == 1 && lines[0] == "ERROR")){
-		DebugLog::Push("Failed to open file " + path.string(), 1);
-		return;
-	}
+
 	dir->clear();
 	bt->clear();
 	int readState = 0;//0 Buttons, 1 Axes
@@ -138,10 +150,7 @@ void ResourceLoader::LoadControlSettings(FS::path path, std::unordered_map<Input
 
 void ResourceLoader::LoadObjects(FS::path path, std::map<int, Object*>* objects){
 	std::vector<std::string> lines = ReturnFileLines(path, true);
-	if (lines.size() == 0 || (lines.size() == 1 && lines[0] == "ERROR")){
-		DebugLog::Push("Failed to open file " + path.string(), 1);
-		return;
-	}
+
 	objects->clear();
 	Object* cobj = nullptr;
 	bool pushedObject = true;
@@ -168,7 +177,7 @@ void ResourceLoader::LoadObjects(FS::path path, std::map<int, Object*>* objects)
 			else if (spl[0] == "mesh")
 				cobj->mesh = Resource::GetMesh(spl[1], false);
 			else if (spl[0] == "material")
-				cobj->material = Resource::GetMaterial(spl[1],true);
+				cobj->material = Resource::GetMaterial(spl[1]);
 			else if (spl[0] == "position"){
 				boost::split(spl2, spl[1], boost::is_any_of(","), boost::token_compress_on);
 				cobj->transform->position = glm::ivec2(boost::lexical_cast<int>(spl2[0]), boost::lexical_cast<int>(spl2[1]));
@@ -189,10 +198,7 @@ void ResourceLoader::LoadObjects(FS::path path, std::map<int, Object*>* objects)
 
 void ResourceLoader::LoadPostEffect(FS::path path, std::vector<std::pair<int, Material*>>* elements, bool* cbBefore, bool* cbAfter,int* order) {
 	std::vector<std::string> lines = ReturnFileLines(path, true);
-	if (lines.size() == 0 || (lines.size() == 1 && lines[0] == "ERROR")){
-		DebugLog::Push("Failed to open file " + path.string(), 1);
-		return;
-	}
+
 	elements->clear();
 	int readState = 0;//0 Properties, 1 Rendering Stages
 	for (unsigned int i = 0; i < lines.size(); ++i){
@@ -234,10 +240,7 @@ void ResourceLoader::LoadPostEffect(FS::path path, std::vector<std::pair<int, Ma
 
 void ResourceLoader::LoadMaterial(FS::path path, Shader** shader, unsigned char* properties, std::map<std::string, GLfloat>* uniformFloats,std::map<std::string, MaterialTexture>* uniformTextures,std::map<std::string, glm::vec4>* uniformVectors){
 	std::vector<std::string> lines = ReturnFileLines(path, true);
-	if (lines.size() == 0 || (lines.size() == 1 && lines[0] == "ERROR")){
-		DebugLog::Push("Failed to open file " + path.string(),1);
-		return;
-	}
+
 	int readState = 0;//0 Properties, 1 Uniform Floats, 2 Uniform Vectors, 3 Uniform Textures
 	uniformFloats->clear();
 	uniformTextures->clear();
@@ -308,10 +311,7 @@ void ResourceLoader::LoadMaterial(FS::path path, Shader** shader, unsigned char*
 void ResourceLoader::LoadMeshVM(FS::path path, std::vector<float> **verts, std::vector<GLuint> **elements, std::vector<VertexAttribute> *vertexFormat){
 	
 	std::vector<std::string> lines = ReturnFileLines(path, true);
-	if (lines.size() == 0||(lines.size() == 1 && lines[0] == "ERROR")){
-		DebugLog::Push("Failed to open file " + path.string(),1);
-		return;
-	}
+
 	int readState = 0; //0 Attribs, 1 Vertices, 2 Elements
 	*verts = new std::vector<float>();
 	*elements = new std::vector<GLuint>();

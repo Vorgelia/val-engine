@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <WinSock2.h>
+#include <Ws2tcpip.h>
 #include "NetworkMessage.h"
 #include "ConnectionSocket.h"
 

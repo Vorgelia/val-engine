@@ -10,6 +10,12 @@ enum class InputButton;
 enum class InputDirection;
 class InputEvent;
 class Object;
+
+enum class ResourceError{
+	FileUnavailable,
+	FileUnreadable
+};
+
 namespace ResourceLoader{
 	std::string LoadTextResource(int id,std::string type="TEXT");
 	std::vector<unsigned char> LoadBinaryResource(int id, std::string type);
@@ -21,4 +27,5 @@ namespace ResourceLoader{
 	void LoadPostEffect(FS::path path, std::vector<std::pair<int, Material* >>* elements, bool* cbBefore, bool* cbAfter,int* order);
 	void LoadControlSettings(FS::path path, std::unordered_map<InputDirection, InputEvent>* dir, std::unordered_map<InputButton, InputEvent>* bt);
 	void LoadObjects(FS::path path, std::map<int, Object*>* objects);
+	std::string DecodeError(ResourceError error);
 }

@@ -2,12 +2,17 @@
 #include "DebugLog.h"
 #include "Time.h"
 bool NetworkEntity::ConnectTo(std::string ip, int port){
-	connections.push_back(ConnectionSocket(inet_addr(ip.c_str()), port));
+	in_addr addr;
+	InetPton(AF_INET,ip.c_str(),&addr);
+	connections.push_back(ConnectionSocket(addr, port));
 	return connections.back().Connect();
 }
 
 bool NetworkEntity::HostServer(int port){
-	connections.push_back(ConnectionSocket(INADDR_ANY, port));
+	in_addr addr;
+	addr.S_un.S_addr = INADDR_ANY;
+
+	connections.push_back(ConnectionSocket(addr, port));
 	return connections.back().BindAsServer();
 }
 

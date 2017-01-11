@@ -7,7 +7,7 @@
 #include "InputEvent.h"
 #include "InputFrame.h"
 
-#include "Hitbox.h"
+#include "CollisionBox.h"
 #include "CircularBuffer.h"
 
 #include "Transform.h"

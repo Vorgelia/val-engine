@@ -69,18 +69,22 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AttackData.cpp" />
     <ClCompile Include="CachedMesh.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="CharacterFrame.cpp" />
+    <ClCompile Include="CharacterState.cpp" />
     <ClCompile Include="ConnectionSocket.cpp" />
     <ClCompile Include="DebugLog.cpp" />
     <ClCompile Include="Font.cpp" />
     <ClCompile Include="FrameBuffer.cpp" />
+    <ClCompile Include="GameCharacter.cpp" />
     <ClCompile Include="GameState.cpp" />
     <ClCompile Include="GameStateManager.cpp" />
     <ClCompile Include="GLStateTrack.cpp" />
     <ClCompile Include="GS_Intro.cpp" />
     <ClCompile Include="GS_Menu.cpp" />
-    <ClCompile Include="Hitbox.cpp" />
+    <ClCompile Include="CollisionBox.cpp" />
     <ClCompile Include="InputDevice.cpp" />
     <ClCompile Include="InputEvent.cpp" />
     <ClCompile Include="InputFrame.cpp" />
@@ -106,8 +110,11 @@
     <ClCompile Include="Transform.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AttackData.h" />
     <ClInclude Include="CachedMesh.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="CharacterFrame.h" />
+    <ClInclude Include="CharacterState.h" />
     <ClInclude Include="CircularBuffer.h" />
     <ClInclude Include="CommonUtilIncludes.hpp" />
     <ClInclude Include="ConnectionSocket.h" />
@@ -115,13 +122,14 @@
     <ClInclude Include="FGIncludes.hpp" />
     <ClInclude Include="Font.h" />
     <ClInclude Include="FrameBuffer.h" />
+    <ClInclude Include="GameCharacter.h" />
     <ClInclude Include="GameState.h" />
     <ClInclude Include="GameStateManager.h" />
     <ClInclude Include="GLStateTrack.h" />
     <ClInclude Include="GS_Intro.h" />
     <ClInclude Include="GSIncludes.hpp" />
     <ClInclude Include="GS_Menu.h" />
-    <ClInclude Include="Hitbox.h" />
+    <ClInclude Include="CollisionBox.h" />
     <ClInclude Include="InputDevice.h" />
     <ClInclude Include="InputEvent.h" />
     <ClInclude Include="InputFrame.h" />

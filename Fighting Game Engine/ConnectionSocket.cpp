@@ -168,8 +168,8 @@ int ConnectionSocket::port(){
 	return ntohs(saddr.sin_port);
 }
 
-ConnectionSocket::ConnectionSocket(unsigned long ip, int port){
-	saddr.sin_addr.s_addr = ip;
+ConnectionSocket::ConnectionSocket(in_addr ip, int port){
+	saddr.sin_addr = ip;
 	saddr.sin_port = htons(port);
 	saddr.sin_family = AF_INET;
 	strictSendOrder = true;
