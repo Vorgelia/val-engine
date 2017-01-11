@@ -40,6 +40,7 @@ Important defines:
 					 VE_WORLD_SCALE
 	Time.h:			 VE_FRAME_TIME
 					 VE_FRAME_RATE
+	DebugLog.h:		 VE_DEBUG_ERRORTHROW
 */
 
 #include "SystemIncludes.hpp"

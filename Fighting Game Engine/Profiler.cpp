@@ -23,5 +23,5 @@ void Profiler::Clear(){
 }
 void Profiler::Print(){
 	for (auto i = elements.begin(); i != elements.end(); ++i)
-		DebugLog::Push(Profiler::String(i->first),0);
+		DebugLog::Push(Profiler::String(i->first), LogItem::Type::Message);
 }

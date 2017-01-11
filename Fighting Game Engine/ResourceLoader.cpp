@@ -83,7 +83,7 @@ bool ResourceLoader::SaveFile(FS::path dir,std::string content,int flags){
 }
 //Abstraction for turning a file into an array of its lines. Heavily used in parsing.
 std::vector<std::string> ResourceLoader::ReturnFileLines(FS::path dir, bool removeWhitespace = false){
-	DebugLog::Push("--Resource: Loading file " + dir.string(), 1);
+	DebugLog::Push("Resource: Loading file " + dir.string());
 	if (!FS::exists(dir))
 		throw ResourceError::FileUnavailable;
 

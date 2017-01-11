@@ -100,7 +100,7 @@ void Rendering::DrawPostEffect(PostEffect* pf){
 
 		Material* cMat = (pf->elementChain[pi].second);
 		if (cMat == nullptr){
-			DebugLog::Push("Skipping post effect stage: " + std::to_string(pi), 2);
+			DebugLog::Push("Skipping post effect stage: " + std::to_string(pi));
 			continue;
 		}
 		GLState::UseProgram(cMat->shader->id);
@@ -234,7 +234,7 @@ void Rendering::DrawScreenMesh(glm::vec4 rect, Mesh* mesh, std::vector<std::pair
 
 void Rendering::DrawMesh(Transform* transform, Mesh* mesh, Material* mat, Camera* camera){
 	if (mesh==nullptr||!mesh->valid()){
-		DebugLog::Push("Attempting to draw invalid mesh: " + mesh->name, 2);
+		DebugLog::Push("Attempting to draw invalid mesh: " + mesh->name, LogItem::Type::Warning);
 		return;
 	}
 	Camera* cCam = (camera == nullptr ? &cameras[0] : camera);

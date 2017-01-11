@@ -72,7 +72,7 @@ void GameState::LoadResources(){
 			try{
 				postEffectsOrder = ResourceLoader::ReturnFileLines(dataPath.string() + "/PostEffectsOrder.txt", true);
 				for (unsigned int i = 0; i < postEffectsOrder.size(); ++i)
-				if (postEffectsOrder[i] != "")
+				if (postEffectsOrder[i].substr(0, 2) != "//" &&postEffectsOrder[i] != "")
 					Resource::GetPostEffect(postEffectsOrder[i]);
 			}
 			catch (ResourceError err){

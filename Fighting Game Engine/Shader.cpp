@@ -27,9 +27,7 @@ Shader::Shader(std::string name, std::vector<ShaderAttachment> shaders){
 	else
 		_valid = true;
 
-	std::string debugString="Shader compilation [" + name + "]:\n";
-	debugString += this->name + ": " + (_valid ? "valid" : "invalid");
-	DebugLog::Push(debugString, 3);
+	DebugLog::Push("Shader compilation [" + name + "]: " + (_valid ? "VALID" : "INVALID"));
 }
 
 Shader::operator GLuint(){
@@ -51,7 +49,7 @@ GLuint Shader::CreateShader(std::string code, GLenum type){
 	glGetShaderInfoLog(shader, 512, NULL, shaderLog);
 	glGetShaderiv(shader, GL_COMPILE_STATUS, &shaderStatus);
 	if (shaderStatus != GL_TRUE){
-		DebugLog::Push("Shader compilation failure:\n" + std::string(shaderLog), 2);
+		DebugLog::Push("Shader compilation failure:\n" + std::string(shaderLog), LogItem::Type::Warning);
 		return -1;
 	}
 	return shader;

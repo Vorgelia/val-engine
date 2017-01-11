@@ -109,7 +109,7 @@ void NetworkEntity::HandleExceptions(){
 			if (getsockopt(connections[i].sock, SOL_SOCKET, SO_ERROR, cErr, &len) == SOCKET_ERROR)
 				ConnectionSocket::GetLastSocketError();
 			else{
-				DebugLog::Push("Socket Exception:"+std::string(cErr,cErr+len),2);
+				DebugLog::Push("Socket Exception:" + std::string(cErr, cErr + len), LogItem::Type::Error);
 				Disconnect(i--);
 			}
 		}

@@ -18,8 +18,8 @@ namespace DebugLog{
 
 void DebugLog::Init(){
 	_endWrite = false;
-	_writeStream = std::ofstream("error_output.txt",std::ios::trunc);
-	_writeQueue.push(LogItem("--Val Engine Error Log--\n"));
+	_writeStream = std::ofstream("log_output.txt",std::ios::trunc);
+	_writeStream << "--Val Engine Output Log--";
 	_writeThread = std::thread(WriteThread);
 }
 void DebugLog::Cleanup(){
@@ -36,15 +36,34 @@ void DebugLog::WriteThread(){
 		LogItem li=_writeQueue.front();
 		_writeQueue.pop();
 		_queueMutex.unlock();
-		_writeStream << "\nLog:"+li.ToString();
-		std::clog << li.ToString(1) << std::endl;
+		switch (li.type){
+		case LogItem::Type::Message:
+			_writeStream << "\n\n" + li.ToString();
+			std::clog << li.ToString(0) << std::endl << std::endl;
+			break;
+		case LogItem::Type::Error:
+			_writeStream << "\n\n-Error:\n" + li.ToString();
+			std::clog << li.ToString() << std::endl << std::endl;
+			break;
+		case LogItem::Type::Log:
+			_writeStream << "\n\n-Log:\n" + li.ToString();
+			std::clog << li.ToString(1) << std::endl << std::endl;
+			break;
+		case LogItem::Type::Warning:
+			_writeStream << "\n\n-Warning:\n" + li.ToString();
+			std::clog << li.ToString() << std::endl << std::endl;
+#ifdef VE_DEBUG_ERRORTHROW
+			throw;
+#endif
+			break;
+		}
 	}
 }
 
-void DebugLog::Push(std::string data, unsigned int stackSize){
+void DebugLog::Push(std::string data, LogItem::Type type){
 	_queueMutex.lock();
-	_writeQueue.push(LogItem(data));
-	GetStackTrace(&_writeQueue.back().stack,stackSize);
+	_writeQueue.push(LogItem(data,type));
+	GetStackTrace(&_writeQueue.back().stack,100);
 	_queueMutex.unlock();
 }
 
@@ -54,7 +73,7 @@ void DebugLog::GetStackTrace(std::vector<std::string>* storage, unsigned int sta
 	std::string returnString;
 	int   i;
 	void          *stack[100];
-	short frames;
+	unsigned short frames;
 	SYMBOL_INFO   *symbol;
 	HANDLE         process;
 	process = GetCurrentProcess();
@@ -64,7 +83,7 @@ void DebugLog::GetStackTrace(std::vector<std::string>* storage, unsigned int sta
 	symbol->MaxNameLen = 255;
 	symbol->SizeOfStruct = sizeof(SYMBOL_INFO);
 	storage->reserve(frames);
-	frames = frames>stackSize?stackSize:frames;
+	frames = (frames - 5)>stackSize ? stackSize : (frames - 5);
 	for (i = 0; i < frames; i++)
 	{
 		SymFromAddr(process, (DWORD64)(stack[i]), 0, symbol);

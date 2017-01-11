@@ -72,7 +72,7 @@ Font* Resource::GetFont(FS::path path){
 			return nullptr;
 		rf = new Font(path);
 		fonts.insert(std::pair<std::string,Font*>(path.string(),rf));
-		DebugLog::Push("Loading Font: "+path.string(),1);
+		DebugLog::Push("Loading Font: "+path.string());
 	}
 	return rf;
 }
@@ -91,13 +91,13 @@ Texture* Resource::GetTexture(FS::path path){
 
 		try{
 			rt = new Texture(path.string(), path, GL_RGBA, SOIL_LOAD_RGBA, GL_NEAREST, GL_REPEAT);
-			DebugLog::Push("Loading Texture: " + path.string(), 1);
+			DebugLog::Push("Loading Texture: " + path.string());
 		}
 		catch (ResourceError err){
-			DebugLog::Push(ResourceLoader::DecodeError(err) + "\n\t" + path.string());
+			DebugLog::Push(ResourceLoader::DecodeError(err) + "\n\t" + path.string(), LogItem::Type::Error);
 		}
 		catch (...){
-			DebugLog::Push("Resource: Unidentified Exception when loading file \n\t"+path.string());
+			DebugLog::Push("Resource: Unidentified Exception when loading file \n\t" + path.string(), LogItem::Type::Error);
 		}
 
 		if (path.parent_path().leaf().string() == "Base")
@@ -121,13 +121,13 @@ PostEffect* Resource::GetPostEffect(FS::path path){
 
 		try{
 			rp = new PostEffect(path.string());
-			DebugLog::Push("Loading Post Effect: " + path.string(), 1);
+			DebugLog::Push("Loading Post Effect: " + path.string());
 		}
 		catch (ResourceError err){
-			DebugLog::Push(ResourceLoader::DecodeError(err) + "\n\t" + path.string());
+			DebugLog::Push(ResourceLoader::DecodeError(err) + "\n\t" + path.string(), LogItem::Type::Error);
 		}
 		catch (...){
-			DebugLog::Push("Resource: Unidentified Exception when loading file \n\t" + path.string());
+			DebugLog::Push("Resource: Unidentified Exception when loading file \n\t" + path.string(), LogItem::Type::Error);
 		}
 
 		Resource::postEffects.insert(std::pair<std::string, PostEffect*>(path.string(), rp));
@@ -148,13 +148,13 @@ Shader* Resource::GetShader(std::string name){
 
 		try{
 			rs = new Shader(name, { ShaderAttachment(ResourceLoader::ReturnFile(name + ".vert"), GL_VERTEX_SHADER), ShaderAttachment(ResourceLoader::ReturnFile(name + ".frag"), GL_FRAGMENT_SHADER) });
-			DebugLog::Push("Loading Shader: " + name, 1);
+			DebugLog::Push("Loading Shader: " + name);
 		}
 		catch (ResourceError err){
-			DebugLog::Push(ResourceLoader::DecodeError(err) + " " + name);
+			DebugLog::Push(ResourceLoader::DecodeError(err) + " " + name, LogItem::Type::Error);
 		}
 		catch (...){
-			DebugLog::Push("Resource: Unidentified Exception when loading file " + name);
+			DebugLog::Push("Resource: Unidentified Exception when loading file " + name, LogItem::Type::Error);
 		}
 
 		Resource::shaders.insert(std::pair<std::string, Shader*>(name, rs));
@@ -182,13 +182,13 @@ Material* Resource::GetMaterial(FS::path path){
 
 		try{
 			rm = new Material(path.string());
-			DebugLog::Push("Loading Material: " + path.string(), 1);
+			DebugLog::Push("Loading Material: " + path.string());
 		}
 		catch (ResourceError err){
-			DebugLog::Push(ResourceLoader::DecodeError(err) + "\n\t" + path.string());
+			DebugLog::Push(ResourceLoader::DecodeError(err) + "\n\t" + path.string(), LogItem::Type::Error);
 		}
 		catch (...){
-			DebugLog::Push("Resource: Unidentified Exception when loading file \n\t" + path.string());
+			DebugLog::Push("Resource: Unidentified Exception when loading file \n\t" + path.string(), LogItem::Type::Error);
 		}
 
 		if (path.parent_path().leaf().string() == "Base")
@@ -233,14 +233,14 @@ Mesh* Resource::GetMesh(FS::path path, bool editable){
 		try{
 			if (cachedMeshes.count(path.string()) == 0)
 				cachedMeshes[path.string()] = new CachedMesh(path);
-			DebugLog::Push("Loading Mesh: " + path.string(), 1);
+			DebugLog::Push("Loading Mesh: " + path.string());
 			rm = new Mesh(path.string(), cachedMeshes[path.string()], editable);
 		}
 		catch (ResourceError err){
-			DebugLog::Push(ResourceLoader::DecodeError(err) + "\n\t" + path.string());
+			DebugLog::Push(ResourceLoader::DecodeError(err) + "\n\t" + path.string(), LogItem::Type::Error);
 		}
 		catch (...){
-			DebugLog::Push("Resource: Unidentified Exception when loading file \n\t" + path.string());
+			DebugLog::Push("Resource: Unidentified Exception when loading file \n\t" + path.string(), LogItem::Type::Error);
 		}
 
 		if (path.parent_path().leaf().string() == "Base")
@@ -250,7 +250,7 @@ Mesh* Resource::GetMesh(FS::path path, bool editable){
 	}
 
 	if (rm==nullptr)
-		DebugLog::Push("Failed to load Mesh: " + path.string(), 1);
+		DebugLog::Push("Failed to load Mesh: " + path.string());
 	else if (rm->valid() == false){
 		DebugLog::Push("Invalid Mesh: " + path.string());
 		delete rm;

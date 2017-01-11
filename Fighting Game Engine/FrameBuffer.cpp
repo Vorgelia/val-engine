@@ -73,7 +73,7 @@ void  FrameBuffer::Update(){
 	glClearColor(clearColor.x, clearColor.y, clearColor.z, clearColor.w);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE){
-		DebugLog::Push("Framebuffer generation failed.", 2);
+		DebugLog::Push("Framebuffer generation failed.", LogItem::Type::Warning);
 	}
 	else
 		_valid = true;

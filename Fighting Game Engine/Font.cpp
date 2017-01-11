@@ -20,7 +20,7 @@ Font::Font(FS::path p)
 	if (!init){
 		init = FT_Init_FreeType(&library)==0;
 		if (!init){
-			DebugLog::Push("Unable to init Freetype",2);
+			DebugLog::Push("Unable to init Freetype", LogItem::Type::Warning);
 			return;
 		}
 	}
@@ -28,7 +28,7 @@ Font::Font(FS::path p)
 	name = p.string();
 	//Font loading
 	if (FT_New_Face(library, name.c_str(), 0, &face)){
-		DebugLog::Push("Unable to load font: "+name, 2);
+		DebugLog::Push("Unable to load font: " + name, LogItem::Type::Warning);
 		return;
 	}
 	FT_Set_Pixel_Sizes(face, 0, TEXT_SIZE);//Force the Y size to TEXT_SIZE, X size automatic.
@@ -39,7 +39,7 @@ Font::Font(FS::path p)
 	glm::ivec2 cursor=glm::ivec2(0,0);
 	for (GLubyte c = 0; c < 255; ++c){
 		if (FT_Load_Char(face, c, FT_LOAD_RENDER)){//Load character texture to face->glyph->bitmap
-			DebugLog::Push("Unable to load character: " + c, 2);
+			DebugLog::Push("Unable to load character: " + c, LogItem::Type::Warning);
 			continue;
 		}
 		
