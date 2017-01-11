@@ -6,6 +6,7 @@
 #include <queue>
 #include <mutex>
 #include "LogItem.h"
+#include <stdexcept>
 
 namespace DebugLog{
 	std::thread _writeThread;
@@ -44,6 +45,18 @@ void DebugLog::WriteThread(){
 		case LogItem::Type::Error:
 			_writeStream << "\n\n-Error:\n" + li.ToString();
 			std::clog << li.ToString() << std::endl << std::endl;
+
+#ifdef VE_DEBUG_ERRORTHROW
+			//If there is a cleaner way of throwing an error message in a debugging environment, i want to know.
+			//Throwing an exception in a try catch block is one of the silliest things i have done.
+			try{
+				throw std::logic_error("DebugLog received an error. To disable breaking on LogItem::Type:Error, undefine VE_DEBUG_ERRORTHROW from DebugLog.h");
+			}
+			catch (std::exception& e){
+				std::cout << e.what() << std::endl << std::endl;
+			}
+#endif
+
 			break;
 		case LogItem::Type::Log:
 			_writeStream << "\n\n-Log:\n" + li.ToString();
@@ -52,9 +65,6 @@ void DebugLog::WriteThread(){
 		case LogItem::Type::Warning:
 			_writeStream << "\n\n-Warning:\n" + li.ToString();
 			std::clog << li.ToString() << std::endl << std::endl;
-#ifdef VE_DEBUG_ERRORTHROW
-			throw;
-#endif
 			break;
 		}
 	}
