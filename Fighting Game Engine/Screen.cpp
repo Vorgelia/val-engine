@@ -10,14 +10,14 @@ namespace Screen{
 	glm::ivec4 viewportSize;
 	double windowAspect;
 	double windowAspectInv;
-	bool isDirty;
+	std::vector<void(*)()> screenUpdateCallbacks;
 
 	const double targetAspect=16.0/9.0;
 	const double targetAspectInv=9.0/16.0;
 }
 //Management of window related stuff. Probably not going to change at all from here.
 void Screen::Init(){
-	Screen::size = glm::ivec2(1280, 720);
+	Screen::size = glm::ivec2(1280, 320);
 	Screen::invSize = glm::vec2(1.0 / 1280.0, 1.0 / 720.0);
 	windowAspect = Screen::size.x / Screen::size.y;
 	windowAspectInv = 1.0 / windowAspect;
@@ -38,7 +38,6 @@ void Screen::Update(){
 }
 
 void Screen::OnResize(GLFWwindow* wnd, int sizeX, int sizeY){
-	isDirty = true;
 	size = glm::ivec2(sizeX, sizeY);
 	invSize = glm::vec2(1.0 / (float)sizeX, 1.0 / (float)sizeY);
 	windowAspect = Screen::size.x / Screen::size.y;
@@ -50,4 +49,7 @@ void Screen::OnResize(GLFWwindow* wnd, int sizeX, int sizeY){
 	else if (Screen::targetAspect < Screen::windowAspect) {
 		viewportSize = glm::ivec4((Screen::size.x - Screen::size.y*Screen::targetAspect)*0.5, 0, Screen::size.y*Screen::targetAspect,Screen::size.y);
 	}
+
+	for (auto i = screenUpdateCallbacks.begin(); i != screenUpdateCallbacks.end(); ++i)
+		(*i)();
 }

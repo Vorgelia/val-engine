@@ -25,7 +25,8 @@ Variables and getters/setters begin with lowercase. Classes, namespaces, functio
 ----Arbitrary to-do list----
 -Engine Features
 TODO: Find a way to multithread input so inputs are received and timed properly on sub-60FPS.
-TODO: Add error detection to resource parsing.
+TODO: Add more customization over cleaning up framebuffers between frames.
+TODO: Check if a framebuffer was used last frame before cleaning it up.
 TODO: Add error checking to Network classes.
 -Cleanup and Efficiency
 TODO: Clean up includes. Change default function parameters to be defined in .h and not .cpp.
@@ -38,6 +39,7 @@ Important defines:
 					 VE_INPUT_BUFFER_MID
 	Rendering.cpp:   VE_AUX_BUFFER_AMOUNT
 					 VE_WORLD_SCALE
+					 VE_FONT_DEFAULT
 	Time.h:			 VE_FRAME_TIME
 					 VE_FRAME_RATE
 	DebugLog.h:		 VE_DEBUG_ERRORTHROW
@@ -59,6 +61,7 @@ int main(){
 	//This just makes it so that decimal point is always a dot, on both input and output.
 	setlocale(LC_NUMERIC, "C");
 	
+	//Initialize OpenGL parameters and engine components.
 	GLInit();
 	EngineInit();
 
@@ -80,7 +83,7 @@ int main(){
 		//This is because fighting games are generally perceived as working on frames, with no middle states in between. It's easier for a designer to specify a move lasting 4 frames
 		//and have it concrete and easy to understand, rather than saying a move lasts 0.06666666 seconds and eeeeeh it depends on when we update.
 
-		//It's also of note that physics engines operate on fixed update rates just to maintain precision on lower framerates.
+		//It's also of note that physics engines also operate on fixed update rates just to maintain precision on lower framerates.
 
 		UpdateComponents();//Some parts of the engine like timekeeping have to update as frequently as possible, regardless of whether it's game update time.
 
@@ -103,15 +106,12 @@ int main(){
 
 
 		if(updatedFrame){
+			//Reset OpenGL rendering variables, clear buffers and prepare for rendering.
 			BeginFrame();
+			//Render all objects in the current scene
 			GameStateManager::StateRenderObjects();
+			//Apply post processing effects and render the result to the main buffer
 			EndFrame();
-			/*system("cls");
-			std::cout << "State:" << GameStateManager::currentState << std::endl;
-			std::cout << "Loading:" << GameStateManager::isLoading << std::endl;
-			std::cout << "Time:" << Time::time << std::endl;
-			std::cout << "Last Update Time:" << Time::lastUpdateTime << std::endl;
-			std::cout << "Load Time:" << Time::timeSinceLoad << std::endl;*/
 		}
 
 	}
@@ -120,9 +120,7 @@ int main(){
 	GLCleanup();
 }
 
-//--
-//GL Handling
-//--
+//Initialize OpenGL related parameters.
 inline void GLInit(){
 	//Init GLFW
 	glfwInit();
@@ -133,9 +131,10 @@ inline void GLInit(){
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	//glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 	//glfwWindowHint(GLFW_DECORATED, GL_FALSE);
+
 	//Initialize screen variables
 	Screen::Init();
-	//Init window
+	//Initialize and store window
 	Screen::window = glfwCreateWindow(Screen::size.x,Screen::size.y,"Videogame",nullptr,nullptr);
 	glfwMakeContextCurrent(Screen::window);
 	//Callbacks
@@ -144,6 +143,7 @@ inline void GLInit(){
 	glfwSetWindowSizeCallback(Screen::window,Screen::OnResize);
 	//Vsync
 	glfwSwapInterval(0);
+
 	glewExperimental = true;
 	glewInit();
 }
@@ -154,25 +154,38 @@ inline void GLCleanup(){
 //--
 //Engine Handling
 //--
+
+//Reset OpenGL rendering variables, clear buffers and prepare for rendering.
 void BeginFrame(){
 	//Not sure why this is here
 	glfwSwapInterval(0);
 	//Reset certain rendering parameters that might have been overriden in the last frame.
+	//BlendFunc controls the way alpha blending happens
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	//Viewport controls the rendering size in pixels based on the actual window size.
+	//We set it to the full window size here to perform no added transformation to the ones we do when rendering. Try changing Screen::size.y to Screen::size.y*0.5.
+	//This will be used later to force the aspect ratio to 16/9
 	glViewport(0, 0, Screen::size.x, Screen::size.y);
+
+	//Bind and clear all framebuffers.
 	for (unsigned int i = 0; i <Rendering::auxBuffers.size(); ++i){
 		Rendering::auxBuffers[i]->Clear();
 	}
 	Rendering::mainBuffer->Clear();//Also binds the main buffer	
 }
-void EndFrame(){
-	if (!GameStateManager::isLoading){
-		GameStateManager::states[GameStateManager::currentState]->FrameEnd();
 
+//Apply post processing effects and render the result to the main buffer
+void EndFrame(){
+	//Don't apply anything if the game state manager is loading.
+	if (!GameStateManager::isLoading){
+		//Call the frame end callback on the current scene
+		GameStateManager::states[GameStateManager::currentState]->FrameEnd();
+		//Draw post effects specified in State/PostEffectsOrder.txt, in the order they were given
 		for (unsigned int i = 0; i<GameStateManager::states[GameStateManager::currentState]->postEffectsOrder.size(); ++i){
 			Rendering::DrawPostEffect(Resource::postEffects[GameStateManager::states[GameStateManager::currentState]->postEffectsOrder[i]]);
 		}
-
+		//Tell the scene to draw its GUI now.
 		GameStateManager::states[GameStateManager::currentState]->GUI();
 	}
 	//Rendering::DrawScreenText(glm::vec4(1920 - 64, 0, 64, 64), 64, std::to_string(GameStateManager::currentState), nullptr, TextAlignment::Right);
@@ -180,12 +193,12 @@ void EndFrame(){
 	//Finally, render the main buffer to the default buffer.
 	//Set the viewport to what was calculated for a forced 16:9 aspect ratio
 	glViewport(Screen::viewportSize.x, Screen::viewportSize.y, Screen::viewportSize.z, Screen::viewportSize.w);
+	//Bind the default framebuffer, clear it and draw the main buffer directly.
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	Rendering::DrawScreenMesh(glm::vec4(0, 0, 1920, 1080), Resource::GetMesh("Meshes/Base/screenQuad.vm"), Rendering::mainBuffer, Resource::GetMaterial("Materials/Base/Screen_FB.vmat"));
 	glfwSwapBuffers(Screen::window);
-	Screen::isDirty = false;//isDirty is set to true when the window has been resized. It's just a flag anything else can read to determine whether anything screen related should be changed
 }
 inline void EngineInit(){
 	DebugLog::Init();
@@ -194,6 +207,7 @@ inline void EngineInit(){
 	Rendering::Init();
 	GameStateManager::Init();
 	InputManager::Init();
+
 	DebugLog::Push("Full Init");
 }
 inline void EngineCleanup(){

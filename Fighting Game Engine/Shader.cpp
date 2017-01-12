@@ -15,6 +15,7 @@ GLint Shader::UniformLocation(string str){
 	}
 	return uniformLocations[str];
 }
+
 Shader::Shader(std::string name, std::vector<ShaderAttachment> shaders){
 	this->name = name;
 	

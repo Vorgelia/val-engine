@@ -33,4 +33,5 @@ namespace Rendering{
 	void DrawTextCharacter(glm::vec4 rect,glm::vec4 params,Texture* tex);
 	inline void BindBufferUniforms(Shader* shad,int* index);
 	void BindEngineUniforms(Shader* shader);
+	void OnScreenResize();
 }

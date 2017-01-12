@@ -155,22 +155,23 @@ void ResourceLoader::LoadObjects(FS::path path, std::map<int, Object*>* objects)
 	Object* cobj = nullptr;
 	bool pushedObject = true;
 	for (unsigned int i = 0; i < lines.size(); ++i){
-		if (lines[i].size()<2 || lines[i].substr(0, 2) == "//")
+		if (lines[i] == "}"){
+			pushedObject = true;
+			if (cobj != nullptr)
+				objects->insert(std::pair<int, Object*>(cobj->id, cobj));
+		}
+		else if (lines[i].size()<2 || lines[i].substr(0, 2) == "//")
 			continue;
-		if (lines[i] == "#OBJECT_BEGIN"){
+		else if (lines[i] == "#OBJECT{"){
 			if (!pushedObject)
 				delete cobj;
 			cobj = new Object();
 			pushedObject = false;
 		}
-		else if (lines[i] == "#OBJECT_END"){
-			pushedObject = true;
-			if (cobj != nullptr)
-				objects->insert(std::pair<int, Object*>(cobj->id, cobj));
-		}
 		else{
 			std::vector<std::string> spl;
 			boost::split(spl, lines[i], boost::is_any_of("="), boost::token_compress_on);
+			DebugLog::Push("'" + lines[i] + "'");
 			std::vector<std::string> spl2;
 			if (spl[0] == "name")
 				cobj->name = spl[1];
