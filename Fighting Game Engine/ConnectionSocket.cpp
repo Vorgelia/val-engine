@@ -66,7 +66,11 @@ bool ConnectionSocket::BindAsServer(){
 
 bool ConnectionSocket::ReceiveData(){
 	char rec_msg[2048];
+
+	//Receive a message, with a maximum length of 2048.
 	int msgLen = recv(sock, rec_msg, 2048,0);
+
+	//If there is nothing to be received, a WSAEWOULDBLOCK error is raised and recv returns -1. It only returns 0 if the client has disconnected.
 	if (msgLen == 0){
 		mode = SocketMode::Disconnected;
 		return false;

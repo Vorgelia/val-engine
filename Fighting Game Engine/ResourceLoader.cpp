@@ -104,11 +104,11 @@ std::vector<std::string> ResourceLoader::ReturnFileLines(FS::path dir, bool remo
 	boost::split(lines, content, boost::is_any_of("\n"), boost::token_compress_on);
 	return lines;
 }
+
 //I lied. Parsing files that i wrote to be simple to parse is fun.
 //For some reason i'm using pointers to components instead of pointers to objects. Don't ask me why, but i stuck with it.
 //Most of these parsers work in similar ways.
 //Lines beginning with // are comments, #DIRECTIVES change where the data goes, the data itself is split on = and ,
-//Little to no error detection. That really needs to be changed.
 void ResourceLoader::LoadControlSettings(FS::path path, std::unordered_map<InputDirection, InputEvent>* dir, std::unordered_map<InputButton,InputEvent>* bt){
 	std::vector<std::string> lines;
 	
@@ -168,7 +168,7 @@ void ResourceLoader::LoadObjects(FS::path path, std::map<int, Object*>* objects)
 			cobj = new Object();
 			pushedObject = false;
 		}
-		else{
+		else if(cobj!=nullptr){
 			std::vector<std::string> spl;
 			boost::split(spl, lines[i], boost::is_any_of("="), boost::token_compress_on);
 			DebugLog::Push("'" + lines[i] + "'");

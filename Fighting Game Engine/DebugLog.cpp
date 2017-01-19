@@ -7,7 +7,7 @@
 #include <mutex>
 #include "LogItem.h"
 #include <stdexcept>
-
+#include <atomic>
 namespace DebugLog{
 	//The thread containing the write loop.
 	std::thread _writeThread;
@@ -18,12 +18,12 @@ namespace DebugLog{
 	//Mutex that controls access to _writeQueue. We don't want both the main thread and _writeThread modifying information in it at the same time.
 	std::mutex _queueMutex;
 	//The function called with _writeThread runs on an infinite loop. _endWrite is a flag that tells that loop to end.
-	bool _endWrite=false;
+	std::atomic<bool> _endWrite=false;
 }
 
 //Initialize the write stream and thread. Erase everything in log_output.txt and write a header in it.
 void DebugLog::Init(){
-	_endWrite = false;
+	_endWrite.store(false);
 	_writeStream = std::ofstream("log_output.txt",std::ios::trunc);
 	_writeStream << "--Val Engine Output Log--";
 	_writeThread = std::thread(WriteThread);
@@ -31,14 +31,14 @@ void DebugLog::Init(){
 
 //Raise the end write flag and wait until the write thread ends. Safely close the log_output.
 void DebugLog::Cleanup(){
-	_endWrite = true;
+	_endWrite.store(true);
 	_writeThread.join();
 	_writeStream.close();
 }
 
 //Infinite loop thread that goes through the write queue and prints its contents to a file, and the console.
 void DebugLog::WriteThread(){
-	while (!_endWrite){
+	while (!_endWrite.load()){
 
 		//If the write queue is empty, no reason to keep running this thread.
 		while (_writeQueue.empty())

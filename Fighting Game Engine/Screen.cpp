@@ -15,12 +15,15 @@ namespace Screen{
 	const double targetAspect=16.0/9.0;
 	const double targetAspectInv=9.0/16.0;
 }
+
 //Management of window related stuff. Probably not going to change at all from here.
 void Screen::Init(){
 	Screen::size = glm::ivec2(1280, 320);
 	Screen::invSize = glm::vec2(1.0 / 1280.0, 1.0 / 720.0);
+
 	windowAspect = Screen::size.x / Screen::size.y;
 	windowAspectInv = 1.0 / windowAspect;
+
 	Screen::primaryMonitor = glfwGetPrimaryMonitor();
 	Screen::mode = glfwGetVideoMode(Screen::primaryMonitor);
 
@@ -40,6 +43,7 @@ void Screen::Update(){
 void Screen::OnResize(GLFWwindow* wnd, int sizeX, int sizeY){
 	size = glm::ivec2(sizeX, sizeY);
 	invSize = glm::vec2(1.0 / (float)sizeX, 1.0 / (float)sizeY);
+
 	windowAspect = Screen::size.x / Screen::size.y;
 	windowAspectInv = 1.0 / windowAspect;
 

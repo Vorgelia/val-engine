@@ -96,8 +96,9 @@ void Rendering::DrawPostEffect(PostEffect* pf){
 		//Prevents IO on buffers that haven't had their effects finish rendering. Omitted for testing.
 		//glFinish();
 
+		Material* cMat = (pf->elementChain[pi].second);
 		//If there is no material for this step, render the aux buffer specified to the main buffer.
-		if (pf->elementChain[pi].second == nullptr){
+		if (cMat == nullptr){
 			GLState::BindFramebuffer(Rendering::mainBuffer->id);
 			DrawScreenMesh(glm::vec4(0, 0, 1920, 1080), nullptr, Rendering::auxBuffers[pf->elementChain[pi].first], Resource::GetMaterial("Materials/Base/Screen_FB.vmat"));
 			continue;
@@ -108,8 +109,6 @@ void Rendering::DrawPostEffect(PostEffect* pf){
 			GLState::BindFramebuffer(Rendering::mainBuffer->id);
 		else
 			GLState::BindFramebuffer(Rendering::auxBuffers[pf->elementChain[pi].first]->id);
-
-		Material* cMat = (pf->elementChain[pi].second);
 
 		//Bind the shader in the specified material
 		GLState::UseProgram(cMat->shader->id);
@@ -284,7 +283,10 @@ inline void Rendering::BindBufferUniforms(Shader* shad, int* index){
 }
 
 void Rendering::DrawMesh(Transform* transform, Mesh* mesh, Material* mat, Camera* camera){
-	if (mesh==nullptr||!mesh->valid()){
+	if(mesh == nullptr){
+		DebugLog::Push("Attempting to draw null mesh.", LogItem::Type::Warning);
+	}
+	else if (!mesh->valid()){
 		DebugLog::Push("Attempting to draw invalid mesh: " + mesh->name, LogItem::Type::Warning);
 		return;
 	}
