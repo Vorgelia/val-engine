@@ -18,7 +18,7 @@ namespace Screen{
 
 //Management of window related stuff. Probably not going to change at all from here.
 void Screen::Init(){
-	Screen::size = glm::ivec2(1280, 320);
+	Screen::size = glm::ivec2(1280, 720);
 	Screen::invSize = glm::vec2(1.0 / 1280.0, 1.0 / 720.0);
 
 	windowAspect = Screen::size.x / Screen::size.y;
