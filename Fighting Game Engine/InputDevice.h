@@ -31,6 +31,7 @@ class InputDevice
 {
 	int _deviceID;
 	std::string _deviceName;
+	std::string _deviceFilename;
 	std::vector<InputFrame> cachedInputFrames;
 
 	std::vector<unsigned char> cachedJoyButtons;

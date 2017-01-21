@@ -17,7 +17,15 @@ InputDevice::InputDevice(int deviceID){
 			this->_deviceName = std::string("Keyboard");
 		else
 			this->_deviceName = std::string(glfwGetJoystickName(deviceID));
-		ResourceLoader::LoadControlSettings("Settings/Input/" + this->_deviceName + ".vi", &(this->directionMap), &(this->buttonMap));
+
+		this->_deviceFilename = this->_deviceName;
+		
+		for (char& c : this->_deviceFilename){
+			if (std::string::npos != std::string("\\/:?\"<>|").find(c))
+				c = '_';
+		}
+
+		ResourceLoader::LoadControlSettings("Settings/Input/" + this->_deviceFilename + ".vi", &(this->directionMap), &(this->buttonMap));
 	}
 	inputBuffer = new InputBuffer(VE_INPUT_BUFFER_SIZE);
 	
