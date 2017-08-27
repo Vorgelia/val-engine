@@ -6,11 +6,11 @@ class Mesh
 {
 private:
 	bool _valid;
-	
+
 public:
 	std::string name;
 	CachedMesh *meshData;
-	
+
 	GLuint vao;
 	GLuint vbo;
 	GLuint ebo;

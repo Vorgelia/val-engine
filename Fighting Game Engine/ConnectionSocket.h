@@ -4,7 +4,8 @@
 #include <string>
 #include "NetworkMessage.h"
 
-enum class SocketMode{
+enum class SocketMode
+{
 	Uninitialized,
 	Initialized,
 	Client,

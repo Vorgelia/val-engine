@@ -10,7 +10,8 @@ class FrameBuffer;
 class Shader;
 class PostEffect;
 
-namespace Rendering{
+namespace Rendering
+{
 	extern FrameBuffer* mainBuffer;
 	extern std::vector<FrameBuffer*> auxBuffers;
 	extern std::vector<Camera> cameras;
@@ -22,16 +23,16 @@ namespace Rendering{
 	void Update();
 	void Cleanup();
 
-	void DrawMesh(Transform* transform, Mesh* mesh,Material* mat,Camera* camera=nullptr);
-	void DrawScreenMesh(glm::vec4 rect,Mesh* mesh,Material* mat);
+	void DrawMesh(Transform* transform, Mesh* mesh, Material* mat, Camera* camera = nullptr);
+	void DrawScreenMesh(glm::vec4 rect, Mesh* mesh, Material* mat);
 	void DrawScreenMesh(glm::vec4 rect, Mesh* mesh, std::vector<std::pair<GLuint, glm::vec4>> textures, Material* mat, glm::vec4 params = glm::vec4(0, 0, 1, 1));
 	void DrawScreenMesh(glm::vec4 rect, Mesh* mesh, std::vector<Texture*> textures, Material* mat, glm::vec4 params = glm::vec4(0, 0, 1, 1));
 	void DrawScreenMesh(glm::vec4 rect, Mesh* mesh, FrameBuffer* textures, Material* mat, glm::vec4 params = glm::vec4(0, 0, 1, 1));
 	void DrawPostEffect(PostEffect* pf);
-	void DrawScreenText(glm::vec4 rect, GLuint size, std::string text,Font* font,TextAlignment alignment=TextAlignment::Left);
+	void DrawScreenText(glm::vec4 rect, GLuint size, std::string text, Font* font, TextAlignment alignment = TextAlignment::Left);
 	void InitTextDrawing();
-	void DrawTextCharacter(glm::vec4 rect,glm::vec4 params,Texture* tex);
-	inline void BindBufferUniforms(Shader* shad,int* index);
+	void DrawTextCharacter(glm::vec4 rect, glm::vec4 params, Texture* tex);
+	inline void BindBufferUniforms(Shader* shad, int* index);
 	void BindEngineUniforms(Shader* shader);
 	void OnScreenResize();
 }

@@ -1,4 +1,5 @@
 #pragma once
-namespace ResourceInitializer{
+namespace ResourceInitializer
+{
 	void Init();
 }

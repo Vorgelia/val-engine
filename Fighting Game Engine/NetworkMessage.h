@@ -1,7 +1,8 @@
 #pragma once
 #include <string>
 #include <vector>
-enum class NetworkMessageType{
+enum class NetworkMessageType
+{
 	Unidentified = 0,
 	PingOut = 1, //Sent as a general use ping
 	PingIn = 2, //Sent as a response to a PingOut
@@ -11,7 +12,8 @@ enum class NetworkMessageType{
 	InputFrame = 6 //Data 
 };
 
-enum class NetworkMessageState{
+enum class NetworkMessageState
+{
 	Invalid = -1,
 	Incomplete = 0,
 	Complete = 1
@@ -39,6 +41,6 @@ public:
 	int MissingDataSize();
 
 	NetworkMessage(std::string dat);
-	NetworkMessage(NetworkMessageType type, std::string data="");
+	NetworkMessage(NetworkMessageType type, std::string data = "");
 	~NetworkMessage();
 };

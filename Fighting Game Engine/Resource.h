@@ -9,8 +9,9 @@ class Shader;
 class PostEffect;
 class Font;
 
-namespace Resource{
-	extern std::map<std::string,CachedMesh*> cachedMeshes;
+namespace Resource
+{
+	extern std::map<std::string, CachedMesh*> cachedMeshes;
 	extern std::map<std::string, Mesh*> meshes;
 	extern std::map<std::string, Texture*> textures;
 	extern std::map<std::string, Material*> materials;

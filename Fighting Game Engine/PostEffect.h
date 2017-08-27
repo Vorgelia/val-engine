@@ -13,7 +13,7 @@ public:
 	bool clearBuffersBefore;
 	bool clearBuffersAfter;
 	int order;
-	PostEffect(std::vector<postEffectElement> elements, bool cbBefore = true, bool cbAfter = false,int order=100);
+	PostEffect(std::vector<postEffectElement> elements, bool cbBefore = true, bool cbAfter = false, int order = 100);
 	PostEffect(FS::path path);
 };
 

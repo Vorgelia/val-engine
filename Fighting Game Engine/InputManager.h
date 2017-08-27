@@ -5,7 +5,8 @@
 
 class InputDevice;
 
-namespace InputManager{
+namespace InputManager
+{
 	extern std::map<int, InputDevice*> inputDevices;
 
 	void Init();

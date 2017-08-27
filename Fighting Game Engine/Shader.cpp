@@ -1,33 +1,37 @@
 #include "Shader.h"
 #include "GLStateTrack.h"
 #include "DebugLog.h"
-ShaderAttachment::ShaderAttachment(string code, GLenum type){
-	this->code=code;
+ShaderAttachment::ShaderAttachment(string code, GLenum type)
+{
+	this->code = code;
 	this->type = type;
 }
 
-GLint Shader::UniformLocation(string str){
+GLint Shader::UniformLocation(string str)
+{
 	//Helper function for getting a uniform location
 	//Allocates it in uniformLocations when it's first required, then reads it from uniformLocations on subsequent uses.
 	//Improves performance, mildly proud of coming up with this.
-	if (uniformLocations.count(str) == 0){
-		uniformLocations[str] = glGetUniformLocation(id,str.c_str());
+	if(uniformLocations.count(str) == 0)
+	{
+		uniformLocations[str] = glGetUniformLocation(id, str.c_str());
 	}
 	return uniformLocations[str];
 }
 
 //Compile the individual shaders and combine them into a shader program.
-Shader::Shader(std::string name, std::vector<ShaderAttachment> shaders){
+Shader::Shader(std::string name, std::vector<ShaderAttachment> shaders)
+{
 	this->name = name;
 
 	this->shaders.reserve(shaders.size());
 
-	for (unsigned int i = 0; i < shaders.size(); ++i)
-		this->shaders.push_back(Shader::CreateShader(shaders[i].code,shaders[i].type));
+	for(unsigned int i = 0; i < shaders.size(); ++i)
+		this->shaders.push_back(Shader::CreateShader(shaders[i].code, shaders[i].type));
 
 	id = Shader::CreateShaderProgram(this->shaders);
 
-	if (id == -1)
+	if(id == -1)
 		_valid = false;
 	else
 		_valid = true;
@@ -35,27 +39,31 @@ Shader::Shader(std::string name, std::vector<ShaderAttachment> shaders){
 	DebugLog::Push("Shader compilation [" + name + "]: " + (_valid ? "VALID" : "INVALID"));
 }
 
-Shader::operator GLuint(){
+Shader::operator GLuint()
+{
 	return id;
 }
 
-bool Shader::valid(){
+bool Shader::valid()
+{
 	return _valid;
 }
 
-GLuint Shader::CreateShader(std::string code, GLenum type){
+GLuint Shader::CreateShader(std::string code, GLenum type)
+{
 	//Shader creation and debug information
 	char shaderLog[512];
 	GLint shaderStatus;
 	GLuint shader = glCreateShader(type);
 	const char* codeStr = code.c_str();
 
-	glShaderSource(shader, 1, &codeStr,NULL);
+	glShaderSource(shader, 1, &codeStr, NULL);
 	glCompileShader(shader);
 	glGetShaderInfoLog(shader, 512, NULL, shaderLog);
 	glGetShaderiv(shader, GL_COMPILE_STATUS, &shaderStatus);
 
-	if (shaderStatus != GL_TRUE){
+	if(shaderStatus != GL_TRUE)
+	{
 		DebugLog::Push("Shader compilation failure:\n" + std::string(shaderLog), LogItem::Type::Warning);
 		return -1;
 	}
@@ -63,11 +71,13 @@ GLuint Shader::CreateShader(std::string code, GLenum type){
 	return shader;
 }
 
-GLuint Shader::CreateShaderProgram(std::vector<GLuint> shaders){
+GLuint Shader::CreateShaderProgram(std::vector<GLuint> shaders)
+{
 	GLuint shaderProgram = glCreateProgram();
 	//Attach all the shaders into a shader program.
-	for (unsigned int i = 0; i < shaders.size(); ++i){
-		glAttachShader(shaderProgram,shaders[i]);
+	for(unsigned int i = 0; i < shaders.size(); ++i)
+	{
+		glAttachShader(shaderProgram, shaders[i]);
 	}
 	//The OUTn variables are pre-bound to point to specific targets in frameuffers.
 	glBindFragDataLocation(shaderProgram, 0, "OUT0");
@@ -82,13 +92,14 @@ GLuint Shader::CreateShaderProgram(std::vector<GLuint> shaders){
 	glBindAttribLocation(shaderProgram, 0, "vertex");
 	glBindAttribLocation(shaderProgram, 1, "uv");
 	glBindAttribLocation(shaderProgram, 2, "normal");
-	
+
 	glLinkProgram(shaderProgram);
 	return shaderProgram;
 }
 
-Shader::~Shader(){
-	if (GLState::boundShader==id)
+Shader::~Shader()
+{
+	if(GLState::boundShader == id)
 		GLState::UseProgram(0);
 	glDeleteProgram(id);
 }

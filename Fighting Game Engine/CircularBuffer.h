@@ -20,7 +20,7 @@ public:
 	void Advance();
 	void Advance(T placedVar);//Quick helper function for adding an element and incrementing _bufferEnd
 	void SetPosition(int pos);
-	
+
 	void Resize(int size);//Really simple resize function. Will not shift the elements to maintain order.
 
 	void Reset();//Helper function for returning all of the buffer's values to default.
@@ -31,36 +31,42 @@ public:
 //Definition. Apparently i have to include this in the .h unless i want to manually type out every potential class it can be used with.
 //WHYYYYYYYYYYYYYYYYYYYYYYYYYY
 template <class T>
-T* CircularBuffer<T>::at(int index){
-	if (_buffer->size() == 0)
+T* CircularBuffer<T>::at(int index)
+{
+	if(_buffer->size() == 0)
 		return nullptr;
 	return &_buffer->at(InternalIndex(index));
 }
 
 template <class T>
-T* CircularBuffer<T>::at_relative(int index){
-	if (_buffer->size() == 0)
+T* CircularBuffer<T>::at_relative(int index)
+{
+	if(_buffer->size() == 0)
 		return nullptr;
-	return &_buffer->at(InternalIndex(_bufferEnd-1+index));
+	return &_buffer->at(InternalIndex(_bufferEnd - 1 + index));
 }
 
 template <class T>
-T* CircularBuffer<T>::back(){
-	if (_buffer->size() == 0)
+T* CircularBuffer<T>::back()
+{
+	if(_buffer->size() == 0)
 		return nullptr;
 	return &_buffer->at(InternalIndex(_bufferEnd - 1));
 }
 
 template <class T>
-T* CircularBuffer<T>::end(){
-	if (_buffer->size() == 0)
+T* CircularBuffer<T>::end()
+{
+	if(_buffer->size() == 0)
 		return nullptr;
 	return &_buffer->at(_bufferEnd);
 }
 
 template <class T>
-int CircularBuffer<T>::InternalIndex(int index){
-	if (index < 0){
+int CircularBuffer<T>::InternalIndex(int index)
+{
+	if(index < 0)
+	{
 		return _buffer->size() - 1 - index%_buffer->size();
 	}
 	else
@@ -68,47 +74,56 @@ int CircularBuffer<T>::InternalIndex(int index){
 }
 
 template <class T>
-void CircularBuffer<T>::Advance(){
+void CircularBuffer<T>::Advance()
+{
 	_bufferEnd = InternalIndex(_bufferEnd + 1);
 }
 
 template <class T>
-void CircularBuffer<T>::Advance(T placedVar){
+void CircularBuffer<T>::Advance(T placedVar)
+{
 	_buffer->at(_bufferEnd) = placedVar;
 	_bufferEnd = InternalIndex(_bufferEnd + 1);
 }
 template <class T>
-void CircularBuffer<T>::SetPosition(int pos){
+void CircularBuffer<T>::SetPosition(int pos)
+{
 	_bufferEnd = InternalIndex(pos);
 }
 
 template <class T>
-int CircularBuffer<T>::position(){
+int CircularBuffer<T>::position()
+{
 	return _bufferEnd;
 }
 
 template <class T>
-void CircularBuffer<T>::Resize(int size){
+void CircularBuffer<T>::Resize(int size)
+{
 	_buffer->resize(size);
 	_bufferEnd = InternalIndex(_bufferEnd);
 }
 
 template <class T>
-void CircularBuffer<T>::Reset(){
-	for (auto i = _buffer->begin(); i < _buffer->end(); ++i){
+void CircularBuffer<T>::Reset()
+{
+	for(auto i = _buffer->begin(); i < _buffer->end(); ++i)
+	{
 		(*i) = T();
 	}
 	_bufferEnd = 0;
 }
 
 template <class T>
-CircularBuffer<T>::CircularBuffer(int size){
+CircularBuffer<T>::CircularBuffer(int size)
+{
 	_buffer = new std::vector<T>();
 	_buffer->resize(size);
 	_bufferEnd = 0;
 }
 
 template<class T>
-CircularBuffer<T>::~CircularBuffer(){
+CircularBuffer<T>::~CircularBuffer()
+{
 	delete _buffer;
 }

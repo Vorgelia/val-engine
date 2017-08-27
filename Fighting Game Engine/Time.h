@@ -2,7 +2,8 @@
 #include "CommonUtilIncludes.hpp"
 #define VE_FRAME_TIME 0.0166666666
 #define VE_FRAME_RATE 60
-namespace Time{
+namespace Time
+{
 	extern double deltaTime;
 	extern double smoothDeltaTime;
 	extern double time;

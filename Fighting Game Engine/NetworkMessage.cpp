@@ -19,58 +19,68 @@ For instance. A NetworkMessage of type TextMessage whose identifying bits say is
 Ooooor if it has less than 3 identifying bits to begin with.
 */
 
-NetworkMessageType NetworkMessage::type(){
+NetworkMessageType NetworkMessage::type()
+{
 	return _type;
 }
 
-std::string NetworkMessage::Serialize(){
-	return _dataIdentifiers+data;
+std::string NetworkMessage::Serialize()
+{
+	return _dataIdentifiers + data;
 }
 //This function appends incoming data to the network message, filling in incomplete data identifiers from it if the message is incomplete
-void NetworkMessage::Append_Raw(std::string str){
-	for (unsigned int index = 0; index < str.length(); ++index){
-		if (_dataIdentifiers.empty()){
+void NetworkMessage::Append_Raw(std::string str)
+{
+	for(unsigned int index = 0; index < str.length(); ++index)
+	{
+		if(_dataIdentifiers.empty())
+		{
 			assert(_type == NetworkMessageType::Unidentified);//If data identifiers are empty, type has to be unidentified. Otherwise, something baaaaad happened.
 			_type = static_cast<NetworkMessageType>(str[index]);
 			_size = 0;
 			data = "";
 		}
-		else{
-			switch (_type){
-			case NetworkMessageType::NameSet:
-			case NetworkMessageType::TextMessage:
-				switch (_dataIdentifiers.size()){
-				case 1:
-					_size += static_cast<unsigned char>(str[index]);
+		else
+		{
+			switch(_type)
+			{
+				case NetworkMessageType::NameSet:
+				case NetworkMessageType::TextMessage:
+					switch(_dataIdentifiers.size())
+					{
+						case 1:
+							_size += static_cast<unsigned char>(str[index]);
+							break;
+						case 2:
+							_size += static_cast<unsigned char>(str[index]) << 8;
+							break;
+						case 3://When all data identifiers are complete, just store the rest of the string to data and stop.
+							data += str.substr(index, str.length() - index);
+							return;
+					}
 					break;
-				case 2:
-					_size += static_cast<unsigned char>(str[index])<<8;
+				case NetworkMessageType::PingOut:
+				case NetworkMessageType::PingIn:
+				case NetworkMessageType::PropertySet:
+				case NetworkMessageType::InputFrame:
+					if(_dataIdentifiers.length() == g_identifierSizes[static_cast<int>(_type)])
+						return;//These aren't meant to have any data associated with them, so after the identifiers are complete, discard the rest and stop.
 					break;
-				case 3://When all data identifiers are complete, just store the rest of the string to data and stop.
-					data += str.substr(index,str.length()-index);
-					return;
-				}
-				break;
-			case NetworkMessageType::PingOut:
-			case NetworkMessageType::PingIn:
-			case NetworkMessageType::PropertySet:
-			case NetworkMessageType::InputFrame:
-				if (_dataIdentifiers.length() == g_identifierSizes[static_cast<int>(_type)])
-					return;//These aren't meant to have any data associated with them, so after the identifiers are complete, discard the rest and stop.
-				break;
-			default:
-				DebugLog::Push("ERROR: Invalid NetworkMessage type");
-				break;
+				default:
+					DebugLog::Push("ERROR: Invalid NetworkMessage type");
+					break;
 			}
 		}
 		_dataIdentifiers += str[index];
 	}
-	
+
 }
 
 //For simpler appending to data with error checking. Not sure where this could be used.
-bool NetworkMessage::Append(std::string str){
-	if ((_type == NetworkMessageType::Unidentified) || _dataIdentifiers.length() != g_identifierSizes[static_cast<int>(_type)]){
+bool NetworkMessage::Append(std::string str)
+{
+	if((_type == NetworkMessageType::Unidentified) || _dataIdentifiers.length() != g_identifierSizes[static_cast<int>(_type)])
+	{
 		DebugLog::Push("ERROR: Incomplete identifiers");
 		return false;
 	}
@@ -78,53 +88,58 @@ bool NetworkMessage::Append(std::string str){
 	return true;
 }
 
-NetworkMessageState NetworkMessage::State(){
-	if (_dataIdentifiers.length() < g_identifierSizes[static_cast<int>(_type)])
+NetworkMessageState NetworkMessage::State()
+{
+	if(_dataIdentifiers.length() < g_identifierSizes[static_cast<int>(_type)])
 		return NetworkMessageState::Incomplete;
-	else if (_dataIdentifiers.length() > g_identifierSizes[static_cast<int>(_type)])
+	else if(_dataIdentifiers.length() > g_identifierSizes[static_cast<int>(_type)])
 		return NetworkMessageState::Invalid;
-	if (data.length() < _size)
+	if(data.length() < _size)
 		return NetworkMessageState::Incomplete;
-	else if (data.length()>_size)
+	else if(data.length()>_size)
 		return NetworkMessageState::Invalid;
 	return NetworkMessageState::Complete;
 }
 
-int NetworkMessage::MissingDataSize(){//Almost equivalent to State(), except State() produces more readable results and is less error-prone.
+int NetworkMessage::MissingDataSize()
+{//Almost equivalent to State(), except State() produces more readable results and is less error-prone.
 	return (g_identifierSizes[static_cast<int>(_type)] - _dataIdentifiers.length()) + (_size - data.length());
 }
 
 //Creates a message from raw data
-NetworkMessage::NetworkMessage(std::string dat){
+NetworkMessage::NetworkMessage(std::string dat)
+{
 	_type = NetworkMessageType::Unidentified;
 	Append_Raw(dat);
 }
 
 //Creates a message with the specified data, generating its identifiers from the type.
-NetworkMessage::NetworkMessage(NetworkMessageType type, std::string data){
+NetworkMessage::NetworkMessage(NetworkMessageType type, std::string data)
+{
 	_type = type;
 	_size = 0;
 	this->data = "";
-	switch (_type){
-	case NetworkMessageType::NameSet:
-	case NetworkMessageType::TextMessage:
-		this->data = data;
-		_dataIdentifiers.push_back((char)type);
-		_dataIdentifiers.push_back((char)data.size());
-		_dataIdentifiers.push_back((char)(data.size()>>8));
-		_size = data.size();
-		return;
-	case NetworkMessageType::PingOut:
-	case NetworkMessageType::PingIn:
-		return;
-	case NetworkMessageType::PropertySet:
-	case NetworkMessageType::InputFrame:
-		_dataIdentifiers.push_back((char)type);
-		_dataIdentifiers.append(data);
-		return;
-	default:
-		DebugLog::Push("ERROR: Invalid NetworkMessage type");
-		break;
+	switch(_type)
+	{
+		case NetworkMessageType::NameSet:
+		case NetworkMessageType::TextMessage:
+			this->data = data;
+			_dataIdentifiers.push_back((char)type);
+			_dataIdentifiers.push_back((char)data.size());
+			_dataIdentifiers.push_back((char)(data.size() >> 8));
+			_size = data.size();
+			return;
+		case NetworkMessageType::PingOut:
+		case NetworkMessageType::PingIn:
+			return;
+		case NetworkMessageType::PropertySet:
+		case NetworkMessageType::InputFrame:
+			_dataIdentifiers.push_back((char)type);
+			_dataIdentifiers.append(data);
+			return;
+		default:
+			DebugLog::Push("ERROR: Invalid NetworkMessage type");
+			break;
 	}
 }
 

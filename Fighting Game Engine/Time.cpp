@@ -1,6 +1,7 @@
 #include "Time.h"
 //Variables related to keeping track of various time-related concepts.
-namespace Time{
+namespace Time
+{
 	double deltaTime;
 	double smoothDeltaTime;
 	double time;
@@ -10,15 +11,17 @@ namespace Time{
 	float updateRate;
 	unsigned long frameCount;
 }
-void Time::Update(){
+void Time::Update()
+{
 	Time::lastTime = Time::time;
 	Time::time = glfwGetTime();
 	Time::deltaTime = Time::time - Time::lastTime;
-	Time::smoothDeltaTime = std::max(Time::smoothDeltaTime + (Time::deltaTime - Time::smoothDeltaTime)*0.01,Time::deltaTime);
+	Time::smoothDeltaTime = std::max(Time::smoothDeltaTime + (Time::deltaTime - Time::smoothDeltaTime)*0.01, Time::deltaTime);
 	updateRate = (float)std::max(updateRate + (Time::deltaTime*VE_FRAME_RATE - updateRate)*0.01, Time::deltaTime*VE_FRAME_RATE);
 	timeSinceLoad += deltaTime;
 }
 
-void Time::FrameUpdate(){
+void Time::FrameUpdate()
+{
 	++frameCount;
 }

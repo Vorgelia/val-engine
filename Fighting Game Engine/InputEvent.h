@@ -6,6 +6,6 @@ public:
 	float inputValue;
 	bool isAxis;
 	float deadzone;
-	InputEvent(int id,bool axis,float value,float deadzone);
+	InputEvent(int id, bool axis, float value, float deadzone);
 };
 

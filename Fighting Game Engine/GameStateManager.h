@@ -1,7 +1,8 @@
 #pragma once
 #include "CommonUtilIncludes.hpp"
 class GameState;
-namespace GameStateManager{
+namespace GameStateManager
+{
 	//global state variables here
 	extern std::vector<GameState*> states;
 

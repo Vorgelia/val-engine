@@ -1,19 +1,19 @@
 /*
 Val Engine
-	by Vorgelia
-	-@Vorgelia
-	https://valerie-laine-dev.com
+by Vorgelia
+-@Vorgelia
+https://valerie-laine-dev.com
 Specialized for Fighting Games
 
 Libraries used:
-	GLM http://glm.g-truc.net
-	GLEW http://glew.sourceforge.net/
-	GLFW http://www.glfw.org/
-	SOIL http://www.lonesock.net/soil.html
-	Boost http://www.boost.org/
-	Freetype 2 https://www.freetype.org/
+GLM http://glm.g-truc.net
+GLEW http://glew.sourceforge.net/
+GLFW http://www.glfw.org/
+SOIL http://www.lonesock.net/soil.html
+Boost http://www.boost.org/
+Freetype 2 https://www.freetype.org/
 Libraries planned to be used:
-	IrrKlang
+IrrKlang
 
 Structured to depend on global variables and functions in namespaces.
 Having global access to things like Input, Time, OpenGL states, etc was the most intuitive decision.
@@ -34,15 +34,15 @@ TODO: Change some class variables to be private with getters.
 TODO: Replace some instances of map with unordered_map.
 ----
 Important defines:
-	Resource.cpp:    VE_CREATE_DEFAULT_RESOURCES
-	InputDevice.cpp: VE_INPUT_BUFFER_INIT
-					 VE_INPUT_BUFFER_MID
-	Rendering.cpp:   VE_AUX_BUFFER_AMOUNT
-					 VE_WORLD_SCALE
-					 VE_FONT_DEFAULT
-	Time.h:			 VE_FRAME_TIME
-					 VE_FRAME_RATE
-	DebugLog.h:		 VE_DEBUG_ERRORTHROW
+Resource.cpp:    VE_CREATE_DEFAULT_RESOURCES
+InputDevice.cpp: VE_INPUT_BUFFER_INIT
+VE_INPUT_BUFFER_MID
+Rendering.cpp:   VE_AUX_BUFFER_AMOUNT
+VE_WORLD_SCALE
+VE_FONT_DEFAULT
+Time.h:			 VE_FRAME_TIME
+VE_FRAME_RATE
+DebugLog.h:		 VE_DEBUG_ERRORTHROW
 */
 
 #include "SystemIncludes.hpp"
@@ -56,16 +56,18 @@ void UpdateComponents();
 void BeginFrame();
 void EndFrame();
 
-int main(){
+int main()
+{
 	//We're setting the numeric locale to default C. Different locales have different ways of signifying decimal points, so converting text into variables can be unpredictable.
 	//This just makes it so that decimal point is always a dot, on both input and output.
 	setlocale(LC_NUMERIC, "C");
-	
+
 	//Initialize OpenGL parameters and engine components.
 	GLInit();
 	EngineInit();
 
-	while (!glfwWindowShouldClose(Screen::window)){
+	while(!glfwWindowShouldClose(Screen::window))
+	{
 		//Aaand this is the main game loop. 
 		//There's two kinds of updates to keep track of. Loop updates, that just refer to a single iteration of the above loop running, and game updates, which refer to the fixed frame game state updates.
 
@@ -88,8 +90,10 @@ int main(){
 		UpdateComponents();//Some parts of the engine like timekeeping have to update as frequently as possible, regardless of whether it's game update time.
 
 		bool updatedFrame = false;//This is a variable that keeps track of whether we've run a game update on this iteration. If we have, this will tell the engine to render at the end.
-		if (!GameStateManager::isLoading){
-			while (Time::lastUpdateTime + VE_FRAME_TIME <= Time::time){//Run updates until running one would put us ahead of our current time
+		if(!GameStateManager::isLoading)
+		{
+			while(Time::lastUpdateTime + VE_FRAME_TIME <= Time::time)
+			{//Run updates until running one would put us ahead of our current time
 				updatedFrame = true;
 				Time::frameCount += 1;
 				Time::lastUpdateTime += VE_FRAME_TIME;//This is important. We don't set last update time to current time, but we just advance it by 1/60
@@ -105,7 +109,8 @@ int main(){
 		GameStateManager::FrameEnd();//Checks if a level needs to be loaded and raises the necessary flags, as well as call the necessary resource management functions
 
 
-		if(updatedFrame){
+		if(updatedFrame)
+		{
 			//Reset OpenGL rendering variables, clear buffers and prepare for rendering.
 			BeginFrame();
 			//Render all objects in the current scene
@@ -121,7 +126,8 @@ int main(){
 }
 
 //Initialize OpenGL related parameters.
-inline void GLInit(){
+inline void GLInit()
+{
 	//Init GLFW
 	glfwInit();
 	//Window settings
@@ -135,19 +141,20 @@ inline void GLInit(){
 	//Initialize screen variables
 	Screen::Init();
 	//Initialize and store window
-	Screen::window = glfwCreateWindow(Screen::size.x,Screen::size.y,"Videogame",nullptr,nullptr);
+	Screen::window = glfwCreateWindow(Screen::size.x, Screen::size.y, "Videogame", nullptr, nullptr);
 	glfwMakeContextCurrent(Screen::window);
 	//Callbacks
 	glfwSetWindowPos(Screen::window, (int)(Screen::mode->width*0.5 - Screen::size.x*0.5), (int)(Screen::mode->height*0.5 - Screen::size.y*0.5));
-	glfwSetKeyCallback(Screen::window,InputManager::KeyCallback);
-	glfwSetWindowSizeCallback(Screen::window,Screen::OnResize);
+	glfwSetKeyCallback(Screen::window, InputManager::KeyCallback);
+	glfwSetWindowSizeCallback(Screen::window, Screen::OnResize);
 	//Vsync
 	glfwSwapInterval(0);
 
 	glewExperimental = true;
 	glewInit();
 }
-inline void GLCleanup(){
+inline void GLCleanup()
+{
 	//Cleanup GLFW
 	glfwTerminate();
 }
@@ -156,7 +163,8 @@ inline void GLCleanup(){
 //--
 
 //Reset OpenGL rendering variables, clear buffers and prepare for rendering.
-void BeginFrame(){
+void BeginFrame()
+{
 	//Not sure why this is here
 	glfwSwapInterval(0);
 	//Reset certain rendering parameters that might have been overriden in the last frame.
@@ -169,20 +177,24 @@ void BeginFrame(){
 	glViewport(0, 0, Screen::size.x, Screen::size.y);
 
 	//Bind and clear all framebuffers.
-	for (unsigned int i = 0; i <Rendering::auxBuffers.size(); ++i){
+	for(unsigned int i = 0; i < Rendering::auxBuffers.size(); ++i)
+	{
 		Rendering::auxBuffers[i]->Clear();
 	}
 	Rendering::mainBuffer->Clear();//Also binds the main buffer	
 }
 
 //Apply post processing effects and render the result to the main buffer
-void EndFrame(){
+void EndFrame()
+{
 	//Don't apply anything if the game state manager is loading.
-	if (!GameStateManager::isLoading){
+	if(!GameStateManager::isLoading)
+	{
 		//Call the frame end callback on the current scene
 		GameStateManager::states[GameStateManager::currentState]->FrameEnd();
 		//Draw post effects specified in State/PostEffectsOrder.txt, in the order they were given
-		for (unsigned int i = 0; i<GameStateManager::states[GameStateManager::currentState]->postEffectsOrder.size(); ++i){
+		for(unsigned int i = 0; i < GameStateManager::states[GameStateManager::currentState]->postEffectsOrder.size(); ++i)
+		{
 			Rendering::DrawPostEffect(Resource::postEffects[GameStateManager::states[GameStateManager::currentState]->postEffectsOrder[i]]);
 		}
 		//Tell the scene to draw its GUI now.
@@ -200,7 +212,8 @@ void EndFrame(){
 	Rendering::DrawScreenMesh(glm::vec4(0, 0, 1920, 1080), Resource::GetMesh("Meshes/Base/screenQuad.vm"), Rendering::mainBuffer, Resource::GetMaterial("Materials/Base/Screen_FB.vmat"));
 	glfwSwapBuffers(Screen::window);
 }
-inline void EngineInit(){
+inline void EngineInit()
+{
 	DebugLog::Init();
 	GLState::Init();
 	Resource::Init();
@@ -210,7 +223,8 @@ inline void EngineInit(){
 
 	DebugLog::Push("Full Init");
 }
-inline void EngineCleanup(){
+inline void EngineCleanup()
+{
 	InputManager::Cleanup();
 	GameStateManager::Cleanup();
 	Rendering::Cleanup();
@@ -221,7 +235,8 @@ inline void EngineCleanup(){
 //--
 //Component Handling
 //--
-inline void UpdateComponents(){
+inline void UpdateComponents()
+{
 	Profiler::Clear();
 	Time::Update();
 	Screen::Update();

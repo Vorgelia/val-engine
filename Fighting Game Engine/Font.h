@@ -7,13 +7,15 @@
 #define FONT_ATLAS_SIZE 1024
 #define FONT_ATLAS_PADDING 2
 class Texture;
-enum class TextAlignment{
+enum class TextAlignment
+{
 	Left,
 	Center,
 	Right
 };
 
-class FontCharacter{
+class FontCharacter
+{
 public:
 	glm::vec4 textureParams;
 	GLuint atlasIndex;
@@ -21,7 +23,7 @@ public:
 	glm::ivec2 bearing;
 	GLuint advance;
 
-	FontCharacter(GLuint atlasIndex,glm::vec4 textureParams,glm::ivec2 size,glm::ivec2 bearing,GLuint advance);
+	FontCharacter(GLuint atlasIndex, glm::vec4 textureParams, glm::ivec2 size, glm::ivec2 bearing, GLuint advance);
 };
 class Font
 {
@@ -29,7 +31,7 @@ class Font
 public:
 	std::string name;
 	FT_Face face;
-	
+
 	GLint topBearing;
 	GLuint height;
 	static FT_Library library;

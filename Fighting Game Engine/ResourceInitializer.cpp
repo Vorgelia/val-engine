@@ -2,7 +2,8 @@
 #include "ResourceLoader.h"
 #include "resource1.h"
 #include "ResourceInitializer.h"
-void ResourceInitializer::Init(){
+void ResourceInitializer::Init()
+{
 	//Create some folders, paste some files from the resources in them.
 	//Resources like textures and fonts don't work at the moment.
 	FS::create_directory("Materials/");
@@ -41,6 +42,6 @@ void ResourceInitializer::Init(){
 	FS::create_directory("States/Intro");
 	FS::create_directory("Textures/");
 	FS::create_directory("Textures/Intro");
-	ResourceLoader::SaveFile("Textures/tex.png", ResourceLoader::LoadTextResource(texpng,"PNG"), std::ios::out | std::ios::trunc);
+	ResourceLoader::SaveFile("Textures/tex.png", ResourceLoader::LoadTextResource(texpng, "PNG"), std::ios::out | std::ios::trunc);
 	ResourceLoader::SaveFile("Textures/Intro/Intro.png", ResourceLoader::LoadTextResource(Intropng, "PNG"), std::ios::out | std::ios::trunc);
 }

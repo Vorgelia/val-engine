@@ -2,14 +2,16 @@
 #include "CommonUtilIncludes.hpp"
 
 class Mesh;
-enum class VertexAttributeLocation{
+enum class VertexAttributeLocation
+{
 	vertex = 0,
 	uv = 1,
 	normal = 2
 };
 //Leftover from my own work that didn't rely as much on screen aligned quads
 //Automates management of vertex attrib pointers upon mesh creation
-class VertexAttribute{
+class VertexAttribute
+{
 public:
 	VertexAttributeLocation index;
 	GLint length;

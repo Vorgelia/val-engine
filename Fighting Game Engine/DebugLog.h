@@ -5,7 +5,8 @@
 
 #define VE_DEBUG_ERRORTHROW
 
-namespace DebugLog{
+namespace DebugLog
+{
 	void Init();
 	void Cleanup();
 	void Push(std::string data, LogItem::Type type = LogItem::Type::Log);

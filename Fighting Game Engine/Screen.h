@@ -1,6 +1,7 @@
 #pragma once
 #include "CommonUtilIncludes.hpp"
-namespace Screen{
+namespace Screen
+{
 	extern GLFWmonitor* primaryMonitor;
 	extern const GLFWvidmode* mode;
 	extern GLFWwindow* window;

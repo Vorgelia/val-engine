@@ -1,6 +1,7 @@
 #pragma once
 #include "CommonUtilIncludes.hpp"
-namespace GLState{
+namespace GLState
+{
 	extern GLuint activeTexture;
 	extern GLuint boundShader;
 	extern GLuint boundVAO;

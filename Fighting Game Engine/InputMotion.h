@@ -1,14 +1,16 @@
 #pragma once
 #include "CommonUtilIncludes.hpp"
 
-enum class InputType{
-	Pressed=1,
-	Released=2,
-	Event=3,
-	Held=4
+enum class InputType
+{
+	Pressed = 1,
+	Released = 2,
+	Event = 3,
+	Held = 4
 };
 typedef std::pair<unsigned char, InputType> InputButtonEvent;
-class InputMotionComponent{
+class InputMotionComponent
+{
 public:
 	std::vector<InputButtonEvent> buttons;
 	unsigned char direction;

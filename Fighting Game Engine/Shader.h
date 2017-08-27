@@ -2,7 +2,8 @@
 #include "CommonUtilIncludes.hpp"
 using std::string;
 
-class ShaderAttachment{
+class ShaderAttachment
+{
 public:
 	string code;
 	GLenum type;
@@ -17,7 +18,7 @@ public:
 	string name;
 	std::vector<GLuint> shaders;
 	std::map<string, GLint> uniformLocations;
-	
+
 	GLuint id;
 
 	bool valid();

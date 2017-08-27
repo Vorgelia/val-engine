@@ -8,12 +8,11 @@ protected:
 	bool _loaded;
 public:
 
-	std::map<int,Object*> objects;
+	std::map<int, Object*> objects;
 	FS::path dataPath;
 
 	std::vector<std::string> postEffectsOrder;
 
-	
 	bool initialized();
 	bool loaded();
 	virtual void OnLoaded();

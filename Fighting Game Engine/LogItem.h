@@ -3,9 +3,11 @@
 #include<vector>
 
 //Very simple container class for log data.
-class LogItem{
+class LogItem
+{
 public:
-	enum class Type{
+	enum class Type
+	{
 		Log,
 		Warning,
 		Error,

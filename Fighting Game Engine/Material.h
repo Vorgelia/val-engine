@@ -2,12 +2,13 @@
 #include "CommonUtilIncludes.hpp"
 class Texture;
 class Shader;
-class MaterialTexture{
+class MaterialTexture
+{
 public:
 	Texture* ref;
 	glm::vec4 params;
 	MaterialTexture(Texture* ref);
-	MaterialTexture(Texture* ref,glm::vec4 params);
+	MaterialTexture(Texture* ref, glm::vec4 params);
 
 };
 
@@ -18,7 +19,8 @@ typedef std::pair<std::string, glm::vec4> uniformVec;
 class Material
 {
 public:
-	enum class Properties{
+	enum class Properties
+	{
 		ZWrite = 1,
 		ZTest = 2,
 		Blend = 4,

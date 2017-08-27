@@ -112,6 +112,12 @@
     <Filter Include="Source Files\FG\Characters">
       <UniqueIdentifier>{20190c51-8f38-47d7-91a0-be49bf78017c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Scripting">
+      <UniqueIdentifier>{aad99d76-6fde-4c72-b79e-7761f34ba28c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Scripting">
+      <UniqueIdentifier>{d9f6b802-75d8-448f-8e2f-e0cbbd44bc84}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
