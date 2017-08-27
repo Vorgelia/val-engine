@@ -1,5 +1,8 @@
 #pragma once
 #include "CommonUtilIncludes.hpp"
+#include<ft2build.h>
+#include FT_FREETYPE_H
+
 #define TEXT_SIZE 64
 #define FONT_ATLAS_SIZE 1024
 #define FONT_ATLAS_PADDING 2

@@ -32,8 +32,6 @@ namespace FS = boost::filesystem;
 #include<GLM\glm.hpp>
 #include<GLM\gtc\matrix_transform.hpp>
 #include<GLM\gtc\type_ptr.hpp>
-//Text
-#include<ft2build.h>
-#include FT_FREETYPE_H
+
 //Profiler
 #include "Profiler.h"

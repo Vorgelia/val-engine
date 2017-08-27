@@ -15,7 +15,7 @@ void ResourceInitializer::Init(){
 	ResourceLoader::SaveFile("Materials/Base/Screen.vmat", ResourceLoader::LoadTextResource(Screenvmat), std::ios::out | std::ios::trunc);
 	ResourceLoader::SaveFile("Materials/Intro/Intro_Screen.vmat", ResourceLoader::LoadTextResource(Intro_Screenvmat), std::ios::out | std::ios::trunc);
 	FS::create_directory("Fonts/");
-	ResourceLoader::SaveFile("Fonts/Amble.ttf", ResourceLoader::LoadTextResource(AmbleTTF,"FONT"), std::ios::out | std::ios::trunc);
+	//ResourceLoader::SaveFile("Fonts/Amble.ttf", ResourceLoader::LoadTextResource(AmbleTTF,"FONT"), std::ios::out | std::ios::trunc);
 	FS::create_directory("Meshes/");
 	FS::create_directory("Meshes/Base");
 	ResourceLoader::SaveFile("Meshes/Base/quad.vm", ResourceLoader::LoadTextResource(Quadvm), std::ios::out | std::ios::trunc);
