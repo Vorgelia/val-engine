@@ -39,6 +39,7 @@ void GameStateManager::Update()
 	{
 		isLoading = false;
 		Time::timeSinceLoad = 0;
+		Time::lastUpdateTime = Time::time - VE_FRAME_TIME;
 		states[currentState]->OnLoaded();
 	}
 }
