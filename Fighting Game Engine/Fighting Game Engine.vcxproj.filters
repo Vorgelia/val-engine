@@ -112,10 +112,10 @@
     <Filter Include="Source Files\FG\Characters">
       <UniqueIdentifier>{20190c51-8f38-47d7-91a0-be49bf78017c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Scripting">
+    <Filter Include="Header Files\FG\Scripting">
       <UniqueIdentifier>{aad99d76-6fde-4c72-b79e-7761f34ba28c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Scripting">
+    <Filter Include="Source Files\FG\Scripting">
       <UniqueIdentifier>{d9f6b802-75d8-448f-8e2f-e0cbbd44bc84}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -235,6 +235,21 @@
       <Filter>Source Files\FG\Utilities</Filter>
     </ClCompile>
     <ClCompile Include="AttackData.cpp">
+      <Filter>Source Files\FG\Characters</Filter>
+    </ClCompile>
+    <ClCompile Include="Script.cpp">
+      <Filter>Source Files\FG\Scripting</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptBlock.cpp">
+      <Filter>Source Files\FG\Scripting</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptManager.cpp">
+      <Filter>Source Files\FG\Scripting</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptError.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptParsingUtils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -369,6 +384,21 @@
       <Filter>Header Files\FG\Utilities</Filter>
     </ClInclude>
     <ClInclude Include="AttackData.h">
+      <Filter>Header Files\FG\Characters</Filter>
+    </ClInclude>
+    <ClInclude Include="Script.h">
+      <Filter>Header Files\FG\Scripting</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptBlock.h">
+      <Filter>Header Files\FG\Scripting</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptManager.h">
+      <Filter>Header Files\FG\Scripting</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptError.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptParsingUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

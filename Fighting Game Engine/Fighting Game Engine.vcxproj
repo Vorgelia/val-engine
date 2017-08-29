@@ -105,6 +105,11 @@
     <ClCompile Include="ResourceInitializer.cpp" />
     <ClCompile Include="ResourceLoader.cpp" />
     <ClCompile Include="Screen.cpp" />
+    <ClCompile Include="Script.cpp" />
+    <ClCompile Include="ScriptBlock.cpp" />
+    <ClCompile Include="ScriptError.cpp" />
+    <ClCompile Include="ScriptManager.cpp" />
+    <ClCompile Include="ScriptParsingUtils.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Time.cpp" />
@@ -150,6 +155,11 @@
     <ClInclude Include="ResourceInitializer.h" />
     <ClInclude Include="ResourceLoader.h" />
     <ClInclude Include="Screen.h" />
+    <ClInclude Include="Script.h" />
+    <ClInclude Include="ScriptBlock.h" />
+    <ClInclude Include="ScriptError.h" />
+    <ClInclude Include="ScriptManager.h" />
+    <ClInclude Include="ScriptParsingUtils.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Time.h" />

@@ -105,7 +105,7 @@ void DebugLog::GetStackTrace(std::vector<std::string>* storage, unsigned int sta
 	//Copy-pasted from somewhere.
 	//Get the call stack, run it against the debug symbols and get a bunch of text out of it.
 
-	int   i;
+	unsigned int   i;
 	void          *stack[100];
 	unsigned short frames;
 	SYMBOL_INFO   *symbol;

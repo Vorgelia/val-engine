@@ -11,7 +11,7 @@
 #include "Screen.h"
 void GS_Intro::Init()
 {
-	levelTimer = (float)Time::lastUpdateTime;
+	levelTimer = 0;
 	_initialized = true;
 }
 void GS_Intro::GUI()
@@ -32,6 +32,7 @@ void GS_Intro::GUI()
 
 void GS_Intro::GameUpdate()
 {
+	levelTimer += VE_FRAME_TIME;
 	if(levelTimer + 4 < Time::lastUpdateTime)
 		GameStateManager::LoadState(1);
 	else

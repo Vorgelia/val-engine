@@ -1,0 +1,5 @@
+#pragma 1 2
+
+function Main(int i) : int
+	return 0
+end

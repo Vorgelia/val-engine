@@ -15,18 +15,23 @@ void ResourceInitializer::Init()
 	ResourceLoader::SaveFile("Materials/Base/Screen_Text.vmat", ResourceLoader::LoadTextResource(Screen_Textvmat), std::ios::out | std::ios::trunc);
 	ResourceLoader::SaveFile("Materials/Base/Screen.vmat", ResourceLoader::LoadTextResource(Screenvmat), std::ios::out | std::ios::trunc);
 	ResourceLoader::SaveFile("Materials/Intro/Intro_Screen.vmat", ResourceLoader::LoadTextResource(Intro_Screenvmat), std::ios::out | std::ios::trunc);
+
 	FS::create_directory("Fonts/");
 	//ResourceLoader::SaveFile("Fonts/Amble.ttf", ResourceLoader::LoadTextResource(AmbleTTF,"FONT"), std::ios::out | std::ios::trunc);
+
 	FS::create_directory("Meshes/");
 	FS::create_directory("Meshes/Base");
 	ResourceLoader::SaveFile("Meshes/Base/quad.vm", ResourceLoader::LoadTextResource(Quadvm), std::ios::out | std::ios::trunc);
 	ResourceLoader::SaveFile("Meshes/Base/screenQuad.vm", ResourceLoader::LoadTextResource(ScreenQuadvm), std::ios::out | std::ios::trunc);
+
 	FS::create_directory("PostEffects/");
 	ResourceLoader::SaveFile("PostEffects/BasePostFX.vfx", ResourceLoader::LoadTextResource(BasePostFXvfx), std::ios::out | std::ios::trunc);
+
 	FS::create_directory("Settings/");
 	FS::create_directory("Settings/Input");
 	ResourceLoader::SaveFile("Settings/Input/Default.vi", ResourceLoader::LoadTextResource(Defaultvi), std::ios::out | std::ios::trunc);
 	ResourceLoader::SaveFile("Settings/Input/Keyboard.vi", ResourceLoader::LoadTextResource(Keyboardvi), std::ios::out | std::ios::trunc);
+
 	FS::create_directory("Shaders/");
 	FS::create_directory("Shaders/Base");
 	ResourceLoader::SaveFile("Shaders/Base/2D.frag", ResourceLoader::LoadTextResource(S2Dfrag), std::ios::out | std::ios::trunc);
@@ -37,6 +42,7 @@ void ResourceInitializer::Init()
 	ResourceLoader::SaveFile("Shaders/Base/Screen.vert", ResourceLoader::LoadTextResource(Screenvert), std::ios::out | std::ios::trunc);
 	ResourceLoader::SaveFile("Shaders/Base/Screen_Text.frag", ResourceLoader::LoadTextResource(Screen_Textfrag), std::ios::out | std::ios::trunc);
 	ResourceLoader::SaveFile("Shaders/Base/Screen_Text.vert", ResourceLoader::LoadTextResource(Screen_Textvert), std::ios::out | std::ios::trunc);
+
 	FS::create_directory("States/");
 	FS::create_directory("States/Menu");
 	FS::create_directory("States/Intro");

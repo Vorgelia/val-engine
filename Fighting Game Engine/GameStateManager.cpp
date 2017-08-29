@@ -12,9 +12,10 @@ namespace GameStateManager
 
 void GameStateManager::LoadState(int stl)
 {
-	DebugLog::Push("----\n\n\nLS: " + std::to_string(stl) + "\n\n\n----", LogItem::Type::Message);
+	DebugLog::Push("----\n\n\n Loading State: " + std::to_string(stl) + "\n\n\n----", LogItem::Type::Message);
 	_stateToLoad = stl;
 }
+
 //The game states are managed here. This is where state loading and cleanup, as well as their per-state callbacks are handled.
 void GameStateManager::FrameEnd()
 {

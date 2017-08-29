@@ -22,9 +22,7 @@
 #include <boost\lexical_cast.hpp>
 #include <boost\algorithm\algorithm.hpp>
 #include <boost\assign\list_of.hpp>
-#include <boost\algorithm\string\classification.hpp> 
-#include <boost\algorithm\string\split.hpp>
-#include <boost\algorithm\string\erase.hpp>
+#include <boost\algorithm\string.hpp>
 namespace FS = boost::filesystem;
 //Files
 #include <SOIL\src\SOIL.h>

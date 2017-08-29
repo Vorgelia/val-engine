@@ -17,8 +17,8 @@ void Time::Update()
 	Time::time = glfwGetTime();
 	Time::deltaTime = Time::time - Time::lastTime;
 	Time::smoothDeltaTime = std::max(Time::smoothDeltaTime + (Time::deltaTime - Time::smoothDeltaTime)*0.01, Time::deltaTime);
-	updateRate = (float)std::max(updateRate + (Time::deltaTime*VE_FRAME_RATE - updateRate)*0.01, Time::deltaTime*VE_FRAME_RATE);
-	timeSinceLoad += deltaTime;
+	Time::updateRate = (float)std::max(updateRate + (Time::deltaTime * VE_FRAME_RATE - updateRate)*0.01, Time::deltaTime * VE_FRAME_RATE);
+	Time::timeSinceLoad += deltaTime;
 }
 
 void Time::FrameUpdate()
