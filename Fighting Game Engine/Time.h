@@ -12,6 +12,7 @@ namespace Time
 	extern double timeSinceLoad;
 	extern float updateRate;
 	extern unsigned long frameCount;
+
 	void Update();
 	void FrameUpdate();
 }

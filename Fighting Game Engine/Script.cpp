@@ -7,7 +7,7 @@
 
 void Script::PreProcess()
 {
-	for(int i = 0; i < _lines.size(); ++i)
+	for(size_t i = 0; i < _lines.size(); ++i)
 	{
 		int indentation;
 		std::string line = ScriptParsingUtils::TrimLine(_lines[i], indentation);
@@ -66,7 +66,7 @@ Script::Script(std::string name, std::vector<std::string> lines)
 
 	PreProcess();
 
-	_block = new ScriptBlock(_lines, 0, nullptr, this);
+	_block = new ScriptBlock(_lines, 0, 0, nullptr, this);
 	ExecuteFunction("Init");
 }
 

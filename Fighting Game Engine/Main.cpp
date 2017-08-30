@@ -95,9 +95,7 @@ int main()
 			while(Time::lastUpdateTime + VE_FRAME_TIME <= Time::time)
 			{//Run updates until running one would put us ahead of our current time
 				updatedFrame = true;
-				Time::frameCount += 1;
-				Time::lastUpdateTime += VE_FRAME_TIME;//This is important. We don't set last update time to current time, but we just advance it by 1/60
-				//This means the while statement will run again if more than one frame was to be processed in between now and last loop update.
+				Time::FrameUpdate();
 
 				InputManager::Update();
 				ScriptManager::Update();

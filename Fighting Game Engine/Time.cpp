@@ -21,7 +21,9 @@ void Time::Update()
 	Time::timeSinceLoad += deltaTime;
 }
 
+//Advance game update related variables by one frame
 void Time::FrameUpdate()
 {
-	++frameCount;
+	frameCount += 1;
+	Time::lastUpdateTime += VE_FRAME_TIME;
 }
