@@ -59,13 +59,14 @@ ScriptExitCode Script::ExecuteFunction(std::string name)
 	return ScriptExitCode::Success;
 }
 
-Script::Script(std::string name, std::vector<std::string> lines) : _lines(lines)
+Script::Script(std::string name, std::vector<std::string> lines)
 {
 	_name = name;
+	_lines = lines;
 
 	PreProcess();
 
-	_block = new ScriptBlock(ScriptLinesView(&lines), 0, nullptr, this);
+	_block = new ScriptBlock(ScriptLinesView(&_lines), 0, nullptr, this);
 	ExecuteFunction("Init");
 }
 

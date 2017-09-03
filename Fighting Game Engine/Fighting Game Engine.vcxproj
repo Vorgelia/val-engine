@@ -41,7 +41,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);C:\Users\VAL\Documents\Visual Studio 2013\Resources\Projects;;C:\Users\VAL\Documents\Visual Studio 2013\Resources\Projects\boost</IncludePath>
     <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);C:\Users\VAL\Documents\Visual Studio 2013\Resources\Libraries;C:\Users\VAL\Documents\Visual Studio 2013\Resources\Projects\boost\stage\lib</LibraryPath>
-    <OutDir>..\Build</OutDir>
+    <OutDir>..\Build\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

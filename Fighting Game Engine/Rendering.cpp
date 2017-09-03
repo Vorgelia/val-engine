@@ -318,6 +318,7 @@ void Rendering::DrawMesh(Transform* transform, Mesh* mesh, Material* mat, Camera
 	if(mesh == nullptr)
 	{
 		DebugLog::Push("Attempting to draw null mesh.", LogItem::Type::Warning);
+		return;
 	}
 	else if(!mesh->valid())
 	{

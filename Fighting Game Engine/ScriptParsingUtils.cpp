@@ -70,7 +70,7 @@ std::string ScriptParsingUtils::TrimLine(std::string line, int& indentationLevel
 	return "";
 }
 
-int ScriptParsingUtils::FindBlockEnd(ScriptLinesView lines, unsigned int blockStart)
+int ScriptParsingUtils::FindBlockEnd(const ScriptLinesView &lines, unsigned int blockStart)
 {
 	if(blockStart >= lines.size())
 	{

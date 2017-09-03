@@ -16,4 +16,3 @@ public:
 	ScriptFunction(std::string name, int start, int end, std::vector<std::string> arguments);
 	~ScriptFunction();
 };
-

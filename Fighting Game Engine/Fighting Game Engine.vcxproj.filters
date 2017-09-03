@@ -268,7 +268,7 @@
       <Filter>Source Files\FG\Scripting\Utilities</Filter>
     </ClCompile>
     <ClCompile Include="ScriptLinesView.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\FG\Scripting\Utilities</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -423,7 +423,7 @@
       <Filter>Header Files\FG\Scripting\Utilities</Filter>
     </ClInclude>
     <ClInclude Include="ScriptLinesView.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\FG\Scripting\Utilities</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

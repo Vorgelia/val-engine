@@ -1,41 +1,41 @@
 #include "ScriptLinesView.h"
 
-std::string ScriptLinesView::operator[](const int &index)
+std::string ScriptLinesView::operator[](const int &index) const
 {
 	return at(index);
 }
 
-std::string ScriptLinesView::at(int index)
+std::string ScriptLinesView::at(int index) const
 {
 	return _lines->at(_front + index);
 }
 
-std::vector<std::string>::iterator ScriptLinesView::begin()
+std::vector<std::string>::iterator ScriptLinesView::begin() const
 {
 	return _lines->begin() + _front;
 }
 
-std::vector<std::string>::iterator ScriptLinesView::end()
+std::vector<std::string>::iterator ScriptLinesView::end() const
 {
 	return _lines->begin() + _back + 1;
 }
 
-std::vector<std::string>* ScriptLinesView::lines()
+std::vector<std::string>* ScriptLinesView::lines() const
 {
 	return _lines;
 }
 
-int ScriptLinesView::front()
+int ScriptLinesView::front() const
 {
 	return _front;
 }
 
-int ScriptLinesView::back()
+int ScriptLinesView::back() const
 {
 	return _back;
 }
 
-size_t ScriptLinesView::size()
+size_t ScriptLinesView::size() const
 {
 	return _back - _front;
 }

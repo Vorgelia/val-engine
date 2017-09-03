@@ -9,18 +9,18 @@ class ScriptLinesView
 	int _back;
 
 public:
-	std::string operator[](const int &index);
+	std::string operator[](const int &index) const;
 
-	std::string at(int index);
+	std::string at(int index) const;
 
-	std::vector<std::string>::iterator begin();
-	std::vector<std::string>::iterator end();
+	std::vector<std::string>::iterator begin() const;
+	std::vector<std::string>::iterator end() const;
 
-	size_t size();
+	size_t size() const;
 
-	std::vector<std::string>* lines();
-	int front();
-	int back();
+	std::vector<std::string>* lines() const;
+	int front() const;
+	int back() const;
 
 	ScriptLinesView(std::vector<std::string>* lines);
 	ScriptLinesView(std::vector<std::string>* lines, int front, int back);
