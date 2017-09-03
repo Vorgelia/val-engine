@@ -108,6 +108,8 @@
     <ClCompile Include="Script.cpp" />
     <ClCompile Include="ScriptBlock.cpp" />
     <ClCompile Include="ScriptError.cpp" />
+    <ClCompile Include="ScriptFunction.cpp" />
+    <ClCompile Include="ScriptLinesView.cpp" />
     <ClCompile Include="ScriptManager.cpp" />
     <ClCompile Include="ScriptParsingUtils.cpp" />
     <ClCompile Include="Shader.cpp" />
@@ -158,6 +160,8 @@
     <ClInclude Include="Script.h" />
     <ClInclude Include="ScriptBlock.h" />
     <ClInclude Include="ScriptError.h" />
+    <ClInclude Include="ScriptFunction.h" />
+    <ClInclude Include="ScriptLinesView.h" />
     <ClInclude Include="ScriptManager.h" />
     <ClInclude Include="ScriptParsingUtils.h" />
     <ClInclude Include="Shader.h" />

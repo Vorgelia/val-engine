@@ -1,7 +1,7 @@
 #include "ScriptParsingUtils.h"
+#include "ScriptLinesView.h"
+
 #define TAB_SPACE_AMOUNT 4
-
-
 
 namespace ScriptParsingUtils
 {
@@ -14,14 +14,14 @@ int ScriptParsingUtils::GetIndentationLevel(std::string line)
 	return GetIndentationLevel(line, lineStart);
 }
 
-int ScriptParsingUtils::GetIndentationLevel(std::string line,unsigned int& lineStart)
+int ScriptParsingUtils::GetIndentationLevel(std::string line, unsigned int& lineStart)
 {
 	int indentationLevel = 0;
 	int spaceCount = 0;
 
 	lineStart = 0;
 
-	for(int i = 0; i < line.length(); ++i)
+	for(size_t i = 0; i < line.length(); ++i)
 	{
 		if(line[i] == '\t')
 		{
@@ -56,7 +56,8 @@ std::string ScriptParsingUtils::TrimLine(std::string line, int& indentationLevel
 		return "";
 	}
 
-	int j = line.length() - 1;
+	unsigned int j = line.length() - 1;
+
 	for(; j > i; --j)
 	{
 		if(line[j] != ' ' && line[j] != '\t')
@@ -69,7 +70,7 @@ std::string ScriptParsingUtils::TrimLine(std::string line, int& indentationLevel
 	return "";
 }
 
-int ScriptParsingUtils::FindBlockEnd(std::vector<std::string> lines, unsigned int blockStart)
+int ScriptParsingUtils::FindBlockEnd(ScriptLinesView lines, unsigned int blockStart)
 {
 	if(blockStart >= lines.size())
 	{

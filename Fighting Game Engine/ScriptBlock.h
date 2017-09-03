@@ -3,6 +3,8 @@
 #include <string>
 #include <vector>
 #include <map>
+#include "ScriptLinesView.h"
+
 
 class Script;
 
@@ -13,8 +15,7 @@ class ScriptBlock
 
 	int _depth;
 
-	int _originLine;
-	std::vector<std::string> _lines;
+	ScriptLinesView _lines;
 
 	std::map<std::string, int> _functions;
 
@@ -23,7 +24,7 @@ public:
 	
 	void Run();
 	void RunFunction(std::string name, ...);
-	ScriptBlock(std::vector<std::string> lines, int originLine, int depth, ScriptBlock* parent, Script* owner);
+	ScriptBlock(ScriptLinesView lines, int depth, ScriptBlock* parent, Script* owner);
 	~ScriptBlock();
 };
 

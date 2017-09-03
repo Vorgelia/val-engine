@@ -4,16 +4,10 @@
 #include "ScriptParsingUtils.h"
 #include "ScriptError.h"
 
-//PreProcess global block only. Cache line references to functions and variables.
+//Cache line references to functions and variables.
 //Not meant to be any kind of rigorous parsing quite yet, so we can get away with just checking if the indentation level is the same.
 void ScriptBlock::PreProcess()
 {
-	if(_parent != nullptr)
-	{
-		//We might want to do something here later.
-		return;
-	}
-
 	for(size_t i = 0; i < _lines.size(); i++)
 	{
 		int indentation;
@@ -33,6 +27,10 @@ void ScriptBlock::PreProcess()
 
 		if(spl[0] == "function")
 		{
+			if(_functions.find(spl[1]) != _functions.end())
+			{
+				throw ScriptError("Parser error: Duplicate function definition on line: " + std::to_string(_lines.front() + i));
+			}
 			_functions[spl[1]] = i;
 		}
 	}
@@ -52,7 +50,7 @@ void ScriptBlock::Run()
 		}
 		else if(depth < _depth)
 		{
-			throw ScriptError("Parser error: Line of invalid depth within block: " + std::to_string(_originLine + i));
+			throw ScriptError("Parser error: Line of invalid depth within block: " + std::to_string(_lines.front() + i));
 		}
 
 		//TODO: Proper parsing
@@ -77,22 +75,25 @@ void ScriptBlock::RunFunction(std::string name, ...)
 		throw ScriptError("Function '" + name + "' not properly terminated.");
 	}
 
-	auto fBegin = _lines.begin() + functionLine->second + 1;
-	auto fEnd = _lines.begin() + functionEndLine;
-	std::vector<std::string> functionLines = std::vector<std::string>(fBegin, fEnd);
-	std::shared_ptr<ScriptBlock> scriptBlock = std::make_shared<ScriptBlock>(functionLines, functionLine->second + 1, _depth + 1, this, _owner);
+	int fBegin = functionLine->second + 1;
+	int fEnd = functionEndLine;
+
+	ScriptLinesView functionLines = ScriptLinesView(_lines.lines(), functionLine->second + 1, functionEndLine);
+
+	std::shared_ptr<ScriptBlock> scriptBlock = std::make_shared<ScriptBlock>(functionLines, _depth + 1, this, _owner);
 	scriptBlock->Run();
 }
 
-ScriptBlock::ScriptBlock(std::vector<std::string> lines, int originLine, int depth, ScriptBlock* parent, Script* owner)
+ScriptBlock::ScriptBlock(ScriptLinesView lines, int depth, ScriptBlock* parent, Script* owner) : _lines(lines)
 {
-	_lines = lines;
 	_depth = depth;
 	_parent = parent;
 	_owner = owner;
-	_originLine = originLine;
 
-	PreProcess();
+	if(parent == nullptr)
+	{
+		PreProcess();
+	}
 }
 
 ScriptBlock::~ScriptBlock()

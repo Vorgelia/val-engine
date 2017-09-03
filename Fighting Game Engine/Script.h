@@ -11,7 +11,7 @@ class Script
 {
 	std::string _name;
 
-	std::vector<std::string> _lines;
+	const std::vector<std::string> _lines;
 	std::map<std::string, std::string> _pragmaDirectives;
 
 	ScriptBlock* _block;

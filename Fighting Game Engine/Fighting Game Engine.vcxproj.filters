@@ -118,6 +118,18 @@
     <Filter Include="Source Files\FG\Scripting">
       <UniqueIdentifier>{d9f6b802-75d8-448f-8e2f-e0cbbd44bc84}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\FG\Scripting\Objects">
+      <UniqueIdentifier>{14ae11ae-9dc7-4b06-9342-7e850546342f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\FG\Scripting\Objects">
+      <UniqueIdentifier>{d0b16b3f-9940-414f-8bf2-3176cc15a002}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\FG\Scripting\Utilities">
+      <UniqueIdentifier>{307116f3-d56c-4d3d-afae-5a19d627947a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\FG\Scripting\Utilities">
+      <UniqueIdentifier>{10fd6aaa-03e5-443c-87c4-756485a630d4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -240,16 +252,22 @@
     <ClCompile Include="Script.cpp">
       <Filter>Source Files\FG\Scripting</Filter>
     </ClCompile>
-    <ClCompile Include="ScriptBlock.cpp">
-      <Filter>Source Files\FG\Scripting</Filter>
-    </ClCompile>
     <ClCompile Include="ScriptManager.cpp">
       <Filter>Source Files\FG\Scripting</Filter>
     </ClCompile>
     <ClCompile Include="ScriptError.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\FG\Scripting</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptFunction.cpp">
+      <Filter>Source Files\FG\Scripting\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptBlock.cpp">
+      <Filter>Source Files\FG\Scripting\Objects</Filter>
     </ClCompile>
     <ClCompile Include="ScriptParsingUtils.cpp">
+      <Filter>Source Files\FG\Scripting\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptLinesView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -389,16 +407,22 @@
     <ClInclude Include="Script.h">
       <Filter>Header Files\FG\Scripting</Filter>
     </ClInclude>
-    <ClInclude Include="ScriptBlock.h">
-      <Filter>Header Files\FG\Scripting</Filter>
-    </ClInclude>
     <ClInclude Include="ScriptManager.h">
       <Filter>Header Files\FG\Scripting</Filter>
     </ClInclude>
     <ClInclude Include="ScriptError.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\FG\Scripting</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptFunction.h">
+      <Filter>Header Files\FG\Scripting\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptBlock.h">
+      <Filter>Header Files\FG\Scripting\Objects</Filter>
     </ClInclude>
     <ClInclude Include="ScriptParsingUtils.h">
+      <Filter>Header Files\FG\Scripting\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptLinesView.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
