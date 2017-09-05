@@ -258,9 +258,6 @@
     <ClCompile Include="ScriptError.cpp">
       <Filter>Source Files\FG\Scripting</Filter>
     </ClCompile>
-    <ClCompile Include="ScriptFunction.cpp">
-      <Filter>Source Files\FG\Scripting\Objects</Filter>
-    </ClCompile>
     <ClCompile Include="ScriptBlock.cpp">
       <Filter>Source Files\FG\Scripting\Objects</Filter>
     </ClCompile>
@@ -269,6 +266,9 @@
     </ClCompile>
     <ClCompile Include="ScriptLinesView.cpp">
       <Filter>Source Files\FG\Scripting\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptFunctionSignature.cpp">
+      <Filter>Source Files\FG\Scripting\Objects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -413,9 +413,6 @@
     <ClInclude Include="ScriptError.h">
       <Filter>Header Files\FG\Scripting</Filter>
     </ClInclude>
-    <ClInclude Include="ScriptFunction.h">
-      <Filter>Header Files\FG\Scripting\Objects</Filter>
-    </ClInclude>
     <ClInclude Include="ScriptBlock.h">
       <Filter>Header Files\FG\Scripting\Objects</Filter>
     </ClInclude>
@@ -424,6 +421,9 @@
     </ClInclude>
     <ClInclude Include="ScriptLinesView.h">
       <Filter>Header Files\FG\Scripting\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptFunctionSignature.h">
+      <Filter>Header Files\FG\Scripting\Objects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

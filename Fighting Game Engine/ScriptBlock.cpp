@@ -3,6 +3,7 @@
 #include "Script.h"
 #include "ScriptParsingUtils.h"
 #include "ScriptError.h"
+#include "ScriptFunctionSignature.h"
 
 //Cache line references to functions and variables.
 //Not meant to be any kind of rigorous parsing quite yet, so we can get away with just checking if the indentation level is the same.
@@ -27,11 +28,25 @@ void ScriptBlock::PreProcess()
 
 		if(spl[0] == "function")
 		{
-			if(_functions.find(spl[1]) != _functions.end())
+			ScriptFunctionSignature signature = ScriptParsingUtils::ParseFunctionSignature(_lines, i);
+
+			if(signature.name.empty())
+			{
+				throw ScriptError("Parser error: Invalid function definition on line " + std::to_string(_lines.front() + i));
+			}
+
+			if(signature.end < 0)
+			{
+				throw ScriptError("Parser error: Improperly terminated function '" + signature.name + "'.");
+			}
+
+			if(_functions.find(signature.name) != _functions.end())
 			{
 				throw ScriptError("Parser error: Duplicate function definition on line: " + std::to_string(_lines.front() + i));
 			}
-			_functions[spl[1]] = i;
+
+			_functions[signature.name] = signature;
+			i = signature.end;
 		}
 	}
 
@@ -63,22 +78,13 @@ void ScriptBlock::Run()
 //Create a new function script block and add some variables to it based on the function signature.
 void ScriptBlock::RunFunction(std::string name, ...)
 {
-	auto functionLine = _functions.find(name);
-	if(functionLine == _functions.end())
+	auto function = _functions.find(name);
+	if(function == _functions.end())
 	{
 		throw ScriptError("Attempting to call invalid function '" + name + "'");
 	}
 
-	int functionEndLine = ScriptParsingUtils::FindBlockEnd(_lines, functionLine->second);
-	if(functionEndLine < 0)
-	{
-		throw ScriptError("Function '" + name + "' not properly terminated.");
-	}
-
-	int fBegin = functionLine->second + 1;
-	int fEnd = functionEndLine;
-
-	ScriptLinesView functionLines = ScriptLinesView(_lines.lines(), functionLine->second + 1, functionEndLine);
+	ScriptLinesView functionLines = ScriptLinesView(_lines.lines(), function->second.start + 1, function->second.end);
 
 	std::shared_ptr<ScriptBlock> scriptBlock = std::make_shared<ScriptBlock>(functionLines, _depth + 1, this, _owner);
 	scriptBlock->Run();

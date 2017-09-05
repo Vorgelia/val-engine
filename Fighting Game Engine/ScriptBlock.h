@@ -7,6 +7,7 @@
 
 
 class Script;
+class ScriptFunctionSignature;
 
 class ScriptBlock
 {
@@ -17,7 +18,7 @@ class ScriptBlock
 
 	ScriptLinesView _lines;
 
-	std::map<std::string, int> _functions;
+	std::map<std::string, ScriptFunctionSignature> _functions;
 
 	void PreProcess();
 public:
