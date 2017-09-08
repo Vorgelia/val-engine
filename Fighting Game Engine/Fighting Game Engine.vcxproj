@@ -108,10 +108,13 @@
     <ClCompile Include="Script.cpp" />
     <ClCompile Include="ScriptBlock.cpp" />
     <ClCompile Include="ScriptError.cpp" />
+    <ClCompile Include="ScriptFunctionBlock.cpp" />
     <ClCompile Include="ScriptFunctionSignature.cpp" />
     <ClCompile Include="ScriptLinesView.cpp" />
     <ClCompile Include="ScriptManager.cpp" />
+    <ClCompile Include="ScriptParentBlock.cpp" />
     <ClCompile Include="ScriptParsingUtils.cpp" />
+    <ClCompile Include="ScriptVariable.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Time.cpp" />
@@ -160,10 +163,13 @@
     <ClInclude Include="Script.h" />
     <ClInclude Include="ScriptBlock.h" />
     <ClInclude Include="ScriptError.h" />
+    <ClInclude Include="ScriptFunctionBlock.h" />
     <ClInclude Include="ScriptFunctionSignature.h" />
     <ClInclude Include="ScriptLinesView.h" />
     <ClInclude Include="ScriptManager.h" />
+    <ClInclude Include="ScriptParentBlock.h" />
     <ClInclude Include="ScriptParsingUtils.h" />
+    <ClInclude Include="ScriptVariable.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Time.h" />

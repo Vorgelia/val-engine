@@ -4,13 +4,14 @@
 #include <vector>
 #include <map>
 #include "ScriptLinesView.h"
-
+#include "ScriptVariable.h"
 
 class Script;
-class ScriptFunctionSignature;
 
 class ScriptBlock
 {
+protected:
+
 	Script* _owner;
 	ScriptBlock* _parent;
 
@@ -18,13 +19,12 @@ class ScriptBlock
 
 	ScriptLinesView _lines;
 
-	std::map<std::string, ScriptFunctionSignature> _functions;
-
-	void PreProcess();
+	void ParseLine(const std::string &line, int lineIndex);
+	bool HandleControlFlag();
 public:
 	
 	void Run();
-	void RunFunction(std::string name, ...);
+
 	ScriptBlock(ScriptLinesView lines, int depth, ScriptBlock* parent, Script* owner);
 	~ScriptBlock();
 };

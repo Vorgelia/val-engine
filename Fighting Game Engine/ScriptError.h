@@ -1,5 +1,6 @@
 #pragma once
 #include <stdexcept>
+#include <string>
 
 enum class ScriptExitCode
 {
@@ -8,4 +9,13 @@ enum class ScriptExitCode
 	Exception = 2,
 };
 
-typedef std::logic_error ScriptError;
+class ScriptError : std::logic_error
+{
+	int _line;
+
+	std::string _scriptName;
+public:
+	const char* what() const;
+	ScriptError(std::string message, std::string scriptName, int line);
+	ScriptError(std::string message);
+};

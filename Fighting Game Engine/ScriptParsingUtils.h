@@ -22,6 +22,16 @@ enum class ScriptTokenType
 	Operator
 };
 
+enum class ScriptControlFlag
+{
+	None,
+
+	Break,
+	Continue,
+
+	Return,
+};
+
 namespace ScriptParsingUtils
 {
 	int GetIndentationLevel(std::string line);

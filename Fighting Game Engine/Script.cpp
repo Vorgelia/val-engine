@@ -2,8 +2,18 @@
 #include "ScriptParsingUtils.h"
 #include "CommonUtilIncludes.hpp"
 #include "ScriptError.h"
-#include "ScriptBlock.h"
+#include "ScriptParentBlock.h"
 #include "DebugLog.h"
+
+std::string Script::name() const
+{
+	return _name;
+}
+
+ScriptControlFlag Script::controlFlag()
+{
+	return _controlFlag;
+}
 
 void Script::PreProcess()
 {
@@ -35,6 +45,16 @@ void Script::PreProcess()
 	}
 }
 
+void Script::RaiseControlFlag(ScriptControlFlag flag)
+{
+	_controlFlag = flag;
+}
+
+void Script::ConsumeControlFlag()
+{
+	_controlFlag = ScriptControlFlag::None;
+}
+
 ScriptExitCode Script::Execute()
 {
 	return ExecuteFunction("Main");
@@ -44,16 +64,18 @@ ScriptExitCode Script::ExecuteFunction(std::string name)
 {
 	try
 	{
-		_block->RunFunction(name);
+		_parentBlock->RunFunction(name);
 	}
 	catch(ScriptError error)
 	{
 		DebugLog::Push(error.what());
+		_valid = false;
 		return ScriptExitCode::Failure;
 	}
 	catch(std::exception error)
 	{
 		DebugLog::Push("Unhandled exception on script[" + _name + "]:\n" + std::string(error.what()));
+		_valid = false;
 		return ScriptExitCode::Exception;
 	}
 	return ScriptExitCode::Success;
@@ -66,11 +88,11 @@ Script::Script(std::string name, std::vector<std::string> lines)
 
 	PreProcess();
 
-	_block = new ScriptBlock(ScriptLinesView(&_lines), 0, nullptr, this);
+	_parentBlock = new ScriptParentBlock(ScriptLinesView(&_lines), 0, this);
 	ExecuteFunction("Init");
 }
 
 Script::~Script()
 {
-	delete _block;
+	delete _parentBlock;
 }

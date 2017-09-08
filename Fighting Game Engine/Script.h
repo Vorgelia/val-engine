@@ -5,20 +5,31 @@
 #include <map>
 
 enum class ScriptExitCode;
-class ScriptBlock;
+enum class ScriptControlFlag;
+class ScriptParentBlock;
 
 class Script
 {
+	friend class ScriptBlock;
+
 	std::string _name;
+	bool _valid;
 
 	std::vector<std::string> _lines;
 	std::map<std::string, std::string> _pragmaDirectives;
 
-	ScriptBlock* _block;
+	ScriptControlFlag _controlFlag;
+
+	ScriptParentBlock* _parentBlock;
 
 	void PreProcess();
 
 public:
+	std::string name() const;
+	ScriptControlFlag controlFlag();
+
+	void RaiseControlFlag(ScriptControlFlag flag);
+	void ConsumeControlFlag();
 
 	ScriptExitCode Execute();
 	ScriptExitCode ExecuteFunction(std::string name);
