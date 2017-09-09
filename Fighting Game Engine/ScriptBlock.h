@@ -19,10 +19,13 @@ protected:
 
 	ScriptLinesView _lines;
 
+	size_t _cursor;
+
 	void ParseLine(const std::string &line, int lineIndex);
 	virtual bool HandleControlFlag();
 public:
-	
+	size_t cursor();
+
 	virtual void Run();
 
 	ScriptBlock(ScriptLinesView lines, int depth, ScriptBlock* parent, Script* owner);

@@ -11,10 +11,10 @@
 //Not meant to be any kind of rigorous parsing quite yet, so we can get away with just checking if the indentation level is the same.
 void ScriptParentBlock::PreProcess()
 {
-	for(size_t i = 0; i < _lines.size(); i++)
+	for(_cursor = 0; _cursor < _lines.size(); _cursor++)
 	{
 		int indentation;
-		std::string line = ScriptParsingUtils::TrimLine(_lines[i], indentation);
+		std::string line = ScriptParsingUtils::TrimLine(_lines[_cursor], indentation);
 		if(indentation != _depth)
 		{
 			continue;
@@ -30,25 +30,25 @@ void ScriptParentBlock::PreProcess()
 
 		if(spl[0] == "function")
 		{
-			ScriptFunctionSignature signature = ScriptParsingUtils::ParseFunctionSignature(_lines, i);
+			ScriptFunctionSignature signature = ScriptParsingUtils::ParseFunctionSignature(_lines, _cursor);
 
 			if(signature.name.empty())
 			{
-				throw ScriptError("Parser error: Invalid function definition.", _owner->name(), _lines.front() + i);
+				throw ScriptError("Parser error: Invalid function definition.");
 			}
 
 			if(signature.end < 0)
 			{
-				throw ScriptError("Parser error: Improperly terminated function '" + signature.name + "'.", _owner->name(), _lines.front() + i);
+				throw ScriptError("Parser error: Improperly terminated function '" + signature.name + "'.");
 			}
 
 			if(_functions.find(signature.name) != _functions.end())
 			{
-				throw ScriptError("Parser error: Duplicate function definition.", _owner->name(), _lines.front() + i);
+				throw ScriptError("Parser error: Duplicate function definition.");
 			}
 
 			_functions[signature.name] = signature;
-			i = signature.end;
+			_cursor = signature.end;
 		}
 	}
 
@@ -73,7 +73,7 @@ void ScriptParentBlock::RunFunction(std::string name)
 	auto function = _functions.find(name);
 	if(function == _functions.end())
 	{
-		throw ScriptError("Attempting to call invalid function '" + name + "'", _owner->name(), -1);
+		throw ScriptError("Attempting to call invalid function '" + name + "'");
 	}
 
 	ScriptLinesView functionLines = ScriptLinesView(_lines.lines(), function->second.start + 1, function->second.end);

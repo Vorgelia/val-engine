@@ -63,7 +63,7 @@ ScriptExitCode Script::Execute()
 	}
 	catch(ScriptError error)
 	{
-		DebugLog::Push(error.what());
+		DebugLog::Push("(" + _name + ")" + std::string(error.what()));
 		_valid = false;
 		return ScriptExitCode::Failure;
 	}
