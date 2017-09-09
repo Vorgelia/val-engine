@@ -57,14 +57,9 @@ void Script::ConsumeControlFlag()
 
 ScriptExitCode Script::Execute()
 {
-	return ExecuteFunction("Main");
-}
-
-ScriptExitCode Script::ExecuteFunction(std::string name)
-{
 	try
 	{
-		_parentBlock->RunFunction(name);
+		ExecuteFunction("Main");
 	}
 	catch(ScriptError error)
 	{
@@ -79,6 +74,11 @@ ScriptExitCode Script::ExecuteFunction(std::string name)
 		return ScriptExitCode::Exception;
 	}
 	return ScriptExitCode::Success;
+}
+
+void Script::ExecuteFunction(std::string name)
+{
+	_parentBlock->RunFunction(name);
 }
 
 Script::Script(std::string name, std::vector<std::string> lines)

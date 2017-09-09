@@ -3,7 +3,7 @@
 #include <vector>
 
 class ScriptLinesView;
-class ScriptFunctionSignature;
+struct ScriptFunctionSignature;
 
 enum class ScriptTokenType
 {

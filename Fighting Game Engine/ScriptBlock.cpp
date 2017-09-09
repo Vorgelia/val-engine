@@ -3,6 +3,7 @@
 #include "ScriptParsingUtils.h"
 #include "ScriptError.h"
 
+//TODO: Make parse line return a token vector
 void ScriptBlock::ParseLine(const std::string &line, int lineIndex)
 {
 	if(line[0] == '#')

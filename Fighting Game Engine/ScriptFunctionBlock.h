@@ -3,10 +3,12 @@
 #include <string>
 #include <stdarg.h>
 
+struct ScriptFunctionSignature;
+
 class ScriptFunctionBlock :
 	public ScriptBlock
 {
-	//ScriptFunctionSignature& _signature;
+	ScriptFunctionSignature* _signature;
 
 	bool HandleControlFlag();
 public:
@@ -14,7 +16,7 @@ public:
 
 	void Run(std::vector<ScriptVariable> variables);
 
-	ScriptFunctionBlock(ScriptLinesView lines, int depth, ScriptBlock* parent, Script* owner);
+	ScriptFunctionBlock(ScriptFunctionSignature* signature, ScriptLinesView lines, int depth, ScriptBlock* parent, Script* owner);
 	~ScriptFunctionBlock();
 };
 

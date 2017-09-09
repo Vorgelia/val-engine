@@ -20,10 +20,10 @@ protected:
 	ScriptLinesView _lines;
 
 	void ParseLine(const std::string &line, int lineIndex);
-	bool HandleControlFlag();
+	virtual bool HandleControlFlag();
 public:
 	
-	void Run();
+	virtual void Run();
 
 	ScriptBlock(ScriptLinesView lines, int depth, ScriptBlock* parent, Script* owner);
 	~ScriptBlock();

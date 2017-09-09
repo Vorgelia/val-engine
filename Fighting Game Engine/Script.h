@@ -32,7 +32,7 @@ public:
 	void ConsumeControlFlag();
 
 	ScriptExitCode Execute();
-	ScriptExitCode ExecuteFunction(std::string name);
+	void ExecuteFunction(std::string name);
 
 	Script(std::string name, std::vector<std::string> lines);
 	~Script();

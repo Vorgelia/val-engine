@@ -2,6 +2,7 @@
 #include "ScriptError.h"
 #include "ScriptFunctionBlock.h"
 #include "ScriptParsingUtils.h"
+#include "ScriptFunctionSignature.h"
 
 bool ScriptFunctionBlock::HandleControlFlag()
 {
@@ -17,8 +18,17 @@ bool ScriptFunctionBlock::HandleControlFlag()
 	return false;
 }
 
-ScriptFunctionBlock::ScriptFunctionBlock(ScriptLinesView lines, int depth, ScriptBlock* parent, Script* owner) :ScriptBlock(lines, depth, parent, owner)
+void ScriptFunctionBlock::Run(std::vector<ScriptVariable> variables)
 {
+	//add variables
+	ScriptBlock::Run();
+}
+
+ScriptFunctionBlock::ScriptFunctionBlock(ScriptFunctionSignature* signature, ScriptLinesView lines, int depth, ScriptBlock* parent, Script* owner)
+: ScriptBlock(lines, depth, parent, owner)
+{
+	_signature = signature;
+	//add __VE_RETURN variable of type signature.returnType
 }
 
 

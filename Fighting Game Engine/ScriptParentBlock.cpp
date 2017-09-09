@@ -1,6 +1,7 @@
 #include "CommonUtilIncludes.hpp"
 #include "ScriptParsingUtils.h"
 #include "ScriptParentBlock.h"
+#include "ScriptFunctionBlock.h"
 #include "ScriptFunctionSignature.h"
 #include "ScriptError.h"
 #include "Script.h"
@@ -77,8 +78,11 @@ void ScriptParentBlock::RunFunction(std::string name)
 
 	ScriptLinesView functionLines = ScriptLinesView(_lines.lines(), function->second.start + 1, function->second.end);
 
-	std::shared_ptr<ScriptBlock> scriptBlock = std::make_shared<ScriptBlock>(functionLines, _depth + 1, this, _owner);
-	scriptBlock->Run();
+	std::shared_ptr<ScriptFunctionBlock> scriptBlock = std::make_shared<ScriptFunctionBlock>(&function->second, functionLines, _depth + 1, this, _owner);
+
+	//TODO: Parse variables, pass to function.
+	std::vector<ScriptVariable> variables;
+	scriptBlock->Run(variables);
 }
 
 ScriptParentBlock::ScriptParentBlock(ScriptLinesView lines, int depth, Script* owner) :ScriptBlock(lines, depth, nullptr, owner)
