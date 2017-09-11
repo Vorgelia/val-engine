@@ -8,6 +8,7 @@
 
 class Script;
 enum class ScriptLineType;
+struct ScriptToken;
 
 class ScriptBlock
 {
@@ -24,10 +25,10 @@ protected:
 
 	void ParseLine(const std::string &line);
 
-	virtual void HandleExpressionLine(const std::vector<ScriptToken> &tokens);
-	virtual void HandleFunctionDeclarationLine(const std::vector<ScriptToken> &tokens);
-	virtual void HandleLoopDeclarationLine(const std::vector<ScriptToken> &tokens);
-	virtual void HandleConditionalDeclarationLine(const std::vector<ScriptToken> &tokens);
+	virtual void HandleExpressionLine(std::vector<ScriptToken> &tokens);
+	virtual void HandleFunctionDeclarationLine(std::vector<ScriptToken> &tokens);
+	virtual void HandleLoopDeclarationLine(std::vector<ScriptToken> &tokens);
+	virtual void HandleConditionalDeclarationLine(std::vector<ScriptToken> &tokens);
 
 	virtual bool HandleControlFlag();
 public:

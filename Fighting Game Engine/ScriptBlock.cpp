@@ -22,7 +22,7 @@ void ScriptBlock::ParseLine(const std::string &line)
 	std::vector<ScriptToken> tokens;
 	ScriptParsingUtils::ParseLineTokens(line, tokens);
 
-	if(tokens.size == 0)
+	if(tokens.size() == 0)
 	{
 		return;
 	}
@@ -45,7 +45,7 @@ void ScriptBlock::ParseLine(const std::string &line)
 	}
 }
 
-void ScriptBlock::HandleExpressionLine(const std::vector<ScriptToken> &tokens)
+void ScriptBlock::HandleExpressionLine(std::vector<ScriptToken> &tokens)
 {
 	if(tokens[0].token == "return")
 	{
@@ -63,21 +63,20 @@ void ScriptBlock::HandleExpressionLine(const std::vector<ScriptToken> &tokens)
 	}
 }
 
-void ScriptBlock::HandleFunctionDeclarationLine(const std::vector<ScriptToken> &tokens)
+void ScriptBlock::HandleFunctionDeclarationLine(std::vector<ScriptToken> &tokens)
 {
 	throw ScriptError("Misplaced function declaration.");
 }
 
-void ScriptBlock::HandleLoopDeclarationLine(const std::vector<ScriptToken> &tokens)
+void ScriptBlock::HandleLoopDeclarationLine(std::vector<ScriptToken> &tokens)
 {
 
 }
 
-void ScriptBlock::HandleConditionalDeclarationLine(const std::vector<ScriptToken> &tokens)
+void ScriptBlock::HandleConditionalDeclarationLine(std::vector<ScriptToken> &tokens)
 {
 
 }
-
 
 void ScriptBlock::Run()
 {
