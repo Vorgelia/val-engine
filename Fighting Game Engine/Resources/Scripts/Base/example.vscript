@@ -1,5 +1,11 @@
-#pragma 1 2
+#pragma foo bar		
 
-function Main(int i) : int
+function Main () : int
+	return 0
+end
+
+function Init(int i):int
+	return 0
+	return 0
 	return 0
 end
