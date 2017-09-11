@@ -35,7 +35,7 @@ void GS_Intro::GUI()
 
 void GS_Intro::GameUpdate()
 {
-	levelTimer += VE_FRAME_TIME;
+	levelTimer += (float)VE_FRAME_TIME;
 	if(levelTimer > 4)
 		GameStateManager::LoadState(1);
 	else

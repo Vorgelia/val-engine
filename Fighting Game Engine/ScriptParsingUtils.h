@@ -57,7 +57,7 @@ namespace ScriptParsingUtils
 	int FindBlockEnd(const ScriptLinesView &lines, unsigned int blockStart);
 
 	ScriptTokenType GetTokenType(char character);
-	ScriptTokenType GetNextTokenType(std::string line, int startIndex, int& out_endIndex);
+	ScriptTokenType GetNextTokenType(std::string line, size_t startIndex, int& out_endIndex);
 
 	void ParseLineTokens(std::string line, std::vector<ScriptToken> &out_tokens);
 

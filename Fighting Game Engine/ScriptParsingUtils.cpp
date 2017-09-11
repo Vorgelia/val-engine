@@ -99,29 +99,29 @@ ScriptTokenType ScriptParsingUtils::GetTokenType(char character)
 {
 	switch(character)
 	{
-		case ' ':
-		case '\t':
-			return ScriptTokenType::Whitespace;
-		case '\"':
-			return ScriptTokenType::StringLiteral;
-		case '(':
-			return ScriptTokenType::ParenthesisGroup;
-		case ',':
-			return ScriptTokenType::Separator;
-		case ':':
-			return ScriptTokenType::Specifier;
-		case '+':
-		case '-':
-		case '|':
-		case '&':
-		case '=':
-		case '*':
-		case '/':
-		case '>':
-		case '<':
-		case '!':
-		case '~':
-			return ScriptTokenType::Operator;
+	case ' ':
+	case '\t':
+		return ScriptTokenType::Whitespace;
+	case '\"':
+		return ScriptTokenType::StringLiteral;
+	case '(':
+		return ScriptTokenType::ParenthesisGroup;
+	case ',':
+		return ScriptTokenType::Separator;
+	case ':':
+		return ScriptTokenType::Specifier;
+	case '+':
+	case '-':
+	case '|':
+	case '&':
+	case '=':
+	case '*':
+	case '/':
+	case '>':
+	case '<':
+	case '!':
+	case '~':
+		return ScriptTokenType::Operator;
 	}
 
 	if(isalpha(character))
@@ -136,7 +136,7 @@ ScriptTokenType ScriptParsingUtils::GetTokenType(char character)
 	return ScriptTokenType::Invalid;
 }
 
-ScriptTokenType ScriptParsingUtils::GetNextTokenType(std::string line, int startIndex, int& out_endIndex)
+ScriptTokenType ScriptParsingUtils::GetNextTokenType(std::string line, size_t startIndex, int& out_endIndex)
 {
 	out_endIndex = -1;
 
@@ -154,110 +154,110 @@ ScriptTokenType ScriptParsingUtils::GetNextTokenType(std::string line, int start
 
 	switch(type)
 	{
-		case ScriptTokenType::Invalid:
-			break;
-		case ScriptTokenType::ParenthesisGroup:
+	case ScriptTokenType::Invalid:
+		break;
+	case ScriptTokenType::ParenthesisGroup:
+	{
+		int parenthesisDepth = 0;
+		for(size_t i = startIndex; i < line.length(); ++i)
 		{
-												  int parenthesisDepth = 0;
-												  for(size_t i = startIndex; i < line.length(); ++i)
-												  {
-													  if(line[i] == '(')
-													  {
-														  ++parenthesisDepth;
-													  }
-													  else if(line[i] == ')')
-													  {
-														  if(--parenthesisDepth == 0)
-														  {
-															  out_endIndex = i;
-															  break;
-														  }
-													  }
-												  }
+			if(line[i] == '(')
+			{
+				++parenthesisDepth;
+			}
+			else if(line[i] == ')')
+			{
+				if(--parenthesisDepth == 0)
+				{
+					out_endIndex = i;
+					break;
+				}
+			}
 		}
-			break;
-		case ScriptTokenType::StringLiteral:
+	}
+	break;
+	case ScriptTokenType::StringLiteral:
+	{
+		bool escapeCharacter = false;
+		for(size_t i = startIndex; i < line.length(); ++i)
 		{
-											   bool escapeCharacter = false;
-											   for(size_t i = startIndex; i < line.length(); ++i)
-											   {
-												   if(!escapeCharacter)
-												   {
-													   if(line[i] == '\\')
-													   {
-														   escapeCharacter = true;
-													   }
-													   else if(line[i] == '"')
-													   {
-														   out_endIndex = i;
-														   break;
-													   }
-												   }
-												   else
-												   {
-													   escapeCharacter = false;
-												   }
-											   }
+			if(!escapeCharacter)
+			{
+				if(line[i] == '\\')
+				{
+					escapeCharacter = true;
+				}
+				else if(line[i] == '"')
+				{
+					out_endIndex = i;
+					break;
+				}
+			}
+			else
+			{
+				escapeCharacter = false;
+			}
 		}
-			break;
-		case ScriptTokenType::Separator:
-		case ScriptTokenType::Specifier:
-			out_endIndex = startIndex;
-			break;
-		case ScriptTokenType::Operator:
-			for(size_t i = startIndex; i < line.length(); ++i)
+	}
+	break;
+	case ScriptTokenType::Separator:
+	case ScriptTokenType::Specifier:
+		out_endIndex = startIndex;
+		break;
+	case ScriptTokenType::Operator:
+		for(size_t i = startIndex; i < line.length(); ++i)
+		{
+			if(GetTokenType(line[i]) == ScriptTokenType::Operator)
 			{
-				if(GetTokenType(line[i]) == ScriptTokenType::Operator)
-				{
-					out_endIndex = i;
-				}
-				else
-				{
-					break;
-				}
+				out_endIndex = i;
 			}
-			break;
-		case ScriptTokenType::NumericLiteral:
-			for(size_t i = startIndex; i < line.length(); ++i)
+			else
 			{
-				if(isalpha(i))
-				{
-					out_endIndex = i;
-					break;
-				}
-				else if(!isdigit(i))
-				{
-					out_endIndex = i - 1;
-					break;
-				}
+				break;
 			}
-			break;
-		case ScriptTokenType::Keyword:
-			for(size_t i = startIndex; i < line.length(); ++i)
+		}
+		break;
+	case ScriptTokenType::NumericLiteral:
+		for(size_t i = startIndex; i < line.length(); ++i)
+		{
+			if(isalpha(i))
 			{
-				if(isalnum(line[i]) || line[i] == '_')
-				{
-					out_endIndex = i;
-				}
-				else
-				{
-					break;
-				}
+				out_endIndex = i;
+				break;
 			}
-			break;
-		case ScriptTokenType::Whitespace:
-			for(size_t i = startIndex; i < line.length(); ++i)
+			else if(!isdigit(i))
 			{
-				if(GetTokenType(line[i]) == ScriptTokenType::Whitespace)
-				{
-					out_endIndex = i;
-				}
-				else
-				{
-					break;
-				}
+				out_endIndex = i - 1;
+				break;
 			}
-			break;
+		}
+		break;
+	case ScriptTokenType::Keyword:
+		for(size_t i = startIndex; i < line.length(); ++i)
+		{
+			if(isalnum(line[i]) || line[i] == '_')
+			{
+				out_endIndex = i;
+			}
+			else
+			{
+				break;
+			}
+		}
+		break;
+	case ScriptTokenType::Whitespace:
+		for(size_t i = startIndex; i < line.length(); ++i)
+		{
+			if(GetTokenType(line[i]) == ScriptTokenType::Whitespace)
+			{
+				out_endIndex = i;
+			}
+			else
+			{
+				break;
+			}
+		}
+		break;
 	}
 	return type;
 }
@@ -279,7 +279,7 @@ void ScriptParsingUtils::ParseLineTokens(std::string line, std::vector<ScriptTok
 			line.substr(cursor, endIndex - cursor + 1)
 			, tokenType });
 
-			cursor = endIndex + 1;
+		cursor = endIndex + 1;
 	}
 }
 
@@ -322,43 +322,43 @@ ScriptFunctionSignature ScriptParsingUtils::ParseFunctionSignature(const ScriptL
 
 		switch(state++)
 		{
-			case 0:
-				if(token != "function")
-				{
-					throw ScriptError("Parser error: Invalid function definition.");
-				}
+		case 0:
+			if(token != "function")
+			{
+				throw ScriptError("Parser error: Invalid function definition.");
+			}
+			break;
+		case 1:
+			if(type != ScriptTokenType::Keyword)
+			{
+				throw ScriptError("Parser error: Invalid function definition.");
+			}
+			signature.name = token;
+			break;
+		case 2:
+			if(type != ScriptTokenType::ParenthesisGroup)
+			{
+				throw ScriptError("Parser error: Invalid function definition.");
+			}
+			if(token.length() < 2)
+			{
 				break;
-			case 1:
-				if(type != ScriptTokenType::Keyword)
-				{
-					throw ScriptError("Parser error: Invalid function definition.");
-				}
-				signature.name = token;
-				break;
-			case 2:
-				if(type != ScriptTokenType::ParenthesisGroup)
-				{
-					throw ScriptError("Parser error: Invalid function definition.");
-				}
-				if(token.length() < 2)
-				{
-					break;
-				}
-				token = token.substr(1, token.length() - 2);
-				boost::split(signature.arguments, token, boost::is_any_of(","), boost::token_compress_on);
-				break;
-			case 3:
-				if(type != ScriptTokenType::Specifier)
-				{
-					throw ScriptError("Parser error: Invalid function definition.");
-				}
-				break;
-			case 4:
-				if(type != ScriptTokenType::Keyword)
-				{
-					throw ScriptError("Parser error: Invalid function definition.");
-				}
-				signature.returnType = token;
+			}
+			token = token.substr(1, token.length() - 2);
+			boost::split(signature.arguments, token, boost::is_any_of(","), boost::token_compress_on);
+			break;
+		case 3:
+			if(type != ScriptTokenType::Specifier)
+			{
+				throw ScriptError("Parser error: Invalid function definition.");
+			}
+			break;
+		case 4:
+			if(type != ScriptTokenType::Keyword)
+			{
+				throw ScriptError("Parser error: Invalid function definition.");
+			}
+			signature.returnType = token;
 		}
 	}
 

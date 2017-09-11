@@ -16,9 +16,6 @@ void ScriptBlock::ParseLine(const std::string &line)
 		return;
 	}
 
-	int cursor = 0;
-	int endIndex;
-
 	std::vector<ScriptToken> tokens;
 	ScriptParsingUtils::ParseLineTokens(line, tokens);
 
@@ -113,10 +110,10 @@ bool ScriptBlock::HandleControlFlag()
 {
 	switch(_owner->controlFlag())
 	{
-		case ScriptControlFlag::Break:
-		case ScriptControlFlag::Return:
-		case ScriptControlFlag::Continue:
-			return true;
+	case ScriptControlFlag::Break:
+	case ScriptControlFlag::Return:
+	case ScriptControlFlag::Continue:
+		return true;
 	}
 	return false;
 }
