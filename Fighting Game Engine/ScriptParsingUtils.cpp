@@ -17,12 +17,12 @@ int ScriptParsingUtils::GetIndentationLevel(std::string line)
 	return GetIndentationLevel(line, lineStart);
 }
 
-int ScriptParsingUtils::GetIndentationLevel(std::string line, unsigned int& lineStart)
+int ScriptParsingUtils::GetIndentationLevel(std::string line, unsigned int& out_lineStart)
 {
 	int indentationLevel = 0;
 	int spaceCount = 0;
 
-	lineStart = 0;
+	out_lineStart = 0;
 
 	for(size_t i = 0; i < line.length(); ++i)
 	{
@@ -41,7 +41,7 @@ int ScriptParsingUtils::GetIndentationLevel(std::string line, unsigned int& line
 		}
 		else
 		{
-			lineStart = i;
+			out_lineStart = i;
 			return indentationLevel;
 		}
 	}
@@ -49,12 +49,12 @@ int ScriptParsingUtils::GetIndentationLevel(std::string line, unsigned int& line
 	return -1;
 }
 
-std::string ScriptParsingUtils::TrimLine(std::string line, int& indentationLevel)
+std::string ScriptParsingUtils::TrimLine(std::string line, int& out_indentationLevel)
 {
 	unsigned int i;
-	indentationLevel = GetIndentationLevel(line, i);
+	out_indentationLevel = GetIndentationLevel(line, i);
 
-	if(indentationLevel < 0)
+	if(out_indentationLevel < 0)
 	{
 		return "";
 	}
@@ -69,7 +69,7 @@ std::string ScriptParsingUtils::TrimLine(std::string line, int& indentationLevel
 		}
 	}
 
-	indentationLevel = -1;
+	out_indentationLevel = -1;
 	return "";
 }
 
@@ -110,7 +110,6 @@ ScriptTokenType ScriptParsingUtils::GetTokenType(char character)
 			return ScriptTokenType::Separator;
 		case ':':
 			return ScriptTokenType::Specifier;
-			break;
 		case '+':
 		case '-':
 		case '|':
@@ -137,9 +136,9 @@ ScriptTokenType ScriptParsingUtils::GetTokenType(char character)
 	return ScriptTokenType::Invalid;
 }
 
-ScriptTokenType ScriptParsingUtils::GetNextTokenType(std::string line, int startIndex, int& endIndex)
+ScriptTokenType ScriptParsingUtils::GetNextTokenType(std::string line, int startIndex, int& out_endIndex)
 {
-	endIndex = -1;
+	out_endIndex = -1;
 
 	if(startIndex >= line.length())
 	{
@@ -149,7 +148,7 @@ ScriptTokenType ScriptParsingUtils::GetNextTokenType(std::string line, int start
 	ScriptTokenType type = GetTokenType(line[startIndex]);
 	if(startIndex == line.length() - 1)
 	{
-		endIndex = startIndex + 1;
+		out_endIndex = startIndex + 1;
 		return type;
 	}
 
@@ -160,7 +159,7 @@ ScriptTokenType ScriptParsingUtils::GetNextTokenType(std::string line, int start
 		case ScriptTokenType::ParenthesisGroup:
 		{
 												  int parenthesisDepth = 0;
-												  for(int i = startIndex; i < line.length(); ++i)
+												  for(size_t i = startIndex; i < line.length(); ++i)
 												  {
 													  if(line[i] == '(')
 													  {
@@ -170,7 +169,7 @@ ScriptTokenType ScriptParsingUtils::GetNextTokenType(std::string line, int start
 													  {
 														  if(--parenthesisDepth == 0)
 														  {
-															  endIndex = i;
+															  out_endIndex = i;
 															  break;
 														  }
 													  }
@@ -180,7 +179,7 @@ ScriptTokenType ScriptParsingUtils::GetNextTokenType(std::string line, int start
 		case ScriptTokenType::StringLiteral:
 		{
 											   bool escapeCharacter = false;
-											   for(int i = startIndex; i < line.length(); ++i)
+											   for(size_t i = startIndex; i < line.length(); ++i)
 											   {
 												   if(!escapeCharacter)
 												   {
@@ -190,7 +189,7 @@ ScriptTokenType ScriptParsingUtils::GetNextTokenType(std::string line, int start
 													   }
 													   else if(line[i] == '"')
 													   {
-														   endIndex = i;
+														   out_endIndex = i;
 														   break;
 													   }
 												   }
@@ -203,14 +202,14 @@ ScriptTokenType ScriptParsingUtils::GetNextTokenType(std::string line, int start
 			break;
 		case ScriptTokenType::Separator:
 		case ScriptTokenType::Specifier:
-			endIndex = startIndex;
+			out_endIndex = startIndex;
 			break;
 		case ScriptTokenType::Operator:
-			for(int i = startIndex; i < line.length(); ++i)
+			for(size_t i = startIndex; i < line.length(); ++i)
 			{
 				if(GetTokenType(line[i]) == ScriptTokenType::Operator)
 				{
-					endIndex = i;
+					out_endIndex = i;
 				}
 				else
 				{
@@ -219,26 +218,26 @@ ScriptTokenType ScriptParsingUtils::GetNextTokenType(std::string line, int start
 			}
 			break;
 		case ScriptTokenType::NumericLiteral:
-			for(int i = startIndex; i < line.length(); ++i)
+			for(size_t i = startIndex; i < line.length(); ++i)
 			{
 				if(isalpha(i))
 				{
-					endIndex = i;
+					out_endIndex = i;
 					break;
 				}
 				else if(!isdigit(i))
 				{
-					endIndex = i - 1;
+					out_endIndex = i - 1;
 					break;
 				}
 			}
 			break;
 		case ScriptTokenType::Keyword:
-			for(int i = startIndex; i < line.length(); ++i)
+			for(size_t i = startIndex; i < line.length(); ++i)
 			{
 				if(isalnum(line[i]) || line[i] == '_')
 				{
-					endIndex = i;
+					out_endIndex = i;
 				}
 				else
 				{
@@ -247,11 +246,11 @@ ScriptTokenType ScriptParsingUtils::GetNextTokenType(std::string line, int start
 			}
 			break;
 		case ScriptTokenType::Whitespace:
-			for(int i = startIndex; i < line.length(); ++i)
+			for(size_t i = startIndex; i < line.length(); ++i)
 			{
 				if(GetTokenType(line[i]) == ScriptTokenType::Whitespace)
 				{
-					endIndex = i;
+					out_endIndex = i;
 				}
 				else
 				{
@@ -261,6 +260,27 @@ ScriptTokenType ScriptParsingUtils::GetNextTokenType(std::string line, int start
 			break;
 	}
 	return type;
+}
+
+void ScriptParsingUtils::ParseLineTokens(std::string line, std::vector<ScriptToken> &out_tokens)
+{
+	out_tokens.clear();
+	ScriptTokenType tokenType;
+	int cursor = 0;
+	int endIndex;
+	while(cursor < line.length())
+	{
+		tokenType = GetNextTokenType(line, cursor, endIndex);
+		if(cursor < 0 || tokenType == ScriptTokenType::Invalid)
+		{
+			return;
+		}
+		out_tokens.push_back(ScriptToken{
+			line.substr(cursor, endIndex - cursor + 1)
+			, tokenType });
+
+			cursor = endIndex + 1;
+	}
 }
 
 ScriptFunctionSignature ScriptParsingUtils::ParseFunctionSignature(const ScriptLinesView &lines, int declarationLine)
@@ -288,7 +308,7 @@ ScriptFunctionSignature ScriptParsingUtils::ParseFunctionSignature(const ScriptL
 	{
 		int endIndex;
 		ScriptTokenType type = GetNextTokenType(line, cursor, endIndex);
-		if(endIndex < 0)
+		if(endIndex < 0 || type == ScriptTokenType::Invalid)
 		{
 			return signature;
 		}

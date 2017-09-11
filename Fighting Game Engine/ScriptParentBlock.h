@@ -10,6 +10,8 @@ class ScriptParentBlock :
 
 	void PreProcess();
 	bool HandleControlFlag();
+
+	void HandleFunctionDeclarationLine(const std::vector<ScriptToken> &tokens);
 public:
 	
 	void RunFunction(std::string name);

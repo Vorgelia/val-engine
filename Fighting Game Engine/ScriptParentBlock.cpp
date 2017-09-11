@@ -7,7 +7,7 @@
 #include "Script.h"
 #include <memory>
 
-//Cache line references to functions and variables.
+//Cache line references to functions.
 //Not meant to be any kind of rigorous parsing quite yet, so we can get away with just checking if the indentation level is the same.
 void ScriptParentBlock::PreProcess()
 {
@@ -53,6 +53,11 @@ void ScriptParentBlock::PreProcess()
 	}
 
 	Run();
+}
+
+void ScriptParentBlock::HandleFunctionDeclarationLine(const std::vector<ScriptToken> &tokens)
+{
+	_cursor = ScriptParsingUtils::FindBlockEnd(_lines, _cursor);
 }
 
 bool ScriptParentBlock::HandleControlFlag()

@@ -32,17 +32,34 @@ enum class ScriptControlFlag
 	Return,
 };
 
+enum class ScriptLineType
+{
+	Invalid,
+	Expression,
+	FunctionDeclaration,
+	LoopDeclaration,
+	ConditionalDeclaration
+};
+
+struct ScriptToken
+{
+	std::string token;
+	ScriptTokenType type;
+};
+
 namespace ScriptParsingUtils
 {
 	int GetIndentationLevel(std::string line);
-	int GetIndentationLevel(std::string line, unsigned int& lineStart);
+	int GetIndentationLevel(std::string line, unsigned int& out_lineStart);
 
-	std::string TrimLine(std::string line, int& indentationLevel);
+	std::string TrimLine(std::string line, int& out_indentationLevel);
 
 	int FindBlockEnd(const ScriptLinesView &lines, unsigned int blockStart);
 
 	ScriptTokenType GetTokenType(char character);
-	ScriptTokenType GetNextTokenType(std::string line, int startIndex, int& endIndex);
+	ScriptTokenType GetNextTokenType(std::string line, int startIndex, int& out_endIndex);
+
+	void ParseLineTokens(std::string line, std::vector<ScriptToken> &out_tokens);
 
 	ScriptFunctionSignature ParseFunctionSignature(const ScriptLinesView &lines, int declarationLine);
 }

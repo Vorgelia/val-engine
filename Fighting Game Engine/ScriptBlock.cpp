@@ -9,7 +9,7 @@ size_t ScriptBlock::cursor()
 }
 
 //TODO: Make parse line return a token vector
-void ScriptBlock::ParseLine(const std::string &line, int lineIndex)
+void ScriptBlock::ParseLine(const std::string &line)
 {
 	if(line[0] == '#')
 	{
@@ -19,18 +19,65 @@ void ScriptBlock::ParseLine(const std::string &line, int lineIndex)
 	int cursor = 0;
 	int endIndex;
 
-	ScriptTokenType type = ScriptParsingUtils::GetNextTokenType(line, cursor, endIndex);
-	if(endIndex < 0 || type == ScriptTokenType::Invalid)
+	std::vector<ScriptToken> tokens;
+	ScriptParsingUtils::ParseLineTokens(line, tokens);
+
+	if(tokens.size == 0)
 	{
-		throw ScriptError("Unexpected parsing error with token " + std::to_string((int)type));
+		return;
 	}
 
-	std::string token = line.substr(cursor, endIndex - cursor + 1);
-	if(token == "return")
+	if(tokens[0].token == "function")
+	{
+		HandleFunctionDeclarationLine(tokens);
+	}
+	else if(tokens[0].token == "if")
+	{
+		HandleConditionalDeclarationLine(tokens);
+	}
+	else if(tokens[0].token == "while")
+	{
+		HandleLoopDeclarationLine(tokens);
+	}
+	else
+	{
+		HandleExpressionLine(tokens);
+	}
+}
+
+void ScriptBlock::HandleExpressionLine(const std::vector<ScriptToken> &tokens)
+{
+	if(tokens[0].token == "return")
 	{
 		_owner->RaiseControlFlag(ScriptControlFlag::Return);
 	}
+	else if(tokens[0].token == "break")
+	{
+		_owner->RaiseControlFlag(ScriptControlFlag::Break);
+		return;
+	}
+	else if(tokens[0].token == "continue")
+	{
+		_owner->RaiseControlFlag(ScriptControlFlag::Continue);
+		return;
+	}
 }
+
+void ScriptBlock::HandleFunctionDeclarationLine(const std::vector<ScriptToken> &tokens)
+{
+	throw ScriptError("Misplaced function declaration.");
+}
+
+void ScriptBlock::HandleLoopDeclarationLine(const std::vector<ScriptToken> &tokens)
+{
+
+}
+
+void ScriptBlock::HandleConditionalDeclarationLine(const std::vector<ScriptToken> &tokens)
+{
+
+}
+
 
 void ScriptBlock::Run()
 {
@@ -48,7 +95,7 @@ void ScriptBlock::Run()
 			throw ScriptError("Parser error: Line of invalid depth within block.");
 		}
 
-		ParseLine(line, _cursor);
+		ParseLine(line);
 		//TODO: Proper parsing
 
 		/* ... */

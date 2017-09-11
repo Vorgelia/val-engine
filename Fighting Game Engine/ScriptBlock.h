@@ -7,6 +7,7 @@
 #include "ScriptVariable.h"
 
 class Script;
+enum class ScriptLineType;
 
 class ScriptBlock
 {
@@ -21,7 +22,13 @@ protected:
 
 	size_t _cursor;
 
-	void ParseLine(const std::string &line, int lineIndex);
+	void ParseLine(const std::string &line);
+
+	virtual void HandleExpressionLine(const std::vector<ScriptToken> &tokens);
+	virtual void HandleFunctionDeclarationLine(const std::vector<ScriptToken> &tokens);
+	virtual void HandleLoopDeclarationLine(const std::vector<ScriptToken> &tokens);
+	virtual void HandleConditionalDeclarationLine(const std::vector<ScriptToken> &tokens);
+
 	virtual bool HandleControlFlag();
 public:
 	size_t cursor();
