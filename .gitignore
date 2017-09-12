@@ -53,8 +53,6 @@ ipch/
 *.opensdf
 *.sdf
 *.cachefile
-*.opendb
-*.db
 
 # Visual Studio profiler
 *.psess
@@ -156,3 +154,4 @@ $RECYCLE.BIN/
 
 # Mac desktop service store files
 .DS_Store
+/.vs/Fighting Game Engine/v15
