@@ -11,7 +11,7 @@ class ScriptParentBlock :
 	void PreProcess();
 	bool HandleControlFlag();
 
-	void HandleFunctionDeclarationLine(const std::vector<ScriptToken> &tokens);
+	void HandleFunctionDeclarationLine(std::vector<ScriptToken> &tokens) override;
 public:
 	
 	void RunFunction(std::string name);

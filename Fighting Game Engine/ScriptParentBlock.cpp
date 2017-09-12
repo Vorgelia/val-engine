@@ -55,7 +55,7 @@ void ScriptParentBlock::PreProcess()
 	Run();
 }
 
-void ScriptParentBlock::HandleFunctionDeclarationLine(const std::vector<ScriptToken> &tokens)
+void ScriptParentBlock::HandleFunctionDeclarationLine(std::vector<ScriptToken> &tokens)
 {
 	_cursor = ScriptParsingUtils::FindBlockEnd(_lines, _cursor);
 }
