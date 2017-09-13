@@ -15,6 +15,22 @@ ScriptControlFlag Script::controlFlag()
 	return _controlFlag;
 }
 
+void Script::BindFunction(std::string name, void(*func)())
+{
+	_boundFunctions[name] = func;
+}
+
+bool Script::CallBoundFunction(std::string name)
+{
+	auto iter = _boundFunctions.find(name);
+	if(iter != _boundFunctions.end() && iter->second != nullptr)
+	{
+		iter->second();
+		return true;
+	}
+	return false;
+}
+
 void Script::PreProcess()
 {
 	for(size_t i = 0; i < _lines.size(); ++i)

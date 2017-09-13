@@ -18,6 +18,8 @@ class Script
 	std::vector<std::string> _lines;
 	std::map<std::string, std::string> _pragmaDirectives;
 
+	std::map<std::string, void (*)()> _boundFunctions;
+
 	ScriptControlFlag _controlFlag;
 
 	ScriptParentBlock* _parentBlock;
@@ -27,6 +29,9 @@ class Script
 public:
 	std::string name() const;
 	ScriptControlFlag controlFlag();
+
+	void BindFunction(std::string name, void(*func)());
+	bool CallBoundFunction(std::string name);
 
 	void RaiseControlFlag(ScriptControlFlag flag);
 	void ConsumeControlFlag();
