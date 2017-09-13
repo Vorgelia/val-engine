@@ -86,7 +86,7 @@ void ScriptBlock::Run()
 		{
 			continue;
 		}
-		else if(depth < _depth)
+		else if(depth != _depth)
 		{
 			throw ScriptError("Parser error: Line of invalid depth within block.");
 		}
@@ -104,6 +104,31 @@ void ScriptBlock::Run()
 	//run normally
 	//if parent isn't null, throw exceptions on class and function declarations
 	//otherwise skip to end of those blocks and continue
+}
+
+void ScriptBlock::RunFunction(std::string name)
+{
+	if(_parent == nullptr)
+	{
+		throw ScriptError("Attempting to call invalid function '" + name + "'");
+	}
+	_parent->RunFunction(name);
+}
+
+ScriptVariable ScriptBlock::GetVariable(std::string name)
+{
+	auto iter = _variables.find(name);
+	if(iter != _variables.end())
+	{
+		return iter->second;
+	}
+
+	if(_parent == nullptr)
+	{
+		throw ScriptError("Attempting to index invalid variable " + name);
+	}
+
+	return _parent->GetVariable(name);
 }
 
 bool ScriptBlock::HandleControlFlag()

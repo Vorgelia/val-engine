@@ -13,15 +13,14 @@ struct ScriptToken;
 class ScriptBlock
 {
 protected:
-
 	Script* _owner;
 	ScriptBlock* _parent;
 
+	ScriptLinesView _lines;
+	size_t _cursor;
 	int _depth;
 
-	ScriptLinesView _lines;
-
-	size_t _cursor;
+	std::map<std::string, ScriptVariable> _variables;
 
 	void ParseLine(const std::string &line);
 
@@ -35,6 +34,9 @@ public:
 	size_t cursor();
 
 	virtual void Run();
+
+	virtual void RunFunction(std::string name);
+	ScriptVariable GetVariable(std::string name);
 
 	ScriptBlock(ScriptLinesView lines, int depth, ScriptBlock* parent, Script* owner);
 	~ScriptBlock();

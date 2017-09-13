@@ -8,56 +8,27 @@
 #include <memory>
 
 //Cache line references to functions.
-//Not meant to be any kind of rigorous parsing quite yet, so we can get away with just checking if the indentation level is the same.
-void ScriptParentBlock::PreProcess()
-{
-	for(_cursor = 0; _cursor < _lines.size(); _cursor++)
-	{
-		int indentation;
-		std::string line = ScriptParsingUtils::TrimLine(_lines[_cursor], indentation);
-		if(indentation != _depth)
-		{
-			continue;
-		}
-
-		std::vector<std::string> spl;
-		boost::split(spl, line, boost::is_any_of(" "), boost::token_compress_on);
-
-		if(spl.size() < 2)
-		{
-			continue;
-		}
-
-		if(spl[0] == "function")
-		{
-			ScriptFunctionSignature signature = ScriptParsingUtils::ParseFunctionSignature(_lines, _cursor);
-
-			if(signature.name.empty())
-			{
-				throw ScriptError("Parser error: Invalid function definition.");
-			}
-
-			if(signature.end < 0)
-			{
-				throw ScriptError("Parser error: Improperly terminated function '" + signature.name + "'.");
-			}
-
-			if(_functions.find(signature.name) != _functions.end())
-			{
-				throw ScriptError("Parser error: Duplicate function definition.");
-			}
-
-			_functions[signature.name] = signature;
-			_cursor = signature.end;
-		}
-	}
-
-	Run();
-}
-
 void ScriptParentBlock::HandleFunctionDeclarationLine(std::vector<ScriptToken> &tokens)
 {
-	_cursor = ScriptParsingUtils::FindBlockEnd(_lines, _cursor);
+	ScriptFunctionSignature signature = ScriptParsingUtils::ParseFunctionSignature(_lines, _cursor);
+
+	if(signature.name.empty())
+	{
+		throw ScriptError("Parser error: Invalid function definition.");
+	}
+
+	if(signature.end < 0)
+	{
+		throw ScriptError("Parser error: Improperly terminated function '" + signature.name + "'.");
+	}
+
+	if(_functions.find(signature.name) != _functions.end())
+	{
+		throw ScriptError("Parser error: Duplicate function definition.");
+	}
+
+	_functions[signature.name] = signature;
+	_cursor = signature.end;
 }
 
 bool ScriptParentBlock::HandleControlFlag()
@@ -92,7 +63,7 @@ void ScriptParentBlock::RunFunction(std::string name)
 
 ScriptParentBlock::ScriptParentBlock(ScriptLinesView lines, int depth, Script* owner) :ScriptBlock(lines, depth, nullptr, owner)
 {
-	PreProcess();
+	Run();
 }
 
 
