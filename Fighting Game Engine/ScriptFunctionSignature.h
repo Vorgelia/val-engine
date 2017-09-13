@@ -4,7 +4,6 @@
 
 struct ScriptFunctionSignature
 {
-public:
 	std::string name;
 
 	int start;

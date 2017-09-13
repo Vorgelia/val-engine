@@ -11,13 +11,13 @@ namespace ScriptParsingUtils
 
 }
 
-int ScriptParsingUtils::GetIndentationLevel(std::string line)
+int ScriptParsingUtils::GetIndentationLevel(const std::string& line)
 {
 	unsigned int lineStart;
 	return GetIndentationLevel(line, lineStart);
 }
 
-int ScriptParsingUtils::GetIndentationLevel(std::string line, unsigned int& out_lineStart)
+int ScriptParsingUtils::GetIndentationLevel(const std::string& line, unsigned int& out_lineStart)
 {
 	int indentationLevel = 0;
 	int spaceCount = 0;
@@ -49,7 +49,7 @@ int ScriptParsingUtils::GetIndentationLevel(std::string line, unsigned int& out_
 	return -1;
 }
 
-std::string ScriptParsingUtils::TrimLine(std::string line, int& out_indentationLevel)
+std::string ScriptParsingUtils::TrimLine(const std::string& line, int& out_indentationLevel)
 {
 	unsigned int i;
 	out_indentationLevel = GetIndentationLevel(line, i);
@@ -136,7 +136,7 @@ ScriptTokenType ScriptParsingUtils::GetTokenType(char character)
 	return ScriptTokenType::Invalid;
 }
 
-ScriptTokenType ScriptParsingUtils::GetNextTokenType(std::string line, size_t startIndex, int& out_endIndex)
+ScriptTokenType ScriptParsingUtils::GetNextTokenType(const std::string& line, size_t startIndex, int& out_endIndex)
 {
 	out_endIndex = -1;
 
@@ -262,16 +262,16 @@ ScriptTokenType ScriptParsingUtils::GetNextTokenType(std::string line, size_t st
 	return type;
 }
 
-void ScriptParsingUtils::ParseLineTokens(std::string line, std::vector<ScriptToken> &out_tokens)
+void ScriptParsingUtils::ParseLineTokens(const std::string& line, std::vector<ScriptToken> &out_tokens)
 {
 	out_tokens.clear();
 	ScriptTokenType tokenType;
-	int cursor = 0;
+	size_t cursor = 0;
 	int endIndex;
 	while(cursor < line.length())
 	{
 		tokenType = GetNextTokenType(line, cursor, endIndex);
-		if(cursor < 0 || tokenType == ScriptTokenType::Invalid)
+		if(endIndex < 0 || tokenType == ScriptTokenType::Invalid)
 		{
 			return;
 		}
@@ -302,7 +302,7 @@ ScriptFunctionSignature ScriptParsingUtils::ParseFunctionSignature(const ScriptL
 		return signature;
 	}
 
-	int cursor = 0;
+	size_t cursor = 0;
 	int state = 0;
 	while(cursor < line.length())
 	{

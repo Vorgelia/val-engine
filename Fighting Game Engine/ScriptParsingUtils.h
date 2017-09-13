@@ -49,17 +49,17 @@ struct ScriptToken
 
 namespace ScriptParsingUtils
 {
-	int GetIndentationLevel(std::string line);
-	int GetIndentationLevel(std::string line, unsigned int& out_lineStart);
+	int GetIndentationLevel(const std::string& line);
+	int GetIndentationLevel(const std::string& line, unsigned int& out_lineStart);
 
-	std::string TrimLine(std::string line, int& out_indentationLevel);
+	std::string TrimLine(const std::string& line, int& out_indentationLevel);
 
 	int FindBlockEnd(const ScriptLinesView &lines, unsigned int blockStart);
 
 	ScriptTokenType GetTokenType(char character);
-	ScriptTokenType GetNextTokenType(std::string line, size_t startIndex, int& out_endIndex);
+	ScriptTokenType GetNextTokenType(const std::string& line, size_t startIndex, int& out_endIndex);
 
-	void ParseLineTokens(std::string line, std::vector<ScriptToken> &out_tokens);
+	void ParseLineTokens(const std::string& line, std::vector<ScriptToken> &out_tokens);
 
 	ScriptFunctionSignature ParseFunctionSignature(const ScriptLinesView &lines, int declarationLine);
 }
