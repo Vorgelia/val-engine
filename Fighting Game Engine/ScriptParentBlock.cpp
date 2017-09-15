@@ -56,7 +56,7 @@ void ScriptParentBlock::RunFunction(std::string name, const std::vector<ScriptVa
 
 	ScriptFunctionBlock* scriptBlock = new ScriptFunctionBlock(&function->second, functionLines, _depth + 1, this, _owner);
 	_owner->PushBlock(scriptBlock);
-	//TODO: Parse variables, pass to function.
+
 	scriptBlock->Run(variables);
 	_owner->PopBlock();
 }

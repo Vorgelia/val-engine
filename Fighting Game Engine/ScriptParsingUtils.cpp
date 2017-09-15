@@ -336,6 +336,7 @@ ScriptFunctionSignature ScriptParsingUtils::ParseFunctionSignature(const ScriptL
 			signature.name = token;
 			break;
 		case 2:
+		{
 			if(type != ScriptTokenType::ParenthesisGroup)
 			{
 				throw ScriptError("Parser error: Invalid function definition.");
@@ -345,8 +346,20 @@ ScriptFunctionSignature ScriptParsingUtils::ParseFunctionSignature(const ScriptL
 				break;
 			}
 			token = token.substr(1, token.length() - 2);
-			boost::split(signature.arguments, token, boost::is_any_of(","), boost::token_compress_on);
+			std::vector<std::string> args;
+			boost::split(args, token, boost::is_any_of(","), boost::token_compress_on);
+			signature.arguments.reserve(args.size());
+			for(std::string& arg : args)
+			{
+				int indentation;
+				arg = TrimLine(arg, indentation);
+				if(arg != "")
+				{
+					signature.arguments.push_back(arg);
+				}
+			}
 			break;
+		}
 		case 3:
 			if(type != ScriptTokenType::Specifier)
 			{

@@ -43,7 +43,7 @@ void Script::PreProcess()
 	{
 		int indentation;
 		std::string line = ScriptParsingUtils::TrimLine(_lines[i], indentation);
-		if(indentation != 0)
+		if(indentation != 0 || line[0] != '#')
 		{
 			continue;
 		}
@@ -59,10 +59,6 @@ void Script::PreProcess()
 		if(spl[0] == "#pragma")
 		{
 			_pragmaDirectives[spl[1]] = spl.size() < 3 ? "" : spl[2];
-		}
-		else if(spl[0] == "class")
-		{
-			//TODO: Parse and store Class
 		}
 	}
 }
@@ -94,11 +90,11 @@ ScriptExitCode Script::Execute()
 
 	try
 	{
-		ExecuteFunction("Main",std::vector<ScriptVariable>());
+		ExecuteFunction("Main", std::vector<ScriptVariable>());
 	}
 	catch(ScriptError error)
 	{
-		DebugLog::Push("(" + _name + " : line " + std::to_string(_blockStack.top()->cursor()) + ")" + std::string(error.what()));
+		DebugLog::Push("(" + _name + " : line " + std::to_string(_blockStack.top()->cursor()) + ")" + std::string(error.what()), LogItem::Type::Error);
 		_valid = false;
 		returnCode = ScriptExitCode::Failure;
 	}
@@ -130,6 +126,7 @@ Script::Script(std::string name, std::vector<std::string> lines)
 {
 	_name = name;
 	_lines = lines;
+	_valid = true;
 
 	PreProcess();
 
