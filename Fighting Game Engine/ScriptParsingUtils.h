@@ -49,7 +49,7 @@ struct ScriptToken
 
 namespace ScriptParsingUtils
 {
-	int GetIndentationLevel(const std::string& line);
+	inline int GetIndentationLevel(const std::string& line);
 	int GetIndentationLevel(const std::string& line, unsigned int& out_lineStart);
 
 	std::string TrimLine(const std::string& line, int& out_indentationLevel);

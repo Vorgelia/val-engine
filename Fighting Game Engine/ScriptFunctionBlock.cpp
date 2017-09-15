@@ -18,7 +18,7 @@ bool ScriptFunctionBlock::HandleControlFlag()
 	return false;
 }
 
-void ScriptFunctionBlock::Run(std::vector<ScriptVariable> variables)
+void ScriptFunctionBlock::Run(const std::vector<ScriptVariable> &variables)
 {
 	//add variables
 	ScriptBlock::Run();

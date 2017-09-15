@@ -3,9 +3,9 @@
 #include "ScriptParsingUtils.h"
 #include "ScriptError.h"
 
-size_t ScriptBlock::cursor()
+size_t ScriptBlock::cursor(bool absolute)
 {
-	return _cursor;
+	return _cursor + (absolute ? _lines.front() : 0);
 }
 
 //TODO: Make parse line return a token vector
@@ -106,13 +106,13 @@ void ScriptBlock::Run()
 	//otherwise skip to end of those blocks and continue
 }
 
-void ScriptBlock::RunFunction(std::string name)
+void ScriptBlock::RunFunction(std::string name, const std::vector<ScriptVariable> &variables)
 {
 	if(_parent == nullptr)
 	{
 		throw ScriptError("Attempting to call invalid function '" + name + "'");
 	}
-	_parent->RunFunction(name);
+	_parent->RunFunction(name, variables);
 }
 
 ScriptVariable ScriptBlock::GetVariable(std::string name)
@@ -152,4 +152,5 @@ ScriptBlock::ScriptBlock(ScriptLinesView lines, int depth, ScriptBlock* parent, 
 
 ScriptBlock::~ScriptBlock()
 {
+
 }

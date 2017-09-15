@@ -25,7 +25,10 @@ void ScriptManager::Update()
 {
 	for(unsigned int i = 0; i < scripts.size(); ++i)
 	{
-		scripts[i]->Execute();
+		if(scripts[i]->valid())
+		{
+			scripts[i]->Execute();
+		}
 	}
 }
 

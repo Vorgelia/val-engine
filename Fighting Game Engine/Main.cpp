@@ -20,8 +20,6 @@ Having global access to things like Input, Time, OpenGL states, etc was the most
 Somewhat error-prone for group projects, but more than manageable and convenient for a one-person project.
 Also included are unnecessary attempts at memory management as personal exercises.
 
-Variables and getters/setters begin with lowercase. Classes, namespaces, functions, etc begin with uppercase.
-
 ----Arbitrary to-do list----
 -Engine Features
 TODO: Find a way to multithread input so inputs are received and timed properly on sub-60FPS.
@@ -34,15 +32,16 @@ TODO: Change some class variables to be private with getters.
 TODO: Replace some instances of map with unordered_map.
 ----
 Important defines:
-Resource.cpp:    VE_CREATE_DEFAULT_RESOURCES
-InputDevice.cpp: VE_INPUT_BUFFER_INIT
--				 VE_INPUT_BUFFER_MID
-Rendering.cpp:   VE_AUX_BUFFER_AMOUNT
--				 VE_WORLD_SCALE
--				 VE_FONT_DEFAULT
-Time.h:			 VE_FRAME_TIME
--				 VE_FRAME_RATE
-DebugLog.h:		 VE_DEBUG_ERRORTHROW
+Resource.cpp:           VE_CREATE_DEFAULT_RESOURCES
+InputDevice.cpp:        VE_INPUT_BUFFER_INIT
+-				        VE_INPUT_BUFFER_MID
+Rendering.cpp:          VE_AUX_BUFFER_AMOUNT
+-				        VE_WORLD_SCALE
+-				        VE_FONT_DEFAULT
+Time.h:			        VE_FRAME_TIME
+-				        VE_FRAME_RATE
+DebugLog.h:		        VE_DEBUG_ERRORTHROW
+ScriptParsingUtils.cpp: VE_TAB_SPACE_AMOUNT
 */
 
 #include "SystemIncludes.hpp"

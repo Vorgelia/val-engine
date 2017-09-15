@@ -4,14 +4,14 @@
 #include "ScriptError.h"
 #include "CommonUtilIncludes.hpp"
 
-#define TAB_SPACE_AMOUNT 4
+#define VE_TAB_SPACE_AMOUNT 4
 
 namespace ScriptParsingUtils
 {
 
 }
 
-int ScriptParsingUtils::GetIndentationLevel(const std::string& line)
+inline int ScriptParsingUtils::GetIndentationLevel(const std::string& line)
 {
 	unsigned int lineStart;
 	return GetIndentationLevel(line, lineStart);
@@ -33,7 +33,7 @@ int ScriptParsingUtils::GetIndentationLevel(const std::string& line, unsigned in
 		else if(line[i] == ' ')
 		{
 			spaceCount += 1;
-			if(spaceCount >= TAB_SPACE_AMOUNT)
+			if(spaceCount >= VE_TAB_SPACE_AMOUNT)
 			{
 				spaceCount = 0;
 				indentationLevel += 1;

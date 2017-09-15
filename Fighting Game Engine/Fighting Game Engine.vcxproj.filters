@@ -261,9 +261,6 @@
     <ClCompile Include="ScriptManager.cpp">
       <Filter>Source Files\FG\Scripting</Filter>
     </ClCompile>
-    <ClCompile Include="ScriptError.cpp">
-      <Filter>Source Files\FG\Scripting</Filter>
-    </ClCompile>
     <ClCompile Include="ScriptParsingUtils.cpp">
       <Filter>Source Files\FG\Scripting\Utilities</Filter>
     </ClCompile>
@@ -273,9 +270,6 @@
     <ClCompile Include="ScriptFunctionSignature.cpp">
       <Filter>Source Files\FG\Scripting\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="ScriptVariable.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ScriptBlock.cpp">
       <Filter>Source Files\FG\Scripting\Objects\Blocks</Filter>
     </ClCompile>
@@ -284,6 +278,12 @@
     </ClCompile>
     <ClCompile Include="ScriptParentBlock.cpp">
       <Filter>Source Files\FG\Scripting\Objects\Blocks</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptVariable.cpp">
+      <Filter>Source Files\FG\Scripting\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptError.cpp">
+      <Filter>Source Files\FG\Scripting\Utilities</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -425,9 +425,6 @@
     <ClInclude Include="ScriptManager.h">
       <Filter>Header Files\FG\Scripting</Filter>
     </ClInclude>
-    <ClInclude Include="ScriptError.h">
-      <Filter>Header Files\FG\Scripting</Filter>
-    </ClInclude>
     <ClInclude Include="ScriptParsingUtils.h">
       <Filter>Header Files\FG\Scripting\Utilities</Filter>
     </ClInclude>
@@ -437,9 +434,6 @@
     <ClInclude Include="ScriptFunctionSignature.h">
       <Filter>Header Files\FG\Scripting\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="ScriptVariable.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ScriptBlock.h">
       <Filter>Header Files\FG\Scripting\Objects\Blocks</Filter>
     </ClInclude>
@@ -448,6 +442,12 @@
     </ClInclude>
     <ClInclude Include="ScriptParentBlock.h">
       <Filter>Header Files\FG\Scripting\Objects\Blocks</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptVariable.h">
+      <Filter>Header Files\FG\Scripting\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptError.h">
+      <Filter>Header Files\FG\Scripting\Utilities</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

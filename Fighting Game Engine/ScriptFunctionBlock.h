@@ -12,9 +12,9 @@ class ScriptFunctionBlock :
 
 	bool HandleControlFlag();
 public:
-	const std::string& returnValue() const;
+	const std::string returnValue() const;
 
-	void Run(std::vector<ScriptVariable> variables);
+	void Run(const std::vector<ScriptVariable> &variables);
 
 	ScriptFunctionBlock(ScriptFunctionSignature* signature, ScriptLinesView lines, int depth, ScriptBlock* parent, Script* owner);
 	~ScriptFunctionBlock();

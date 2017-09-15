@@ -1,4 +1,5 @@
 #include "Script.h"
+#include "ScriptVariable.h"
 #include "ScriptParsingUtils.h"
 #include "CommonUtilIncludes.hpp"
 #include "ScriptError.h"
@@ -8,6 +9,11 @@
 std::string Script::name() const
 {
 	return _name;
+}
+
+bool Script::valid() const
+{
+	return _valid;
 }
 
 ScriptControlFlag Script::controlFlag()
@@ -61,6 +67,17 @@ void Script::PreProcess()
 	}
 }
 
+void Script::PushBlock(ScriptBlock* block)
+{
+	_blockStack.push(block);
+}
+
+void Script::PopBlock()
+{
+	delete _blockStack.top();
+	_blockStack.pop();
+}
+
 void Script::RaiseControlFlag(ScriptControlFlag flag)
 {
 	_controlFlag = flag;
@@ -73,28 +90,40 @@ void Script::ConsumeControlFlag()
 
 ScriptExitCode Script::Execute()
 {
+	ScriptExitCode returnCode = ScriptExitCode::Success;
+
 	try
 	{
-		ExecuteFunction("Main");
+		ExecuteFunction("Main",std::vector<ScriptVariable>());
 	}
 	catch(ScriptError error)
 	{
-		DebugLog::Push("(" + _name + ")" + std::string(error.what()));
+		DebugLog::Push("(" + _name + " : line " + std::to_string(_blockStack.top()->cursor()) + ")" + std::string(error.what()));
 		_valid = false;
-		return ScriptExitCode::Failure;
+		returnCode = ScriptExitCode::Failure;
 	}
 	catch(std::exception error)
 	{
-		DebugLog::Push("Unhandled exception on script[" + _name + "]:\n" + std::string(error.what()));
+		DebugLog::Push("Unhandled exception on script[" + _name + "]:\n" + std::string(error.what()), LogItem::Type::Error);
 		_valid = false;
-		return ScriptExitCode::Exception;
+		returnCode = ScriptExitCode::Exception;
 	}
-	return ScriptExitCode::Success;
+
+	if(_blockStack.size() > 0)
+	{
+		DebugLog::Push("Block stack not empty after script " + _name + " execution.", LogItem::Type::Error);
+		while(_blockStack.size() > 0)
+		{
+			PopBlock();
+		}
+	}
+
+	return returnCode;
 }
 
-void Script::ExecuteFunction(std::string name)
+void Script::ExecuteFunction(std::string name, const std::vector<ScriptVariable> &variables)
 {
-	_parentBlock->RunFunction(name);
+	_parentBlock->RunFunction(name, variables);
 }
 
 Script::Script(std::string name, std::vector<std::string> lines)
@@ -105,7 +134,7 @@ Script::Script(std::string name, std::vector<std::string> lines)
 	PreProcess();
 
 	_parentBlock = new ScriptParentBlock(ScriptLinesView(&_lines), 0, this);
-	ExecuteFunction("Init");
+	ExecuteFunction("Init", std::vector<ScriptVariable>());
 }
 
 Script::~Script()

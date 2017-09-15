@@ -44,7 +44,7 @@ bool ScriptParentBlock::HandleControlFlag()
 }
 
 //Create a new function script block and add some variables to it based on the function signature.
-void ScriptParentBlock::RunFunction(std::string name)
+void ScriptParentBlock::RunFunction(std::string name, const std::vector<ScriptVariable> &variables)
 {
 	auto function = _functions.find(name);
 	if(function == _functions.end())
@@ -54,11 +54,11 @@ void ScriptParentBlock::RunFunction(std::string name)
 
 	ScriptLinesView functionLines = ScriptLinesView(_lines.lines(), function->second.start + 1, function->second.end);
 
-	std::shared_ptr<ScriptFunctionBlock> scriptBlock = std::make_shared<ScriptFunctionBlock>(&function->second, functionLines, _depth + 1, this, _owner);
-
+	ScriptFunctionBlock* scriptBlock = new ScriptFunctionBlock(&function->second, functionLines, _depth + 1, this, _owner);
+	_owner->PushBlock(scriptBlock);
 	//TODO: Parse variables, pass to function.
-	std::vector<ScriptVariable> variables;
 	scriptBlock->Run(variables);
+	_owner->PopBlock();
 }
 
 ScriptParentBlock::ScriptParentBlock(ScriptLinesView lines, int depth, Script* owner) :ScriptBlock(lines, depth, nullptr, owner)
