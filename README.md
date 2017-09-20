@@ -10,3 +10,4 @@ Libraries used:
 	SOIL http://www.lonesock.net/soil.html
 	Boost http://www.boost.org/
 	Freetype 2 https://www.freetype.org/
+	FMTlib http://fmtlib.net
