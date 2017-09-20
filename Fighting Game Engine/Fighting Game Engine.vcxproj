@@ -117,6 +117,7 @@
     <ClCompile Include="ScriptManager.cpp" />
     <ClCompile Include="ScriptParentBlock.cpp" />
     <ClCompile Include="ScriptParsingUtils.cpp" />
+    <ClCompile Include="ScriptToken.cpp" />
     <ClCompile Include="ScriptVariable.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Texture.cpp" />
@@ -172,6 +173,7 @@
     <ClInclude Include="ScriptManager.h" />
     <ClInclude Include="ScriptParentBlock.h" />
     <ClInclude Include="ScriptParsingUtils.h" />
+    <ClInclude Include="ScriptToken.h" />
     <ClInclude Include="ScriptVariable.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="Texture.h" />

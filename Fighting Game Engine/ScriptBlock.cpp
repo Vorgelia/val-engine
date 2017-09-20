@@ -8,7 +8,6 @@ size_t ScriptBlock::cursor(bool absolute)
 	return _cursor + (absolute ? _lines.front() : 0);
 }
 
-//TODO: Make parse line return a token vector
 void ScriptBlock::ParseLine(const std::string &line)
 {
 	if(line[0] == '#')
@@ -24,15 +23,15 @@ void ScriptBlock::ParseLine(const std::string &line)
 		return;
 	}
 
-	if(tokens[0].token == "function")
+	if(tokens[0].token == ScriptToken::function_declaration)
 	{
 		HandleFunctionDeclarationLine(tokens);
 	}
-	else if(tokens[0].token == "if")
+	else if(tokens[0].token == ScriptToken::conditional_declaration)
 	{
 		HandleConditionalDeclarationLine(tokens);
 	}
-	else if(tokens[0].token == "while")
+	else if(tokens[0].token == ScriptToken::while_loop_declaration)
 	{
 		HandleLoopDeclarationLine(tokens);
 	}
@@ -44,19 +43,30 @@ void ScriptBlock::ParseLine(const std::string &line)
 
 void ScriptBlock::HandleExpressionLine(std::vector<ScriptToken> &tokens)
 {
-	if(tokens[0].token == "return")
+	size_t i = 0;
+	//something about parse state
+	for(; i < tokens.size(); ++i)
 	{
-		_owner->RaiseControlFlag(ScriptControlFlag::Return);
+		ScriptToken &token = tokens[i];
+		if(token.token == ScriptToken::block_return)
+		{
+			_owner->RaiseControlFlag(ScriptControlFlag::Return);
+		}
+		else if(token.token == ScriptToken::block_break)
+		{
+			_owner->RaiseControlFlag(ScriptControlFlag::Break);
+			break;
+		}
+		else if(token.token == ScriptToken::block_continue)
+		{
+			_owner->RaiseControlFlag(ScriptControlFlag::Continue);
+			break;
+		}
 	}
-	else if(tokens[0].token == "break")
+
+	if(i < tokens.size())
 	{
-		_owner->RaiseControlFlag(ScriptControlFlag::Break);
-		return;
-	}
-	else if(tokens[0].token == "continue")
-	{
-		_owner->RaiseControlFlag(ScriptControlFlag::Continue);
-		return;
+		throw ScriptError("Parse error: Unexpected token: " + tokens[i].token);
 	}
 }
 
@@ -92,21 +102,15 @@ void ScriptBlock::Run()
 		}
 
 		ParseLine(line);
-		//TODO: Proper parsing
-
-		/* ... */
 
 		if(HandleControlFlag())
 		{
 			break;
 		}
 	}
-	//run normally
-	//if parent isn't null, throw exceptions on class and function declarations
-	//otherwise skip to end of those blocks and continue
 }
 
-void ScriptBlock::RunFunction(std::string name, const std::vector<ScriptVariable> &variables)
+std::shared_ptr<ScriptVariable> ScriptBlock::RunFunction(std::string name, const std::vector<std::shared_ptr<ScriptVariable>> &variables)
 {
 	if(_parent == nullptr)
 	{
@@ -115,7 +119,7 @@ void ScriptBlock::RunFunction(std::string name, const std::vector<ScriptVariable
 	_parent->RunFunction(name, variables);
 }
 
-ScriptVariable ScriptBlock::GetVariable(std::string name)
+std::shared_ptr<ScriptVariable> ScriptBlock::GetVariable(std::string name)
 {
 	auto iter = _variables.find(name);
 	if(iter != _variables.end())

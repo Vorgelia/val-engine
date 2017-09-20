@@ -4,7 +4,7 @@
 
 namespace ScriptManager
 {
-	std::vector<Script*> scripts;
+	std::vector<Script*> _scripts;
 }
 
 void ScriptManager::Init()
@@ -17,27 +17,27 @@ void ScriptManager::AddScript(FS::path path)
 	std::vector<std::string> lines = ResourceLoader::ReturnFileLines(path, false);
 	if(lines.size() > 0)
 	{
-		scripts.push_back(new Script(path.leaf().generic_string(), lines));
+		_scripts.push_back(new Script(path.leaf().generic_string(), lines));
 	}
 }
 
 void ScriptManager::Update()
 {
-	for(unsigned int i = 0; i < scripts.size(); ++i)
+	for(unsigned int i = 0; i < _scripts.size(); ++i)
 	{
-		if(scripts[i]->valid())
+		if(_scripts[i]->valid())
 		{
-			scripts[i]->Execute();
+			_scripts[i]->Execute();
 		}
 	}
 }
 
 void ScriptManager::Cleanup()
 {
-	for(unsigned int i = 0; i < scripts.size(); ++i)
+	for(unsigned int i = 0; i < _scripts.size(); ++i)
 	{
-		delete scripts[i];
+		delete _scripts[i];
 	}
 
-	scripts.clear();
+	_scripts.clear();
 }

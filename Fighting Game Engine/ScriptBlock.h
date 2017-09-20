@@ -1,8 +1,8 @@
 #pragma once
-#include <stdarg.h>
 #include <string>
 #include <vector>
 #include <map>
+#include <memory>
 #include "ScriptLinesView.h"
 #include "ScriptVariable.h"
 
@@ -20,7 +20,7 @@ protected:
 	size_t _cursor;
 	int _depth;
 
-	std::map<std::string, ScriptVariable> _variables;
+	std::map<std::string, std::shared_ptr<ScriptVariable>> _variables;
 
 	void ParseLine(const std::string &line);
 
@@ -35,8 +35,8 @@ public:
 
 	virtual void Run();
 
-	virtual void RunFunction(std::string name, const std::vector<ScriptVariable> &variables);
-	ScriptVariable GetVariable(std::string name);
+	virtual std::shared_ptr<ScriptVariable> RunFunction(std::string name, const std::vector<std::shared_ptr<ScriptVariable>> &variables);
+	std::shared_ptr<ScriptVariable> GetVariable(std::string name);
 
 	ScriptBlock(ScriptLinesView lines, int depth, ScriptBlock* parent, Script* owner);
 	~ScriptBlock();

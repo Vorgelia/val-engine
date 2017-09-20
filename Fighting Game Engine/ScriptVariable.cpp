@@ -1,4 +1,11 @@
 #include "ScriptVariable.h"
+#include "ScriptParsingUtils.h"
+
+ScriptVariable::ScriptVariable(std::string type)
+{
+	_type = type;
+	_value = ScriptToken::null_token;
+}
 
 ScriptVariable::ScriptVariable(std::string type, std::string value)
 {
@@ -8,8 +15,8 @@ ScriptVariable::ScriptVariable(std::string type, std::string value)
 
 ScriptVariable::ScriptVariable()
 {
-	_type = "null";
-	_value = "null";
+	_type = ScriptToken::null_token;
+	_value = ScriptToken::null_token;
 }
 
 ScriptVariable::~ScriptVariable()

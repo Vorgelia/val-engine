@@ -21,17 +21,17 @@ ScriptControlFlag Script::controlFlag()
 	return _controlFlag;
 }
 
-void Script::BindFunction(std::string name, void(*func)())
+void Script::BindFunction(std::string name, void(*func)(std::vector<std::shared_ptr<ScriptVariable>>&))
 {
 	_boundFunctions[name] = func;
 }
 
-bool Script::CallBoundFunction(std::string name)
+bool Script::CallBoundFunction(std::string name, std::vector<std::shared_ptr<ScriptVariable>> &variables)
 {
 	auto iter = _boundFunctions.find(name);
 	if(iter != _boundFunctions.end() && iter->second != nullptr)
 	{
-		iter->second();
+		iter->second(variables);
 		return true;
 	}
 	return false;
@@ -90,7 +90,7 @@ ScriptExitCode Script::Execute()
 
 	try
 	{
-		ExecuteFunction("Main", std::vector<ScriptVariable>());
+		ExecuteFunction("Main", std::vector<std::shared_ptr<ScriptVariable>>());
 	}
 	catch(ScriptError error)
 	{
@@ -117,7 +117,7 @@ ScriptExitCode Script::Execute()
 	return returnCode;
 }
 
-void Script::ExecuteFunction(std::string name, const std::vector<ScriptVariable> &variables)
+void Script::ExecuteFunction(std::string name, const std::vector<std::shared_ptr<ScriptVariable>> &variables)
 {
 	_parentBlock->RunFunction(name, variables);
 }
@@ -131,7 +131,7 @@ Script::Script(std::string name, std::vector<std::string> lines)
 	PreProcess();
 
 	_parentBlock = new ScriptParentBlock(ScriptLinesView(&_lines), 0, this);
-	ExecuteFunction("Init", std::vector<ScriptVariable>());
+	ExecuteFunction("Init", std::vector<std::shared_ptr<ScriptVariable>>());
 }
 
 Script::~Script()

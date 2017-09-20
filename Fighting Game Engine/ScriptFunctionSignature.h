@@ -2,6 +2,11 @@
 #include <string>
 #include <vector>
 
+struct ScriptFunctionArgument
+{
+
+};
+
 struct ScriptFunctionSignature
 {
 	std::string name;

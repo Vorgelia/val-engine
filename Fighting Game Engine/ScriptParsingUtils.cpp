@@ -49,6 +49,12 @@ int ScriptParsingUtils::GetIndentationLevel(const std::string& line, unsigned in
 	return -1;
 }
 
+std::string ScriptParsingUtils::TrimLine(const std::string& line)
+{
+	int indentation = 0;
+	return TrimLine(line, indentation);
+}
+
 std::string ScriptParsingUtils::TrimLine(const std::string& line, int& out_indentationLevel)
 {
 	unsigned int i;
@@ -86,7 +92,7 @@ int ScriptParsingUtils::FindBlockEnd(const ScriptLinesView &lines, unsigned int 
 	{
 		int lineDepth;
 		std::string line = ScriptParsingUtils::TrimLine(lines[i], lineDepth);
-		if(lineDepth == blockDepth && line == "end")
+		if(lineDepth == blockDepth && line == ScriptToken::block_end)
 		{
 			return i;
 		}
@@ -275,10 +281,13 @@ void ScriptParsingUtils::ParseLineTokens(const std::string& line, std::vector<Sc
 		{
 			return;
 		}
-		out_tokens.push_back(ScriptToken{
-			line.substr(cursor, endIndex - cursor + 1)
-			, tokenType });
 
+		if(tokenType != ScriptTokenType::Whitespace)
+		{
+			out_tokens.push_back(ScriptToken{
+				line.substr(cursor, endIndex - cursor + 1)
+				, tokenType });
+		}
 		cursor = endIndex + 1;
 	}
 }
@@ -323,7 +332,7 @@ ScriptFunctionSignature ScriptParsingUtils::ParseFunctionSignature(const ScriptL
 		switch(state++)
 		{
 		case 0:
-			if(token != "function")
+			if(token != ScriptToken::function_declaration)
 			{
 				throw ScriptError("Parser error: Invalid function definition.");
 			}

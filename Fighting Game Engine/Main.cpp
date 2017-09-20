@@ -12,6 +12,7 @@ GLFW http://www.glfw.org/
 SOIL http://www.lonesock.net/soil.html
 Boost http://www.boost.org/
 Freetype 2 https://www.freetype.org/
+FMTlib http://fmtlib.net
 Libraries planned to be used:
 IrrKlang
 

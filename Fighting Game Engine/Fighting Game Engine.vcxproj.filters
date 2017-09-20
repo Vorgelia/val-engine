@@ -13,9 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Header Files\IncludeLists">
-      <UniqueIdentifier>{5eba43cb-9827-4311-9232-3cc2b0cc0846}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\GL">
       <UniqueIdentifier>{8ce192c5-2989-49bf-b4c8-e37b2b7b2d1f}</UniqueIdentifier>
     </Filter>
@@ -135,6 +132,9 @@
     </Filter>
     <Filter Include="Source Files\FG\Scripting\Objects\Blocks">
       <UniqueIdentifier>{4bc89b97-5ddc-4037-9be9-97a3cf4bbc41}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\IncludeLists">
+      <UniqueIdentifier>{5eba43cb-9827-4311-9232-3cc2b0cc0846}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -283,6 +283,9 @@
       <Filter>Source Files\FG\Scripting\Objects</Filter>
     </ClCompile>
     <ClCompile Include="ScriptError.cpp">
+      <Filter>Source Files\FG\Scripting\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptToken.cpp">
       <Filter>Source Files\FG\Scripting\Utilities</Filter>
     </ClCompile>
   </ItemGroup>
@@ -447,6 +450,9 @@
       <Filter>Header Files\FG\Scripting\Objects</Filter>
     </ClInclude>
     <ClInclude Include="ScriptError.h">
+      <Filter>Header Files\FG\Scripting\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptToken.h">
       <Filter>Header Files\FG\Scripting\Utilities</Filter>
     </ClInclude>
   </ItemGroup>
