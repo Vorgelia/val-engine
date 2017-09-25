@@ -1,10 +1,10 @@
 #include "CommonUtilIncludes.hpp"
+#include "Script.h"
 #include "ScriptParsingUtils.h"
 #include "ScriptParentBlock.h"
 #include "ScriptFunctionBlock.h"
 #include "ScriptFunctionSignature.h"
 #include "ScriptError.h"
-#include "Script.h"
 #include <memory>
 
 //Cache line references to functions.
@@ -54,7 +54,7 @@ std::shared_ptr<ScriptVariable> ScriptParentBlock::RunFunction(std::string name,
 
 	ScriptLinesView functionLines = ScriptLinesView(_lines.lines(), function->second.start + 1, function->second.end);
 
-	ScriptFunctionBlock* scriptBlock = new ScriptFunctionBlock(&function->second, functionLines, _depth + 1, this, _owner);
+	std::shared_ptr<ScriptFunctionBlock> scriptBlock = std::make_shared<ScriptFunctionBlock>(&function->second, functionLines, _depth + 1, this, _owner);
 	_owner->PushBlock(scriptBlock);
 
 	scriptBlock->Run(variables);

@@ -136,6 +136,12 @@
     <Filter Include="Header Files\IncludeLists">
       <UniqueIdentifier>{5eba43cb-9827-4311-9232-3cc2b0cc0846}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\FG\Scripting\Objects\Variables">
+      <UniqueIdentifier>{b4360ee8-e052-41fd-b1ca-0c7b34622559}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\FG\Scripting\Objects\Variables">
+      <UniqueIdentifier>{d97bca5d-5f4c-47a6-86b2-ca676f6bd8fc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -279,14 +285,17 @@
     <ClCompile Include="ScriptParentBlock.cpp">
       <Filter>Source Files\FG\Scripting\Objects\Blocks</Filter>
     </ClCompile>
-    <ClCompile Include="ScriptVariable.cpp">
-      <Filter>Source Files\FG\Scripting\Objects</Filter>
-    </ClCompile>
     <ClCompile Include="ScriptError.cpp">
       <Filter>Source Files\FG\Scripting\Utilities</Filter>
     </ClCompile>
     <ClCompile Include="ScriptToken.cpp">
       <Filter>Source Files\FG\Scripting\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptVariable.cpp">
+      <Filter>Source Files\FG\Scripting\Objects\Variables</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptConditionalBlock.cpp">
+      <Filter>Source Files\FG\Scripting\Objects\Blocks</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -446,14 +455,17 @@
     <ClInclude Include="ScriptParentBlock.h">
       <Filter>Header Files\FG\Scripting\Objects\Blocks</Filter>
     </ClInclude>
-    <ClInclude Include="ScriptVariable.h">
-      <Filter>Header Files\FG\Scripting\Objects</Filter>
-    </ClInclude>
     <ClInclude Include="ScriptError.h">
       <Filter>Header Files\FG\Scripting\Utilities</Filter>
     </ClInclude>
     <ClInclude Include="ScriptToken.h">
       <Filter>Header Files\FG\Scripting\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptConditionalBlock.h">
+      <Filter>Header Files\FG\Scripting\Objects\Blocks</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptVariable.h">
+      <Filter>Header Files\FG\Scripting\Objects\Variables</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

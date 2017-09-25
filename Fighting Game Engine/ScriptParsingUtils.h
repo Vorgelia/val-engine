@@ -41,4 +41,6 @@ namespace ScriptParsingUtils
 	void ParseLineTokens(const std::string& line, std::vector<ScriptToken>& out_tokens);
 
 	ScriptFunctionSignature ParseFunctionSignature(const ScriptLinesView& lines, int declarationLine);
+
+	void ParseConditionalExpression(const ScriptLinesView& lines, const std::vector<ScriptToken>& lineTokens, int cursor, std::vector<ScriptToken>& out_conditionalTokens, int& out_blockEnd);
 }

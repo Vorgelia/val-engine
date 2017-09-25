@@ -110,6 +110,7 @@
     <ClCompile Include="Screen.cpp" />
     <ClCompile Include="Script.cpp" />
     <ClCompile Include="ScriptBlock.cpp" />
+    <ClCompile Include="ScriptConditionalBlock.cpp" />
     <ClCompile Include="ScriptError.cpp" />
     <ClCompile Include="ScriptFunctionBlock.cpp" />
     <ClCompile Include="ScriptFunctionSignature.cpp" />
@@ -166,6 +167,7 @@
     <ClInclude Include="Screen.h" />
     <ClInclude Include="Script.h" />
     <ClInclude Include="ScriptBlock.h" />
+    <ClInclude Include="ScriptConditionalBlock.h" />
     <ClInclude Include="ScriptError.h" />
     <ClInclude Include="ScriptFunctionBlock.h" />
     <ClInclude Include="ScriptFunctionSignature.h" />

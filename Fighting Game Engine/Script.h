@@ -7,6 +7,7 @@
 
 enum class ScriptExitCode;
 enum class ScriptControlFlag;
+class ScriptBlock;
 class ScriptParentBlock;
 class ScriptVariable;
 
@@ -23,14 +24,14 @@ class Script
 
 	std::map<std::string, void(*)(std::vector<std::shared_ptr<ScriptVariable>>&)> _boundFunctions;
 
-	std::stack<ScriptBlock*> _blockStack;
+	std::stack<std::shared_ptr<ScriptBlock>> _blockStack;
 	ScriptControlFlag _controlFlag;
 
 	ScriptParentBlock* _parentBlock;
 
 	void PreProcess();
 
-	void PushBlock(ScriptBlock* block);
+	void PushBlock(std::shared_ptr<ScriptBlock> block);
 	void PopBlock();
 
 public:
@@ -42,6 +43,8 @@ public:
 	void BindFunction(std::string name, void(*func)(std::vector<std::shared_ptr<ScriptVariable>>&));
 	bool CallBoundFunction(std::string name, std::vector<std::shared_ptr<ScriptVariable>> &variables);
 
+	std::shared_ptr<ScriptVariable> GetGlobalVariable(const std::string& name) const;
+
 	void RaiseControlFlag(ScriptControlFlag flag);
 	void ConsumeControlFlag();
 
@@ -51,4 +54,3 @@ public:
 	Script(std::string name, std::vector<std::string> lines);
 	~Script();
 };
-

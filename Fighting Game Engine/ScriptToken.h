@@ -23,6 +23,7 @@ struct ScriptToken
 #pragma region Constant Token Declarations
 	static const std::string function_declaration;
 	static const std::string conditional_declaration;
+	static const std::string conditional_else;
 	static const std::string while_loop_declaration;
 
 	static const std::string block_end;

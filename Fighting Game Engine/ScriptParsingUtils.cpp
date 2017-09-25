@@ -226,12 +226,7 @@ ScriptTokenType ScriptParsingUtils::GetNextTokenType(const std::string& line, si
 	case ScriptTokenType::NumericLiteral:
 		for(size_t i = startIndex; i < line.length(); ++i)
 		{
-			if(isalpha(i))
-			{
-				out_endIndex = i;
-				break;
-			}
-			else if(!isdigit(i))
+			if(!isdigit(i))
 			{
 				out_endIndex = i - 1;
 				break;
@@ -385,4 +380,22 @@ ScriptFunctionSignature ScriptParsingUtils::ParseFunctionSignature(const ScriptL
 	}
 
 	return signature;
+}
+
+void ScriptParsingUtils::ParseConditionalExpression(const ScriptLinesView& lines , const std::vector<ScriptToken>& lineTokens, int cursor, std::vector<ScriptToken>& out_conditionalTokens, int& out_blockEnd)
+{
+	if(lineTokens.size() != 2)
+	{
+		throw ScriptError("Parse error: Invalid loop declaration.");
+	}
+
+	if(lineTokens[1].type != ScriptTokenType::ParenthesisGroup)
+	{
+		throw ScriptError("Parse error: Unexpected token: " + lineTokens[1].token);
+	}
+
+	out_blockEnd = ScriptParsingUtils::FindBlockEnd(lines, cursor);
+	
+	out_conditionalTokens.clear();
+	ScriptParsingUtils::ParseLineTokens(lineTokens[1].token, out_conditionalTokens);
 }

@@ -37,6 +37,19 @@ bool Script::CallBoundFunction(std::string name, std::vector<std::shared_ptr<Scr
 	return false;
 }
 
+std::shared_ptr<ScriptVariable> Script::GetGlobalVariable(const std::string& name) const
+{
+	try
+	{
+		return _parentBlock->GetVariable(name);
+	}
+	catch(ScriptError error)
+	{
+		DebugLog::Push("Could not find variable " + name + " in script " + _name + ".", LogItem::Type::Error);
+		return nullptr;
+	}
+}
+
 void Script::PreProcess()
 {
 	for(size_t i = 0; i < _lines.size(); ++i)
@@ -63,14 +76,13 @@ void Script::PreProcess()
 	}
 }
 
-void Script::PushBlock(ScriptBlock* block)
+void Script::PushBlock(std::shared_ptr<ScriptBlock> block)
 {
 	_blockStack.push(block);
 }
 
 void Script::PopBlock()
 {
-	delete _blockStack.top();
 	_blockStack.pop();
 }
 

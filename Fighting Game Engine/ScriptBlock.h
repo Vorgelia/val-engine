@@ -26,8 +26,10 @@ protected:
 
 	virtual void HandleExpressionLine(std::vector<ScriptToken> &tokens);
 	virtual void HandleFunctionDeclarationLine(std::vector<ScriptToken> &tokens);
-	virtual void HandleLoopDeclarationLine(std::vector<ScriptToken> &tokens);
-	virtual void HandleConditionalDeclarationLine(std::vector<ScriptToken> &tokens);
+	virtual void HandleLoopDeclarationLine(std::vector<ScriptToken> &tokens, int& out_blockEnd);
+	virtual bool HandleConditionalDeclarationLine(std::vector<ScriptToken> &tokens, int& out_blockEnd);
+
+	std::shared_ptr<ScriptVariable> EvaluateExpression(std::vector<ScriptToken>& tokens);
 
 	virtual bool HandleControlFlag();
 public:
