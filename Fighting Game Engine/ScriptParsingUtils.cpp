@@ -3,6 +3,7 @@
 #include "ScriptFunctionSignature.h"
 #include "ScriptError.h"
 #include "CommonUtilIncludes.hpp"
+#include "BaseScriptVariable.h"
 
 #define VE_TAB_SPACE_AMOUNT 4
 
@@ -375,7 +376,19 @@ ScriptFunctionSignature ScriptParsingUtils::ParseFunctionSignature(const ScriptL
 			{
 				throw ScriptError("Parser error: Invalid function definition.");
 			}
-			signature.returnType = token;
+
+			if(token == ScriptToken::type_bool)
+			{
+				signature.returnType = ScriptVariableType::Bool;
+			}
+			else if(token == ScriptToken::type_int)
+			{
+				signature.returnType = ScriptVariableType::Int;
+			}
+			else if(token == ScriptToken::type_bool)
+			{
+				signature.returnType = ScriptVariableType::Bool;
+			}
 		}
 	}
 

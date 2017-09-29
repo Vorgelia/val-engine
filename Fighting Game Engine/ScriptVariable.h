@@ -1,14 +1,48 @@
 #pragma once
-#include<string>
+#include <memory>
+#include <string>
+#include "BaseScriptVariable.h"
 
-class ScriptVariable
+template<typename T>
+class ScriptVariable :
+	public BaseScriptVariable
 {
-	std::string _type;
-	std::string _value;
+	T _value;
 public:
-	ScriptVariable(std::string type);
-	ScriptVariable(std::string type, std::string value);
-	ScriptVariable();
-	~ScriptVariable();
+	T value() const;
+	void assign(const ScriptVariable<T>& value);
+	ScriptVariable(T value = T(), bool isConst = false);
 };
 
+typedef ScriptVariable<int> ScriptInt;
+typedef ScriptVariable<bool> ScriptBool;
+typedef ScriptVariable<std::string> ScriptString;
+
+template<typename T>
+inline T ScriptVariable<T>::value() const
+{
+	return _value;
+}
+
+template<typename T>
+inline void ScriptVariable<T>::assign(const ScriptVariable<T>& value)
+{
+	if(_const)
+	{
+		throw ScriptError("Attempting to modify const variable.");
+	}
+	_value = value.value();
+}
+
+template<typename T>
+inline ScriptVariable<T>::ScriptVariable(T value, bool isConst)
+{
+	_value = value;
+}
+
+template<>
+ScriptInt::ScriptVariable(int value, bool isConst);
+template<>
+ScriptBool::ScriptVariable(bool value, bool isConst);
+template<>
+ScriptString::ScriptVariable(std::string value, bool isConst);

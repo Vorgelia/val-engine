@@ -21,12 +21,12 @@ bool ScriptFunctionBlock::HandleControlFlag()
 	return false;
 }
 
-const std::shared_ptr<ScriptVariable> ScriptFunctionBlock::returnValue() const
+const std::shared_ptr<BaseScriptVariable> ScriptFunctionBlock::returnValue() const
 {
-	return _variables.at("__VE_RETURN");
+	return _variables.at(VE_SCRIPT_RETURN_VARIABLE_ID);
 }
 
-void ScriptFunctionBlock::Run(const std::vector<std::shared_ptr<ScriptVariable>> &variables)
+void ScriptFunctionBlock::Run(const std::vector<std::shared_ptr<BaseScriptVariable>> &variables)
 {
 	if(variables.size() != _signature->arguments.size())
 	{
@@ -49,7 +49,7 @@ ScriptFunctionBlock::ScriptFunctionBlock(ScriptFunctionSignature* signature, Scr
 	: ScriptBlock(lines, depth, parent, owner)
 {
 	_signature = signature;
-	_variables["__VE_RETURN"] = std::make_shared<ScriptVariable>(signature->returnType);
+	_variables[VE_SCRIPT_RETURN_VARIABLE_ID] = std::make_shared<BaseScriptVariable>(signature->returnType);
 }
 
 

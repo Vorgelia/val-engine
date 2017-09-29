@@ -1,5 +1,5 @@
 #include "Script.h"
-#include "ScriptVariable.h"
+#include "BaseScriptVariable.h"
 #include "ScriptParsingUtils.h"
 #include "CommonUtilIncludes.hpp"
 #include "ScriptError.h"
@@ -21,12 +21,12 @@ ScriptControlFlag Script::controlFlag()
 	return _controlFlag;
 }
 
-void Script::BindFunction(std::string name, void(*func)(std::vector<std::shared_ptr<ScriptVariable>>&))
+void Script::BindFunction(std::string name, void(*func)(std::vector<std::shared_ptr<BaseScriptVariable>>&))
 {
 	_boundFunctions[name] = func;
 }
 
-bool Script::CallBoundFunction(std::string name, std::vector<std::shared_ptr<ScriptVariable>> &variables)
+bool Script::CallBoundFunction(std::string name, std::vector<std::shared_ptr<BaseScriptVariable>> &variables)
 {
 	auto iter = _boundFunctions.find(name);
 	if(iter != _boundFunctions.end() && iter->second != nullptr)
@@ -37,7 +37,7 @@ bool Script::CallBoundFunction(std::string name, std::vector<std::shared_ptr<Scr
 	return false;
 }
 
-std::shared_ptr<ScriptVariable> Script::GetGlobalVariable(const std::string& name) const
+std::shared_ptr<BaseScriptVariable> Script::GetGlobalVariable(const std::string& name) const
 {
 	try
 	{
@@ -102,7 +102,7 @@ ScriptExitCode Script::Execute()
 
 	try
 	{
-		ExecuteFunction("Main", std::vector<std::shared_ptr<ScriptVariable>>());
+		ExecuteFunction("Main", std::vector<std::shared_ptr<BaseScriptVariable>>());
 	}
 	catch(ScriptError error)
 	{
@@ -129,7 +129,7 @@ ScriptExitCode Script::Execute()
 	return returnCode;
 }
 
-void Script::ExecuteFunction(std::string name, const std::vector<std::shared_ptr<ScriptVariable>> &variables)
+void Script::ExecuteFunction(std::string name, const std::vector<std::shared_ptr<BaseScriptVariable>> &variables)
 {
 	_parentBlock->RunFunction(name, variables);
 }
@@ -143,7 +143,7 @@ Script::Script(std::string name, std::vector<std::string> lines)
 	PreProcess();
 
 	_parentBlock = new ScriptParentBlock(ScriptLinesView(&_lines), 0, this);
-	ExecuteFunction("Init", std::vector<std::shared_ptr<ScriptVariable>>());
+	ExecuteFunction("Init", std::vector<std::shared_ptr<BaseScriptVariable>>());
 }
 
 Script::~Script()

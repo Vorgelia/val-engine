@@ -79,7 +79,7 @@ void ScriptBlock::HandleExpressionLine(std::vector<ScriptToken> &tokens)
 				break;
 			}
 			_owner->RaiseControlFlag(ScriptControlFlag::Return);
-			_variables["__VE_RETURN"] = EvaluateExpression(std::vector<ScriptToken>(tokens.begin() + 1, tokens.end()));
+			_variables[VE_SCRIPT_RETURN_VARIABLE_ID] = EvaluateExpression(std::vector<ScriptToken>(tokens.begin() + 1, tokens.end()));
 		}
 		else if(token.token == ScriptToken::block_break)
 		{
@@ -152,51 +152,51 @@ bool ScriptBlock::HandleConditionalDeclarationLine(std::vector<ScriptToken> &tok
 	return blockExecuted;
 }
 
-std::shared_ptr<ScriptVariable> ScriptBlock::EvaluateExpression(std::vector<ScriptToken>& tokens)
+std::shared_ptr<BaseScriptVariable> ScriptBlock::EvaluateExpression(std::vector<ScriptToken>& tokens)
 {
 	//operator stack
 	//variable stack
 
-	for(size_t i = 0; i < tokens.size(); ++i)
-	{
-		ScriptToken& token = tokens[i];
-		//switch parsing state
-		switch(token.type)
-		{
-		case ScriptTokenType::ParenthesisGroup:
-		{
-			std::vector<ScriptToken> parenthesisTokens;
-			ScriptParsingUtils::ParseLineTokens(token.token, parenthesisTokens);
-			std::shared_ptr<ScriptVariable> result = EvaluateExpression(parenthesisTokens);
-			//push result to variable stack
-		}
-		break;
-		case ScriptTokenType::Operator:
-		{
-			//check if valid operator
-			//while priority < operator stack top
-			//apply operator stack top
-			//push to operator stack
-		}
-		break;
-		case ScriptTokenType::NumericLiteral:
-		{
-			//push int variable to operator stack
-		}
-		break;
-		case ScriptTokenType::Keyword:
-		{
-			//if the keyword is a type
-			//	handle as variable initialization
-			//if the keyword is a 
-		}
-		break;
-		}
+	//for(size_t i = 0; i < tokens.size(); ++i)
+	//{
+	//	ScriptToken& token = tokens[i];
+	//	//switch parsing state
+	//	switch(token.type)
+	//	{
+	//	case ScriptTokenType::ParenthesisGroup:
+	//	{
+	//		std::vector<ScriptToken> parenthesisTokens;
+	//		ScriptParsingUtils::ParseLineTokens(token.token, parenthesisTokens);
+	//		std::shared_ptr<BaseScriptVariable> result = EvaluateExpression(parenthesisTokens);
+	//		//push result to variable stack
+	//	}
+	//	break;
+	//	case ScriptTokenType::Operator:
+	//	{
+	//		//check if valid operator
+	//		//while priority < operator stack top
+	//		//apply operator stack top
+	//		//push to operator stack
+	//	}
+	//	break;
+	//	case ScriptTokenType::NumericLiteral:
+	//	{
+	//		//push int variable to operator stack
+	//	}
+	//	break;
+	//	case ScriptTokenType::Keyword:
+	//	{
+	//		//if the keyword is a type
+	//		//	handle as variable initialization
+	//		//if the keyword is a 
+	//	}
+	//	break;
+	//	}
 
-	}
+	//}
 
 	//keep applying operator stack until empty
-	return std::make_shared<ScriptVariable>();
+	return std::make_shared<BaseScriptVariable>();
 }
 
 void ScriptBlock::Run()
@@ -224,7 +224,7 @@ void ScriptBlock::Run()
 	}
 }
 
-std::shared_ptr<ScriptVariable> ScriptBlock::RunFunction(std::string name, const std::vector<std::shared_ptr<ScriptVariable>> &variables)
+std::shared_ptr<BaseScriptVariable> ScriptBlock::RunFunction(std::string name, const std::vector<std::shared_ptr<BaseScriptVariable>> &variables)
 {
 	if(_parent == nullptr)
 	{
@@ -233,7 +233,7 @@ std::shared_ptr<ScriptVariable> ScriptBlock::RunFunction(std::string name, const
 	return _parent->RunFunction(name, variables);
 }
 
-std::shared_ptr<ScriptVariable> ScriptBlock::GetVariable(std::string name)
+std::shared_ptr<BaseScriptVariable> ScriptBlock::GetVariable(std::string name)
 {
 	auto iter = _variables.find(name);
 	if(iter != _variables.end())

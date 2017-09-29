@@ -2,10 +2,7 @@
 #include <string>
 #include <vector>
 
-struct ScriptFunctionArgument
-{
-
-};
+enum class ScriptVariableType;
 
 struct ScriptFunctionSignature
 {
@@ -15,9 +12,9 @@ struct ScriptFunctionSignature
 	int end;
 
 	std::vector<std::string> arguments;
-	std::string returnType;
+	ScriptVariableType returnType;
 
-	ScriptFunctionSignature(std::string name, int start, int end, std::vector<std::string> arguments, std::string returnType);
+	ScriptFunctionSignature(std::string name, int start, int end, std::vector<std::string> arguments, ScriptVariableType returnType);
 	ScriptFunctionSignature();
 	~ScriptFunctionSignature();
 };

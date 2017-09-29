@@ -4,7 +4,9 @@
 #include <map>
 #include <memory>
 #include "ScriptLinesView.h"
-#include "ScriptVariable.h"
+#include "BaseScriptVariable.h"
+
+#define VE_SCRIPT_RETURN_VARIABLE_ID "__VE_RETURN"
 
 class Script;
 enum class ScriptLineType;
@@ -20,7 +22,7 @@ protected:
 	size_t _cursor;
 	int _depth;
 
-	std::map<std::string, std::shared_ptr<ScriptVariable>> _variables;
+	std::map<std::string, std::shared_ptr<BaseScriptVariable>> _variables;
 
 	void ParseLine(const std::string &line);
 
@@ -29,7 +31,7 @@ protected:
 	virtual void HandleLoopDeclarationLine(std::vector<ScriptToken> &tokens, int& out_blockEnd);
 	virtual bool HandleConditionalDeclarationLine(std::vector<ScriptToken> &tokens, int& out_blockEnd);
 
-	std::shared_ptr<ScriptVariable> EvaluateExpression(std::vector<ScriptToken>& tokens);
+	std::shared_ptr<BaseScriptVariable> EvaluateExpression(std::vector<ScriptToken>& tokens);
 
 	virtual bool HandleControlFlag();
 public:
@@ -37,8 +39,8 @@ public:
 
 	virtual void Run();
 
-	virtual std::shared_ptr<ScriptVariable> RunFunction(std::string name, const std::vector<std::shared_ptr<ScriptVariable>> &variables);
-	std::shared_ptr<ScriptVariable> GetVariable(std::string name);
+	virtual std::shared_ptr<BaseScriptVariable> RunFunction(std::string name, const std::vector<std::shared_ptr<BaseScriptVariable>> &variables);
+	std::shared_ptr<BaseScriptVariable> GetVariable(std::string name);
 
 	ScriptBlock(ScriptLinesView lines, int depth, ScriptBlock* parent, Script* owner);
 	~ScriptBlock();

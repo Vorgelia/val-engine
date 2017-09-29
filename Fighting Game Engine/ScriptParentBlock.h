@@ -13,7 +13,7 @@ class ScriptParentBlock :
 	void HandleFunctionDeclarationLine(std::vector<ScriptToken> &tokens) override;
 public:
 	
-	std::shared_ptr<ScriptVariable> RunFunction(std::string name, const std::vector<std::shared_ptr<ScriptVariable>> &variables) override;
+	std::shared_ptr<BaseScriptVariable> RunFunction(std::string name, const std::vector<std::shared_ptr<BaseScriptVariable>> &variables) override;
 
 	ScriptParentBlock(ScriptLinesView lines, int depth, Script* owner);
 	~ScriptParentBlock();

@@ -31,7 +31,13 @@ struct ScriptToken
 	static const std::string block_continue;
 	static const std::string block_return;
 
-	static const std::string null_token;
+	static const std::string value_null;
+	static const std::string value_true;
+	static const std::string value_false;
+
+	static const std::string type_int;
+	static const std::string type_bool;
+	static const std::string type_string;
 #pragma endregion
 
 	std::string token;
