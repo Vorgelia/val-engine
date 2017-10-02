@@ -4,16 +4,18 @@
 
 class ScriptBlock;
 class BaseScriptVariable;
+struct ScriptToken;
 
 class ScriptExpression
 {
 	enum class State;
 
 	ScriptBlock* _parent;
+	const std::vector<ScriptToken>& _tokens;
 public:
 
 	std::shared_ptr<BaseScriptVariable> Evaluate();
-	ScriptExpression();
+	ScriptExpression(const std::vector<ScriptToken>& tokens);
 	~ScriptExpression();
 };
 

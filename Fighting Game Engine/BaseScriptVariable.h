@@ -20,6 +20,7 @@ protected:
 public:
 	ScriptVariableType type() const;
 	bool isConst() const;
+	virtual std::string ToString();
 
 	BaseScriptVariable(ScriptVariableType type, bool isConst = false);
 	BaseScriptVariable();

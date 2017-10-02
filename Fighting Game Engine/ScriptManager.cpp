@@ -1,10 +1,13 @@
 #include "ScriptManager.h"
-#include"Script.h"
+#include "Script.h"
+#include "BaseScriptVariable.h"
 #include "ResourceLoader.h"
+#include <map>
 
 namespace ScriptManager
 {
-	std::vector<Script*> _scripts;
+	std::map<std::string, std::shared_ptr<Script>> _scripts;
+	std::map<std::string, std::shared_ptr<BaseScriptVariable>> _globalVariables;
 }
 
 void ScriptManager::Init()
@@ -12,32 +15,43 @@ void ScriptManager::Init()
 	AddScript("Scripts/Base/example.vscript");
 }
 
-void ScriptManager::AddScript(FS::path path)
+void ScriptManager::AddScript(const FS::path& path)
 {
 	std::vector<std::string> lines = ResourceLoader::ReturnFileLines(path, false);
 	if(lines.size() > 0)
 	{
-		_scripts.push_back(new Script(path.leaf().generic_string(), lines));
+		const std::string& scriptName = path.leaf().generic_string();
+		_scripts.emplace(scriptName, std::make_shared<Script>(scriptName, lines));
 	}
+}
+
+void ScriptManager::AddVariable(const std::string& name, const std::shared_ptr<BaseScriptVariable>& variable)
+{
+	_globalVariables.emplace(name, variable);
+}
+
+std::shared_ptr<BaseScriptVariable> ScriptManager::GetVariable(const std::string& name)
+{
+	auto& iter = _globalVariables.find(name);
+	if(iter == _globalVariables.end())
+	{
+		return nullptr;
+	}
+	return iter->second;
 }
 
 void ScriptManager::Update()
 {
-	for(unsigned int i = 0; i < _scripts.size(); ++i)
+	for(auto& script : _scripts)
 	{
-		if(_scripts[i]->valid())
+		if(script.second->valid())
 		{
-			_scripts[i]->Execute();
+			script.second->Execute();
 		}
 	}
 }
 
 void ScriptManager::Cleanup()
 {
-	for(unsigned int i = 0; i < _scripts.size(); ++i)
-	{
-		delete _scripts[i];
-	}
-
 	_scripts.clear();
 }

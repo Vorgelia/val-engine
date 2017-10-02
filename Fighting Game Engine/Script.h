@@ -34,6 +34,7 @@ class Script
 	void PushBlock(std::shared_ptr<ScriptBlock> block);
 	void PopBlock();
 
+	std::shared_ptr<BaseScriptVariable> GetGlobalVariable(const std::string& name) const;
 public:
 	std::string name() const;
 	bool valid() const;
@@ -43,7 +44,7 @@ public:
 	void BindFunction(std::string name, void(*func)(std::vector<std::shared_ptr<BaseScriptVariable>>&));
 	bool CallBoundFunction(std::string name, std::vector<std::shared_ptr<BaseScriptVariable>> &variables);
 
-	std::shared_ptr<BaseScriptVariable> GetGlobalVariable(const std::string& name) const;
+	std::shared_ptr<BaseScriptVariable> GetVariable(const std::string& name) const;
 
 	void RaiseControlFlag(ScriptControlFlag flag);
 	void ConsumeControlFlag();

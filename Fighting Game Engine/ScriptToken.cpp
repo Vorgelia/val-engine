@@ -3,6 +3,7 @@
 const std::string ScriptToken::function_declaration = "function";
 const std::string ScriptToken::conditional_declaration = "if";
 const std::string ScriptToken::conditional_else = "else";
+const std::string ScriptToken::conditional_elseif = "elseif";
 const std::string ScriptToken::while_loop_declaration = "while";
 
 const std::string ScriptToken::block_end = "end";

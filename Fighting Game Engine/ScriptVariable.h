@@ -10,6 +10,8 @@ class ScriptVariable :
 	T _value;
 public:
 	T value() const;
+	std::string ToString() override;
+
 	void assign(const ScriptVariable<T>& value);
 	ScriptVariable(T value = T(), bool isConst = false);
 };
@@ -22,6 +24,12 @@ template<typename T>
 inline T ScriptVariable<T>::value() const
 {
 	return _value;
+}
+
+template<typename T>
+std::string ScriptVariable<T>::ToString()
+{
+	return std::to_string(_value);
 }
 
 template<typename T>
@@ -39,6 +47,13 @@ inline ScriptVariable<T>::ScriptVariable(T value, bool isConst)
 {
 	_value = value;
 }
+
+template<>
+std::string ScriptInt::ToString();
+template<>
+std::string ScriptBool::ToString();
+template<>
+std::string ScriptString::ToString();
 
 template<>
 ScriptInt::ScriptVariable(int value, bool isConst);

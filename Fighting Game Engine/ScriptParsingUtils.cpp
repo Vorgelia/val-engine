@@ -399,7 +399,7 @@ void ScriptParsingUtils::ParseConditionalExpression(const ScriptLinesView& lines
 {
 	if(lineTokens.size() != 2)
 	{
-		throw ScriptError("Parse error: Invalid loop declaration.");
+		throw ScriptError("Parse error: Invalid conditional declaration.");
 	}
 
 	if(lineTokens[1].type != ScriptTokenType::ParenthesisGroup)

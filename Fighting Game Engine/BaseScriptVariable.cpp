@@ -2,6 +2,7 @@
 #include "ScriptParsingUtils.h"
 #include "ScriptError.h"
 #include "ScriptOperator.h"
+#include "ScriptToken.h"
 
 ScriptVariableType BaseScriptVariable::type() const
 {
@@ -11,6 +12,11 @@ ScriptVariableType BaseScriptVariable::type() const
 bool BaseScriptVariable::isConst() const
 {
 	return _const;
+}
+
+std::string BaseScriptVariable::ToString()
+{
+	return ScriptToken::value_null;
 }
 
 BaseScriptVariable::BaseScriptVariable(ScriptVariableType type, bool isConst)

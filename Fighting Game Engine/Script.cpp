@@ -1,4 +1,5 @@
 #include "Script.h"
+#include "ScriptManager.h"
 #include "BaseScriptVariable.h"
 #include "ScriptParsingUtils.h"
 #include "CommonUtilIncludes.hpp"
@@ -37,7 +38,7 @@ bool Script::CallBoundFunction(std::string name, std::vector<std::shared_ptr<Bas
 	return false;
 }
 
-std::shared_ptr<BaseScriptVariable> Script::GetGlobalVariable(const std::string& name) const
+std::shared_ptr<BaseScriptVariable> Script::GetVariable(const std::string& name) const
 {
 	try
 	{
@@ -84,6 +85,16 @@ void Script::PushBlock(std::shared_ptr<ScriptBlock> block)
 void Script::PopBlock()
 {
 	_blockStack.pop();
+}
+
+std::shared_ptr<BaseScriptVariable> Script::GetGlobalVariable(const std::string & name) const
+{
+	std::shared_ptr<BaseScriptVariable> var = ScriptManager::GetVariable(name);
+	if(var == nullptr)
+	{
+		throw ScriptError("Attempting to index invalid variable " + name);
+	}
+	return var;
 }
 
 void Script::RaiseControlFlag(ScriptControlFlag flag)
