@@ -188,7 +188,7 @@ std::shared_ptr<BaseScriptVariable> ScriptVariableUtils::ApplyOperation(std::sha
 	case ScriptOperatorType::Addition:
 		return OperatorAdd<ScriptString>(lhs, rhs);
 	default:
-		throw ScriptError(fmt::format("Undefined operator {} {} {}", (int)lhs->type(), (int)operation, (int)rhs->type()));
+		throw ScriptError(fmt::format("Undefined operator string '{}' string", (int)lhs->type(), (int)operation, (int)rhs->type()));
 	}
 }
 

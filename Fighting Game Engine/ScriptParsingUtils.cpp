@@ -227,9 +227,12 @@ ScriptTokenType ScriptParsingUtils::GetNextTokenType(const std::string& line, si
 	case ScriptTokenType::NumericLiteral:
 		for(size_t i = startIndex; i < line.length(); ++i)
 		{
-			if(!isdigit(line[i]))
+			if(isdigit(line[i]))
 			{
-				out_endIndex = i - 1;
+				out_endIndex = i;
+			}
+			else
+			{
 				break;
 			}
 		}

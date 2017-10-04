@@ -92,7 +92,7 @@ void ScriptBlock::HandleLoopDeclarationLine(std::vector<ScriptToken> &tokens, in
 	ScriptParsingUtils::ParseConditionalExpression(_lines, std::forward<std::vector<ScriptToken>>(tokens), _cursor, parenthesisTokens, blockEnd);
 
 	out_blockEnd = blockEnd;
-	ScriptLinesView blockLines = ScriptLinesView(_lines, _cursor + 1, out_blockEnd);
+	ScriptLinesView blockLines = ScriptLinesView(_lines, _cursor + 1, out_blockEnd + 1);
 
 	bool validExpression;
 	do

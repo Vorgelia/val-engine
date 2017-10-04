@@ -42,7 +42,7 @@ std::shared_ptr<BaseScriptVariable> ScriptParentBlock::RunFunction(std::string n
 		throw ScriptError("Attempting to call invalid function '" + name + "'");
 	}
 
-	ScriptLinesView functionLines = ScriptLinesView(_lines.lines(), function->second.start + 1, function->second.end);
+	ScriptLinesView functionLines = ScriptLinesView(_lines.lines(), function->second.start + 1, function->second.end + 1);
 
 	std::shared_ptr<ScriptFunctionBlock> scriptBlock = std::make_shared<ScriptFunctionBlock>(&function->second, functionLines, _depth + 1, this, _owner);
 	_owner->PushBlock(scriptBlock);

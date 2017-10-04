@@ -34,18 +34,23 @@ std::shared_ptr<BaseScriptVariable> ScriptExpression::Evaluate()
 		switch(token.type)
 		{
 		case ScriptTokenType::Operator:
-			if(previousState == ScriptExpression::State::BinaryOperator || previousState == ScriptExpression::State::UnaryOperator)
-			{
-				throw ScriptError("Unexpected Token " + token.token);
-			}
 			if(previousState == ScriptExpression::State::VariableEvaluation || previousState == ScriptExpression::State::VariableDeclaration)
 			{
 				state = ScriptExpression::State::BinaryOperator;
+				if(previousState == ScriptExpression::State::BinaryOperator || previousState == ScriptExpression::State::UnaryOperator)
+				{
+					throw ScriptError("Unexpected Token " + token.token);
+				}
 			}
 			else
 			{
 				state = ScriptExpression::State::UnaryOperator;
+				if(previousState == ScriptExpression::State::UnaryOperator)
+				{
+					throw ScriptError("Unexpected Token " + token.token);
+				}
 			}
+
 			break;
 		case ScriptTokenType::Keyword:
 			if(BaseScriptVariable::GetVariableType(token.token) != ScriptVariableType::Null)
@@ -158,7 +163,7 @@ std::shared_ptr<BaseScriptVariable> ScriptExpression::Evaluate()
 				std::shared_ptr<ScriptExpression> expression = std::make_shared<ScriptExpression>(_parent, parenthesisTokens);
 				evaluatedVar = expression->Evaluate();
 			}
-			if(token.type == ScriptTokenType::NumericLiteral)
+			else if(token.type == ScriptTokenType::NumericLiteral)
 			{
 				evaluatedVar = std::make_shared<ScriptInt>(boost::lexical_cast<int>(token.token), true);
 			}
