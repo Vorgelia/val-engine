@@ -125,7 +125,7 @@ void ScriptBlock::HandleConditionalDeclarationLine(std::vector<ScriptToken> &tok
 			out_blockEnd = ScriptParsingUtils::FindBlockEnd(_lines, out_blockEnd);
 			if(!branchRan)
 			{
-				ScriptLinesView blockLines = ScriptLinesView(_lines, _cursor + 1, out_blockEnd);
+				ScriptLinesView blockLines = ScriptLinesView(_lines, _cursor + 1, out_blockEnd + 1);
 				std::shared_ptr<ScriptBlock> block = std::make_shared<ScriptBlock>(blockLines, _depth + 1, this, _owner);
 				block->Run();
 			}
@@ -144,7 +144,7 @@ void ScriptBlock::HandleConditionalDeclarationLine(std::vector<ScriptToken> &tok
 				std::vector<ScriptToken> parenthesisTokens;
 				ScriptParsingUtils::ParseConditionalExpression(_lines, std::forward<std::vector<ScriptToken>>(tokens), _cursor, parenthesisTokens, out_blockEnd);
 
-				ScriptLinesView blockLines = ScriptLinesView(_lines, _cursor + 1, out_blockEnd);
+				ScriptLinesView blockLines = ScriptLinesView(_lines, _cursor + 1, out_blockEnd + 1);
 				std::shared_ptr<ScriptConditionalBlock> block = std::make_shared<ScriptConditionalBlock>(parenthesisTokens, blockLines, _depth + 1, this, _owner);
 
 				_owner->PushBlock(block);
@@ -159,6 +159,7 @@ void ScriptBlock::HandleConditionalDeclarationLine(std::vector<ScriptToken> &tok
 
 			out_blockEnd += 2;
 			ScriptParsingUtils::ParseLineTokens(_lines[out_blockEnd], tokens);
+			_cursor = out_blockEnd;
 		}
 		else
 		{

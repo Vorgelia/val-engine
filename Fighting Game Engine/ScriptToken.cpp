@@ -12,8 +12,8 @@ const std::string ScriptToken::block_continue = "continue";
 const std::string ScriptToken::block_return = "return";
 
 const std::string ScriptToken::value_null = "null";
-const std::string ScriptToken::value_true = "null";
-const std::string ScriptToken::value_false = "null";
+const std::string ScriptToken::value_true = "true";
+const std::string ScriptToken::value_false = "false";
 
 const std::string ScriptToken::type_int = "int";
 const std::string ScriptToken::type_bool = "bool";
