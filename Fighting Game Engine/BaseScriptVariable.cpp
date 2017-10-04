@@ -41,7 +41,7 @@ BaseScriptVariable::BaseScriptVariable(ScriptVariableType type, bool isConst)
 {
 	_type = type;
 	_const = isConst;
-	_initialized = true;
+	_initialized = false;
 }
 
 BaseScriptVariable::BaseScriptVariable()

@@ -12,7 +12,7 @@ class ScriptFunctionBlock :
 
 	bool HandleControlFlag();
 public:
-	const std::shared_ptr<BaseScriptVariable> returnValue() const;
+	std::shared_ptr<BaseScriptVariable> returnValue() const;
 
 	void Run(const std::vector<std::shared_ptr<BaseScriptVariable>> &variables);
 

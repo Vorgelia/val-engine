@@ -111,7 +111,8 @@ void ScriptBlock::HandleConditionalDeclarationLine(std::vector<ScriptToken> &tok
 	bool branchRan = false;
 	bool initialBranchChecked = false;
 
-	out_blockEnd = _cursor;
+	int nextBlockBegin = _cursor;
+	out_blockEnd = nextBlockBegin;
 
 	while(tokens.size() > 0)
 	{
@@ -122,10 +123,10 @@ void ScriptBlock::HandleConditionalDeclarationLine(std::vector<ScriptToken> &tok
 				throw ScriptError("Unexpected token " + tokens[1].token);
 			}
 
-			out_blockEnd = ScriptParsingUtils::FindBlockEnd(_lines, out_blockEnd);
+			out_blockEnd = ScriptParsingUtils::FindBlockEnd(_lines, nextBlockBegin);
 			if(!branchRan)
 			{
-				ScriptLinesView blockLines = ScriptLinesView(_lines, _cursor + 1, out_blockEnd + 1);
+				ScriptLinesView blockLines = ScriptLinesView(_lines, nextBlockBegin + 1, out_blockEnd + 1);
 				std::shared_ptr<ScriptBlock> block = std::make_shared<ScriptBlock>(blockLines, _depth + 1, this, _owner);
 				block->Run();
 			}
@@ -137,14 +138,14 @@ void ScriptBlock::HandleConditionalDeclarationLine(std::vector<ScriptToken> &tok
 
 			if(branchRan)
 			{
-				out_blockEnd = ScriptParsingUtils::FindBlockEnd(_lines, out_blockEnd);
+				out_blockEnd = ScriptParsingUtils::FindBlockEnd(_lines, nextBlockBegin);
 			}
 			else
 			{
 				std::vector<ScriptToken> parenthesisTokens;
-				ScriptParsingUtils::ParseConditionalExpression(_lines, std::forward<std::vector<ScriptToken>>(tokens), _cursor, parenthesisTokens, out_blockEnd);
+				ScriptParsingUtils::ParseConditionalExpression(_lines, std::forward<std::vector<ScriptToken>>(tokens), nextBlockBegin, parenthesisTokens, out_blockEnd);
 
-				ScriptLinesView blockLines = ScriptLinesView(_lines, _cursor + 1, out_blockEnd + 1);
+				ScriptLinesView blockLines = ScriptLinesView(_lines, nextBlockBegin + 1, out_blockEnd + 1);
 				std::shared_ptr<ScriptConditionalBlock> block = std::make_shared<ScriptConditionalBlock>(parenthesisTokens, blockLines, _depth + 1, this, _owner);
 
 				_owner->PushBlock(block);
@@ -157,9 +158,8 @@ void ScriptBlock::HandleConditionalDeclarationLine(std::vector<ScriptToken> &tok
 				break;
 			}
 
-			out_blockEnd += 2;
-			ScriptParsingUtils::ParseLineTokens(_lines[out_blockEnd], tokens);
-			_cursor = out_blockEnd;
+			nextBlockBegin = out_blockEnd + 2;
+			ScriptParsingUtils::ParseLineTokens(_lines[nextBlockBegin], tokens);
 		}
 		else
 		{

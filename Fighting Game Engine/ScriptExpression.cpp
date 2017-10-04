@@ -218,7 +218,8 @@ std::shared_ptr<BaseScriptVariable> ScriptExpression::Evaluate()
 
 			if(previousState == ScriptExpression::State::UnaryOperator)
 			{
-				evaluatedVar = ScriptVariableUtils::Operate(evaluatedVar, ScriptOperatorType::Subtraction);
+				evaluatedVar = ScriptVariableUtils::Operate(evaluatedVar, operatorStack.top()->type());
+				operatorStack.pop();
 			}
 
 			variableStack.push(evaluatedVar);

@@ -21,7 +21,7 @@ bool ScriptFunctionBlock::HandleControlFlag()
 	return false;
 }
 
-const std::shared_ptr<BaseScriptVariable> ScriptFunctionBlock::returnValue() const
+std::shared_ptr<BaseScriptVariable> ScriptFunctionBlock::returnValue() const
 {
 	return _variables.at(VE_SCRIPT_RETURN_VARIABLE_ID);
 }
