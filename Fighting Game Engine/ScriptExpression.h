@@ -15,7 +15,7 @@ class ScriptExpression
 public:
 
 	std::shared_ptr<BaseScriptVariable> Evaluate();
-	ScriptExpression(const std::vector<ScriptToken>& tokens);
+	ScriptExpression(ScriptBlock* parent, const std::vector<ScriptToken>& tokens);
 	~ScriptExpression();
 };
 

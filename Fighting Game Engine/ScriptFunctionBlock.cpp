@@ -33,15 +33,16 @@ void ScriptFunctionBlock::Run(const std::vector<std::shared_ptr<BaseScriptVariab
 		throw ScriptError(fmt::format("Runtime Error: Mismatched arguments on {}() call. (expected {}, got{})", _signature->name, _signature->arguments.size(), variables.size()));
 	}
 
-	/*for(size_t i = 0; i < variables.size(); i++)
+	for(size_t i = 0; i < variables.size(); i++)
 	{
 		if(_signature->arguments[i].type != variables[i]->type())
 		{
-			throw ScriptError(fmt::format("Argument of invalid type on {}() call. (expected {}, got {}",_signature->name, _signature->arguments[i].type(), variables[i].type()));
+			throw ScriptError(fmt::format("Argument of invalid type on {}() call. (expected {}, got {}", _signature->name, (int)_signature->arguments[i].type, (int)variables[i]->type()));
 		}
+
 		_variables[_signature->arguments[i].name] = variables[i];
-	}*/
-	//add variables
+	}
+
 	ScriptBlock::Run();
 }
 

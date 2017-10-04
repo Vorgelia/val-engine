@@ -80,11 +80,11 @@ std::string ScriptParsingUtils::TrimLine(const std::string& line, int& out_inden
 	return "";
 }
 
-int ScriptParsingUtils::FindBlockEnd(const ScriptLinesView &lines, unsigned int blockStart)
+int ScriptParsingUtils::FindBlockEnd(const ScriptLinesView &lines, unsigned int blockStart, bool requireEndDeclaration)
 {
 	if(blockStart >= lines.size())
 	{
-		return -1;
+		throw ScriptError("Improperly terminated block");
 	}
 
 	int blockDepth = GetIndentationLevel(lines[blockStart]);
@@ -93,13 +93,13 @@ int ScriptParsingUtils::FindBlockEnd(const ScriptLinesView &lines, unsigned int 
 	{
 		int lineDepth;
 		std::string line = ScriptParsingUtils::TrimLine(lines[i], lineDepth);
-		if(lineDepth == blockDepth && line == ScriptToken::block_end)
+		if(lineDepth == blockDepth && (!requireEndDeclaration || line == ScriptToken::block_end))
 		{
-			return i;
+			return i - 1;
 		}
 	}
 
-	return -1;
+	throw ScriptError("Improperly terminated block");
 }
 
 ScriptTokenType ScriptParsingUtils::GetTokenType(char character)
@@ -227,7 +227,7 @@ ScriptTokenType ScriptParsingUtils::GetNextTokenType(const std::string& line, si
 	case ScriptTokenType::NumericLiteral:
 		for(size_t i = startIndex; i < line.length(); ++i)
 		{
-			if(!isdigit(i))
+			if(!isdigit(line[i]))
 			{
 				out_endIndex = i - 1;
 				break;
@@ -278,7 +278,13 @@ void ScriptParsingUtils::ParseLineTokens(const std::string& line, std::vector<Sc
 			return;
 		}
 
-		if(tokenType != ScriptTokenType::Whitespace)
+		if(tokenType == ScriptTokenType::ParenthesisGroup)
+		{
+			out_tokens.push_back(ScriptToken{
+				line.substr(cursor + 1, endIndex - cursor - 1)
+				, tokenType });
+		}
+		else if(tokenType != ScriptTokenType::Whitespace)
 		{
 			out_tokens.push_back(ScriptToken{
 				line.substr(cursor, endIndex - cursor + 1)
@@ -288,114 +294,113 @@ void ScriptParsingUtils::ParseLineTokens(const std::string& line, std::vector<Sc
 	}
 }
 
+int ScriptParsingUtils::GetNextTokenOfType(ScriptTokenType type, const std::vector<ScriptToken>& tokens, int startIndex)
+{
+	for(size_t i = startIndex; i < tokens.size(); ++i)
+	{
+		if(tokens[i].type == type)
+		{
+			return i;
+		}
+	}
+	return -1;
+}
+
 ScriptFunctionSignature ScriptParsingUtils::ParseFunctionSignature(const ScriptLinesView &lines, int declarationLine)
 {
 	ScriptFunctionSignature signature;
 
+	int indentationLevel;
+	std::string line = TrimLine(lines[declarationLine], indentationLevel);
+	if(indentationLevel < 0)
+	{
+		throw ScriptError("Parser Error - Invalid function declaration line. Somehow the parser is completely broken.");
+	}
+
 	signature.end = FindBlockEnd(lines, declarationLine);
 	if(signature.end < 0)
 	{
-		return signature;
+		throw ScriptError("Parser error: Improperly terminated function '" + signature.name + "'.");
 	}
 
 	signature.start = declarationLine;
 
-	int il;
-	std::string line = TrimLine(lines[declarationLine], il);
-	if(il < 0)
+	std::vector<ScriptToken> declLineTokens;
+	ParseLineTokens(line, declLineTokens);
+
+	if(declLineTokens.size() != 5
+		|| declLineTokens[0].token != ScriptToken::function_declaration)
 	{
-		return signature;
+		throw ScriptError("Parser Error - Invalid function declaration.");
 	}
 
-	size_t cursor = 0;
-	int state = 0;
-	while(cursor < line.length())
+	if(declLineTokens[1].type != ScriptTokenType::Keyword)
 	{
-		int endIndex;
-		ScriptTokenType type = GetNextTokenType(line, cursor, endIndex);
-		if(endIndex < 0 || type == ScriptTokenType::Invalid)
-		{
-			return signature;
-		}
+		throw ScriptError("Parser Error - Invalid function declaration name.");
+	}
+	signature.name = declLineTokens[1].token;
 
-		std::string token = line.substr(cursor, endIndex - cursor + 1);
-		cursor = endIndex + 1;
-		if(type == ScriptTokenType::Whitespace)
-		{
-			continue;
-		}
+	if(declLineTokens[2].type != ScriptTokenType::ParenthesisGroup)
+	{
+		throw ScriptError("Parser Error - Invalid function declaration arguments.");
+	}
+	ParseFunctionArgumentSignatures(declLineTokens[2].token, signature.arguments);
 
-		switch(state++)
-		{
-		case 0:
-			if(token != ScriptToken::function_declaration)
-			{
-				throw ScriptError("Parser error: Invalid function definition.");
-			}
-			break;
-		case 1:
-			if(type != ScriptTokenType::Keyword)
-			{
-				throw ScriptError("Parser error: Invalid function definition.");
-			}
-			signature.name = token;
-			break;
-		case 2:
-		{
-			if(type != ScriptTokenType::ParenthesisGroup)
-			{
-				throw ScriptError("Parser error: Invalid function definition.");
-			}
-			if(token.length() < 2)
-			{
-				break;
-			}
-			token = token.substr(1, token.length() - 2);
-			std::vector<std::string> args;
-			boost::split(args, token, boost::is_any_of(","), boost::token_compress_on);
-			signature.arguments.reserve(args.size());
-			for(std::string& arg : args)
-			{
-				int indentation;
-				arg = TrimLine(arg, indentation);
-				if(arg != "")
-				{
-					signature.arguments.push_back(arg);
-				}
-			}
-			break;
-		}
-		case 3:
-			if(type != ScriptTokenType::Specifier)
-			{
-				throw ScriptError("Parser error: Invalid function definition.");
-			}
-			break;
-		case 4:
-			if(type != ScriptTokenType::Keyword)
-			{
-				throw ScriptError("Parser error: Invalid function definition.");
-			}
+	if(declLineTokens[3].type != ScriptTokenType::Specifier)
+	{
+		throw ScriptError("Parser Error - Invalid return type specifier.");
+	}
 
-			if(token == ScriptToken::type_bool)
-			{
-				signature.returnType = ScriptVariableType::Bool;
-			}
-			else if(token == ScriptToken::type_int)
-			{
-				signature.returnType = ScriptVariableType::Int;
-			}
-			else if(token == ScriptToken::type_bool)
-			{
-				signature.returnType = ScriptVariableType::Bool;
-			}
-		}
+	if(declLineTokens[4].type != ScriptTokenType::Keyword || (signature.returnType = BaseScriptVariable::GetVariableType(declLineTokens[4].token)) == ScriptVariableType::Null)
+	{
+		throw ScriptError("Parser Error - Invalid function return type.");
 	}
 
 	return signature;
 }
 
-void ScriptParsingUtils::ParseConditionalExpression(const ScriptLinesView& lines , const std::vector<ScriptToken>& lineTokens, int cursor, std::vector<ScriptToken>& out_conditionalTokens, int& out_blockEnd)
+void ScriptParsingUtils::ParseFunctionArgumentSignatures(const std::string & token, std::vector<ScriptVariableSignature>& out_signatures)
+{
+	out_signatures.clear();
+	if(token.length() == 0)
+	{
+		return;
+	}
+
+	std::vector<ScriptToken> parenthesisTokens;
+	ParseLineTokens(token, parenthesisTokens);
+
+	if(parenthesisTokens.size() % 3 != 2)
+	{
+		throw ScriptError("Invalid function definition arguments.");
+	}
+
+	for(size_t i = 0; i < parenthesisTokens.size(); i += 3)
+	{
+		const ScriptToken& typeToken = parenthesisTokens[i];
+
+		ScriptVariableType variableType;
+		if(typeToken.type != ScriptTokenType::Keyword || (variableType = BaseScriptVariable::GetVariableType(typeToken.token)) == ScriptVariableType::Null)
+		{
+			throw ScriptError("Invalid variable type declaration " + typeToken.token);
+		}
+
+		const ScriptToken& nameToken = parenthesisTokens[i + 1];
+		if(typeToken.type != ScriptTokenType::Keyword)
+		{
+			throw ScriptError("Invalid variable name declaration.");
+		}
+
+		if(i + 3 < parenthesisTokens.size() && parenthesisTokens[i + 2].type != ScriptTokenType::Separator)
+		{
+			throw ScriptError("Unexpected token " + parenthesisTokens[i + 2].token);
+		}
+
+		out_signatures.push_back(ScriptVariableSignature(variableType, nameToken.token));
+	}
+}
+
+void ScriptParsingUtils::ParseConditionalExpression(const ScriptLinesView& lines, const std::vector<ScriptToken>& lineTokens, int cursor, std::vector<ScriptToken>& out_conditionalTokens, int& out_blockEnd)
 {
 	if(lineTokens.size() != 2)
 	{
@@ -408,7 +413,7 @@ void ScriptParsingUtils::ParseConditionalExpression(const ScriptLinesView& lines
 	}
 
 	out_blockEnd = ScriptParsingUtils::FindBlockEnd(lines, cursor);
-	
+
 	out_conditionalTokens.clear();
 	ScriptParsingUtils::ParseLineTokens(lineTokens[1].token, out_conditionalTokens);
 }

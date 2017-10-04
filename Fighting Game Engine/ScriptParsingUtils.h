@@ -5,6 +5,7 @@
 
 class ScriptLinesView;
 struct ScriptFunctionSignature;
+struct ScriptVariableSignature;
 
 enum class ScriptControlFlag
 {
@@ -25,6 +26,13 @@ enum class ScriptLineType
 	ConditionalDeclaration
 };
 
+enum class ScriptReservedKeywordType
+{
+	None,
+	VariableType,
+	ScriptKeyword,
+};
+
 namespace ScriptParsingUtils
 {
 	inline int GetIndentationLevel(const std::string& line);
@@ -33,14 +41,17 @@ namespace ScriptParsingUtils
 	inline std::string TrimLine(const std::string& line);
 	std::string TrimLine(const std::string& line, int& out_indentationLevel);
 
-	int FindBlockEnd(const ScriptLinesView& lines, unsigned int blockStart);
+	int FindBlockEnd(const ScriptLinesView& lines, unsigned int blockStart, bool requireEndDeclaration = true);
 
 	ScriptTokenType GetTokenType(char character);
 	ScriptTokenType GetNextTokenType(const std::string& line, size_t startIndex, int& out_endIndex);
 
 	void ParseLineTokens(const std::string& line, std::vector<ScriptToken>& out_tokens);
 
+	int GetNextTokenOfType(ScriptTokenType type, const std::vector<ScriptToken>& tokens, int startIndex);
+
 	ScriptFunctionSignature ParseFunctionSignature(const ScriptLinesView& lines, int declarationLine);
+	void ParseFunctionArgumentSignatures(const std::string& token, std::vector<ScriptVariableSignature>& out_signatures);
 
 	void ParseConditionalExpression(const ScriptLinesView& lines, const std::vector<ScriptToken>& lineTokens, int cursor, std::vector<ScriptToken>& out_conditionalTokens, int& out_blockEnd);
 }

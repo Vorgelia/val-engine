@@ -153,8 +153,16 @@ Script::Script(std::string name, std::vector<std::string> lines)
 
 	PreProcess();
 
-	_parentBlock = new ScriptParentBlock(ScriptLinesView(&_lines), 0, this);
-	ExecuteFunction("Init", std::vector<std::shared_ptr<BaseScriptVariable>>());
+	try
+	{
+		_parentBlock = new ScriptParentBlock(ScriptLinesView(&_lines), 0, this);
+		ExecuteFunction("Init", std::vector<std::shared_ptr<BaseScriptVariable>>());
+	}
+	catch(ScriptError error)
+	{
+		DebugLog::Push("(" + _name + " : line " + std::to_string(_blockStack.top()->cursor()) + ")" + std::string(error.what()), LogItem::Type::Error);
+		_valid = false;
+	}
 }
 
 Script::~Script()

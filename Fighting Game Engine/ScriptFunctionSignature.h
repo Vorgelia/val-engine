@@ -4,6 +4,14 @@
 
 enum class ScriptVariableType;
 
+struct ScriptVariableSignature
+{
+	ScriptVariableType type;
+	std::string name;
+
+	ScriptVariableSignature(ScriptVariableType type, std::string name);
+};
+
 struct ScriptFunctionSignature
 {
 	std::string name;
@@ -11,10 +19,10 @@ struct ScriptFunctionSignature
 	int start;
 	int end;
 
-	std::vector<std::string> arguments;
+	std::vector<ScriptVariableSignature> arguments;
 	ScriptVariableType returnType;
 
-	ScriptFunctionSignature(std::string name, int start, int end, std::vector<std::string> arguments, ScriptVariableType returnType);
+	ScriptFunctionSignature(std::string name, int start, int end, std::vector<ScriptVariableSignature> arguments, ScriptVariableType returnType);
 	ScriptFunctionSignature();
 	~ScriptFunctionSignature();
 };

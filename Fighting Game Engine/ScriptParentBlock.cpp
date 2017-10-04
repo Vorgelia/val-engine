@@ -12,33 +12,23 @@ void ScriptParentBlock::HandleFunctionDeclarationLine(std::vector<ScriptToken> &
 {
 	ScriptFunctionSignature signature = ScriptParsingUtils::ParseFunctionSignature(_lines, _cursor);
 
-	if(signature.name.empty())
-	{
-		throw ScriptError("Parser error: Invalid function definition.");
-	}
-
-	if(signature.end < 0)
-	{
-		throw ScriptError("Parser error: Improperly terminated function '" + signature.name + "'.");
-	}
-
 	if(_functions.find(signature.name) != _functions.end())
 	{
 		throw ScriptError("Parser error: Duplicate function definition.");
 	}
 
 	_functions[signature.name] = signature;
-	_cursor = signature.end;
+	_cursor = signature.end + 1;
 }
 
 bool ScriptParentBlock::HandleControlFlag()
 {
 	switch(_owner->controlFlag())
 	{
-		case ScriptControlFlag::Break:
-		case ScriptControlFlag::Return:
-		case ScriptControlFlag::Continue:
-			throw ScriptError("Invalid declaration of control flag in global scope.");
+	case ScriptControlFlag::Break:
+	case ScriptControlFlag::Return:
+	case ScriptControlFlag::Continue:
+		throw ScriptError("Invalid declaration of control flag in global scope.");
 	}
 	return false;
 }

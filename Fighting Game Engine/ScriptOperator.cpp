@@ -1,27 +1,54 @@
 #include "ScriptOperator.h"
 
-const std::map<std::string, ScriptOperatorType> ScriptOperator::operatorLookup = {
-	{ "=", ScriptOperatorType::Assignment },
+const std::map<std::string, ScriptOperator> ScriptOperator::_operatorLookup = {
+	{ "=", ScriptOperator(ScriptOperatorType::Assignment, 15) },
 
-	{ "+", ScriptOperatorType::Addition },
-	{ "-", ScriptOperatorType::Subtraction },
-	{ "*", ScriptOperatorType::Multiplication },
-	{ "/", ScriptOperatorType::Division },
-	{ "%", ScriptOperatorType::Modulo },
+	{ "+", ScriptOperator(ScriptOperatorType::Addition, 6) },
+	{ "-", ScriptOperator(ScriptOperatorType::Subtraction, 6) },
+	{ "*", ScriptOperator(ScriptOperatorType::Multiplication, 5) },
+	{ "/", ScriptOperator(ScriptOperatorType::Division, 5) },
+	{ "%", ScriptOperator(ScriptOperatorType::Modulo, 5) },
 
-	{ "==", ScriptOperatorType::Equals },
-	{ "!=", ScriptOperatorType::NotEquals },
-	{ ">", ScriptOperatorType::Larger },
-	{ "<", ScriptOperatorType::Smaller },
-	{ ">=", ScriptOperatorType::LargerEquals },
-	{ "<=", ScriptOperatorType::SmallerEquals },
+	{ "==", ScriptOperator(ScriptOperatorType::Equals, 9) },
+	{ "!=", ScriptOperator(ScriptOperatorType::NotEquals, 9) },
+	{ ">", ScriptOperator(ScriptOperatorType::Larger, 8) },
+	{ "<", ScriptOperator(ScriptOperatorType::Smaller, 8) },
+	{ ">=", ScriptOperator(ScriptOperatorType::LargerEquals, 8) },
+	{ "<=", ScriptOperator(ScriptOperatorType::SmallerEquals, 8) },
 
-	{ "&&", ScriptOperatorType::LogicalAnd },
-	{ "||", ScriptOperatorType::LogicalOr },
-	{ "!", ScriptOperatorType::LogicalNot },
+	{ "&&", ScriptOperator(ScriptOperatorType::LogicalAnd, 13) },
+	{ "||", ScriptOperator(ScriptOperatorType::LogicalOr, 14) },
+	{ "!", ScriptOperator(ScriptOperatorType::LogicalNot, 3) },
 
-	{ "&", ScriptOperatorType::BitwiseAnd },
-	{ "|", ScriptOperatorType::BitwiseOr },
-	{ "^", ScriptOperatorType::BitwiseXor },
-	{ "~", ScriptOperatorType::BitwiseInvert },
+	{ "&", ScriptOperator(ScriptOperatorType::BitwiseAnd, 10) },
+	{ "|", ScriptOperator(ScriptOperatorType::BitwiseOr, 12) },
+	{ "^", ScriptOperator(ScriptOperatorType::BitwiseXor, 11) },
+	{ "~", ScriptOperator(ScriptOperatorType::BitwiseInvert, 3) },
 };
+
+ScriptOperatorType ScriptOperator::type() const
+{
+	return _type;
+}
+
+int ScriptOperator::priority() const
+{
+	return _priority;
+}
+
+const ScriptOperator * ScriptOperator::GetOperator(std::string signature)
+{
+	auto iter = _operatorLookup.find(signature);
+	if(iter == _operatorLookup.end())
+	{
+		return nullptr;
+	}
+
+	return &(iter->second);
+}
+
+ScriptOperator::ScriptOperator(ScriptOperatorType type, int priority)
+{
+	_type = type;
+	_priority = priority;
+}

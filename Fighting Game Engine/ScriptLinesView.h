@@ -24,5 +24,6 @@ public:
 
 	ScriptLinesView(std::vector<std::string>* lines);
 	ScriptLinesView(std::vector<std::string>* lines, int front, int back);
+	ScriptLinesView(const ScriptLinesView& lines, int front, int back);
 	~ScriptLinesView();
 };

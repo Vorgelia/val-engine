@@ -3,11 +3,11 @@
 #include "ScriptError.h"
 #include "ScriptToken.h"
 #include "ScriptVariable.h"
+#include "ScriptExpression.h"
 
 bool ScriptConditionalBlock::Evaluate()
 {
-	//TODO evaluate expression, store to result
-	std::shared_ptr<BaseScriptVariable> result;
+	std::shared_ptr<BaseScriptVariable> result = ScriptExpression(this, _conditionTokens).Evaluate();
 	if(result->type() != ScriptVariableType::Bool)
 	{
 		throw ScriptError("Invalid result type in conditional block expression.");

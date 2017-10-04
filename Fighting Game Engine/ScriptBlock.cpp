@@ -33,13 +33,13 @@ void ScriptBlock::ParseLine(const std::string &line)
 	{
 		int blockEnd;
 		HandleConditionalDeclarationLine(tokens, blockEnd);
-		_cursor = blockEnd;
+		_cursor = blockEnd + 1;
 	}
 	else if(tokens[0].token == ScriptToken::while_loop_declaration)
 	{
 		int blockEnd = _cursor;
 		HandleLoopDeclarationLine(tokens, blockEnd);
-		_cursor = blockEnd;
+		_cursor = blockEnd + 1;
 	}
 	else
 	{
@@ -70,7 +70,7 @@ void ScriptBlock::HandleExpressionLine(std::vector<ScriptToken> &tokens)
 	}
 	else
 	{
-		EvaluateExpression(std::vector<ScriptToken>(tokens.begin() + 1, tokens.end()));
+		EvaluateExpression(std::vector<ScriptToken>(tokens.begin(), tokens.end()));
 		return;
 	}
 
@@ -92,7 +92,7 @@ void ScriptBlock::HandleLoopDeclarationLine(std::vector<ScriptToken> &tokens, in
 	ScriptParsingUtils::ParseConditionalExpression(_lines, std::forward<std::vector<ScriptToken>>(tokens), _cursor, parenthesisTokens, blockEnd);
 
 	out_blockEnd = blockEnd;
-	ScriptLinesView blockLines = ScriptLinesView(_lines.lines(), _cursor + 1, out_blockEnd);
+	ScriptLinesView blockLines = ScriptLinesView(_lines, _cursor + 1, out_blockEnd);
 
 	bool validExpression;
 	do
@@ -125,13 +125,13 @@ void ScriptBlock::HandleConditionalDeclarationLine(std::vector<ScriptToken> &tok
 			out_blockEnd = ScriptParsingUtils::FindBlockEnd(_lines, out_blockEnd);
 			if(!branchRan)
 			{
-				ScriptLinesView blockLines = ScriptLinesView(_lines.lines(), _cursor + 1, out_blockEnd);
+				ScriptLinesView blockLines = ScriptLinesView(_lines, _cursor + 1, out_blockEnd);
 				std::shared_ptr<ScriptBlock> block = std::make_shared<ScriptBlock>(blockLines, _depth + 1, this, _owner);
 				block->Run();
 			}
 			return;
 		}
-		else if(tokens[0].token == ScriptToken::conditional_elseif || (tokens[0].token == ScriptToken::conditional_declaration && initialBranchChecked))
+		else if(tokens[0].token == ScriptToken::conditional_elseif || (tokens[0].token == ScriptToken::conditional_declaration && !initialBranchChecked))
 		{
 			initialBranchChecked = true;
 
@@ -144,7 +144,7 @@ void ScriptBlock::HandleConditionalDeclarationLine(std::vector<ScriptToken> &tok
 				std::vector<ScriptToken> parenthesisTokens;
 				ScriptParsingUtils::ParseConditionalExpression(_lines, std::forward<std::vector<ScriptToken>>(tokens), _cursor, parenthesisTokens, out_blockEnd);
 
-				ScriptLinesView blockLines = ScriptLinesView(_lines.lines(), _cursor + 1, out_blockEnd);
+				ScriptLinesView blockLines = ScriptLinesView(_lines, _cursor + 1, out_blockEnd);
 				std::shared_ptr<ScriptConditionalBlock> block = std::make_shared<ScriptConditionalBlock>(parenthesisTokens, blockLines, _depth + 1, this, _owner);
 
 				_owner->PushBlock(block);
@@ -152,14 +152,13 @@ void ScriptBlock::HandleConditionalDeclarationLine(std::vector<ScriptToken> &tok
 				_owner->PopBlock();
 			}
 
-			if(out_blockEnd < _lines.lines()->size())
-			{
-				ScriptParsingUtils::ParseLineTokens(_lines[out_blockEnd], tokens);
-			}
-			else
+			if(out_blockEnd + 2 >= _lines.lines()->size())
 			{
 				break;
 			}
+
+			out_blockEnd += 2;
+			ScriptParsingUtils::ParseLineTokens(_lines[out_blockEnd], tokens);
 		}
 		else
 		{
@@ -170,49 +169,7 @@ void ScriptBlock::HandleConditionalDeclarationLine(std::vector<ScriptToken> &tok
 
 std::shared_ptr<BaseScriptVariable> ScriptBlock::EvaluateExpression(std::vector<ScriptToken>& tokens)
 {
-	//operator stack
-	//variable stack
-
-	//for(size_t i = 0; i < tokens.size(); ++i)
-	//{
-	//	ScriptToken& token = tokens[i];
-	//	//switch parsing state
-	//	switch(token.type)
-	//	{
-	//	case ScriptTokenType::ParenthesisGroup:
-	//	{
-	//		std::vector<ScriptToken> parenthesisTokens;
-	//		ScriptParsingUtils::ParseLineTokens(token.token, parenthesisTokens);
-	//		std::shared_ptr<BaseScriptVariable> result = EvaluateExpression(parenthesisTokens);
-	//		//push result to variable stack
-	//	}
-	//	break;
-	//	case ScriptTokenType::Operator:
-	//	{
-	//		//check if valid operator
-	//		//while priority < operator stack top
-	//		//apply operator stack top
-	//		//push to operator stack
-	//	}
-	//	break;
-	//	case ScriptTokenType::NumericLiteral:
-	//	{
-	//		//push int variable to operator stack
-	//	}
-	//	break;
-	//	case ScriptTokenType::Keyword:
-	//	{
-	//		//if the keyword is a type
-	//		//	handle as variable initialization
-	//		//if the keyword is a 
-	//	}
-	//	break;
-	//	}
-
-	//}
-
-	//keep applying operator stack until empty
-	return std::make_shared<BaseScriptVariable>();
+	return std::make_shared<ScriptExpression>(this, tokens)->Evaluate();
 }
 
 void ScriptBlock::Run()
@@ -247,6 +204,18 @@ std::shared_ptr<BaseScriptVariable> ScriptBlock::RunFunction(std::string name, c
 		throw ScriptError("Attempting to call invalid function '" + name + "'");
 	}
 	return _parent->RunFunction(name, variables);
+}
+
+void ScriptBlock::AddVariable(std::string name, std::shared_ptr<BaseScriptVariable> variable)
+{
+	if(_variables.find(name) != _variables.end())
+	{
+		throw ScriptError("Attempting to add variable with duplicate name " + name);
+	}
+
+	//TODO: Check if name is a keyword
+
+	_variables.emplace(name, variable);
 }
 
 std::shared_ptr<BaseScriptVariable> ScriptBlock::GetVariable(std::string name)

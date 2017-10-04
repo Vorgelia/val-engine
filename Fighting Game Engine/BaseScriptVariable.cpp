@@ -4,6 +4,24 @@
 #include "ScriptOperator.h"
 #include "ScriptToken.h"
 
+const std::map<std::string, ScriptVariableType> BaseScriptVariable::variableTypeLookup =
+{
+	{ ScriptToken::type_int, ScriptVariableType::Int },
+	{ ScriptToken::type_bool, ScriptVariableType::Bool },
+	{ ScriptToken::type_string, ScriptVariableType::String },
+};
+
+ScriptVariableType BaseScriptVariable::GetVariableType(const std::string & token)
+{
+	auto& iter = variableTypeLookup.find(token);
+	if(iter == variableTypeLookup.end())
+	{
+		return ScriptVariableType::Null;
+	}
+
+	return iter->second;
+}
+
 ScriptVariableType BaseScriptVariable::type() const
 {
 	return _type;
@@ -28,7 +46,7 @@ BaseScriptVariable::BaseScriptVariable(ScriptVariableType type, bool isConst)
 
 BaseScriptVariable::BaseScriptVariable()
 {
-	_type = ScriptVariableType::Error;
+	_type = ScriptVariableType::Null;
 	_const = false;
 	_initialized = false;
 }

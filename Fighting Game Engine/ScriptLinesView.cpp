@@ -59,5 +59,12 @@ ScriptLinesView::ScriptLinesView(std::vector<std::string>* lines, int front, int
 	_back = back;
 }
 
+ScriptLinesView::ScriptLinesView(const ScriptLinesView & lines, int front, int back)
+{
+	_lines = lines.lines();
+	_front = lines.front() + front;
+	_back = lines.front() + back;
+}
+
 
 ScriptLinesView::~ScriptLinesView() {}

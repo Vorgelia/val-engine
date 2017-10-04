@@ -39,6 +39,7 @@ struct ScriptToken
 	static const std::string type_int;
 	static const std::string type_bool;
 	static const std::string type_string;
+
 #pragma endregion
 
 	std::string token;

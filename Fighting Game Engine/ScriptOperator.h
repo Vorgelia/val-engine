@@ -31,6 +31,17 @@ enum class ScriptOperatorType
 
 class ScriptOperator
 {
+private:
+	static const std::map<std::string, ScriptOperator> _operatorLookup;
+
+	ScriptOperatorType _type;
+	int _priority;
+
 public:
-	static const std::map<std::string, ScriptOperatorType> operatorLookup;
+	ScriptOperatorType type() const;
+	int priority() const;
+
+	static const ScriptOperator* GetOperator(std::string signature);
+
+	ScriptOperator(ScriptOperatorType type, int priority);
 };
