@@ -1,11 +1,28 @@
-#pragma foo bar		
+#pragma foo bar
 
 function Main () : int
 	return 0
 end
 
-function Init(int i):int
-	return 0
-	return 0
-	return 0
+function Init():int
+	bool correctOperationOrder
+	int i=2*2+3
+	if(i==7)
+		correctOperationOrder = true
+	end
+	else
+		correctOperationOrder = false
+	end
+	
+	bool logicOperators = !(i!=7)
+	
+	if(logicOperators && correctOperationOrder)
+		i = JustReturn666()
+	end
+	
+	return i/2
+end
+
+function JustReturn666():int
+	return 666
 end
