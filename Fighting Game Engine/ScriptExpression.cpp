@@ -165,7 +165,7 @@ std::shared_ptr<BaseScriptVariable> ScriptExpression::Evaluate()
 			}
 			else if(token.type == ScriptTokenType::NumericLiteral)
 			{
-				evaluatedVar = std::make_shared<ScriptInt>(boost::lexical_cast<int>(token.token), true);
+				evaluatedVar = std::make_shared<ScriptInt>(boost::lexical_cast<long>(token.token), true);
 			}
 			else if(token.type == ScriptTokenType::StringLiteral)
 			{

@@ -16,7 +16,7 @@ public:
 	ScriptVariable(T value = T(), bool isConst = false);
 };
 
-typedef ScriptVariable<int> ScriptInt;
+typedef ScriptVariable<long> ScriptInt;
 typedef ScriptVariable<bool> ScriptBool;
 typedef ScriptVariable<std::string> ScriptString;
 
@@ -57,7 +57,7 @@ template<>
 std::string ScriptString::ToString();
 
 template<>
-ScriptInt::ScriptVariable(int value, bool isConst);
+ScriptInt::ScriptVariable(long value, bool isConst);
 template<>
 ScriptBool::ScriptVariable(bool value, bool isConst);
 template<>
