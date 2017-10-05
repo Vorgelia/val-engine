@@ -184,7 +184,7 @@ ScriptTokenType ScriptParsingUtils::GetNextTokenType(const std::string& line, si
 	case ScriptTokenType::StringLiteral:
 	{
 		bool escapeCharacter = false;
-		for(size_t i = startIndex; i < line.length(); ++i)
+		for(size_t i = startIndex + 1; i < line.length(); ++i)
 		{
 			if(!escapeCharacter)
 			{
@@ -280,7 +280,7 @@ void ScriptParsingUtils::ParseLineTokens(const std::string& line, std::vector<Sc
 			return;
 		}
 
-		if(tokenType == ScriptTokenType::ParenthesisGroup)
+		if(tokenType == ScriptTokenType::ParenthesisGroup || tokenType == ScriptTokenType::StringLiteral)
 		{
 			out_tokens.push_back(ScriptToken{
 				line.substr(cursor + 1, endIndex - cursor - 1)

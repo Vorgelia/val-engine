@@ -20,7 +20,17 @@ function Init():int
 		i = JustReturn666()
 	end
 	
-	ve_log(i)
+	ve_log(i=i/2)
+	
+	int j=0
+	int k=0
+	while(k<5)
+		j = j+5
+		k = k+1
+	end
+	
+	ve_log(j)
+	ve_log("returning ",i/2)
 	
 	return i/2
 end
