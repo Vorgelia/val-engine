@@ -26,6 +26,7 @@ struct ScriptToken
 	static const std::string conditional_elseif;
 	static const std::string conditional_else;
 	static const std::string while_loop_declaration;
+	static const std::string ranged_switch_declaration;
 
 	static const std::string block_end;
 	static const std::string block_break;

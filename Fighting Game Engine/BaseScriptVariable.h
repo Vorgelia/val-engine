@@ -26,6 +26,7 @@ public:
 
 	ScriptVariableType type() const;
 	bool isConst() const;
+	bool isInitialized();
 	virtual std::string ToString();
 
 	BaseScriptVariable(ScriptVariableType type, bool isConst = false);

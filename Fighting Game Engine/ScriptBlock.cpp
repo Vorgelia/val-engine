@@ -31,7 +31,7 @@ void ScriptBlock::ParseLine(const std::string &line)
 	}
 	else if(tokens[0].token == ScriptToken::conditional_declaration)
 	{
-		int blockEnd;
+		int blockEnd = _cursor;
 		HandleConditionalDeclarationLine(tokens, blockEnd);
 		_cursor = blockEnd + 1;
 	}
@@ -40,6 +40,10 @@ void ScriptBlock::ParseLine(const std::string &line)
 		int blockEnd = _cursor;
 		HandleLoopDeclarationLine(tokens, blockEnd);
 		_cursor = blockEnd + 1;
+	}
+	else if(tokens[0].token == ScriptToken::ranged_switch_declaration)
+	{
+		//TODO: Handle
 	}
 	else
 	{

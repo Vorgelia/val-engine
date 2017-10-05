@@ -32,6 +32,11 @@ bool BaseScriptVariable::isConst() const
 	return _const;
 }
 
+bool BaseScriptVariable::isInitialized()
+{
+	return _initialized;
+}
+
 std::string BaseScriptVariable::ToString()
 {
 	return ScriptToken::value_null;

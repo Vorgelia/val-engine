@@ -46,6 +46,7 @@ template<typename T>
 inline ScriptVariable<T>::ScriptVariable(T value, bool isConst)
 {
 	_value = value;
+	_initialized = true;
 }
 
 template<>

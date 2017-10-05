@@ -71,6 +71,11 @@ std::shared_ptr<BaseScriptVariable> ScriptVariableUtils::Operate(std::shared_ptr
 		throw ScriptError(fmt::format("Attempting to operate on variables with different types. {} {} {}", (int)lhs->type(), (int)operation, (int)rhs->type()));
 	}
 
+	if(!lhs->isInitialized() || !rhs->isInitialized())
+	{
+		throw ScriptError("Attempting to operate on one or more uninitialized variables");
+	}
+
 	switch(lhs->type())
 	{
 	case ScriptVariableType::Bool:
@@ -91,6 +96,11 @@ std::shared_ptr<BaseScriptVariable> ScriptVariableUtils::Operate(std::shared_ptr
 
 std::shared_ptr<BaseScriptVariable> ScriptVariableUtils::Operate(std::shared_ptr<BaseScriptVariable>& rhs, ScriptOperatorType operation)
 {
+	if(!rhs->isInitialized())
+	{
+		throw ScriptError("Attempting to operate on an uninitialized variable");
+	}
+
 	switch(rhs->type())
 	{
 	case ScriptVariableType::Bool:
