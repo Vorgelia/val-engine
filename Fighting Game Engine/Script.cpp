@@ -22,20 +22,29 @@ ScriptControlFlag Script::controlFlag()
 	return _controlFlag;
 }
 
-void Script::BindFunction(std::string name, void(*func)(std::vector<std::shared_ptr<BaseScriptVariable>>&))
+void Script::BindFunction(std::string name, std::shared_ptr<BaseScriptVariable>(*func)(std::vector<std::shared_ptr<BaseScriptVariable>>&))
 {
 	_boundFunctions[name] = func;
 }
 
-bool Script::CallBoundFunction(std::string name, std::vector<std::shared_ptr<BaseScriptVariable>> &variables)
+std::shared_ptr<BaseScriptVariable> Script::CallBoundFunction(std::string name, std::vector<std::shared_ptr<BaseScriptVariable>> &variables)
 {
 	auto iter = _boundFunctions.find(name);
-	if(iter != _boundFunctions.end() && iter->second != nullptr)
+	if(iter == _boundFunctions.end() || iter->second == nullptr)
 	{
-		iter->second(variables);
-		return true;
+		throw ScriptError("Attempting to call invalid external function '" + name + "'");
 	}
-	return false;
+	return iter->second(variables);
+}
+
+std::vector<std::string> Script::GetPragmaDirectives(std::string id)
+{
+	const auto& iter = _pragmaDirectives.find(id);
+	if(iter != _pragmaDirectives.end())
+	{
+		return iter->second;
+	}
+	return std::vector<std::string>();
 }
 
 std::shared_ptr<BaseScriptVariable> Script::GetVariable(const std::string& name) const
@@ -72,7 +81,17 @@ void Script::PreProcess()
 
 		if(spl[0] == "#pragma")
 		{
-			_pragmaDirectives[spl[1]] = spl.size() < 3 ? "" : spl[2];
+			std::string directive = spl.size() < 3 ? "" : spl[2];
+
+			const auto& iter = _pragmaDirectives.find(spl[1]);
+			if(iter == _pragmaDirectives.end())
+			{
+				_pragmaDirectives.emplace(spl[1], std::vector<std::string>{directive});
+			}
+			else
+			{
+				iter->second.push_back(directive);
+			}
 		}
 	}
 }
@@ -105,6 +124,20 @@ void Script::RaiseControlFlag(ScriptControlFlag flag)
 void Script::ConsumeControlFlag()
 {
 	_controlFlag = ScriptControlFlag::None;
+}
+
+void Script::Init()
+{
+	try
+	{
+		_parentBlock = new ScriptParentBlock(ScriptLinesView(&_lines), 0, this);
+		ExecuteFunction("Init", std::vector<std::shared_ptr<BaseScriptVariable>>());
+	}
+	catch(ScriptError error)
+	{
+		DebugLog::Push("(" + _name + " : line " + std::to_string(_blockStack.top()->cursor()) + ")" + std::string(error.what()), LogItem::Type::Error);
+		_valid = false;
+	}
 }
 
 ScriptExitCode Script::Execute()
@@ -140,7 +173,7 @@ ScriptExitCode Script::Execute()
 	return returnCode;
 }
 
-void Script::ExecuteFunction(std::string name, const std::vector<std::shared_ptr<BaseScriptVariable>> &variables)
+void Script::ExecuteFunction(std::string name, std::vector<std::shared_ptr<BaseScriptVariable>> &variables)
 {
 	_parentBlock->RunFunction(name, variables);
 }
@@ -152,17 +185,6 @@ Script::Script(std::string name, std::vector<std::string> lines)
 	_valid = true;
 
 	PreProcess();
-
-	try
-	{
-		_parentBlock = new ScriptParentBlock(ScriptLinesView(&_lines), 0, this);
-		ExecuteFunction("Init", std::vector<std::shared_ptr<BaseScriptVariable>>());
-	}
-	catch(ScriptError error)
-	{
-		DebugLog::Push("(" + _name + " : line " + std::to_string(_blockStack.top()->cursor()) + ")" + std::string(error.what()), LogItem::Type::Error);
-		_valid = false;
-	}
 }
 
 Script::~Script()

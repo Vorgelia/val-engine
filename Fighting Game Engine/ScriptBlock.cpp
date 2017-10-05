@@ -198,7 +198,7 @@ void ScriptBlock::Run()
 	}
 }
 
-std::shared_ptr<BaseScriptVariable> ScriptBlock::RunFunction(std::string name, const std::vector<std::shared_ptr<BaseScriptVariable>> &variables)
+std::shared_ptr<BaseScriptVariable> ScriptBlock::RunFunction(std::string name, std::vector<std::shared_ptr<BaseScriptVariable>> &variables)
 {
 	if(_parent == nullptr)
 	{

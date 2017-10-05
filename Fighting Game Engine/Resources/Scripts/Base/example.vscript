@@ -1,4 +1,4 @@
-#pragma foo bar
+#pragma Bind Debug
 
 function Main () : int
 	return 0
@@ -19,6 +19,8 @@ function Init():int
 	if(logicOperators && correctOperationOrder)
 		i = JustReturn666()
 	end
+	
+	ve_log(i)
 	
 	return i/2
 end
