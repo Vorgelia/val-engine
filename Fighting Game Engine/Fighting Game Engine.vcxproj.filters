@@ -315,6 +315,9 @@
     <ClCompile Include="ScriptExpression.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ScriptLine.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FGIncludes.hpp">
@@ -495,6 +498,9 @@
       <Filter>Header Files\FG\Utilities</Filter>
     </ClInclude>
     <ClInclude Include="ScriptExpression.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptLine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

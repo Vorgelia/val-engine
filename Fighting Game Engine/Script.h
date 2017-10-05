@@ -7,6 +7,7 @@
 
 enum class ScriptExitCode;
 enum class ScriptControlFlag;
+struct ScriptLine;
 class ScriptBlock;
 class ScriptParentBlock;
 class BaseScriptVariable;
@@ -19,10 +20,13 @@ class Script
 	std::string _name;
 	bool _valid;
 
-	std::vector<std::string> _lines;
+	//TODO: Line token/number caching
+	std::vector<std::string> _rawLines;
+	std::vector<ScriptLine> _lines;
+
 	std::map<std::string, std::vector<std::string>> _pragmaDirectives;
 
-	std::map<std::string, std::shared_ptr<BaseScriptVariable>(*)(std::vector<std::shared_ptr<BaseScriptVariable>>&)> _boundFunctions;
+	std::map<std::string, std::shared_ptr<BaseScriptVariable>(*)(const Script*, std::vector<std::shared_ptr<BaseScriptVariable>>&)> _boundFunctions;
 
 	std::stack<std::shared_ptr<ScriptBlock>> _blockStack;
 	ScriptControlFlag _controlFlag;
@@ -41,7 +45,7 @@ public:
 
 	ScriptControlFlag controlFlag();
 
-	void BindFunction(std::string name, std::shared_ptr<BaseScriptVariable>(*func)(std::vector<std::shared_ptr<BaseScriptVariable>>&));
+	void BindFunction(std::string name, std::shared_ptr<BaseScriptVariable>(*func)(const Script*, std::vector<std::shared_ptr<BaseScriptVariable>>&));
 	std::shared_ptr<BaseScriptVariable> CallBoundFunction(std::string name, std::vector<std::shared_ptr<BaseScriptVariable>> &variables);
 
 	std::vector<std::string> GetPragmaDirectives(std::string id);

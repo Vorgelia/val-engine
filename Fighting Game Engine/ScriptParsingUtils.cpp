@@ -87,13 +87,9 @@ int ScriptParsingUtils::FindBlockEnd(const ScriptLinesView &lines, unsigned int 
 		throw ScriptError("Improperly terminated block");
 	}
 
-	int blockDepth = GetIndentationLevel(lines[blockStart]);
-
 	for(size_t i = blockStart + 1; i < lines.size(); i++)
 	{
-		int lineDepth;
-		std::string line = ScriptParsingUtils::TrimLine(lines[i], lineDepth);
-		if(lineDepth == blockDepth && (!requireEndDeclaration || line == ScriptToken::block_end))
+		if(lines[blockStart].depth == lines[i].depth && (!requireEndDeclaration || lines[i].line == ScriptToken::block_end))
 		{
 			return i - 1;
 		}
@@ -129,6 +125,8 @@ ScriptTokenType ScriptParsingUtils::GetTokenType(char character)
 	case '!':
 	case '~':
 		return ScriptTokenType::Operator;
+	case '#':
+		return ScriptTokenType::Preprocessor;
 	}
 
 	if(isalpha(character))
@@ -209,6 +207,7 @@ ScriptTokenType ScriptParsingUtils::GetNextTokenType(const std::string& line, si
 	break;
 	case ScriptTokenType::Separator:
 	case ScriptTokenType::Specifier:
+	case ScriptTokenType::Preprocessor:
 		out_endIndex = startIndex;
 		break;
 	case ScriptTokenType::Operator:
@@ -313,9 +312,7 @@ ScriptFunctionSignature ScriptParsingUtils::ParseFunctionSignature(const ScriptL
 {
 	ScriptFunctionSignature signature;
 
-	int indentationLevel;
-	std::string line = TrimLine(lines[declarationLine], indentationLevel);
-	if(indentationLevel < 0)
+	if(lines[declarationLine].depth < 0)
 	{
 		throw ScriptError("Parser Error - Invalid function declaration line. Somehow the parser is completely broken.");
 	}
@@ -328,8 +325,7 @@ ScriptFunctionSignature ScriptParsingUtils::ParseFunctionSignature(const ScriptL
 
 	signature.start = declarationLine;
 
-	std::vector<ScriptToken> declLineTokens;
-	ParseLineTokens(line, declLineTokens);
+	std::vector<ScriptToken>& declLineTokens(lines[declarationLine].tokens);
 
 	if(declLineTokens.size() != 5
 		|| declLineTokens[0].token != ScriptToken::function_declaration)

@@ -11,6 +11,7 @@
 
 #include "BaseScriptVariable.h"
 #include "ScriptError.h"
+#include "Script.h"
 
 namespace DebugLog
 {
@@ -138,9 +139,12 @@ void DebugLog::GetStackTrace(std::vector<std::string>* storage, unsigned int sta
 
 #pragma region Scripting Bindings
 
-std::shared_ptr<BaseScriptVariable> DebugLog::Push(std::vector<std::shared_ptr<BaseScriptVariable>>& variables)
+std::shared_ptr<BaseScriptVariable> DebugLog::Push(const Script* script, std::vector<std::shared_ptr<BaseScriptVariable>>& variables)
 {
 	std::stringstream str;
+
+	str << "[Script: " << script->name() << "] ";
+
 	for(const auto& var : variables)
 	{
 		if(var != nullptr)

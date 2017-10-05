@@ -6,6 +6,7 @@
 #include "ScriptError.h"
 #include "ScriptParentBlock.h"
 #include "DebugLog.h"
+#include "ScriptLine.h"
 
 std::string Script::name() const
 {
@@ -22,7 +23,7 @@ ScriptControlFlag Script::controlFlag()
 	return _controlFlag;
 }
 
-void Script::BindFunction(std::string name, std::shared_ptr<BaseScriptVariable>(*func)(std::vector<std::shared_ptr<BaseScriptVariable>>&))
+void Script::BindFunction(std::string name, std::shared_ptr<BaseScriptVariable>(*func)(const Script*, std::vector<std::shared_ptr<BaseScriptVariable>>&))
 {
 	_boundFunctions[name] = func;
 }
@@ -34,7 +35,7 @@ std::shared_ptr<BaseScriptVariable> Script::CallBoundFunction(std::string name, 
 	{
 		throw ScriptError("Attempting to call invalid external function '" + name + "'");
 	}
-	return iter->second(variables);
+	return iter->second(this, variables);
 }
 
 std::vector<std::string> Script::GetPragmaDirectives(std::string id)
@@ -62,36 +63,35 @@ std::shared_ptr<BaseScriptVariable> Script::GetVariable(const std::string& name)
 
 void Script::PreProcess()
 {
-	for(size_t i = 0; i < _lines.size(); ++i)
+	_lines.reserve(_rawLines.size());
+	for(size_t i = 0; i < _rawLines.size(); ++i)
 	{
 		int indentation;
-		std::string line = ScriptParsingUtils::TrimLine(_lines[i], indentation);
-		if(indentation != 0 || line[0] != '#')
+		std::string line = ScriptParsingUtils::TrimLine(_rawLines[i], indentation);
+
+		std::vector<ScriptToken> tokens;
+		ScriptParsingUtils::ParseLineTokens(line, tokens);
+
+		if(indentation >= 0 && tokens.size() > 0)
+		{
+			_lines.push_back(ScriptLine(line, i, indentation, tokens));
+		}
+
+		if(indentation != 0 || tokens.size() < 3 || tokens[0].type != ScriptTokenType::Preprocessor || tokens[1].token != "pragma")
 		{
 			continue;
 		}
 
-		std::vector<std::string> spl;
-		boost::split(spl, line, boost::is_any_of(" "), boost::token_compress_on);
+		std::string directive = tokens.size() < 4 ? "" : tokens[3].token;
 
-		if(spl.size() < 2)
+		const auto& iter = _pragmaDirectives.find(tokens[2].token);
+		if(iter == _pragmaDirectives.end())
 		{
-			continue;
+			_pragmaDirectives.emplace(tokens[2].token, std::vector<std::string>{directive});
 		}
-
-		if(spl[0] == "#pragma")
+		else
 		{
-			std::string directive = spl.size() < 3 ? "" : spl[2];
-
-			const auto& iter = _pragmaDirectives.find(spl[1]);
-			if(iter == _pragmaDirectives.end())
-			{
-				_pragmaDirectives.emplace(spl[1], std::vector<std::string>{directive});
-			}
-			else
-			{
-				iter->second.push_back(directive);
-			}
+			iter->second.push_back(directive);
 		}
 	}
 }
@@ -181,7 +181,7 @@ void Script::ExecuteFunction(std::string name, std::vector<std::shared_ptr<BaseS
 Script::Script(std::string name, std::vector<std::string> lines)
 {
 	_name = name;
-	_lines = lines;
+	_rawLines = lines;
 	_valid = true;
 
 	PreProcess();

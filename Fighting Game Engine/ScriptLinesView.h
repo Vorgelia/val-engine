@@ -1,29 +1,30 @@
 #pragma once
 #include <string>
 #include <vector>
+#include "ScriptLine.h"
 
 class ScriptLinesView
 {
-	std::vector<std::string> *_lines;
+	std::vector<ScriptLine> *_lines;
 	int _front;
 	int _back;
 
 public:
-	std::string operator[](const int &index) const;
+	ScriptLine operator[](std::vector<ScriptLine>::size_type index) const;
 
-	std::string at(int index) const;
+	ScriptLine at(std::vector<ScriptLine>::size_type index) const;
 
-	std::vector<std::string>::iterator begin() const;
-	std::vector<std::string>::iterator end() const;
+	std::vector<ScriptLine>::iterator begin() const;
+	std::vector<ScriptLine>::iterator end() const;
 
 	size_t size() const;
 
-	std::vector<std::string>* lines() const;
+	std::vector<ScriptLine>* lines() const;
 	int front() const;
 	int back() const;
 
-	ScriptLinesView(std::vector<std::string>* lines);
-	ScriptLinesView(std::vector<std::string>* lines, int front, int back);
+	ScriptLinesView(std::vector<ScriptLine>* lines);
+	ScriptLinesView(std::vector<ScriptLine>* lines, int front, int back);
 	ScriptLinesView(const ScriptLinesView& lines, int front, int back);
 	~ScriptLinesView();
 };

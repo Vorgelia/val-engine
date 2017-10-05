@@ -15,7 +15,8 @@ enum class ScriptTokenType
 
 	Separator,
 	Specifier,
-	Operator
+	Operator,
+	Preprocessor,
 };
 
 struct ScriptToken

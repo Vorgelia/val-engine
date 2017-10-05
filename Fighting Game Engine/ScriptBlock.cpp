@@ -4,54 +4,47 @@
 #include "ScriptError.h"
 #include "ScriptConditionalBlock.h"
 #include "ScriptExpression.h"
+#include "ScriptLine.h"
 
 size_t ScriptBlock::cursor(bool absolute)
 {
 	return _cursor + (absolute ? _lines.front() : 0);
 }
 
-void ScriptBlock::ParseLine(const std::string &line)
+void ScriptBlock::ParseLine(ScriptLine &line)
 {
-	if(line[0] == '#')
+	if(line.tokens[0].token[0] == '#')
 	{
 		return;
 	}
 
-	std::vector<ScriptToken> tokens;
-	ScriptParsingUtils::ParseLineTokens(line, tokens);
-
-	if(tokens.size() == 0)
+	if(line.tokens[0].token == ScriptToken::function_declaration)
 	{
-		return;
+		HandleFunctionDeclarationLine(line.tokens);
 	}
-
-	if(tokens[0].token == ScriptToken::function_declaration)
-	{
-		HandleFunctionDeclarationLine(tokens);
-	}
-	else if(tokens[0].token == ScriptToken::conditional_declaration)
+	else if(line.tokens[0].token == ScriptToken::conditional_declaration)
 	{
 		int blockEnd = _cursor;
-		HandleConditionalDeclarationLine(tokens, blockEnd);
+		HandleConditionalDeclarationLine(line.tokens, blockEnd);
 		_cursor = blockEnd + 1;
 	}
-	else if(tokens[0].token == ScriptToken::while_loop_declaration)
+	else if(line.tokens[0].token == ScriptToken::while_loop_declaration)
 	{
 		int blockEnd = _cursor;
-		HandleLoopDeclarationLine(tokens, blockEnd);
+		HandleLoopDeclarationLine(line.tokens, blockEnd);
 		_cursor = blockEnd + 1;
 	}
-	else if(tokens[0].token == ScriptToken::ranged_switch_declaration)
+	else if(line.tokens[0].token == ScriptToken::ranged_switch_declaration)
 	{
 		//TODO: Handle
 	}
 	else
 	{
-		HandleExpressionLine(tokens);
+		HandleExpressionLine(line.tokens);
 	}
 }
 
-void ScriptBlock::HandleExpressionLine(std::vector<ScriptToken> &tokens)
+void ScriptBlock::HandleExpressionLine(std::vector<ScriptToken>& tokens)
 {
 	if(tokens.size() < 1)
 	{
@@ -84,16 +77,16 @@ void ScriptBlock::HandleExpressionLine(std::vector<ScriptToken> &tokens)
 	}
 }
 
-void ScriptBlock::HandleFunctionDeclarationLine(std::vector<ScriptToken> &tokens)
+void ScriptBlock::HandleFunctionDeclarationLine(std::vector<ScriptToken>& tokens)
 {
 	throw ScriptError("Misplaced function declaration.");
 }
 
-void ScriptBlock::HandleLoopDeclarationLine(std::vector<ScriptToken> &tokens, int& out_blockEnd)
+void ScriptBlock::HandleLoopDeclarationLine(std::vector<ScriptToken>& tokens, int& out_blockEnd)
 {
 	std::vector<ScriptToken> parenthesisTokens;
 	int blockEnd;
-	ScriptParsingUtils::ParseConditionalExpression(_lines, std::forward<std::vector<ScriptToken>>(tokens), _cursor, parenthesisTokens, blockEnd);
+	ScriptParsingUtils::ParseConditionalExpression(_lines, tokens, _cursor, parenthesisTokens, blockEnd);
 
 	out_blockEnd = blockEnd;
 	ScriptLinesView blockLines = ScriptLinesView(_lines, _cursor + 1, out_blockEnd + 1);
@@ -110,7 +103,7 @@ void ScriptBlock::HandleLoopDeclarationLine(std::vector<ScriptToken> &tokens, in
 	} while(validExpression);
 }
 
-void ScriptBlock::HandleConditionalDeclarationLine(std::vector<ScriptToken> &tokens, int& out_blockEnd)
+void ScriptBlock::HandleConditionalDeclarationLine(std::vector<ScriptToken>& tokens, int& out_blockEnd)
 {
 	bool branchRan = false;
 	bool initialBranchChecked = false;
@@ -147,7 +140,7 @@ void ScriptBlock::HandleConditionalDeclarationLine(std::vector<ScriptToken> &tok
 			else
 			{
 				std::vector<ScriptToken> parenthesisTokens;
-				ScriptParsingUtils::ParseConditionalExpression(_lines, std::forward<std::vector<ScriptToken>>(tokens), nextBlockBegin, parenthesisTokens, out_blockEnd);
+				ScriptParsingUtils::ParseConditionalExpression(_lines, tokens, nextBlockBegin, parenthesisTokens, out_blockEnd);
 
 				ScriptLinesView blockLines = ScriptLinesView(_lines, nextBlockBegin + 1, out_blockEnd + 1);
 				std::shared_ptr<ScriptConditionalBlock> block = std::make_shared<ScriptConditionalBlock>(parenthesisTokens, blockLines, _depth + 1, this, _owner);
@@ -163,13 +156,31 @@ void ScriptBlock::HandleConditionalDeclarationLine(std::vector<ScriptToken> &tok
 			}
 
 			nextBlockBegin = out_blockEnd + 2;
-			ScriptParsingUtils::ParseLineTokens(_lines[nextBlockBegin], tokens);
+			tokens = _lines[nextBlockBegin].tokens;
 		}
 		else
 		{
 			break;
 		}
 	}
+}
+
+void ScriptBlock::HandleRangedSwitchDeclarationLine(std::vector<ScriptToken>& tokens, int & out_blockEnd)
+{
+	std::vector<ScriptToken> parenthesisTokens;
+	int blockEnd;
+	ScriptParsingUtils::ParseConditionalExpression(_lines, std::forward<std::vector<ScriptToken>>(tokens), _cursor, parenthesisTokens, blockEnd);
+
+	out_blockEnd = blockEnd;
+	ScriptLinesView blockLines = ScriptLinesView(_lines, _cursor + 1, out_blockEnd + 1);
+
+	//TODO: ScriptRangedSwitchBlock
+	std::shared_ptr<ScriptConditionalBlock> block = std::make_shared<ScriptConditionalBlock>(parenthesisTokens, blockLines, _depth + 1, this, _owner);
+	_owner->PushBlock(block);
+
+	block->Evaluate();
+
+	_owner->PopBlock();
 }
 
 std::shared_ptr<BaseScriptVariable> ScriptBlock::EvaluateExpression(std::vector<ScriptToken>& tokens)
@@ -181,19 +192,16 @@ void ScriptBlock::Run()
 {
 	for(_cursor = 0; _cursor < _lines.size(); ++_cursor)
 	{
-		int depth;
-		std::string line = ScriptParsingUtils::TrimLine(_lines[_cursor], depth);
-
-		if(depth < 0)
+		if(_lines[_cursor].depth < 0)
 		{
 			continue;
 		}
-		else if(depth != _depth)
+		else if(_lines[_cursor].depth != _depth)
 		{
 			throw ScriptError("Parser error: Line of invalid depth within block.");
 		}
 
-		ParseLine(line);
+		ParseLine(_lines[_cursor]);
 
 		if(HandleControlFlag())
 		{

@@ -11,6 +11,7 @@
 class Script;
 enum class ScriptLineType;
 struct ScriptToken;
+struct ScriptLine;
 
 class ScriptBlock
 {
@@ -25,12 +26,13 @@ protected:
 
 	std::map<std::string, std::shared_ptr<BaseScriptVariable>> _variables;
 
-	void ParseLine(const std::string &line);
+	void ParseLine(ScriptLine &line);
 
-	virtual void HandleExpressionLine(std::vector<ScriptToken> &tokens);
-	virtual void HandleFunctionDeclarationLine(std::vector<ScriptToken> &tokens);
-	virtual void HandleLoopDeclarationLine(std::vector<ScriptToken> &tokens, int& out_blockEnd);
-	virtual void HandleConditionalDeclarationLine(std::vector<ScriptToken> &tokens, int& out_blockEnd);
+	virtual void HandleExpressionLine(std::vector<ScriptToken>& tokens);
+	virtual void HandleFunctionDeclarationLine(std::vector<ScriptToken>& tokens);
+	virtual void HandleLoopDeclarationLine(std::vector<ScriptToken>& tokens, int& out_blockEnd);
+	virtual void HandleConditionalDeclarationLine(std::vector<ScriptToken>& tokens, int& out_blockEnd);
+	virtual void HandleRangedSwitchDeclarationLine(std::vector<ScriptToken>& tokens, int& out_blockEnd);
 
 	std::shared_ptr<BaseScriptVariable> EvaluateExpression(std::vector<ScriptToken>& tokens);
 

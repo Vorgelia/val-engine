@@ -7,6 +7,7 @@
 #define VE_DEBUG_ERRORTHROW
 
 class BaseScriptVariable;
+class Script;
 
 namespace DebugLog
 {
@@ -17,6 +18,6 @@ namespace DebugLog
 	void GetStackTrace(std::vector<std::string>* storage, unsigned int stackSize);
 
 #pragma region Scripting Bindings
-	std::shared_ptr<BaseScriptVariable> Push(std::vector<std::shared_ptr<BaseScriptVariable>>&);
+	std::shared_ptr<BaseScriptVariable> Push(const Script* script, std::vector<std::shared_ptr<BaseScriptVariable>>&);
 #pragma endregion
 }

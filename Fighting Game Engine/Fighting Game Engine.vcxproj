@@ -102,6 +102,7 @@
     <ClCompile Include="NetworkMessage.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="ScriptExpression.cpp" />
+    <ClCompile Include="ScriptLine.cpp" />
     <ClCompile Include="ScriptOperator.cpp" />
     <ClCompile Include="PostEffect.cpp" />
     <ClCompile Include="Profiler.cpp" />
@@ -176,6 +177,7 @@
     <ClInclude Include="ScriptExpression.h" />
     <ClInclude Include="ScriptFunctionBlock.h" />
     <ClInclude Include="ScriptFunctionSignature.h" />
+    <ClInclude Include="ScriptLine.h" />
     <ClInclude Include="ScriptVariable.h" />
     <ClInclude Include="ScriptLinesView.h" />
     <ClInclude Include="ScriptManager.h" />
