@@ -103,6 +103,7 @@
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="ScriptExpression.cpp" />
     <ClCompile Include="ScriptLine.cpp" />
+    <ClCompile Include="ScriptLoopBlock.cpp" />
     <ClCompile Include="ScriptOperator.cpp" />
     <ClCompile Include="PostEffect.cpp" />
     <ClCompile Include="Profiler.cpp" />
@@ -117,6 +118,7 @@
     <ClCompile Include="ScriptError.cpp" />
     <ClCompile Include="ScriptFunctionBlock.cpp" />
     <ClCompile Include="ScriptFunctionSignature.cpp" />
+    <ClCompile Include="ScriptRangedSwitchBlock.cpp" />
     <ClCompile Include="ScriptVariable.cpp" />
     <ClCompile Include="ScriptLinesView.cpp" />
     <ClCompile Include="ScriptManager.cpp" />
@@ -178,6 +180,8 @@
     <ClInclude Include="ScriptFunctionBlock.h" />
     <ClInclude Include="ScriptFunctionSignature.h" />
     <ClInclude Include="ScriptLine.h" />
+    <ClInclude Include="ScriptLoopBlock.h" />
+    <ClInclude Include="ScriptRangedSwitchBlock.h" />
     <ClInclude Include="ScriptVariable.h" />
     <ClInclude Include="ScriptLinesView.h" />
     <ClInclude Include="ScriptManager.h" />

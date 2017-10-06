@@ -312,10 +312,16 @@
     <ClCompile Include="CollisionBox.cpp">
       <Filter>Source Files\FG\Utilities</Filter>
     </ClCompile>
+    <ClCompile Include="ScriptLine.cpp">
+      <Filter>Source Files\FG\Scripting\Data</Filter>
+    </ClCompile>
     <ClCompile Include="ScriptExpression.cpp">
+      <Filter>Source Files\FG\Scripting\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptRangedSwitchBlock.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ScriptLine.cpp">
+    <ClCompile Include="ScriptLoopBlock.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -498,9 +504,15 @@
       <Filter>Header Files\FG\Utilities</Filter>
     </ClInclude>
     <ClInclude Include="ScriptExpression.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\FG\Scripting\Objects</Filter>
     </ClInclude>
     <ClInclude Include="ScriptLine.h">
+      <Filter>Header Files\FG\Scripting\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptRangedSwitchBlock.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptLoopBlock.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

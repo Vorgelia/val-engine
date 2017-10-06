@@ -22,6 +22,9 @@ enum class ScriptTokenType
 struct ScriptToken
 {
 #pragma region Constant Token Declarations
+
+	static const std::string preprocessor_pragma;
+
 	static const std::string function_declaration;
 	static const std::string conditional_declaration;
 	static const std::string conditional_elseif;
@@ -33,6 +36,9 @@ struct ScriptToken
 	static const std::string block_break;
 	static const std::string block_continue;
 	static const std::string block_return;
+
+	static const std::string switch_case;
+	static const std::string switch_default;
 
 	static const std::string value_null;
 	static const std::string value_true;

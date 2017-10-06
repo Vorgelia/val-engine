@@ -7,6 +7,7 @@
 #include "ScriptParentBlock.h"
 #include "DebugLog.h"
 #include "ScriptLine.h"
+#include "ScriptToken.h"
 
 std::string Script::name() const
 {
@@ -72,12 +73,12 @@ void Script::PreProcess()
 		std::vector<ScriptToken> tokens;
 		ScriptParsingUtils::ParseLineTokens(line, tokens);
 
-		if(indentation >= 0 && tokens.size() > 0)
+		if(indentation >= 0 && tokens.size() > 0 && tokens[0].type != ScriptTokenType::Preprocessor)
 		{
 			_lines.push_back(ScriptLine(line, i, indentation, tokens));
 		}
 
-		if(indentation != 0 || tokens.size() < 3 || tokens[0].type != ScriptTokenType::Preprocessor || tokens[1].token != "pragma")
+		if(indentation != 0 || tokens.size() < 3 || tokens[0].type != ScriptTokenType::Preprocessor || tokens[1].token != ScriptToken::preprocessor_pragma)
 		{
 			continue;
 		}
@@ -135,8 +136,17 @@ void Script::Init()
 	}
 	catch(ScriptError error)
 	{
-		DebugLog::Push("(" + _name + " : line " + std::to_string(_blockStack.top()->cursor()) + ")" + std::string(error.what()), LogItem::Type::Error);
+		DebugLog::Push("(" + _name + " : line " + std::to_string(_lines[_blockStack.top()->cursor()].index) + ")" + std::string(error.what()), LogItem::Type::Error);
 		_valid = false;
+	}
+
+	if(_blockStack.size() > 0)
+	{
+		DebugLog::Push("Block stack not empty after script " + _name + " execution.", LogItem::Type::Error);
+		while(_blockStack.size() > 0)
+		{
+			PopBlock();
+		}
 	}
 }
 
@@ -150,7 +160,7 @@ ScriptExitCode Script::Execute()
 	}
 	catch(ScriptError error)
 	{
-		DebugLog::Push("(" + _name + " : line " + std::to_string(_blockStack.top()->cursor()) + ")" + std::string(error.what()), LogItem::Type::Error);
+		DebugLog::Push("(" + _name + " : line " + std::to_string(_lines[_blockStack.top()->cursor()].index) + ")" + std::string(error.what()), LogItem::Type::Error);
 		_valid = false;
 		returnCode = ScriptExitCode::Failure;
 	}

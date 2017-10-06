@@ -2,6 +2,8 @@
 #include "Script.h"
 #include "ScriptParsingUtils.h"
 #include "ScriptError.h"
+#include "ScriptLoopBlock.h"
+#include "ScriptRangedSwitchBlock.h"
 #include "ScriptConditionalBlock.h"
 #include "ScriptExpression.h"
 #include "ScriptLine.h"
@@ -13,11 +15,6 @@ size_t ScriptBlock::cursor(bool absolute)
 
 void ScriptBlock::ParseLine(ScriptLine &line)
 {
-	if(line.tokens[0].token[0] == '#')
-	{
-		return;
-	}
-
 	if(line.tokens[0].token == ScriptToken::function_declaration)
 	{
 		HandleFunctionDeclarationLine(line.tokens);
@@ -36,7 +33,9 @@ void ScriptBlock::ParseLine(ScriptLine &line)
 	}
 	else if(line.tokens[0].token == ScriptToken::ranged_switch_declaration)
 	{
-		//TODO: Handle
+		int blockEnd = _cursor;
+		HandleRangedSwitchDeclarationLine(line.tokens, blockEnd);
+		_cursor = blockEnd + 1;
 	}
 	else
 	{
@@ -94,7 +93,7 @@ void ScriptBlock::HandleLoopDeclarationLine(std::vector<ScriptToken>& tokens, in
 	bool validExpression;
 	do
 	{
-		std::shared_ptr<ScriptConditionalBlock> block = std::make_shared<ScriptConditionalBlock>(parenthesisTokens, blockLines, _depth + 1, this, _owner);
+		std::shared_ptr<ScriptLoopBlock> block = std::make_shared<ScriptLoopBlock>(parenthesisTokens, blockLines, _depth + 1, this, _owner);
 		_owner->PushBlock(block);
 
 		validExpression = block->Evaluate();
@@ -174,8 +173,7 @@ void ScriptBlock::HandleRangedSwitchDeclarationLine(std::vector<ScriptToken>& to
 	out_blockEnd = blockEnd;
 	ScriptLinesView blockLines = ScriptLinesView(_lines, _cursor + 1, out_blockEnd + 1);
 
-	//TODO: ScriptRangedSwitchBlock
-	std::shared_ptr<ScriptConditionalBlock> block = std::make_shared<ScriptConditionalBlock>(parenthesisTokens, blockLines, _depth + 1, this, _owner);
+	std::shared_ptr<ScriptRangedSwitchBlock> block = std::make_shared<ScriptRangedSwitchBlock>(parenthesisTokens, blockLines, _depth + 1, this, _owner);
 	_owner->PushBlock(block);
 
 	block->Evaluate();

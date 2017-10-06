@@ -26,7 +26,7 @@ protected:
 
 	std::map<std::string, std::shared_ptr<BaseScriptVariable>> _variables;
 
-	void ParseLine(ScriptLine &line);
+	virtual void ParseLine(ScriptLine &line);
 
 	virtual void HandleExpressionLine(std::vector<ScriptToken>& tokens);
 	virtual void HandleFunctionDeclarationLine(std::vector<ScriptToken>& tokens);
