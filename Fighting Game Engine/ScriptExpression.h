@@ -11,7 +11,7 @@ class ScriptExpression
 	enum class State;
 
 	ScriptBlock* _parent;
-	const std::vector<ScriptToken>& _tokens;
+	std::vector<ScriptToken> _tokens;
 public:
 
 	std::shared_ptr<BaseScriptVariable> Evaluate();

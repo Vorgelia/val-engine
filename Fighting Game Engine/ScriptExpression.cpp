@@ -27,6 +27,11 @@ std::shared_ptr<BaseScriptVariable> ScriptExpression::Evaluate()
 	std::stack<std::shared_ptr<BaseScriptVariable>> variableStack;
 	std::stack<const ScriptOperator*> operatorStack;
 
+	if(_tokens.size() == 0)
+	{
+		throw ScriptError("Parser Error - Expected an expression");
+	}
+
 	for(size_t i = 0; i < _tokens.size(); ++i)
 	{
 		const ScriptToken& token = _tokens[i];
@@ -251,8 +256,16 @@ std::shared_ptr<BaseScriptVariable> ScriptExpression::Evaluate()
 	return variableStack.top();
 }
 
-ScriptExpression::ScriptExpression(ScriptBlock* parent, const std::vector<ScriptToken>& tokens) : _tokens(tokens)
+ScriptExpression::ScriptExpression(ScriptBlock* parent, const std::vector<ScriptToken>& tokens)
 {
+	if(tokens.size() == 1 && tokens[0].type == ScriptTokenType::ParenthesisGroup)
+	{
+		ScriptParsingUtils::ParseLineTokens(tokens[0].token, _tokens);
+	}
+	else
+	{
+		_tokens = tokens;
+	}
 	_parent = parent;
 }
 

@@ -38,17 +38,11 @@ void ScriptRangedSwitchBlock::ParseLine(ScriptLine & line)
 			switch(line.tokens.size())
 			{
 			case 2:
-				if(line.tokens[1].type != ScriptTokenType::ParenthesisGroup && line.tokens[1].type != ScriptTokenType::NumericLiteral)
-				{
-					break;
-				}
 				lowerBound = ScriptExpression(this, std::vector<ScriptToken>{line.tokens[1]}).Evaluate();
 				_handledCaseLabel = _conditionResult->value() == std::static_pointer_cast<ScriptInt>(lowerBound)->value();
 				return;
 			case 4:
-				if(line.tokens[1].type != ScriptTokenType::ParenthesisGroup  && line.tokens[1].type != ScriptTokenType::NumericLiteral
-					|| line.tokens[3].type != ScriptTokenType::ParenthesisGroup  && line.tokens[3].type != ScriptTokenType::NumericLiteral
-					|| line.tokens[2].token != "->")
+				if(line.tokens[2].token != "->")
 				{
 					break;
 				}
@@ -62,8 +56,8 @@ void ScriptRangedSwitchBlock::ParseLine(ScriptLine & line)
 				}
 
 				_handledCaseLabel =
-					_conditionResult->value() >= std::static_pointer_cast<ScriptInt>(lowerBound)->value()
-					&& _conditionResult->value() <= std::static_pointer_cast<ScriptInt>(upperBound)->value();
+					std::static_pointer_cast<ScriptBool>(ScriptVariableUtils::Operate(std::static_pointer_cast<BaseScriptVariable>(_conditionResult), lowerBound, ScriptOperatorType::LargerEquals))->value()
+					&& std::static_pointer_cast<ScriptBool>(ScriptVariableUtils::Operate(std::static_pointer_cast<BaseScriptVariable>(_conditionResult), upperBound, ScriptOperatorType::SmallerEquals))->value();
 				return;
 			}
 
