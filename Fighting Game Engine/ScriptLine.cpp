@@ -8,7 +8,6 @@ ScriptLine::ScriptLine(std::string line, int index, int indentationLevel, std::v
 {
 }
 
-
 ScriptLine::~ScriptLine()
 {
 }
