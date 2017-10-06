@@ -67,5 +67,4 @@ ScriptLinesView::ScriptLinesView(const ScriptLinesView & lines, int front, int b
 	_back = lines.front() + back;
 }
 
-
 ScriptLinesView::~ScriptLinesView() {}
