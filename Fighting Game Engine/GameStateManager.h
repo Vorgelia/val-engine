@@ -12,7 +12,7 @@ namespace GameStateManager
 
 	void Init();
 	void Update();
-	void LoadState(int stl);
+	void LoadState(int stateIndex);
 	void FrameEnd();
 	void Cleanup();
 

@@ -10,10 +10,10 @@ namespace GameStateManager
 	std::vector<GameState*> states;
 }
 
-void GameStateManager::LoadState(int stl)
+void GameStateManager::LoadState(int stateIndex)
 {
-	DebugLog::Push("----\n\n\n Loading State: " + std::to_string(stl) + "\n\n\n----", LogItem::Type::Message);
-	_stateToLoad = stl;
+	DebugLog::Push("----\n\n\n Loading State: " + std::to_string(stateIndex) + "\n\n\n----", LogItem::Type::Message);
+	_stateToLoad = stateIndex;
 }
 
 //The game states are managed here. This is where state loading and cleanup, as well as their per-state callbacks are handled.

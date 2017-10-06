@@ -12,5 +12,5 @@ enum class ScriptExitCode
 class ScriptError : public std::logic_error 
 {
 public:
-	ScriptError(std::string message);
+	ScriptError(const std::string& message);
 };

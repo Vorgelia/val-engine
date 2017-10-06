@@ -17,7 +17,7 @@ public:
 	std::vector<ScriptLine>::iterator begin() const;
 	std::vector<ScriptLine>::iterator end() const;
 
-	size_t size() const;
+	std::vector<ScriptLine>::size_type size() const;
 
 	std::vector<ScriptLine>* lines() const;
 	int front() const;

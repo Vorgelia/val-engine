@@ -1,3 +1,3 @@
 #include "ScriptError.h"
 
-ScriptError::ScriptError(std::string message) :std::logic_error(message) {}
+ScriptError::ScriptError(const std::string& message) :std::logic_error(message) {}

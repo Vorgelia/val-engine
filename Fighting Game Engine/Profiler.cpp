@@ -9,18 +9,18 @@ namespace Profiler
 	glm::vec2 stateChanges;
 }
 
-void Profiler::Begin(std::string str)
+void Profiler::Begin(const std::string& str)
 {
 	elements[str] = glfwGetTime();
 }
 
-void Profiler::End(std::string str)
+void Profiler::End(const std::string& str)
 {
 	//	glFinish();
 	elements[str] = glfwGetTime() - elements[str];
 }
 
-std::string Profiler::String(std::string str)
+std::string Profiler::String(const std::string& str)
 {
 	return "Profiler| " + str + ":  " + std::to_string(elements[str] * 1000) + "ms";
 }

@@ -38,7 +38,7 @@ bool Material::HasProperty(Material::Properties pr)
 {
 	return ((this->properties)&((unsigned char)pr)) != 0;
 }
-Material::Material(std::string name, Shader* shader, unsigned char properties, std::vector<uniformFloat> floats, std::vector<uniformVec> vecs, std::vector<uniformTex> textures)
+Material::Material(const std::string& name, Shader* shader, unsigned char properties, const std::vector<uniformFloat>& floats, const std::vector<uniformVec>& vecs, const std::vector<uniformTex>& textures)
 {
 	this->name = name;
 	this->shader = shader;
@@ -56,7 +56,7 @@ Material::Material(std::string name, Shader* shader, unsigned char properties, s
 		uniformTextures.insert(uniformTex(textures[i].first, textures[i].second));
 	}
 }
-Material::Material(FS::path path)
+Material::Material(const FS::path& path)
 {
 	name = path.string();
 	ResourceLoader::LoadMaterial(path, &shader, &properties, &uniformFloats, &uniformTextures, &uniformVectors);

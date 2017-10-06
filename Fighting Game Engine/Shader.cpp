@@ -1,13 +1,13 @@
 #include "Shader.h"
 #include "GLStateTrack.h"
 #include "DebugLog.h"
-ShaderAttachment::ShaderAttachment(string code, GLenum type)
+ShaderAttachment::ShaderAttachment(const string& code, GLenum type)
 {
 	this->code = code;
 	this->type = type;
 }
 
-GLint Shader::UniformLocation(string str)
+GLint Shader::UniformLocation(const string& str)
 {
 	//Helper function for getting a uniform location
 	//Allocates it in uniformLocations when it's first required, then reads it from uniformLocations on subsequent uses.
@@ -20,7 +20,7 @@ GLint Shader::UniformLocation(string str)
 }
 
 //Compile the individual shaders and combine them into a shader program.
-Shader::Shader(std::string name, std::vector<ShaderAttachment> shaders)
+Shader::Shader(const std::string& name, const std::vector<ShaderAttachment>& shaders)
 {
 	this->name = name;
 
@@ -49,7 +49,7 @@ bool Shader::valid()
 	return _valid;
 }
 
-GLuint Shader::CreateShader(std::string code, GLenum type)
+GLuint Shader::CreateShader(const std::string& code, GLenum type)
 {
 	//Shader creation and debug information
 	char shaderLog[512];
@@ -71,7 +71,7 @@ GLuint Shader::CreateShader(std::string code, GLenum type)
 	return shader;
 }
 
-GLuint Shader::CreateShaderProgram(std::vector<GLuint> shaders)
+GLuint Shader::CreateShaderProgram(const std::vector<GLuint>& shaders)
 {
 	GLuint shaderProgram = glCreateProgram();
 	//Attach all the shaders into a shader program.

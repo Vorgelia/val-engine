@@ -14,7 +14,7 @@ Texture::operator const GLuint()
 	return id;
 }
 
-Texture::Texture(std::string nm, std::vector<unsigned char> pixels, glm::ivec2 dim, int format, GLuint filt = GL_NEAREST, GLuint edgeBehaviour = GL_REPEAT, bool flip)
+Texture::Texture(const std::string& nm, const std::vector<unsigned char>& pixels, glm::ivec2 dim, int format, GLuint filt = GL_NEAREST, GLuint edgeBehaviour = GL_REPEAT, bool flip)
 {
 	name = nm;
 	_valid = false;
@@ -41,7 +41,7 @@ Texture::Texture(std::string nm, std::vector<unsigned char> pixels, glm::ivec2 d
 	else
 		Create(pixels);
 }
-Texture::Texture(std::string nm, std::vector<float> pixels, glm::ivec2 dim, int format, GLuint filt = GL_NEAREST, GLuint edgeBehaviour = GL_REPEAT, bool flip)
+Texture::Texture(const std::string& nm, const std::vector<float>& pixels, glm::ivec2 dim, int format, GLuint filt = GL_NEAREST, GLuint edgeBehaviour = GL_REPEAT, bool flip)
 {
 	name = nm;
 	_valid = false;
@@ -68,7 +68,7 @@ Texture::Texture(std::string nm, std::vector<float> pixels, glm::ivec2 dim, int 
 	else
 		Create(pixels);
 }
-Texture::Texture(std::string nm, FS::path path, int format, int SOILformat = SOIL_LOAD_AUTO, GLuint filt = GL_NEAREST, GLuint edgeBehaviour = GL_REPEAT)
+Texture::Texture(const std::string& nm, const FS::path& path, int format, int SOILformat = SOIL_LOAD_AUTO, GLuint filt = GL_NEAREST, GLuint edgeBehaviour = GL_REPEAT)
 {
 	_valid = false;
 	this->path = path;
@@ -102,7 +102,7 @@ Texture::Texture(std::string nm, FS::path path, int format, int SOILformat = SOI
 
 
 
-void Texture::Create(std::vector<float> px)
+void Texture::Create(const std::vector<float>& px)
 {
 	if(px.size() == 0)
 	{
@@ -122,7 +122,7 @@ void Texture::Create(std::vector<float> px)
 
 }
 
-void Texture::Create(std::vector<unsigned char> px)
+void Texture::Create(const std::vector<unsigned char>& px)
 {
 	if(px.size() == 0)
 	{

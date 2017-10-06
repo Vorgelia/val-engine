@@ -13,7 +13,7 @@ FontCharacter::FontCharacter(GLuint atlasIndex, glm::vec4 textureParams, glm::iv
 	this->atlasIndex = atlasIndex;
 }
 
-Font::Font(FS::path p)
+Font::Font(const FS::path& p)
 {
 	//Small experiment with initialization. Class instances initialize the underlying framework if it isn't initialized.
 	//Cleaner code, i guess? Last time i put initialization and font loading in GUI::Init() and it was h-o-r-r-i-b-l-e.

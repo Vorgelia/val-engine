@@ -7,7 +7,7 @@ class ShaderAttachment
 public:
 	string code;
 	GLenum type;
-	ShaderAttachment(string code, GLenum type);
+	ShaderAttachment(const string& code, GLenum type);
 };
 
 class Shader
@@ -22,11 +22,11 @@ public:
 	GLuint id;
 
 	bool valid();
-	GLint UniformLocation(string str);
-	Shader(string n, std::vector<ShaderAttachment> code);
+	GLint UniformLocation(const string& str);
+	Shader(const string& name, const std::vector<ShaderAttachment>& code);
 	operator GLuint();
-	static GLuint CreateShader(std::string code, GLenum type);
-	static GLuint CreateShaderProgram(std::vector<GLuint> shaders);
+	static GLuint CreateShader(const std::string& code, GLenum type);
+	static GLuint CreateShaderProgram(const std::vector<GLuint>& shaders);
 	~Shader();
 
 };

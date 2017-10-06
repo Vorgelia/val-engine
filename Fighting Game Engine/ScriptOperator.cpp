@@ -36,7 +36,7 @@ int ScriptOperator::priority() const
 	return _priority;
 }
 
-const ScriptOperator * ScriptOperator::GetOperator(std::string signature)
+const ScriptOperator * ScriptOperator::GetOperator(const std::string& signature)
 {
 	auto iter = _operatorLookup.find(signature);
 	if(iter == _operatorLookup.end())

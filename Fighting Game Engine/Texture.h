@@ -29,11 +29,11 @@ public:
 
 	operator const GLuint();
 
-	Texture(std::string nm, std::vector<unsigned char> px, glm::ivec2 dim, int format, GLuint filt, GLuint edgeBehaviour, bool flip = true);
-	Texture(std::string nm, std::vector<float> px, glm::ivec2 dim, int format, GLuint filt, GLuint edgeBehaviour, bool flip = true);
-	Texture(std::string nm, FS::path path, int format, int SOILformat, GLuint filt, GLuint edgeBehaviour);
-	void Create(std::vector<float> px);
-	void Create(std::vector<unsigned char> px);
+	Texture(const std::string& nm, const std::vector<unsigned char>& px, glm::ivec2 dim, int format, GLuint filt, GLuint edgeBehaviour, bool flip = true);
+	Texture(const std::string& nm, const std::vector<float>& px, glm::ivec2 dim, int format, GLuint filt, GLuint edgeBehaviour, bool flip = true);
+	Texture(const std::string& nm, const FS::path& path, int format, int SOILformat, GLuint filt, GLuint edgeBehaviour);
+	void Create(const std::vector<float>& px);
+	void Create(const std::vector<unsigned char>& px);
 	bool Bind(int ind);
 	void Update();
 	void Destroy();

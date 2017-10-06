@@ -34,7 +34,7 @@ public:
 	std::map<std::string, glm::vec4> uniformVectors;
 	void ApplyProperties();
 	inline bool HasProperty(Properties pr);
-	Material(std::string name, Shader* shader, unsigned char properties, std::vector<uniformFloat> floats, std::vector<uniformVec> vecs, std::vector<uniformTex> textures);
-	Material(FS::path path);
+	Material(const std::string& name, Shader* shader, unsigned char properties, const std::vector<uniformFloat>& floats, const std::vector<uniformVec>& vecs, const std::vector<uniformTex>& textures);
+	Material(const FS::path& path);
 };
 

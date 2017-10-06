@@ -36,7 +36,7 @@ int ScriptLinesView::back() const
 	return _back;
 }
 
-size_t ScriptLinesView::size() const
+std::vector<ScriptLine>::size_type ScriptLinesView::size() const
 {
 	return _back - _front;
 }

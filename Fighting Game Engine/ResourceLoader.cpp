@@ -30,7 +30,7 @@ std::string ResourceLoader::DecodeError(ResourceError error)
 
 //Probably my least favourite part of making this engine is importing files.
 //The code always looks like a mess but at least i don't have to touch it after making it.
-std::string ResourceLoader::LoadTextResource(int id, std::string type)
+std::string ResourceLoader::LoadTextResource(int id, const std::string& type)
 {//Copypasta text resource loading. Could probably be optimized.
 	HRSRC hResource = FindResource(NULL, MAKEINTRESOURCE(id), (LPCSTR)type.c_str());
 	if(hResource == nullptr)
@@ -48,7 +48,7 @@ std::string ResourceLoader::LoadTextResource(int id, std::string type)
 	int size = SizeofResource(NULL, hResource) / sizeof(char);
 	return std::string(sText).substr(0, size);
 }
-std::vector<unsigned char> ResourceLoader::LoadBinaryResource(int id, std::string type)
+std::vector<unsigned char> ResourceLoader::LoadBinaryResource(int id, const std::string& type)
 {//Doesn't work, completely unused.
 	HRSRC hResource = FindResource(NULL, MAKEINTRESOURCE(id), (LPCSTR)type.c_str());
 	if(hResource == 0)
@@ -65,7 +65,7 @@ std::vector<unsigned char> ResourceLoader::LoadBinaryResource(int id, std::strin
 	int size = SizeofResource(NULL, hResource) / sizeof(unsigned char);
 	return std::vector<unsigned char>((unsigned char*)sData, (unsigned char*)sData[size]);
 }
-std::string ResourceLoader::ReturnFile(FS::path dir)
+std::string ResourceLoader::ReturnFile(const FS::path& dir)
 {//Abstraction for turning a file into a string.
 	if(!FS::exists(dir))
 		throw ResourceError::FileUnavailable;
@@ -81,7 +81,7 @@ std::string ResourceLoader::ReturnFile(FS::path dir)
 	return content;
 }
 //Bit of a weird function to put in ResourceLoader, buuuut considering this is where a ton of file management happens, it felt the most natural.
-bool ResourceLoader::SaveFile(FS::path dir, std::string content, int flags)
+bool ResourceLoader::SaveFile(const FS::path& dir, std::string content, int flags)
 {
 	boost::algorithm::erase_all(content, "\r");
 	std::ofstream ofs(dir.c_str(), flags);
@@ -94,7 +94,7 @@ bool ResourceLoader::SaveFile(FS::path dir, std::string content, int flags)
 	return true;
 }
 //Abstraction for turning a file into an array of its lines. Heavily used in parsing.
-std::vector<std::string> ResourceLoader::ReturnFileLines(FS::path dir, bool removeWhitespace = false)
+std::vector<std::string> ResourceLoader::ReturnFileLines(const FS::path& dir, bool removeWhitespace = false)
 {
 	DebugLog::Push("Resource: Loading file " + dir.string());
 	if(!FS::exists(dir))
@@ -124,7 +124,7 @@ std::vector<std::string> ResourceLoader::ReturnFileLines(FS::path dir, bool remo
 //For some reason i'm using pointers to components instead of pointers to objects. Don't ask me why, but i stuck with it.
 //Most of these parsers work in similar ways.
 //Lines beginning with // are comments, #DIRECTIVES change where the data goes, the data itself is split on = and ,
-void ResourceLoader::LoadControlSettings(FS::path path, std::unordered_map<InputDirection, InputEvent>* dir, std::unordered_map<InputButton, InputEvent>* bt)
+void ResourceLoader::LoadControlSettings(const FS::path& path, std::unordered_map<InputDirection, InputEvent>* dir, std::unordered_map<InputButton, InputEvent>* bt)
 {
 	std::vector<std::string> lines;
 
@@ -169,7 +169,7 @@ void ResourceLoader::LoadControlSettings(FS::path path, std::unordered_map<Input
 	}
 }
 
-void ResourceLoader::LoadObjects(FS::path path, std::map<int, Object*>* objects)
+void ResourceLoader::LoadObjects(const FS::path& path, std::map<int, Object*>* objects)
 {
 	std::vector<std::string> lines = ReturnFileLines(path, true);
 
@@ -225,7 +225,7 @@ void ResourceLoader::LoadObjects(FS::path path, std::map<int, Object*>* objects)
 	}
 }
 
-void ResourceLoader::LoadPostEffect(FS::path path, std::vector<std::pair<int, Material*>>* elements, bool* cbBefore, bool* cbAfter, int* order)
+void ResourceLoader::LoadPostEffect(const FS::path& path, std::vector<std::pair<int, Material*>>* elements, bool* cbBefore, bool* cbAfter, int* order)
 {
 	std::vector<std::string> lines = ReturnFileLines(path, true);
 
@@ -272,7 +272,7 @@ void ResourceLoader::LoadPostEffect(FS::path path, std::vector<std::pair<int, Ma
 	}
 }
 
-void ResourceLoader::LoadMaterial(FS::path path, Shader** shader, unsigned char* properties, std::map<std::string, GLfloat>* uniformFloats, std::map<std::string, MaterialTexture>* uniformTextures, std::map<std::string, glm::vec4>* uniformVectors)
+void ResourceLoader::LoadMaterial(const FS::path& path, Shader** shader, unsigned char* properties, std::map<std::string, GLfloat>* uniformFloats, std::map<std::string, MaterialTexture>* uniformTextures, std::map<std::string, glm::vec4>* uniformVectors)
 {
 	std::vector<std::string> lines = ReturnFileLines(path, true);
 
@@ -349,7 +349,7 @@ void ResourceLoader::LoadMaterial(FS::path path, Shader** shader, unsigned char*
 	}
 }
 
-void ResourceLoader::LoadMeshVM(FS::path path, std::vector<float> **verts, std::vector<GLuint> **elements, std::vector<VertexAttribute> *vertexFormat)
+void ResourceLoader::LoadMeshVM(const FS::path& path, std::vector<float> **verts, std::vector<GLuint> **elements, std::vector<VertexAttribute> *vertexFormat)
 {
 
 	std::vector<std::string> lines = ReturnFileLines(path, true);

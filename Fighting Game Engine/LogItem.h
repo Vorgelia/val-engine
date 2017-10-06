@@ -19,6 +19,6 @@ public:
 	std::vector<std::string> stack;
 	std::string ToString(unsigned int stackAmount = 100);
 
-	LogItem(std::string msg, std::vector<std::string> stack, LogItem::Type type = LogItem::Type::Log);
-	LogItem(std::string msg, LogItem::Type type = LogItem::Type::Log);
+	LogItem(const std::string& msg, std::vector<std::string>& stack, LogItem::Type type = LogItem::Type::Log);
+	LogItem(const std::string& msg, LogItem::Type type = LogItem::Type::Log);
 };

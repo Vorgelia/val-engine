@@ -8,6 +8,7 @@
 class InputMotionComponent;
 typedef std::vector<InputMotionComponent> InputMotion;
 typedef CircularBuffer<InputFrame> InputBuffer;
+
 enum class InputButton
 {
 	Light = 1,
@@ -20,6 +21,7 @@ enum class InputButton
 	Start = 32
 
 };
+
 enum class InputDirection
 {
 	Up = 1,
@@ -51,10 +53,10 @@ public:
 	std::string deviceName();
 	std::string Serialize();
 
-	bool EvaluateInput(InputEvent ie);
-	bool EvaluateMotion(InputMotion motion, bool inverse);
-	int InputMotionDistance(int currentIndex, InputMotionComponent motionComp, int maxBuffer = 1199, bool firstInput = false);
-	bool InputMotionFrameCheck(InputMotionComponent* motionComp, int index);
+	bool EvaluateInput(InputEvent& ie);
+	bool EvaluateMotion(InputMotion& motion, bool inverse);
+	int InputMotionDistance(int currentIndex, InputMotionComponent& motionComp, int maxBuffer = 1199, bool firstInput = false);
+	bool InputMotionFrameCheck(InputMotionComponent& motionComp, int index);
 	InputDevice(int deviceID);
 	~InputDevice();
 };
