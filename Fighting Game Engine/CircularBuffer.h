@@ -18,7 +18,7 @@ public:
 	int InternalIndex(int index);
 
 	void Advance();
-	void Advance(T placedVar);//Quick helper function for adding an element and incrementing _bufferEnd
+	void Advance(T& placedVar);//Quick helper function for adding an element and incrementing _bufferEnd
 	void SetPosition(int pos);
 
 	void Resize(int size);//Really simple resize function. Will not shift the elements to maintain order.
@@ -80,7 +80,7 @@ void CircularBuffer<T>::Advance()
 }
 
 template <class T>
-void CircularBuffer<T>::Advance(T placedVar)
+void CircularBuffer<T>::Advance(T& placedVar)
 {
 	_buffer->at(_bufferEnd) = placedVar;
 	_bufferEnd = InternalIndex(_bufferEnd + 1);

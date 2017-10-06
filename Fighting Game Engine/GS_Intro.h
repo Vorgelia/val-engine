@@ -10,6 +10,6 @@ public:
 	void Init();
 	void GUI();
 	void GameUpdate();
-	GS_Intro(FS::path path);
+	GS_Intro(const FS::path& path);
 };
 

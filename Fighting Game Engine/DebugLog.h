@@ -13,7 +13,7 @@ namespace DebugLog
 {
 	void Init();
 	void Cleanup();
-	void Push(std::string data, LogItem::Type type = LogItem::Type::Log);
+	void Push(const std::string& data, LogItem::Type type = LogItem::Type::Log);
 	void WriteThread();
 	void GetStackTrace(std::vector<std::string>* storage, unsigned int stackSize);
 

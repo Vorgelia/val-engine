@@ -39,7 +39,7 @@ InputDevice::~InputDevice()
 }
 //Helper function for evaluating whether a specific input event is occuring.
 //Needed to abstract checking for buttons and axes to a single function with boolean output.
-bool InputDevice::EvaluateInput(InputEvent ie)
+bool InputDevice::EvaluateInput(InputEvent& ie)
 {
 	if(this->_deviceID == -2)
 	{
@@ -68,7 +68,7 @@ std::string debugString;
 //This function is fairly simple. It checks if a specific motion has been performed by validating every part of the motion based on the distance of its beginning.
 //For a quarter circle forward L, it would check if L has been pressed, then the distance between L and a forward input, then the distance between the forward input to the down-forward input, etc
 //The distance checking is abstracted in the InputMotionDistance function.
-bool InputDevice::EvaluateMotion(InputMotion motion, bool inverse)
+bool InputDevice::EvaluateMotion(InputMotion& motion, bool inverse)
 {
 	if(motion.size() == 0)
 		return false;
@@ -116,7 +116,7 @@ bool InputDevice::EvaluateMotion(InputMotion motion, bool inverse)
 //This function checks the distance from an input's beginning by checking back in the buffer until the specified input exceeds its necessary duration and stops being valid.
 //For instance, holding forward in a quarter circle forward for 4 frames means the input is valid and turns invalid in a 10f window, and therefore it's valid.
 //Max buffer is used as an early out to prevent from checking too far if we're going to discard based on distance being too high anyway
-int InputDevice::InputMotionDistance(int currentIndex, InputMotionComponent motionComp, int maxBuffer, bool firstInput)
+int InputDevice::InputMotionDistance(int currentIndex, InputMotionComponent& motionComp, int maxBuffer, bool firstInput)
 {
 	int cind = currentIndex;
 	int duration = 0;
@@ -124,7 +124,7 @@ int InputDevice::InputMotionDistance(int currentIndex, InputMotionComponent moti
 	{
 		//Look back into the buffer and check if motionComp is valid for that frame. If it is, increase the duration of the input.
 		//If the duration is over the needed duration, keep checking to see when the input started
-		if(InputMotionFrameCheck(&motionComp, cind))
+		if(InputMotionFrameCheck(motionComp, cind))
 		{
 			debugString += "--Valid Frame " + std::to_string(cind) + " dur:" + std::to_string(duration + 1) + "|" + std::to_string((int)inputBuffer->at(cind)->axisState) + "," + std::to_string((int)inputBuffer->at(cind)->buttonStates) + "\n";
 			++duration;
@@ -162,19 +162,19 @@ int InputDevice::InputMotionDistance(int currentIndex, InputMotionComponent moti
 	} while(glm::abs(currentIndex - cind) - motionComp.minDuration <= maxBuffer);
 	return -1;//-1 is used for invalid results.
 }
-bool InputDevice::InputMotionFrameCheck(InputMotionComponent* motionComp, int index)
+bool InputDevice::InputMotionFrameCheck(InputMotionComponent& motionComp, int index)
 {
 	InputFrame* inpf = inputBuffer->at(index);//Current checked frame
 	InputFrame* inpfp = inputBuffer->at(index - 1);//Current checked frame -1, to check for button events
 
-	if(motionComp->direction != 0)
+	if(motionComp.direction != 0)
 	{
-		if((inpf->axisState&motionComp->direction) == 0)
+		if((inpf->axisState&motionComp.direction) == 0)
 			return false;
-		if(motionComp->strict && (inpf->axisState != motionComp->direction))
+		if(motionComp.strict && (inpf->axisState != motionComp.direction))
 			return false;
 	}
-	for(auto i = motionComp->buttons.begin(); i != motionComp->buttons.end(); ++i)
+	for(auto i = motionComp.buttons.begin(); i != motionComp.buttons.end(); ++i)
 	{
 		if(((int)(i->second) | (int)InputType::Pressed))
 		{

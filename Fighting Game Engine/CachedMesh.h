@@ -29,8 +29,8 @@ public:
 	std::vector<Mesh*> owners;
 	bool RegisterOwner(Mesh*);
 	bool UnregisterOwner(Mesh*);
-	CachedMesh(std::string name, std::vector<float> *verts, std::vector<GLuint> *elements, std::vector<VertexAttribute> vertexFormat);
-	CachedMesh(FS::path path);
+	CachedMesh(const std::string& name, std::vector<float> *verts, std::vector<GLuint> *elements, const std::vector<VertexAttribute>& vertexFormat);
+	CachedMesh(const FS::path& path);
 	~CachedMesh();
 };
 

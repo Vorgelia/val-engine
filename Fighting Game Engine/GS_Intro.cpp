@@ -46,7 +46,7 @@ void GS_Intro::GameUpdate()
 	}
 }
 
-GS_Intro::GS_Intro(FS::path path) :GameState(path)
+GS_Intro::GS_Intro(const FS::path& path) :GameState(path)
 {
 
 }

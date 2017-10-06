@@ -2,7 +2,8 @@
 #include "CachedMesh.h"
 #include "GLStateTrack.h"
 #include "DebugLog.h"
-Mesh::Mesh(std::string name, CachedMesh* meshData, bool editable = false)
+
+Mesh::Mesh(const std::string& name, CachedMesh* meshData, bool editable = false)
 {
 	this->name = name;
 	if(meshData == nullptr)

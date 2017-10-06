@@ -73,14 +73,7 @@ void DebugLog::WriteThread()
 			_writeStream << "\n\n-Error:\n" + li.ToString();
 			std::clog << li.ToString() << std::endl << std::endl;
 #ifdef VE_DEBUG_ERRORTHROW
-			try
-			{
-				throw std::runtime_error(li.ToString());
-			}
-			catch(...)
-			{
-
-			}
+			throw std::runtime_error(li.ToString());
 #endif
 			break;
 		case LogItem::Type::Log:
@@ -100,7 +93,8 @@ void DebugLog::WriteThread()
 }
 
 //This will add data to the write queue. As before, the mutex here is to prevent the other thread from modifying the write queue as we're adding things to it.
-void DebugLog::Push(std::string data, LogItem::Type type)
+//TODO: Port to ZMQ
+void DebugLog::Push(const std::string& data, LogItem::Type type)
 {
 	_queueMutex.lock();
 	_writeQueue.push(LogItem(data, type));

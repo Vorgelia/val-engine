@@ -45,9 +45,9 @@ void GS_Menu::GUI()
 
 }
 InputMotion qcf = {
-	InputMotionComponent({}, (unsigned char)InputDirection::Left, 60, 20, false),
-	InputMotionComponent({}, 4, 0, 10, false),
-	InputMotionComponent({ InputButtonEvent((unsigned char)InputButton::Light, InputType::Pressed) }, 0, 0, 1, false)
+	InputMotionComponent(std::vector<InputButtonEvent>{}, (unsigned char)InputDirection::Left, 60, 20, false),
+	InputMotionComponent(std::vector<InputButtonEvent>{}, 4, 0, 10, false),
+	InputMotionComponent(std::vector<InputButtonEvent>{ InputButtonEvent((unsigned char)InputButton::Light, InputType::Pressed) }, 0, 0, 1, false)
 };
 void GS_Menu::Update()
 {
@@ -63,7 +63,7 @@ void GS_Menu::GameUpdate()
 		InputManager::inputDevices[0]->EvaluateMotion(qcf, false);
 	Rendering::cameras.at(0).position += InputManager::inputDevices[-1]->inputBuffer->back()->ToVector() * 500.0f * (float)VE_FRAME_TIME;
 }
-GS_Menu::GS_Menu(FS::path path) :GameState(path)
+GS_Menu::GS_Menu(const FS::path& path) :GameState(path)
 {
 }
 

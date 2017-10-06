@@ -1,6 +1,5 @@
 #include "LogItem.h"
 
-
 std::string LogItem::ToString(unsigned int stackAmount)
 {
 	std::string returnString = message;
@@ -12,13 +11,13 @@ std::string LogItem::ToString(unsigned int stackAmount)
 	return returnString;
 }
 
-LogItem::LogItem(std::string msg, std::vector<std::string> stack, LogItem::Type type)
+LogItem::LogItem(const std::string& msg, std::vector<std::string>& stack, LogItem::Type type)
 {
 	this->message = msg;
 	this->stack = stack;
 	this->type = type;
 }
-LogItem::LogItem(std::string msg, LogItem::Type type)
+LogItem::LogItem(const std::string& msg, LogItem::Type type)
 {
 	this->message = msg;
 	this->type = type;

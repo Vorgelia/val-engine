@@ -157,7 +157,7 @@ std::string GameState::Serialize()
 	return "ERROR";
 }
 
-void GameState::Deserialize(std::string data)
+void GameState::Deserialize(const std::string& data)
 {
 
 }
@@ -179,7 +179,7 @@ void GameState::RenderObjects()
 		i->second->Render();
 }
 
-const Object* GameState::FindObject(std::string name)
+const Object* GameState::FindObject(const std::string& name)
 {
 	for(auto i = objects.begin(); i != objects.end(); ++i)
 	if(i->second->name == name)
@@ -187,7 +187,7 @@ const Object* GameState::FindObject(std::string name)
 	return nullptr;
 }
 
-GameState::GameState(FS::path path)
+GameState::GameState(const FS::path& path)
 {
 	_initialized = false;
 	_loaded = false;

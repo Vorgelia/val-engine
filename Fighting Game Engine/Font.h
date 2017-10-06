@@ -40,7 +40,7 @@ public:
 	std::vector<Texture*> atlases;
 
 	FontCharacter* Character(GLubyte ch);
-	Font(FS::path p);
+	Font(const FS::path& p);
 	~Font();
 };
 

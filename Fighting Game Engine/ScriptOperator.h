@@ -41,7 +41,7 @@ public:
 	ScriptOperatorType type() const;
 	int priority() const;
 
-	static const ScriptOperator* GetOperator(std::string signature);
+	static const ScriptOperator* GetOperator(const std::string& signature);
 
 	ScriptOperator(ScriptOperatorType type, int priority);
 };

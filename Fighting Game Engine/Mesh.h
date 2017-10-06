@@ -19,7 +19,7 @@ public:
 
 	bool editable;//If set to true, prevent the vertices from being deleted while this mesh exists
 	bool valid();
-	Mesh(std::string name, CachedMesh* meshData, bool editable);
+	Mesh(const std::string& name, CachedMesh* meshData, bool editable);
 	void Update();
 	~Mesh();
 };

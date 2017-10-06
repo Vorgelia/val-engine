@@ -41,7 +41,7 @@ bool CachedMesh::UnregisterOwner(Mesh* owner)
 	}
 	return false;
 }
-CachedMesh::CachedMesh(std::string name, std::vector<float> *verts, std::vector<GLuint> *elements, std::vector<VertexAttribute> vertexFormat)
+CachedMesh::CachedMesh(const std::string& name, std::vector<float> *verts, std::vector<GLuint> *elements, const std::vector<VertexAttribute>& vertexFormat)
 {
 	this->name = name;
 	this->verts = verts;
@@ -49,7 +49,7 @@ CachedMesh::CachedMesh(std::string name, std::vector<float> *verts, std::vector<
 	this->vertexFormat = vertexFormat;
 }
 
-CachedMesh::CachedMesh(FS::path path)
+CachedMesh::CachedMesh(const FS::path& path)
 {
 	this->name = path.string();
 	//if (path.extension().string() == "vm")

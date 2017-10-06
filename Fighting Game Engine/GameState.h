@@ -25,9 +25,9 @@ public:
 	virtual void GUI();
 	virtual void Cleanup();
 	virtual std::string GameState::Serialize();
-	virtual void GameState::Deserialize(std::string data);
-	virtual const Object* FindObject(std::string name);
-	GameState(FS::path path);
+	virtual void GameState::Deserialize(const std::string& data);
+	virtual const Object* FindObject(const std::string& name);
+	GameState(const FS::path& path);
 	virtual ~GameState();
 };
 
