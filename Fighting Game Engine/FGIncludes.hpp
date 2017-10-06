@@ -17,6 +17,9 @@
 #include "GSIncludes.hpp"
 #include <irrKlang\include\irrKlang.h>
 
+#include "ScriptManager.h"
+#include "Script.h"
+
 #include "ConnectionSocket.h"
 #include "NetworkEntity.h"
 #include "NetworkMessage.h"

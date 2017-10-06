@@ -11,7 +11,8 @@ public:
 		Log,
 		Warning,
 		Error,
-		Message
+		Message,
+		ScriptLog
 	};
 	std::string message;
 	LogItem::Type type;

@@ -9,10 +9,11 @@
 #include "Font.h"
 #include "ResourceInitializer.h"
 #include "DebugLog.h"
+
 //If the following define exists, the engine will create some default resource files if the folder structure is missing.
 //I opt to create and then read files rather than reading directly from the resources because the generated files have comments in them that explain how they work
 //They are also easier to just modify instead of writing new ones from scratch
-#define VE_CREATE_DEFAULT_RESOURCES
+//#define VE_CREATE_DEFAULT_RESOURCES
 
 namespace Resource
 {
@@ -20,22 +21,23 @@ namespace Resource
 	std::map<std::string, Mesh*> meshes;
 	std::map<std::string, Texture*> textures;
 	std::map<std::string, Material*> materials;
+	std::map<std::string, Shader*> shaders;
+	std::map<std::string, Font*> fonts;
 
 	//Base
 	std::map<std::string, Mesh*> baseMeshes;
 	std::map<std::string, Texture*> baseTextures;
 	std::map<std::string, Material*> baseMaterials;
 	std::map<std::string, PostEffect*> postEffects;
-	std::map<std::string, Shader*> shaders;
-	std::map<std::string, Font*> fonts;
 }
 
 void Resource::Init()
 {
-	std::vector<float> pixels{
-	1, 0, 1, 1, 0, 0, 0, 1,
-	0, 0, 0, 1, 1, 0, 1, 1
-};
+	std::vector<float> pixels
+	{
+		1, 0, 1, 1, 0, 0, 0, 1,
+		0, 0, 0, 1, 1, 0, 1, 1
+	};
 #ifdef VE_CREATE_DEFAULT_RESOURCES
 	if(!FS::exists("Meshes/") || !FS::exists("Shaders/") || !FS::exists("Settings/") || !FS::exists("States/"))
 	{
@@ -99,7 +101,6 @@ Texture* Resource::GetTexture(FS::path path)
 	}
 	else
 	{
-
 		try
 		{
 			rt = new Texture(path.string(), path, GL_RGBA, SOIL_LOAD_RGBA, GL_NEAREST, GL_REPEAT);
@@ -134,7 +135,6 @@ PostEffect* Resource::GetPostEffect(FS::path path)
 		rp = Resource::postEffects[path.string()];
 	else
 	{
-
 		try
 		{
 			rp = new PostEffect(path.string());
@@ -160,13 +160,11 @@ PostEffect* Resource::GetPostEffect(FS::path path)
 
 Shader* Resource::GetShader(std::string name)
 {
-
 	Shader* rs = nullptr;
 	if(Resource::shaders.count(name) > 0)
 		rs = Resource::shaders[name];
 	else
 	{
-
 		try
 		{
 			rs = new Shader(name, { ShaderAttachment(ResourceLoader::ReturnFile(name + ".vert"), GL_VERTEX_SHADER), ShaderAttachment(ResourceLoader::ReturnFile(name + ".frag"), GL_FRAGMENT_SHADER) });
@@ -182,7 +180,6 @@ Shader* Resource::GetShader(std::string name)
 		}
 
 		Resource::shaders.insert(std::pair<std::string, Shader*>(name, rs));
-
 	}
 
 	if(rs != nullptr&&rs->valid())
@@ -208,7 +205,6 @@ Material* Resource::GetMaterial(FS::path path)
 	}
 	else
 	{
-
 		try
 		{
 			rm = new Material(path.string());

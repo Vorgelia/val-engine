@@ -13,9 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Header Files\IncludeLists">
-      <UniqueIdentifier>{5eba43cb-9827-4311-9232-3cc2b0cc0846}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\GL">
       <UniqueIdentifier>{8ce192c5-2989-49bf-b4c8-e37b2b7b2d1f}</UniqueIdentifier>
     </Filter>
@@ -88,12 +85,6 @@
     <Filter Include="Resource Files\Textures\Intro">
       <UniqueIdentifier>{cce49813-dc4b-40c6-af73-21484adb3cd7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\FG\Utilities">
-      <UniqueIdentifier>{fac04833-3869-4867-b1c5-732f41ddddff}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\FG\Utilities">
-      <UniqueIdentifier>{5cc4f0a9-7bb9-4e43-8ebe-99a9d58bdb13}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\FG\Networking">
       <UniqueIdentifier>{1865e464-f120-4daf-82c0-d1c053d682dc}</UniqueIdentifier>
     </Filter>
@@ -112,11 +103,50 @@
     <Filter Include="Source Files\FG\Characters">
       <UniqueIdentifier>{20190c51-8f38-47d7-91a0-be49bf78017c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Scripting">
+    <Filter Include="Header Files\FG\Scripting">
       <UniqueIdentifier>{aad99d76-6fde-4c72-b79e-7761f34ba28c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Scripting">
+    <Filter Include="Source Files\FG\Scripting">
       <UniqueIdentifier>{d9f6b802-75d8-448f-8e2f-e0cbbd44bc84}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\FG\Scripting\Objects">
+      <UniqueIdentifier>{14ae11ae-9dc7-4b06-9342-7e850546342f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\FG\Scripting\Objects">
+      <UniqueIdentifier>{d0b16b3f-9940-414f-8bf2-3176cc15a002}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\FG\Scripting\Objects\Blocks">
+      <UniqueIdentifier>{75bbc52f-7d15-4ff9-a210-e407101fa7b0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\FG\Scripting\Objects\Blocks">
+      <UniqueIdentifier>{4bc89b97-5ddc-4037-9be9-97a3cf4bbc41}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\IncludeLists">
+      <UniqueIdentifier>{5eba43cb-9827-4311-9232-3cc2b0cc0846}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\FG\Scripting\Objects\Variables">
+      <UniqueIdentifier>{b4360ee8-e052-41fd-b1ca-0c7b34622559}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\FG\Scripting\Objects\Variables">
+      <UniqueIdentifier>{d97bca5d-5f4c-47a6-86b2-ca676f6bd8fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\FG\Scripting\Data">
+      <UniqueIdentifier>{307116f3-d56c-4d3d-afae-5a19d627947a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\FG\Scripting\Utilities">
+      <UniqueIdentifier>{5fb3cb63-294f-48b3-98d1-dede13a8d6fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\FG\Scripting\Data">
+      <UniqueIdentifier>{10fd6aaa-03e5-443c-87c4-756485a630d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\FG\Scripting\Utilities">
+      <UniqueIdentifier>{ce045fde-443f-47f3-905c-c24548f886c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\FG\Utilities">
+      <UniqueIdentifier>{564001d8-db18-420f-bf6d-7f2d69f5ebee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\FG\Utilities">
+      <UniqueIdentifier>{80649126-a9c1-4216-8108-32de985cd964}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -231,10 +261,67 @@
     <ClCompile Include="CharacterFrame.cpp">
       <Filter>Source Files\FG\Characters</Filter>
     </ClCompile>
+    <ClCompile Include="AttackData.cpp">
+      <Filter>Source Files\FG\Characters</Filter>
+    </ClCompile>
+    <ClCompile Include="Script.cpp">
+      <Filter>Source Files\FG\Scripting</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptManager.cpp">
+      <Filter>Source Files\FG\Scripting</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptLinesView.cpp">
+      <Filter>Source Files\FG\Scripting\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptBlock.cpp">
+      <Filter>Source Files\FG\Scripting\Objects\Blocks</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptFunctionBlock.cpp">
+      <Filter>Source Files\FG\Scripting\Objects\Blocks</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptParentBlock.cpp">
+      <Filter>Source Files\FG\Scripting\Objects\Blocks</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptError.cpp">
+      <Filter>Source Files\FG\Scripting\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptToken.cpp">
+      <Filter>Source Files\FG\Scripting\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptConditionalBlock.cpp">
+      <Filter>Source Files\FG\Scripting\Objects\Blocks</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptFunctionSignature.cpp">
+      <Filter>Source Files\FG\Scripting\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptOperator.cpp">
+      <Filter>Source Files\FG\Scripting\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseScriptVariable.cpp">
+      <Filter>Source Files\FG\Scripting\Objects\Variables</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptVariable.cpp">
+      <Filter>Source Files\FG\Scripting\Objects\Variables</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptParsingUtils.cpp">
+      <Filter>Source Files\FG\Scripting\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptVariableUtils.cpp">
+      <Filter>Source Files\FG\Scripting\Utilities</Filter>
+    </ClCompile>
     <ClCompile Include="CollisionBox.cpp">
       <Filter>Source Files\FG\Utilities</Filter>
     </ClCompile>
-    <ClCompile Include="AttackData.cpp">
+    <ClCompile Include="ScriptLine.cpp">
+      <Filter>Source Files\FG\Scripting\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptExpression.cpp">
+      <Filter>Source Files\FG\Scripting\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptRangedSwitchBlock.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptLoopBlock.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -338,9 +425,6 @@
     <ClInclude Include="resource1.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CircularBuffer.h">
-      <Filter>Header Files\FG\Utilities</Filter>
-    </ClInclude>
     <ClInclude Include="ConnectionSocket.h">
       <Filter>Header Files\FG\Networking</Filter>
     </ClInclude>
@@ -365,10 +449,70 @@
     <ClInclude Include="CharacterFrame.h">
       <Filter>Header Files\FG\Characters</Filter>
     </ClInclude>
+    <ClInclude Include="AttackData.h">
+      <Filter>Header Files\FG\Characters</Filter>
+    </ClInclude>
+    <ClInclude Include="Script.h">
+      <Filter>Header Files\FG\Scripting</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptManager.h">
+      <Filter>Header Files\FG\Scripting</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptLinesView.h">
+      <Filter>Header Files\FG\Scripting\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptBlock.h">
+      <Filter>Header Files\FG\Scripting\Objects\Blocks</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptFunctionBlock.h">
+      <Filter>Header Files\FG\Scripting\Objects\Blocks</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptParentBlock.h">
+      <Filter>Header Files\FG\Scripting\Objects\Blocks</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptError.h">
+      <Filter>Header Files\FG\Scripting\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptToken.h">
+      <Filter>Header Files\FG\Scripting\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptConditionalBlock.h">
+      <Filter>Header Files\FG\Scripting\Objects\Blocks</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptFunctionSignature.h">
+      <Filter>Header Files\FG\Scripting\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptOperator.h">
+      <Filter>Header Files\FG\Scripting\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseScriptVariable.h">
+      <Filter>Header Files\FG\Scripting\Objects\Variables</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptVariable.h">
+      <Filter>Header Files\FG\Scripting\Objects\Variables</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptVariableUtils.h">
+      <Filter>Header Files\FG\Scripting\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptParsingUtils.h">
+      <Filter>Header Files\FG\Scripting\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="CircularBuffer.h">
+      <Filter>Header Files\FG\Utilities</Filter>
+    </ClInclude>
     <ClInclude Include="CollisionBox.h">
       <Filter>Header Files\FG\Utilities</Filter>
     </ClInclude>
-    <ClInclude Include="AttackData.h">
+    <ClInclude Include="ScriptExpression.h">
+      <Filter>Header Files\FG\Scripting\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptLine.h">
+      <Filter>Header Files\FG\Scripting\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptRangedSwitchBlock.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptLoopBlock.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

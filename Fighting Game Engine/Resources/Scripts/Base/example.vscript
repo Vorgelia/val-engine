@@ -1,0 +1,40 @@
+#pragma Bind Debug
+
+function Main () : int
+	return 0
+end
+
+function Init():int
+	bool correctOperationOrder
+	int i=2*2+3
+	if(i==7)
+		correctOperationOrder = true
+	end
+	else
+		correctOperationOrder = false
+	end
+	
+	bool logicOperators = !(i!=7)
+	
+	if(logicOperators && correctOperationOrder)
+		i = JustReturn666()
+	end
+	
+	ve_log(i=i/2)
+	
+	int j=0
+	int k=0
+	while(k<5)
+		j = j+5
+		k = k+1
+	end
+	
+	ve_log(j)
+	ve_log("returning ",i/2)
+	
+	return i/2
+end
+
+function JustReturn666():int
+	return 666
+end

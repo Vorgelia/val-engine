@@ -8,6 +8,11 @@
 #include "LogItem.h"
 #include <stdexcept>
 #include <atomic>
+
+#include "BaseScriptVariable.h"
+#include "ScriptError.h"
+#include "Script.h"
+
 namespace DebugLog
 {
 	//The thread containing the write loop.
@@ -60,32 +65,36 @@ void DebugLog::WriteThread()
 		//Print different stuff to the console and the file based on the bessage type.
 		switch(li.type)
 		{
-			case LogItem::Type::Message:
-				_writeStream << "\n\n" + li.ToString();
-				std::clog << li.ToString(0) << std::endl << std::endl;
-				break;
-			case LogItem::Type::Error:
-				_writeStream << "\n\n-Error:\n" + li.ToString();
-				std::clog << li.ToString() << std::endl << std::endl;
+		case LogItem::Type::Message:
+			_writeStream << "\n\n" + li.ToString();
+			std::clog << li.ToString(0) << std::endl << std::endl;
+			break;
+		case LogItem::Type::Error:
+			_writeStream << "\n\n-Error:\n" + li.ToString();
+			std::clog << li.ToString() << std::endl << std::endl;
 #ifdef VE_DEBUG_ERRORTHROW
-				try
-				{
-					throw std::runtime_error(li.ToString());
-				}
-				catch(...)
-				{
+			try
+			{
+				throw std::runtime_error(li.ToString());
+			}
+			catch(...)
+			{
 
-				}
+			}
 #endif
-				break;
-			case LogItem::Type::Log:
-				_writeStream << "\n\n-Log:\n" + li.ToString();
-				std::clog << li.ToString(1) << std::endl << std::endl;
-				break;
-			case LogItem::Type::Warning:
-				_writeStream << "\n\n-Warning:\n" + li.ToString();
-				std::clog << li.ToString() << std::endl << std::endl;
-				break;
+			break;
+		case LogItem::Type::Log:
+			_writeStream << "\n\n-Log:\n" + li.ToString();
+			std::clog << li.ToString(1) << std::endl << std::endl;
+			break;
+		case LogItem::Type::Warning:
+			_writeStream << "\n\n-Warning:\n" + li.ToString();
+			std::clog << li.ToString() << std::endl << std::endl;
+			break;
+		case LogItem::Type::ScriptLog:
+			_writeStream << "\n\n-Script Log:\n" + li.ToString();
+			std::clog << li.ToString(2) << std::endl << std::endl;
+			break;
 		}
 	}
 }
@@ -105,7 +114,7 @@ void DebugLog::GetStackTrace(std::vector<std::string>* storage, unsigned int sta
 	//Copy-pasted from somewhere.
 	//Get the call stack, run it against the debug symbols and get a bunch of text out of it.
 
-	int   i;
+	unsigned int   i;
 	void          *stack[100];
 	unsigned short frames;
 	SYMBOL_INFO   *symbol;
@@ -113,7 +122,7 @@ void DebugLog::GetStackTrace(std::vector<std::string>* storage, unsigned int sta
 	process = GetCurrentProcess();
 	SymInitialize(process, NULL, TRUE);
 	frames = CaptureStackBackTrace(2, 100, stack, NULL);
-	symbol = (SYMBOL_INFO *)calloc(sizeof(SYMBOL_INFO)+256 * sizeof(char), 1);
+	symbol = (SYMBOL_INFO *)calloc(sizeof(SYMBOL_INFO) + 256 * sizeof(char), 1);
 	symbol->MaxNameLen = 255;
 	symbol->SizeOfStruct = sizeof(SYMBOL_INFO);
 	storage->reserve(frames);
@@ -127,3 +136,25 @@ void DebugLog::GetStackTrace(std::vector<std::string>* storage, unsigned int sta
 		storage->push_back(std::to_string(frames - i - 1) + ": " + symbol_name + " 0x" + std::to_string(symbol->Address));
 	}
 }
+
+#pragma region Scripting Bindings
+
+std::shared_ptr<BaseScriptVariable> DebugLog::Push(const Script* script, std::vector<std::shared_ptr<BaseScriptVariable>>& variables)
+{
+	std::stringstream str;
+
+	str << "[Script: " << script->name() << "] ";
+
+	for(const auto& var : variables)
+	{
+		if(var != nullptr)
+		{
+			str << var->ToString();
+		}
+	}
+
+	DebugLog::Push(str.str(), LogItem::Type::ScriptLog);
+	return std::make_shared<BaseScriptVariable>();
+}
+
+#pragma endregion

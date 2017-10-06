@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -13,18 +13,19 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{A5C68F09-A292-4D46-B4F5-8D682AC689BD}</ProjectGuid>
     <RootNamespace>FightingGameEngine</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
@@ -39,9 +40,9 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);C:\Users\VAL\Documents\Visual Studio 2013\Resources\Projects;;C:\Users\VAL\Documents\Visual Studio 2013\Resources\Projects\boost</IncludePath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);C:\Users\VAL\Documents\Visual Studio 2013\Resources\Projects;C:\Users\VAL\Documents\Visual Studio 2013\Resources\Projects\boost</IncludePath>
     <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);C:\Users\VAL\Documents\Visual Studio 2013\Resources\Libraries;C:\Users\VAL\Documents\Visual Studio 2013\Resources\Projects\boost\stage\lib</LibraryPath>
-    <OutDir>..\Build</OutDir>
+    <OutDir>..\Build\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -51,8 +52,10 @@
       <AdditionalOptions>-D_SCL_SECURE_NO_WARNINGS %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>Dbghelp.lib;ws2_32.lib;freetype27d.lib;SOIL.lib;glfw3.lib;glew32s.lib;opengl32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies);</AdditionalDependencies>
+      <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
+      <AdditionalDependencies>Dbghelp.lib;ws2_32.lib;freetype27d.lib;legacy_stdio_definitions.lib;SOIL.lib;glfw3.lib;glew32s.lib;opengl32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies);</AdditionalDependencies>
+      <FullProgramDatabaseFile>true</FullProgramDatabaseFile>
+      <GenerateMapFile>true</GenerateMapFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -98,6 +101,10 @@
     <ClCompile Include="NetworkEntity.cpp" />
     <ClCompile Include="NetworkMessage.cpp" />
     <ClCompile Include="Object.cpp" />
+    <ClCompile Include="ScriptExpression.cpp" />
+    <ClCompile Include="ScriptLine.cpp" />
+    <ClCompile Include="ScriptLoopBlock.cpp" />
+    <ClCompile Include="ScriptOperator.cpp" />
     <ClCompile Include="PostEffect.cpp" />
     <ClCompile Include="Profiler.cpp" />
     <ClCompile Include="Rendering.cpp" />
@@ -105,6 +112,21 @@
     <ClCompile Include="ResourceInitializer.cpp" />
     <ClCompile Include="ResourceLoader.cpp" />
     <ClCompile Include="Screen.cpp" />
+    <ClCompile Include="Script.cpp" />
+    <ClCompile Include="ScriptBlock.cpp" />
+    <ClCompile Include="ScriptConditionalBlock.cpp" />
+    <ClCompile Include="ScriptError.cpp" />
+    <ClCompile Include="ScriptFunctionBlock.cpp" />
+    <ClCompile Include="ScriptFunctionSignature.cpp" />
+    <ClCompile Include="ScriptRangedSwitchBlock.cpp" />
+    <ClCompile Include="ScriptVariable.cpp" />
+    <ClCompile Include="ScriptLinesView.cpp" />
+    <ClCompile Include="ScriptManager.cpp" />
+    <ClCompile Include="ScriptParentBlock.cpp" />
+    <ClCompile Include="ScriptParsingUtils.cpp" />
+    <ClCompile Include="ScriptToken.cpp" />
+    <ClCompile Include="BaseScriptVariable.cpp" />
+    <ClCompile Include="ScriptVariableUtils.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Time.cpp" />
@@ -150,6 +172,25 @@
     <ClInclude Include="ResourceInitializer.h" />
     <ClInclude Include="ResourceLoader.h" />
     <ClInclude Include="Screen.h" />
+    <ClInclude Include="Script.h" />
+    <ClInclude Include="ScriptBlock.h" />
+    <ClInclude Include="ScriptConditionalBlock.h" />
+    <ClInclude Include="ScriptError.h" />
+    <ClInclude Include="ScriptExpression.h" />
+    <ClInclude Include="ScriptFunctionBlock.h" />
+    <ClInclude Include="ScriptFunctionSignature.h" />
+    <ClInclude Include="ScriptLine.h" />
+    <ClInclude Include="ScriptLoopBlock.h" />
+    <ClInclude Include="ScriptRangedSwitchBlock.h" />
+    <ClInclude Include="ScriptVariable.h" />
+    <ClInclude Include="ScriptLinesView.h" />
+    <ClInclude Include="ScriptManager.h" />
+    <ClInclude Include="ScriptOperator.h" />
+    <ClInclude Include="ScriptParentBlock.h" />
+    <ClInclude Include="ScriptParsingUtils.h" />
+    <ClInclude Include="ScriptToken.h" />
+    <ClInclude Include="BaseScriptVariable.h" />
+    <ClInclude Include="ScriptVariableUtils.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Time.h" />

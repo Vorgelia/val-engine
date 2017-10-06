@@ -10,8 +10,8 @@ enum class ForceMode
 class CharacterFrame
 {
 public:
-	glm::ivec2 movementOffset;
-	glm::ivec2 force;
+	glm::ivec2 speed; 
+	glm::ivec2 acceleration;
 	ForceMode forceMode;
 
 	//Hitboxes
@@ -20,4 +20,3 @@ public:
 	CharacterFrame();
 	~CharacterFrame();
 };
-

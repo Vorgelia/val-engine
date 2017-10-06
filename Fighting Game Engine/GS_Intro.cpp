@@ -9,14 +9,17 @@
 #include "InputMotion.h"
 #include "GameStateManager.h"
 #include "Screen.h"
+#include "DebugLog.h"
+
 void GS_Intro::Init()
 {
-	levelTimer = (float)Time::lastUpdateTime;
+	DebugLog::Push("Start time: " + std::to_string(glfwGetTime()));
+	levelTimer = 0;
 	_initialized = true;
 }
 void GS_Intro::GUI()
 {
-	Resource::GetMaterial("Materials/Intro/Intro_Screen.vmat")->uniformVectors["ve_color"].a = glm::clamp(3 - glm::abs((levelTimer + 2) - (float)Time::lastUpdateTime) * 3, 0.0f, 1.0f);
+	Resource::GetMaterial("Materials/Intro/Intro_Screen.vmat")->uniformVectors["ve_color"].a = glm::clamp(glm::min(levelTimer, 4 - levelTimer), 0.0f, 1.0f);
 	Rendering::DrawScreenMesh(glm::vec4(0, 0, 1920, 1080), (Mesh*)nullptr, Resource::GetMaterial("Materials/Intro/Intro_Screen.vmat"));
 
 	Rendering::DrawScreenText(glm::vec4(0, 10, 100, 100), 24, std::to_string(std::min((int)std::round(1.0 / Time::smoothDeltaTime), 60)), nullptr);
@@ -32,7 +35,8 @@ void GS_Intro::GUI()
 
 void GS_Intro::GameUpdate()
 {
-	if(levelTimer + 4 < Time::lastUpdateTime)
+	levelTimer += (float)VE_FRAME_TIME;
+	if(levelTimer > 4)
 		GameStateManager::LoadState(1);
 	else
 	{

@@ -16,6 +16,7 @@ namespace Resource
 	extern std::map<std::string, Texture*> textures;
 	extern std::map<std::string, Material*> materials;
 	extern std::map<std::string, PostEffect*> postEffects;
+
 	//Base
 	extern std::map<std::string, Mesh*> baseMeshes;
 	extern std::map<std::string, Texture*> baseTextures;
@@ -31,6 +32,7 @@ namespace Resource
 	Material* CopyMaterial(Material* mat);
 	PostEffect* GetPostEffect(FS::path path);
 	Font* GetFont(FS::path path);
+
 	void Update();
 	void Unload();
 	void Cleanup();

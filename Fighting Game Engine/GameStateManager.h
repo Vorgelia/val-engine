@@ -20,5 +20,4 @@ namespace GameStateManager
 	void StateUpdate();
 	void StateGameUpdate();
 	void StateRenderObjects();
-
 }

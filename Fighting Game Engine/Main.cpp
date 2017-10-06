@@ -12,6 +12,7 @@ GLFW http://www.glfw.org/
 SOIL http://www.lonesock.net/soil.html
 Boost http://www.boost.org/
 Freetype 2 https://www.freetype.org/
+FMTlib http://fmtlib.net
 Libraries planned to be used:
 IrrKlang
 
@@ -19,8 +20,6 @@ Structured to depend on global variables and functions in namespaces.
 Having global access to things like Input, Time, OpenGL states, etc was the most intuitive decision.
 Somewhat error-prone for group projects, but more than manageable and convenient for a one-person project.
 Also included are unnecessary attempts at memory management as personal exercises.
-
-Variables and getters/setters begin with lowercase. Classes, namespaces, functions, etc begin with uppercase.
 
 ----Arbitrary to-do list----
 -Engine Features
@@ -34,15 +33,16 @@ TODO: Change some class variables to be private with getters.
 TODO: Replace some instances of map with unordered_map.
 ----
 Important defines:
-Resource.cpp:    VE_CREATE_DEFAULT_RESOURCES
-InputDevice.cpp: VE_INPUT_BUFFER_INIT
-VE_INPUT_BUFFER_MID
-Rendering.cpp:   VE_AUX_BUFFER_AMOUNT
-VE_WORLD_SCALE
-VE_FONT_DEFAULT
-Time.h:			 VE_FRAME_TIME
-VE_FRAME_RATE
-DebugLog.h:		 VE_DEBUG_ERRORTHROW
+Resource.cpp:           VE_CREATE_DEFAULT_RESOURCES
+InputDevice.cpp:        VE_INPUT_BUFFER_INIT
+-				        VE_INPUT_BUFFER_MID
+Rendering.cpp:          VE_AUX_BUFFER_AMOUNT
+-				        VE_WORLD_SCALE
+-				        VE_FONT_DEFAULT
+Time.h:			        VE_FRAME_TIME
+-				        VE_FRAME_RATE
+DebugLog.h:		        VE_DEBUG_ERRORTHROW
+ScriptParsingUtils.cpp: VE_TAB_SPACE_AMOUNT
 */
 
 #include "SystemIncludes.hpp"
@@ -95,10 +95,11 @@ int main()
 			while(Time::lastUpdateTime + VE_FRAME_TIME <= Time::time)
 			{//Run updates until running one would put us ahead of our current time
 				updatedFrame = true;
-				Time::frameCount += 1;
-				Time::lastUpdateTime += VE_FRAME_TIME;//This is important. We don't set last update time to current time, but we just advance it by 1/60
-				//This means the while statement will run again if more than one frame was to be processed in between now and last loop update.
+				Time::FrameUpdate();
+
 				InputManager::Update();
+				ScriptManager::Update();
+
 				GameStateManager::StateInit();
 				GameStateManager::StateGameUpdate();//Send a game update callback
 
@@ -107,7 +108,6 @@ int main()
 		}
 
 		GameStateManager::FrameEnd();//Checks if a level needs to be loaded and raises the necessary flags, as well as call the necessary resource management functions
-
 
 		if(updatedFrame)
 		{
@@ -118,7 +118,6 @@ int main()
 			//Apply post processing effects and render the result to the main buffer
 			EndFrame();
 		}
-
 	}
 
 	EngineCleanup();
@@ -220,11 +219,13 @@ inline void EngineInit()
 	Rendering::Init();
 	GameStateManager::Init();
 	InputManager::Init();
+	ScriptManager::Init();
 
 	DebugLog::Push("Full Init");
 }
 inline void EngineCleanup()
 {
+	ScriptManager::Cleanup();
 	InputManager::Cleanup();
 	GameStateManager::Cleanup();
 	Rendering::Cleanup();
