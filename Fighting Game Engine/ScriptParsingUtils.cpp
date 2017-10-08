@@ -45,6 +45,11 @@ int ScriptParsingUtils::GetIndentationLevel(const std::string& line, unsigned in
 			out_lineStart = i;
 			return indentationLevel;
 		}
+
+		if(i == line.length() - 1)
+		{
+			return -1;
+		}
 	}
 
 	return -1;
@@ -58,21 +63,36 @@ std::string ScriptParsingUtils::TrimLine(const std::string& line)
 
 std::string ScriptParsingUtils::TrimLine(const std::string& line, int& out_indentationLevel)
 {
-	unsigned int i;
-	out_indentationLevel = GetIndentationLevel(line, i);
+
+	size_t lineStart;
+	out_indentationLevel = GetIndentationLevel(line, lineStart);
 
 	if(out_indentationLevel < 0)
 	{
 		return "";
 	}
 
-	unsigned int j = line.length() - 1;
+	size_t lineEnd = lineStart;
 
-	for(; j > i; --j)
+	for(size_t i = lineStart; i < line.length(); ++i)
 	{
-		if(line[j] != ' ' && line[j] != '\t')
+		if(i > 0 && line[i] == '/'&& line[i - 1] == '/')
 		{
-			return line.substr(i, j - i + 1);
+			if(i < 2)
+			{
+				out_indentationLevel = -1;
+				return "";
+			}
+			lineEnd = i - 2;
+			break;
+		}
+	}
+
+	for(size_t i = lineEnd; i >= lineStart; --i)
+	{
+		if(line[i] != ' ' && line[i] != '\t')
+		{
+			return line.substr(lineStart, i - lineStart + 1);
 		}
 	}
 

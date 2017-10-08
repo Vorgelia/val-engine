@@ -9,4 +9,3 @@ public:
 	AttackData();
 	~AttackData();
 };
-
