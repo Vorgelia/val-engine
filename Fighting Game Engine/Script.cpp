@@ -136,7 +136,7 @@ void Script::Init()
 	}
 	catch(ScriptError error)
 	{
-		DebugLog::Push("(" + _name + " : line " + std::to_string(_lines[_blockStack.top()->cursor()].index) + ")" + std::string(error.what()), LogItem::Type::Error);
+		DebugLog::Push("(Preprocessing " + _name + " : line " + std::to_string(_lines[_parentBlock->cursor()].index) + ") " + std::string(error.what()), LogItem::Type::Error);
 		_valid = false;
 	}
 
@@ -160,7 +160,7 @@ ScriptExitCode Script::Execute()
 	}
 	catch(ScriptError error)
 	{
-		DebugLog::Push("(" + _name + " : line " + std::to_string(_lines[_blockStack.top()->cursor()].index) + ")" + std::string(error.what()), LogItem::Type::Error);
+		DebugLog::Push("(" + _name + " : line " + std::to_string(_lines[_blockStack.top()->cursor()].index) + ") " + std::string(error.what()), LogItem::Type::Error);
 		_valid = false;
 		returnCode = ScriptExitCode::Failure;
 	}
