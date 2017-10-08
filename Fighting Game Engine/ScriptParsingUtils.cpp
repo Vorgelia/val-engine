@@ -86,6 +86,7 @@ std::string ScriptParsingUtils::TrimLine(const std::string& line, int& out_inden
 			lineEnd = i - 2;
 			break;
 		}
+		lineEnd = i;
 	}
 
 	for(size_t i = lineEnd; i >= lineStart; --i)
