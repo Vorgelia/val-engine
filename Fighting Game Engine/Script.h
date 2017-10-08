@@ -31,7 +31,7 @@ class Script
 	std::stack<std::shared_ptr<ScriptBlock>> _blockStack;
 	ScriptControlFlag _controlFlag;
 
-	ScriptParentBlock* _parentBlock;
+	std::shared_ptr<ScriptParentBlock> _parentBlock;
 
 	void PreProcess();
 
