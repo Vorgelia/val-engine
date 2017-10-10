@@ -8,6 +8,7 @@ MaterialTexture::MaterialTexture(Texture* ref)
 	this->ref = ref;
 	this->params = glm::vec4(0, 0, 1, 1);
 }
+
 MaterialTexture::MaterialTexture(Texture* ref, glm::vec4 params)
 {
 	this->ref = ref;
@@ -20,14 +21,17 @@ void Material::ApplyProperties()
 		GLState::Set(GL_CULL_FACE, true);
 	else
 		GLState::Set(GL_CULL_FACE, false);
+
 	if(HasProperty(Properties::Blend))
 		GLState::Set(GL_BLEND, true);
 	else
 		GLState::Set(GL_BLEND, false);
+
 	if(HasProperty(Properties::ZWrite))
 		glDepthMask(GL_TRUE);
 	else
 		glDepthMask(GL_FALSE);
+
 	if(HasProperty(Properties::ZTest))
 		GLState::Set(GL_DEPTH_TEST, true);
 	else
@@ -43,14 +47,17 @@ Material::Material(const std::string& name, Shader* shader, unsigned char proper
 	this->name = name;
 	this->shader = shader;
 	this->properties = properties;
+
 	for(unsigned int i = 0; i < floats.size(); ++i)
 	{
 		uniformFloats[floats[i].first] = floats[i].second;
 	}
+
 	for(unsigned int i = 0; i < vecs.size(); ++i)
 	{
 		uniformVectors[vecs[i].first] = vecs[i].second;
 	}
+
 	for(unsigned int i = 0; i < textures.size(); ++i)
 	{
 		uniformTextures.insert(uniformTex(textures[i].first, textures[i].second));

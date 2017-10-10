@@ -192,9 +192,9 @@ void EndFrame()
 		//Call the frame end callback on the current scene
 		GameStateManager::states[GameStateManager::currentState]->FrameEnd();
 		//Draw post effects specified in State/PostEffectsOrder.txt, in the order they were given
-		for(unsigned int i = 0; i < GameStateManager::states[GameStateManager::currentState]->postEffectsOrder.size(); ++i)
+		for(unsigned int i = 0; i < GameStateManager::states[GameStateManager::currentState]->postEffectsOrder().size(); ++i)
 		{
-			Rendering::DrawPostEffect(Resource::postEffects[GameStateManager::states[GameStateManager::currentState]->postEffectsOrder[i]]);
+			Rendering::DrawPostEffect(Resource::postEffects[GameStateManager::states[GameStateManager::currentState]->postEffectsOrder()[i]]);
 		}
 		//Tell the scene to draw its GUI now.
 		GameStateManager::states[GameStateManager::currentState]->GUI();

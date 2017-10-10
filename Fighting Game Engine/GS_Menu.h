@@ -9,6 +9,7 @@ public:
 	void Update();
 	void GameUpdate();
 	void Init();
+
 	GS_Menu(const FS::path& path);
 };
 

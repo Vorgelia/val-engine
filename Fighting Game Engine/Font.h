@@ -6,6 +6,7 @@
 #define TEXT_SIZE 64
 #define FONT_ATLAS_SIZE 1024
 #define FONT_ATLAS_PADDING 2
+
 class Texture;
 enum class TextAlignment
 {
@@ -25,6 +26,7 @@ public:
 
 	FontCharacter(GLuint atlasIndex, glm::vec4 textureParams, glm::ivec2 size, glm::ivec2 bearing, GLuint advance);
 };
+
 class Font
 {
 	std::unordered_map <GLubyte, FontCharacter*> characters;

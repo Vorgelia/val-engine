@@ -24,6 +24,7 @@ bool CachedMesh::RegisterOwner(Mesh* owner)
 			return false;
 		}
 	}
+
 	owners.push_back(owner);
 	owner->meshData = this;
 	return true;
@@ -55,7 +56,6 @@ CachedMesh::CachedMesh(const FS::path& path)
 	//if (path.extension().string() == "vm")
 	ResourceLoader::LoadMeshVM(path, &verts, &elements, &vertexFormat);
 }
-
 
 CachedMesh::~CachedMesh()
 {

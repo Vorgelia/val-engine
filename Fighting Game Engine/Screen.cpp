@@ -62,6 +62,6 @@ void Screen::OnResize(GLFWwindow* wnd, int sizeX, int sizeY)
 		viewportSize = glm::ivec4((Screen::size.x - Screen::size.y*Screen::targetAspect)*0.5, 0, Screen::size.y*Screen::targetAspect, Screen::size.y);
 	}
 
-	for(auto i = screenUpdateCallbacks.begin(); i != screenUpdateCallbacks.end(); ++i)
+	for(auto i : screenUpdateCallbacks)
 		(*i)();
 }

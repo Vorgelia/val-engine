@@ -1,6 +1,5 @@
 #include "Transform.h"
 
-
 Transform::Transform(glm::ivec2 position, glm::vec3 rotation, glm::vec2 scale)
 {
 	this->position = position;

@@ -14,16 +14,15 @@
 #include "InputFrame.h"
 #include "DebugLog.h"
 
-
 //Turn a resource error into a readable string.
 std::string ResourceLoader::DecodeError(ResourceError error)
 {
 	switch(error)
 	{
-		case ResourceError::FileUnavailable:
-			return "Resource Error 0: Could not find file.";
-		case ResourceError::FileUnreadable:
-			return "Resource Error 1: Could not open file.";
+	case ResourceError::FileUnavailable:
+		return "Resource Error 0: Could not find file.";
+	case ResourceError::FileUnreadable:
+		return "Resource Error 1: Could not open file.";
 	}
 	return "Resource: UnknownError " + std::to_string(static_cast<int>(error));
 }
@@ -31,42 +30,51 @@ std::string ResourceLoader::DecodeError(ResourceError error)
 //Probably my least favourite part of making this engine is importing files.
 //The code always looks like a mess but at least i don't have to touch it after making it.
 std::string ResourceLoader::LoadTextResource(int id, const std::string& type)
-{//Copypasta text resource loading. Could probably be optimized.
+{
+	//Copypasta text resource loading. Could probably be optimized.
 	HRSRC hResource = FindResource(NULL, MAKEINTRESOURCE(id), (LPCSTR)type.c_str());
 	if(hResource == nullptr)
 	{
 		throw ResourceError::FileUnavailable;
 	}
+
 	HGLOBAL hLoadedResource = LoadResource(NULL, hResource);
 	if(hLoadedResource == nullptr)
 	{
 		throw ResourceError::FileUnreadable;
 	}
+
 	LPVOID pdata = LockResource(hLoadedResource);
 	LPBYTE sData = (LPBYTE)pdata;
 	LPTSTR sText = (LPTSTR)sData;
+
 	int size = SizeofResource(NULL, hResource) / sizeof(char);
 	return std::string(sText).substr(0, size);
 }
 std::vector<unsigned char> ResourceLoader::LoadBinaryResource(int id, const std::string& type)
-{//Doesn't work, completely unused.
+{
+	//Doesn't work, completely unused.
 	HRSRC hResource = FindResource(NULL, MAKEINTRESOURCE(id), (LPCSTR)type.c_str());
 	if(hResource == 0)
 	{
 		throw ResourceError::FileUnavailable;
 	}
+
 	HGLOBAL hLoadedResource = LoadResource(NULL, hResource);
 	if(hLoadedResource == 0)
 	{
 		throw ResourceError::FileUnreadable;
 	}
+
 	LPVOID pdata = LockResource(hLoadedResource);
 	LPBYTE sData = (LPBYTE)pdata;
+
 	int size = SizeofResource(NULL, hResource) / sizeof(unsigned char);
 	return std::vector<unsigned char>((unsigned char*)sData, (unsigned char*)sData[size]);
 }
 std::string ResourceLoader::ReturnFile(const FS::path& dir)
-{//Abstraction for turning a file into a string.
+{
+	//Abstraction for turning a file into a string.
 	if(!FS::exists(dir))
 		throw ResourceError::FileUnavailable;
 
@@ -78,17 +86,20 @@ std::string ResourceLoader::ReturnFile(const FS::path& dir)
 
 	std::string content((std::istreambuf_iterator<char>(ifs)), (std::istreambuf_iterator<char>()));
 	ifs.close();
+
 	return content;
 }
 //Bit of a weird function to put in ResourceLoader, buuuut considering this is where a ton of file management happens, it felt the most natural.
-bool ResourceLoader::SaveFile(const FS::path& dir, std::string content, int flags)
+bool ResourceLoader::SaveFile(const FS::path& dir, std::string& content, int flags)
 {
 	boost::algorithm::erase_all(content, "\r");
+
 	std::ofstream ofs(dir.c_str(), flags);
 	if(!ofs.is_open())
 	{
 		throw ResourceError::FileUnreadable;
 	}
+
 	ofs << content;
 	ofs.close();
 	return true;
@@ -96,7 +107,6 @@ bool ResourceLoader::SaveFile(const FS::path& dir, std::string content, int flag
 //Abstraction for turning a file into an array of its lines. Heavily used in parsing.
 std::vector<std::string> ResourceLoader::ReturnFileLines(const FS::path& dir, bool removeWhitespace = false)
 {
-	DebugLog::Push("Resource: Loading file " + dir.string());
 	if(!FS::exists(dir))
 		throw ResourceError::FileUnavailable;
 
@@ -109,7 +119,9 @@ std::vector<std::string> ResourceLoader::ReturnFileLines(const FS::path& dir, bo
 
 	std::string content((std::istreambuf_iterator<char>(ifs)),
 		std::istreambuf_iterator<char>());
+
 	ifs.close();
+
 	if(removeWhitespace)
 	{
 		boost::algorithm::erase_all(content, " ");
@@ -134,10 +146,13 @@ void ResourceLoader::LoadControlSettings(const FS::path& path, std::unordered_ma
 		FS::copy_file("Settings/Input/Default.vi", path);
 	}
 	else
+	{
 		lines = ReturnFileLines(path);
+	}
 
 	dir->clear();
 	bt->clear();
+
 	int readState = 0;//0 Buttons, 1 Axes
 	for(unsigned int i = 0; i < lines.size(); ++i)
 	{
@@ -156,14 +171,15 @@ void ResourceLoader::LoadControlSettings(const FS::path& path, std::unordered_ma
 			std::vector<std::string> spl2;
 			boost::split(spl, lines[i], boost::is_any_of(":"), boost::token_compress_on);
 			boost::split(spl2, spl[1], boost::is_any_of(","), boost::token_compress_on);
+
 			switch(readState)
 			{
-				case 0:
-					bt->insert(std::pair<InputButton, InputEvent>((InputButton)boost::lexical_cast<int>(spl[0]), InputEvent(boost::lexical_cast<int>(spl2[1]), spl2[0] == "t", boost::lexical_cast<float>(spl2[2]), boost::lexical_cast<float>(spl2[3]))));
-					break;
-				case 1:
-					dir->insert(std::pair<InputDirection, InputEvent>((InputDirection)boost::lexical_cast<int>(spl[0]), InputEvent(boost::lexical_cast<int>(spl2[1]), spl2[0] == "t", boost::lexical_cast<float>(spl2[2]), boost::lexical_cast<float>(spl2[3]))));
-					break;
+			case 0:
+				bt->insert(std::pair<InputButton, InputEvent>((InputButton)boost::lexical_cast<int>(spl[0]), InputEvent(boost::lexical_cast<int>(spl2[1]), spl2[0] == "t", boost::lexical_cast<float>(spl2[2]), boost::lexical_cast<float>(spl2[3]))));
+				break;
+			case 1:
+				dir->insert(std::pair<InputDirection, InputEvent>((InputDirection)boost::lexical_cast<int>(spl[0]), InputEvent(boost::lexical_cast<int>(spl2[1]), spl2[0] == "t", boost::lexical_cast<float>(spl2[2]), boost::lexical_cast<float>(spl2[3]))));
+				break;
 			}
 		}
 	}
@@ -176,6 +192,7 @@ void ResourceLoader::LoadObjects(const FS::path& path, std::map<int, Object*>* o
 	objects->clear();
 	Object* cobj = nullptr;
 	bool pushedObject = true;
+
 	for(unsigned int i = 0; i < lines.size(); ++i)
 	{
 		if(lines[i] == "}")
@@ -185,11 +202,14 @@ void ResourceLoader::LoadObjects(const FS::path& path, std::map<int, Object*>* o
 				objects->insert(std::pair<int, Object*>(cobj->id, cobj));
 		}
 		else if(lines[i].size() < 2 || lines[i].substr(0, 2) == "//")
+		{
 			continue;
+		}
 		else if(lines[i] == "#OBJECT{")
 		{
 			if(!pushedObject)
 				delete cobj;
+
 			cobj = new Object();
 			pushedObject = false;
 		}
@@ -197,8 +217,8 @@ void ResourceLoader::LoadObjects(const FS::path& path, std::map<int, Object*>* o
 		{
 			std::vector<std::string> spl;
 			boost::split(spl, lines[i], boost::is_any_of("="), boost::token_compress_on);
-			DebugLog::Push("'" + lines[i] + "'");
 			std::vector<std::string> spl2;
+
 			if(spl[0] == "name")
 				cobj->name = spl[1];
 			else if(spl[0] == "mesh")
@@ -247,26 +267,26 @@ void ResourceLoader::LoadPostEffect(const FS::path& path, std::vector<std::pair<
 			std::vector<std::string> spl;
 			switch(readState)
 			{
-				case 0:
-					boost::split(spl, lines[i], boost::is_any_of("="), boost::token_compress_on);
-					if(spl.size() < 2)
-						continue;
-					if(spl[0] == "cleanBufferBefore")
-						(*cbBefore) = (spl[1] == "true");
-					else if(spl[0] == "cleanBufferAfter")
-						(*cbAfter) = (spl[1] == "true");
-					else if(spl[0] == "order")
-						(*cbAfter) = (spl[1] == "true");
-					break;
-				case 1:
-					boost::split(spl, lines[i], boost::is_any_of(":"), boost::token_compress_on);
-					if(spl.size() < 2)
-						continue;
-					if(spl[1] == "null")
-						elements->push_back(std::pair<int, Material*>(boost::lexical_cast<int>(spl[0]), nullptr));
-					else
-						elements->push_back(std::pair<int, Material*>(boost::lexical_cast<int>(spl[0]), Resource::GetMaterial(spl[1])));
-					break;
+			case 0:
+				boost::split(spl, lines[i], boost::is_any_of("="), boost::token_compress_on);
+				if(spl.size() < 2)
+					continue;
+				if(spl[0] == "cleanBufferBefore")
+					(*cbBefore) = (spl[1] == "true");
+				else if(spl[0] == "cleanBufferAfter")
+					(*cbAfter) = (spl[1] == "true");
+				else if(spl[0] == "order")
+					(*cbAfter) = (spl[1] == "true");
+				break;
+			case 1:
+				boost::split(spl, lines[i], boost::is_any_of(":"), boost::token_compress_on);
+				if(spl.size() < 2)
+					continue;
+				if(spl[1] == "null")
+					elements->push_back(std::pair<int, Material*>(boost::lexical_cast<int>(spl[0]), nullptr));
+				else
+					elements->push_back(std::pair<int, Material*>(boost::lexical_cast<int>(spl[0]), Resource::GetMaterial(spl[1])));
+				break;
 			}
 		}
 	}
@@ -280,7 +300,9 @@ void ResourceLoader::LoadMaterial(const FS::path& path, Shader** shader, unsigne
 	uniformFloats->clear();
 	uniformTextures->clear();
 	uniformVectors->clear();
+
 	std::string lastTexture;
+
 	for(unsigned int i = 0; i < lines.size(); ++i)
 	{
 		if(lines[i] == "" || lines[i].substr(0, 2) == "//")
@@ -305,45 +327,45 @@ void ResourceLoader::LoadMaterial(const FS::path& path, Shader** shader, unsigne
 				continue;
 			switch(readState)
 			{
-				case 0:
-					if(spl[0] == "properties")
-						(*properties) = boost::lexical_cast<GLuint>(spl[1]);
-					else if(spl[0] == "shader")
-						(*shader) = Resource::GetShader(spl[1]);
-					break;
-				case 1:
-					uniformFloats->insert(std::pair<std::string, GLfloat>(spl[0], boost::lexical_cast<GLfloat>(spl[1])));
-					break;
-				case 2:
-					boost::split(spl2, spl[1], boost::is_any_of(","), boost::token_compress_on);
-					uniformVectors->insert(std::pair<std::string, glm::vec4>(spl[0],
-						glm::vec4(
+			case 0:
+				if(spl[0] == "properties")
+					(*properties) = boost::lexical_cast<GLuint>(spl[1]);
+				else if(spl[0] == "shader")
+					(*shader) = Resource::GetShader(spl[1]);
+				break;
+			case 1:
+				uniformFloats->insert(std::pair<std::string, GLfloat>(spl[0], boost::lexical_cast<GLfloat>(spl[1])));
+				break;
+			case 2:
+				boost::split(spl2, spl[1], boost::is_any_of(","), boost::token_compress_on);
+				uniformVectors->insert(std::pair<std::string, glm::vec4>(spl[0],
+					glm::vec4(
 						boost::lexical_cast<GLfloat>(spl2[0]),
 						boost::lexical_cast<GLfloat>(spl2[1]),
 						boost::lexical_cast<GLfloat>(spl2[2]),
 						boost::lexical_cast<GLfloat>(spl2[3])
-						)
-						));
-					break;
-				case 3:
-					if(spl[0] == ".properties"&&lastTexture != "")
-					{
-						boost::split(spl2, spl[1], boost::is_any_of(","), boost::token_compress_on);
-						if(spl2.size() < 4)
-							continue;
-						uniformTextures->at(lastTexture).params = glm::vec4(
-							boost::lexical_cast<float>(spl2[0]),
-							boost::lexical_cast<float>(spl2[1]),
-							boost::lexical_cast<float>(spl2[2]),
-							boost::lexical_cast<float>(spl2[3])
-							);
-					}
-					else
-					{
-						uniformTextures->insert(std::pair<std::string, MaterialTexture>(spl[0], MaterialTexture(Resource::GetTexture(spl[1]))));
-						lastTexture = spl[0];
-					}
-					break;
+					)
+					));
+				break;
+			case 3:
+				if(spl[0] == ".properties"&&lastTexture != "")
+				{
+					boost::split(spl2, spl[1], boost::is_any_of(","), boost::token_compress_on);
+					if(spl2.size() < 4)
+						continue;
+					uniformTextures->at(lastTexture).params = glm::vec4(
+						boost::lexical_cast<float>(spl2[0]),
+						boost::lexical_cast<float>(spl2[1]),
+						boost::lexical_cast<float>(spl2[2]),
+						boost::lexical_cast<float>(spl2[3])
+					);
+				}
+				else
+				{
+					uniformTextures->insert(std::pair<std::string, MaterialTexture>(spl[0], MaterialTexture(Resource::GetTexture(spl[1]))));
+					lastTexture = spl[0];
+				}
+				break;
 			}
 		}
 	}
@@ -357,6 +379,7 @@ void ResourceLoader::LoadMeshVM(const FS::path& path, std::vector<float> **verts
 	int readState = 0; //0 Attribs, 1 Vertices, 2 Elements
 	*verts = new std::vector<float>();
 	*elements = new std::vector<GLuint>();
+
 	//And here is my very loose implementation of a very loosely defined format. I present to you, ValMesh!
 	//Look at Meshes/quad.vm as an example of how it works. It's really simple.
 	//readState keeps track of what is currently being read, options being Attribs, Vertices and Elements.
@@ -379,21 +402,20 @@ void ResourceLoader::LoadMeshVM(const FS::path& path, std::vector<float> **verts
 			boost::split(split, lines[i], boost::is_any_of(","), boost::token_compress_on);//Split line by comma
 			switch(readState)
 			{//Indiscriminately add stuff to the arrays based on readState
-				case 0:
-					for(unsigned int j = 0; j < split.size(); ++j)//Cheating yet again. Not splitting VertexAttributes by - and just taking the first and third characters.
-						vertexFormat->push_back(VertexAttribute((VertexAttributeLocation)(boost::lexical_cast<int>(split[j][0])), boost::lexical_cast<int>(split[j][2])));
-					break;//I bet your favourite format doesn't omit error checking
-				case 1:
-					for(unsigned int j = 0; j < split.size(); ++j)
-						(*verts)->push_back(boost::lexical_cast<float>(split[j]));
-					break;
-				case 2:
-					for(unsigned int j = 0; j < split.size(); ++j)
-						(*elements)->push_back(boost::lexical_cast<GLuint>(split[j]));
-					break;
+			case 0:
+				for(unsigned int j = 0; j < split.size(); ++j)//Cheating yet again. Not splitting VertexAttributes by - and just taking the first and third characters.
+					vertexFormat->push_back(VertexAttribute((VertexAttributeLocation)(boost::lexical_cast<int>(split[j][0])), boost::lexical_cast<int>(split[j][2])));
+				break;//I bet your favourite format doesn't omit error checking
+			case 1:
+				for(unsigned int j = 0; j < split.size(); ++j)
+					(*verts)->push_back(boost::lexical_cast<float>(split[j]));
+				break;
+			case 2:
+				for(unsigned int j = 0; j < split.size(); ++j)
+					(*elements)->push_back(boost::lexical_cast<GLuint>(split[j]));
+				break;
 			}
 		}
-
 	}
 
 	//(*verts)->push_back();

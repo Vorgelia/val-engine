@@ -12,13 +12,13 @@ namespace GLState
 	std::map<GLenum, bool> glFeatures;
 }
 
-
 void GLState::Init()
 {
 	boundTextures = new std::vector<GLuint>(32);
 	for(unsigned int i = 0; i < 32; ++i)
 		boundTextures->at(i) = (GLuint)0;
 }
+
 void GLState::Cleanup()
 {
 	delete boundTextures;
@@ -26,17 +26,19 @@ void GLState::Cleanup()
 
 bool GLState::Set(GLenum feature, bool enable)
 {
-	if(glFeatures.count(feature) == 0 || glFeatures[feature] != enable)
+	if(glFeatures.find(feature) == glFeatures.end() || glFeatures[feature] != enable)
 	{
 		glFeatures[feature] = enable;
 		if(enable)
 			glEnable(feature);
 		else
 			glDisable(feature);
-		Profiler::stateChanges.x += 1;
+
+		Profiler::_stateChanges.x += 1;
 		return true;
 	}
-	Profiler::stateChanges.y += 1;
+
+	Profiler::_stateChanges.y += 1;
 	return false;
 }
 
@@ -46,10 +48,11 @@ bool GLState::ActiveTexture(GLuint pos)
 	{
 		activeTexture = pos;
 		glActiveTexture(GL_TEXTURE0 + pos);
-		Profiler::stateChanges.x += 1;
+		Profiler::_stateChanges.x += 1;
 		return true;
 	}
-	Profiler::stateChanges.y += 1;
+
+	Profiler::_stateChanges.y += 1;
 	return false;
 }
 bool GLState::UseProgram(GLuint id)
@@ -58,10 +61,11 @@ bool GLState::UseProgram(GLuint id)
 	{
 		boundShader = id;
 		glUseProgram(id);
-		Profiler::stateChanges.x += 1;
+		Profiler::_stateChanges.x += 1;
 		return true;
 	}
-	Profiler::stateChanges.y += 1;
+	
+	Profiler::_stateChanges.y += 1;
 	return false;
 }
 bool GLState::BindVertexArray(GLuint id)
@@ -70,10 +74,11 @@ bool GLState::BindVertexArray(GLuint id)
 	{
 		boundVAO = id;
 		glBindVertexArray(id);
-		Profiler::stateChanges.x += 1;
+		Profiler::_stateChanges.x += 1;
 		return true;
 	}
-	Profiler::stateChanges.y += 1;
+
+	Profiler::_stateChanges.y += 1;
 	return false;
 }
 bool GLState::BindFramebuffer(GLuint id)
@@ -82,10 +87,11 @@ bool GLState::BindFramebuffer(GLuint id)
 	{
 		boundFramebuffer = id;
 		glBindFramebuffer(GL_FRAMEBUFFER, id);
-		Profiler::stateChanges.x += 1;
+		Profiler::_stateChanges.x += 1;
 		return true;
 	}
-	Profiler::stateChanges.y += 1;
+
+	Profiler::_stateChanges.y += 1;
 	return false;
 }
 bool GLState::BindTexture(GLuint id)
@@ -94,10 +100,11 @@ bool GLState::BindTexture(GLuint id)
 	{
 		boundTextures->at(activeTexture) = id;
 		glBindTexture(GL_TEXTURE_2D, id);
-		Profiler::stateChanges.x += 1;
+		Profiler::_stateChanges.x += 1;
 		return true;
 	}
-	Profiler::stateChanges.y += 1;
+
+	Profiler::_stateChanges.y += 1;
 	return false;
 }
 bool GLState::BindTexture(GLuint id, GLuint pos)
@@ -107,6 +114,7 @@ bool GLState::BindTexture(GLuint id, GLuint pos)
 		ActiveTexture(pos);
 		return BindTexture(id);
 	}
-	Profiler::stateChanges.y += 1;
+
+	Profiler::_stateChanges.y += 1;
 	return false;
 }

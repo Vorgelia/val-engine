@@ -12,8 +12,13 @@ public:
 
 class Shader
 {
+public:
+	static GLuint CreateShader(const std::string& code, GLenum type);
+	static GLuint CreateShaderProgram(const std::vector<GLuint>& shaders);
+
 private:
 	bool _valid;
+
 public:
 	string name;
 	std::vector<GLuint> shaders;
@@ -22,11 +27,11 @@ public:
 	GLuint id;
 
 	bool valid();
+
 	GLint UniformLocation(const string& str);
-	Shader(const string& name, const std::vector<ShaderAttachment>& code);
+	
 	operator GLuint();
-	static GLuint CreateShader(const std::string& code, GLenum type);
-	static GLuint CreateShaderProgram(const std::vector<GLuint>& shaders);
+	Shader(const string& name, const std::vector<ShaderAttachment>& code);
 	~Shader();
 
 };

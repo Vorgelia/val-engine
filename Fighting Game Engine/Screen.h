@@ -10,7 +10,7 @@ namespace Screen
 	extern glm::vec2 invSize;
 	extern glm::ivec4 viewportSize;
 	extern double windowAspect;
-	extern double WindowAspectInv;
+	extern double windowAspectInv;
 	extern std::vector<void(*)()> screenUpdateCallbacks;
 
 	extern const double targetAspect;

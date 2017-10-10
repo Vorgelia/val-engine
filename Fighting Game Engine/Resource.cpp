@@ -35,9 +35,10 @@ void Resource::Init()
 {
 	std::vector<float> pixels
 	{
-		1, 0, 1, 1, 0, 0, 0, 1,
-		0, 0, 0, 1, 1, 0, 1, 1
+		1, 0, 1, 1,	 0, 0, 0, 1,
+		0, 0, 0, 1,	 1, 0, 1, 1
 	};
+
 #ifdef VE_CREATE_DEFAULT_RESOURCES
 	if(!FS::exists("Meshes/") || !FS::exists("Shaders/") || !FS::exists("Settings/") || !FS::exists("States/"))
 	{
@@ -45,12 +46,16 @@ void Resource::Init()
 		ResourceInitializer::Init();
 	}
 #endif
+
 	//Initialization of base resources. These will not be unloaded throughout the program, but they can be overriden per GameState.
 	baseTextures.insert(std::pair<std::string, Texture*>("base_texture", new Texture("base_texture", pixels, glm::ivec2(2, 2), GL_RGBA, GL_NEAREST, GL_REPEAT)));
 	pixels = { 0, 0, 0, 1 };
+
 	baseTextures.insert(std::pair<std::string, Texture*>("black", new Texture("black", pixels, glm::ivec2(1, 1), GL_RGBA, GL_NEAREST, GL_REPEAT)));
 	pixels = { 1, 1, 1, 1 };
+
 	baseTextures.insert(std::pair<std::string, Texture*>("white", new Texture("white", pixels, glm::ivec2(1, 1), GL_RGBA, GL_NEAREST, GL_REPEAT)));
+
 	//Base shaders
 	Resource::GetShader("Shaders/Base/2D");
 	Resource::GetShader("Shaders/Base/Screen");
@@ -81,7 +86,6 @@ Font* Resource::GetFont(FS::path path)
 			return nullptr;
 		rf = new Font(path);
 		fonts.insert(std::pair<std::string, Font*>(path.string(), rf));
-		DebugLog::Push("Loading Font: " + path.string());
 	}
 	return rf;
 }
@@ -104,7 +108,6 @@ Texture* Resource::GetTexture(FS::path path)
 		try
 		{
 			rt = new Texture(path.string(), path, GL_RGBA, SOIL_LOAD_RGBA, GL_NEAREST, GL_REPEAT);
-			DebugLog::Push("Loading Texture: " + path.string());
 		}
 		catch(ResourceError err)
 		{
@@ -132,13 +135,14 @@ PostEffect* Resource::GetPostEffect(FS::path path)
 
 	PostEffect* rp = nullptr;
 	if(Resource::postEffects.count(path.string()) > 0)
+	{
 		rp = Resource::postEffects[path.string()];
+	}
 	else
 	{
 		try
 		{
 			rp = new PostEffect(path.string());
-			DebugLog::Push("Loading Post Effect: " + path.string());
 		}
 		catch(ResourceError err)
 		{
@@ -150,7 +154,6 @@ PostEffect* Resource::GetPostEffect(FS::path path)
 		}
 
 		Resource::postEffects.insert(std::pair<std::string, PostEffect*>(path.string(), rp));
-
 	}
 
 	if(rp == nullptr)
@@ -168,7 +171,6 @@ Shader* Resource::GetShader(std::string name)
 		try
 		{
 			rs = new Shader(name, { ShaderAttachment(ResourceLoader::ReturnFile(name + ".vert"), GL_VERTEX_SHADER), ShaderAttachment(ResourceLoader::ReturnFile(name + ".frag"), GL_FRAGMENT_SHADER) });
-			DebugLog::Push("Loading Shader: " + name);
 		}
 		catch(ResourceError err)
 		{
@@ -208,7 +210,6 @@ Material* Resource::GetMaterial(FS::path path)
 		try
 		{
 			rm = new Material(path.string());
-			DebugLog::Push("Loading Material: " + path.string());
 		}
 		catch(ResourceError err)
 		{
@@ -223,7 +224,6 @@ Material* Resource::GetMaterial(FS::path path)
 			baseMaterials.insert(std::pair<std::string, Material*>(path.string(), rm));
 		else
 			materials.insert(std::pair<std::string, Material*>(path.string(), rm));
-
 	}
 
 	if(rm == nullptr)
@@ -268,7 +268,7 @@ Mesh* Resource::GetMesh(FS::path path, bool editable)
 		{
 			if(cachedMeshes.count(path.string()) == 0)
 				cachedMeshes[path.string()] = new CachedMesh(path);
-			DebugLog::Push("Loading Mesh: " + path.string());
+
 			rm = new Mesh(path.string(), cachedMeshes[path.string()], editable);
 		}
 		catch(ResourceError err)
@@ -287,7 +287,9 @@ Mesh* Resource::GetMesh(FS::path path, bool editable)
 	}
 
 	if(rm == nullptr)
+	{
 		DebugLog::Push("Failed to load Mesh: " + path.string());
+	}
 	else if(rm->valid() == false)
 	{
 		DebugLog::Push("Invalid Mesh: " + path.string());
@@ -304,6 +306,7 @@ void Resource::Unload()
 		delete i->second;
 	}
 	meshes.clear();
+
 	//Clear all meshes before clearing cached meshes.
 	//Code is structured so that Meshes send messages to their cached meshes for memory management
 	for(auto i = cachedMeshes.begin(); i != cachedMeshes.end(); ++i)
@@ -312,12 +315,14 @@ void Resource::Unload()
 			delete i->second;
 	}
 	cachedMeshes.clear();
+
 	for(auto i = textures.begin(); i != textures.end(); ++i)
 	{
 		if(i->second != nullptr)
 			delete i->second;
 	}
 	textures.clear();
+
 	for(auto i = materials.begin(); i != materials.end(); ++i)
 	{
 		if(i->second != nullptr)
@@ -334,31 +339,37 @@ void Resource::Cleanup()
 			delete i->second;
 	}
 	baseMeshes.clear();
+
 	Unload();
+
 	for(auto i = baseMaterials.begin(); i != baseMaterials.end(); ++i)
 	{
 		if(i->second != nullptr)
 			delete i->second;
 	}
 	baseMaterials.clear();
+
 	for(auto i = shaders.begin(); i != shaders.end(); ++i)
 	{
 		if(i->second != nullptr)
 			delete i->second;
 	}
 	shaders.clear();
+
 	for(auto i = baseTextures.begin(); i != baseTextures.end(); ++i)
 	{
 		if(i->second != nullptr)
 			delete i->second;
 	}
 	baseTextures.clear();
+
 	for(auto i = fonts.begin(); i != fonts.end(); ++i)
 	{
 		if(i->second != nullptr)
 			delete i->second;
 	}
 	fonts.clear();
+
 	for(auto i = postEffects.begin(); i != postEffects.end(); ++i)
 	{
 		if(i->second != nullptr)

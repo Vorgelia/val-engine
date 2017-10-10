@@ -8,6 +8,7 @@ public:
 
 	InputFrame flipped();
 	glm::vec2 ToVector();
+
 	InputFrame(unsigned char buttonStates, unsigned char axisState);
 	InputFrame();
 };

@@ -1,6 +1,5 @@
 #include "Camera.h"
 
-
 Camera::Camera(glm::vec2 pos, glm::mat4* mat)
 {
 	this->position = pos;

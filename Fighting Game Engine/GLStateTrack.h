@@ -8,6 +8,7 @@ namespace GLState
 	extern GLuint boundFramebuffer;
 	extern std::vector<GLuint> *boundTextures;
 	extern std::map<GLenum, bool> glFeatures;
+
 	void Init();
 	void Cleanup();
 

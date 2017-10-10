@@ -28,8 +28,7 @@ public:
 	CircularBuffer(int size);
 	~CircularBuffer();
 };
-//Definition. Apparently i have to include this in the .h unless i want to manually type out every potential class it can be used with.
-//WHYYYYYYYYYYYYYYYYYYYYYYYYYY
+
 template <class T>
 T* CircularBuffer<T>::at(int index)
 {
@@ -70,7 +69,7 @@ int CircularBuffer<T>::InternalIndex(int index)
 		return _buffer->size() - 1 - index%_buffer->size();
 	}
 	else
-		return index%_buffer->size();
+		return index % _buffer->size();
 }
 
 template <class T>
@@ -85,6 +84,7 @@ void CircularBuffer<T>::Advance(T& placedVar)
 	_buffer->at(_bufferEnd) = placedVar;
 	_bufferEnd = InternalIndex(_bufferEnd + 1);
 }
+
 template <class T>
 void CircularBuffer<T>::SetPosition(int pos)
 {
@@ -107,9 +107,9 @@ void CircularBuffer<T>::Resize(int size)
 template <class T>
 void CircularBuffer<T>::Reset()
 {
-	for(auto i = _buffer->begin(); i < _buffer->end(); ++i)
+	for(auto& i : _buffer)
 	{
-		(*i) = T();
+		i = T();
 	}
 	_bufferEnd = 0;
 }

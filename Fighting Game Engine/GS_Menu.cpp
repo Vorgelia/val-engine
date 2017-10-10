@@ -30,10 +30,10 @@ void GS_Menu::GUI()
 
 
 	int ind = 0;
-	for(auto i = InputManager::inputDevices.begin(); i != InputManager::inputDevices.end(); ++i)
+	for(auto i = InputManager::_inputDevices.begin(); i != InputManager::_inputDevices.end(); ++i)
 	{
 		if(i->second != nullptr)
-			Rendering::DrawScreenText(glm::vec4(0, 60 + ind * 30, 100, 100), 24, std::to_string(i->first) + ":" + std::to_string(i->second->inputBuffer->back()->buttonStates) + ":" + std::to_string(i->second->inputBuffer->back()->axisState), nullptr);
+			Rendering::DrawScreenText(glm::vec4(0, 60 + ind * 30, 100, 100), 24, std::to_string(i->first) + ":" + std::to_string(i->second->inputBuffer()->back()->buttonStates) + ":" + std::to_string(i->second->inputBuffer()->back()->axisState), nullptr);
 		++ind;
 	}
 
@@ -59,9 +59,9 @@ void GS_Menu::Update()
 }
 void GS_Menu::GameUpdate()
 {
-	if(InputManager::inputDevices[0] != nullptr)
-		InputManager::inputDevices[0]->EvaluateMotion(qcf, false);
-	Rendering::cameras.at(0).position += InputManager::inputDevices[-1]->inputBuffer->back()->ToVector() * 500.0f * (float)VE_FRAME_TIME;
+	if(InputManager::_inputDevices[0] != nullptr)
+		InputManager::_inputDevices[0]->EvaluateMotion(qcf, false);
+	Rendering::cameras.at(0).position += InputManager::_inputDevices[-1]->inputBuffer()->back()->ToVector() * 500.0f * (float)VE_FRAME_TIME;
 }
 GS_Menu::GS_Menu(const FS::path& path) :GameState(path)
 {

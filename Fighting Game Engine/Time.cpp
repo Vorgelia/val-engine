@@ -11,6 +11,7 @@ namespace Time
 	float updateRate;
 	unsigned long frameCount;
 }
+
 void Time::Update()
 {
 	Time::lastTime = Time::time;
