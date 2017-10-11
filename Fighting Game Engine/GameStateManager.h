@@ -1,5 +1,6 @@
 #pragma once
-#include "CommonUtilIncludes.hpp"
+#include <vector>
+
 class GameState;
 namespace GameStateManager
 {

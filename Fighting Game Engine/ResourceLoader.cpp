@@ -185,7 +185,7 @@ void ResourceLoader::LoadControlSettings(const FS::path& path, std::unordered_ma
 	}
 }
 
-void ResourceLoader::LoadObjects(const FS::path& path, std::map<int, Object*>* objects)
+void ResourceLoader::LoadObjects(const FS::path& path, std::unordered_map<int, Object*>* objects)
 {
 	std::vector<std::string> lines = ReturnFileLines(path, true);
 
@@ -292,7 +292,7 @@ void ResourceLoader::LoadPostEffect(const FS::path& path, std::vector<std::pair<
 	}
 }
 
-void ResourceLoader::LoadMaterial(const FS::path& path, Shader** shader, unsigned char* properties, std::map<std::string, GLfloat>* uniformFloats, std::map<std::string, MaterialTexture>* uniformTextures, std::map<std::string, glm::vec4>* uniformVectors)
+void ResourceLoader::LoadMaterial(const FS::path& path, Shader** shader, unsigned char* properties, std::unordered_map<std::string, GLfloat>* uniformFloats, std::unordered_map<std::string, MaterialTexture>* uniformTextures, std::unordered_map<std::string, glm::vec4>* uniformVectors)
 {
 	std::vector<std::string> lines = ReturnFileLines(path, true);
 

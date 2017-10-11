@@ -27,10 +27,10 @@ namespace ResourceLoader
 
 	bool SaveFile(const FS::path& dir, std::string& content, int flags = std::ios::out | std::ios::trunc);
 	void LoadMeshVM(const FS::path& path, std::vector<float> **verts, std::vector<GLuint> **elements, std::vector<VertexAttribute> *vertexFormat);
-	void LoadMaterial(const FS::path& path, Shader** shader, unsigned char* properties, std::map<std::string, GLfloat>* uniformFloats, std::map<std::string, MaterialTexture>* uniformTextures, std::map<std::string, glm::vec4>* uniformVectors);
+	void LoadMaterial(const FS::path& path, Shader** shader, unsigned char* properties, std::unordered_map<std::string, GLfloat>* uniformFloats, std::unordered_map<std::string, MaterialTexture>* uniformTextures, std::unordered_map<std::string, glm::vec4>* uniformVectors);
 	void LoadPostEffect(const FS::path& path, std::vector<std::pair<int, Material* >>* elements, bool* cbBefore, bool* cbAfter, int* order);
 	void LoadControlSettings(const FS::path& path, std::unordered_map<InputDirection, InputEvent>* dir, std::unordered_map<InputButton, InputEvent>* bt);
-	void LoadObjects(const FS::path& path, std::map<int, Object*>* objects);
+	void LoadObjects(const FS::path& path, std::unordered_map<int, Object*>* objects);
 
 	std::string DecodeError(ResourceError error);
 }

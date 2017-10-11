@@ -1,5 +1,5 @@
 #pragma once
-#include "CommonUtilIncludes.hpp"
+#include <vector>
 
 //Bitmask, even though it might not look like it.
 enum class InputType

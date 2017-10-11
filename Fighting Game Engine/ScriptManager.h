@@ -2,6 +2,7 @@
 #include <memory>
 #include <string>
 #include<boost\filesystem.hpp>
+
 namespace FS = boost::filesystem;
 
 class Script;

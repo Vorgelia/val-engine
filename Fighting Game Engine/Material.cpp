@@ -3,6 +3,7 @@
 #include "Shader.h"
 #include "ResourceLoader.h"
 #include "GLStateTrack.h"
+
 MaterialTexture::MaterialTexture(Texture* ref)
 {
 	this->ref = ref;

@@ -24,7 +24,7 @@ protected:
 	size_t _cursor;
 	int _depth;
 
-	std::map<std::string, std::shared_ptr<BaseScriptVariable>> _variables;
+	std::unordered_map<std::string, std::shared_ptr<BaseScriptVariable>> _variables;
 
 	virtual void ParseLine(ScriptLine &line);
 

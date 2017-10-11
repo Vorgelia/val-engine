@@ -1,6 +1,7 @@
 #include "FrameBuffer.h"
 #include "DebugLog.h"
 #include "GLStateTrack.h"
+
 bool FrameBuffer::valid()
 {
 	return _valid;
@@ -25,7 +26,7 @@ bool FrameBuffer::Bind()
 	return false;
 }
 
-void  FrameBuffer::Destroy()
+void FrameBuffer::Destroy()
 {
 	glDeleteTextures(textures.size(), &textures[0]);
 	if(hasDepthStencil)
@@ -36,7 +37,7 @@ void  FrameBuffer::Destroy()
 	_valid = false;
 }
 
-void  FrameBuffer::Update()
+void FrameBuffer::Update()
 {
 	invResolution = glm::vec2(1.0 / (double)resolution.x, 1.0 / (double)resolution.y);
 	std::vector<GLuint> attachments;
@@ -68,9 +69,6 @@ void  FrameBuffer::Update()
 			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		}
 
-		//I don't remember if i have to do this for framebuffers. I'm doing it anyway.
-		//glGenerateMipmap(GL_TEXTURE_2D);
-		//I guess i'm not doing it after all and it works for now.
 		if(!_valid)
 		{
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, textures[i], 0);

@@ -1,5 +1,7 @@
 #pragma once
-#include "CommonUtilIncludes.hpp"
+#include <string>
+#include "GLIncludes.hpp"
+
 class CachedMesh;
 
 class Mesh

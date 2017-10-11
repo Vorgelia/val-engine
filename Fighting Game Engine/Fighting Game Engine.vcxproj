@@ -146,6 +146,7 @@
     <ClInclude Include="GameCharacter.h" />
     <ClInclude Include="GameState.h" />
     <ClInclude Include="GameStateManager.h" />
+    <ClInclude Include="GLIncludes.hpp" />
     <ClInclude Include="GLStateTrack.h" />
     <ClInclude Include="GS_Intro.h" />
     <ClInclude Include="GSIncludes.hpp" />

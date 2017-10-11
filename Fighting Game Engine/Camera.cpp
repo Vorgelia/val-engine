@@ -1,4 +1,5 @@
 #include "Camera.h"
+#include<GLM\gtc\matrix_transform.hpp>
 
 Camera::Camera(glm::vec2 pos, glm::mat4* mat)
 {

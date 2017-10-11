@@ -1,5 +1,8 @@
 #pragma once
-#include "CommonUtilIncludes.hpp"
+#include <string>
+#include <unordered_map>
+#include <boost\filesystem.hpp>
+namespace FS = boost::filesystem;
 
 class CachedMesh;
 class Mesh;
@@ -11,18 +14,18 @@ class Font;
 
 namespace Resource
 {
-	extern std::map<std::string, CachedMesh*> cachedMeshes;
-	extern std::map<std::string, Mesh*> meshes;
-	extern std::map<std::string, Texture*> textures;
-	extern std::map<std::string, Material*> materials;
-	extern std::map<std::string, PostEffect*> postEffects;
+	extern std::unordered_map<std::string, CachedMesh*> cachedMeshes;
+	extern std::unordered_map<std::string, Mesh*> meshes;
+	extern std::unordered_map<std::string, Texture*> textures;
+	extern std::unordered_map<std::string, Material*> materials;
+	extern std::unordered_map<std::string, PostEffect*> postEffects;
 
 	//Base
-	extern std::map<std::string, Mesh*> baseMeshes;
-	extern std::map<std::string, Texture*> baseTextures;
-	extern std::map<std::string, Material*> baseMaterials;
-	extern std::map<std::string, Shader*> shaders;
-	extern std::map<std::string, Font*> fonts;
+	extern std::unordered_map<std::string, Mesh*> baseMeshes;
+	extern std::unordered_map<std::string, Texture*> baseTextures;
+	extern std::unordered_map<std::string, Material*> baseMaterials;
+	extern std::unordered_map<std::string, Shader*> shaders;
+	extern std::unordered_map<std::string, Font*> fonts;
 
 	void Init();
 	Mesh* GetMesh(FS::path path, bool editable = false);

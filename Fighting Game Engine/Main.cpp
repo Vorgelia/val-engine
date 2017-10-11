@@ -169,7 +169,7 @@ void BeginFrame()
 	//Reset certain rendering parameters that might have been overriden in the last frame.
 	//BlendFunc controls the way alpha blending happens
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
+	glDepthMask(GL_TRUE);
 	//Viewport controls the rendering size in pixels based on the actual window size.
 	//We set it to the full window size here to perform no added transformation to the ones we do when rendering. Try changing Screen::size.y to Screen::size.y*0.5.
 	//This will be used later to force the aspect ratio to 16/9
@@ -180,6 +180,7 @@ void BeginFrame()
 	{
 		Rendering::auxBuffers[i]->Clear();
 	}
+
 	Rendering::mainBuffer->Clear();//Also binds the main buffer	
 }
 

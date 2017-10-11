@@ -1,5 +1,10 @@
 #pragma once
-#include "CommonUtilIncludes.hpp"
+#include <string>
+#include <glm\glm.hpp>
+#include <boost\filesystem.hpp>
+#include "GLIncludes.hpp"
+
+namespace FS = boost::filesystem;
 
 class Texture
 {

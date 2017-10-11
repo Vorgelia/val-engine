@@ -1,5 +1,12 @@
 #pragma once
-#include "CommonUtilIncludes.hpp"
+#include <GLM\glm.hpp>
+#include <string>
+#include <unordered_map>
+#include <boost\filesystem.hpp>
+#include "GLIncludes.hpp"
+
+namespace FS = boost::filesystem;
+
 class Texture;
 class Shader;
 class MaterialTexture
@@ -30,9 +37,9 @@ public:
 	std::string name;
 	Shader* shader;
 	unsigned char properties;
-	std::map<std::string, GLfloat> uniformFloats;
-	std::map<std::string, MaterialTexture> uniformTextures;
-	std::map<std::string, glm::vec4> uniformVectors;
+	std::unordered_map<std::string, GLfloat> uniformFloats;
+	std::unordered_map<std::string, MaterialTexture> uniformTextures;
+	std::unordered_map<std::string, glm::vec4> uniformVectors;
 
 	void ApplyProperties();
 	inline bool HasProperty(Properties pr);
@@ -40,4 +47,3 @@ public:
 	Material(const std::string& name, Shader* shader, unsigned char properties, const std::vector<uniformFloat>& floats, const std::vector<uniformVec>& vecs, const std::vector<uniformTex>& textures);
 	Material(const FS::path& path);
 };
-

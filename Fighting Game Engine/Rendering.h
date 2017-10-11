@@ -1,6 +1,8 @@
 #pragma once
-#include "CommonUtilIncludes.hpp"
+#include <vector>
+#include <GLM\glm.hpp>
 #include "Font.h"
+
 class Mesh;
 class Camera;
 class Material;

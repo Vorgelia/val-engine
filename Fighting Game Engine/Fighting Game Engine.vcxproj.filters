@@ -509,6 +509,9 @@
     <ClInclude Include="ScriptRangedSwitchBlock.h">
       <Filter>Header Files\FG\Scripting\Objects\Blocks</Filter>
     </ClInclude>
+    <ClInclude Include="GLIncludes.hpp">
+      <Filter>Header Files\IncludeLists</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Fighting Game Engine.rc">

@@ -1,5 +1,6 @@
 #pragma once
-#include "CommonUtilIncludes.hpp"
+#include <GLM\glm.hpp>
+
 class Camera
 {
 public:

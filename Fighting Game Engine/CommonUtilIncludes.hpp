@@ -13,10 +13,8 @@
 #include <thread>
 
 //OpenGL
-#define GLEW_STATIC
-#define GLFW_INCLUDE_GLU
-#include <GLEW\GL\glew.h>
-#include <GLFW\include\GLFW\glfw3.h>
+#include "GLIncludes.hpp"
+
 //boost
 #include <boost\filesystem.hpp>
 #include <boost\lexical_cast.hpp>
@@ -24,8 +22,10 @@
 #include <boost\assign\list_of.hpp>
 #include <boost\algorithm\string.hpp>
 namespace FS = boost::filesystem;
+
 //Files
 #include <SOIL\src\SOIL.h>
+
 //Math
 #include<GLM\glm.hpp>
 #include<GLM\gtc\matrix_transform.hpp>

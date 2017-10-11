@@ -1,6 +1,9 @@
 #include "DebugLog.h"
+#include <windows.h>
 #include "Time.h"
 #include <thread>
+#include <sstream>
+#include <iostream>
 #include <fstream>
 #include <DbgHelp.h>
 #include <queue>

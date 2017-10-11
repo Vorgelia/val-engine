@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+
 //Declaration.
 //Circular buffers are containers with a fixed size but a variable end. It will always hold the last _buffer.size() entries, with older ones getting replaced by new ones.
 template <class T>

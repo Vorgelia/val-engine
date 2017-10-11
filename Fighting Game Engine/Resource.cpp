@@ -17,18 +17,18 @@
 
 namespace Resource
 {
-	std::map<std::string, CachedMesh*> cachedMeshes;
-	std::map<std::string, Mesh*> meshes;
-	std::map<std::string, Texture*> textures;
-	std::map<std::string, Material*> materials;
-	std::map<std::string, Shader*> shaders;
-	std::map<std::string, Font*> fonts;
+	std::unordered_map<std::string, CachedMesh*> cachedMeshes;
+	std::unordered_map<std::string, Mesh*> meshes;
+	std::unordered_map<std::string, Texture*> textures;
+	std::unordered_map<std::string, Material*> materials;
+	std::unordered_map<std::string, Shader*> shaders;
+	std::unordered_map<std::string, Font*> fonts;
 
 	//Base
-	std::map<std::string, Mesh*> baseMeshes;
-	std::map<std::string, Texture*> baseTextures;
-	std::map<std::string, Material*> baseMaterials;
-	std::map<std::string, PostEffect*> postEffects;
+	std::unordered_map<std::string, Mesh*> baseMeshes;
+	std::unordered_map<std::string, Texture*> baseTextures;
+	std::unordered_map<std::string, Material*> baseMaterials;
+	std::unordered_map<std::string, PostEffect*> postEffects;
 }
 
 void Resource::Init()

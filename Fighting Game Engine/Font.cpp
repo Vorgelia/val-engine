@@ -1,6 +1,7 @@
 #include "Font.h"
 #include "Texture.h"
 #include "DebugLog.h"
+
 FT_Library Font::library;
 bool Font::init = false;
 
@@ -83,7 +84,7 @@ Font::Font(const FS::path& p)
 		{
 			//Hack fraud method of finding the top bearing of the entire font by finding the top bearing of one of the tallest characters.
 			topBearing = face->glyph->bitmap_top;
-			this->height = glm::max(this->height, face->glyph->bitmap.rows);
+			this->height = glm::max<GLuint>(this->height, face->glyph->bitmap.rows);
 			//std::cout <<"H params: "<< params.x << "," << params.y << "," << params.z << "," << params.w << std::endl;
 		}
 	}

@@ -1,11 +1,13 @@
 #pragma once
-#include "CommonUtilIncludes.hpp"
+#include <unordered_map>
+#include <memory>
+#include "GLIncludes.hpp"
 
 class InputDevice;
 
 namespace InputManager
 {
-	extern std::map<int, std::shared_ptr<InputDevice>> _inputDevices;
+	extern std::unordered_map<int, std::shared_ptr<InputDevice>> _inputDevices;
 
 	void Init();
 	void Update();

@@ -22,8 +22,8 @@ void GS_Menu::FrameEnd()
 
 void GS_Menu::GUI()
 {
-	Rendering::DrawScreenText(glm::vec4(0, 10, 100, 100), 24, std::to_string(std::min((int)std::round(1.0 / Time::smoothDeltaTime), 60)), nullptr);
-	Rendering::DrawScreenText(glm::vec4(0, 30, 100, 100), 24, std::to_string(std::max(((int)(Time::updateRate * 100))*0.01, 1.0)), nullptr);
+	Rendering::DrawScreenText(glm::vec4(0, 10, 100, 100), 24, std::to_string(glm::min<double>((int)std::round(1.0 / Time::smoothDeltaTime), 60)), nullptr);
+	Rendering::DrawScreenText(glm::vec4(0, 30, 100, 100), 24, std::to_string(glm::max<double>(((int)(Time::updateRate * 100))*0.01, 1.0)), nullptr);
 
 	if((int)(Time::time * 4) % 2 == 1)
 		Rendering::DrawScreenText(glm::vec4(0, 1080 - 200, 1920, 60), 140, "VIDEOGAME", nullptr, TextAlignment::Center);

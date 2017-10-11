@@ -1,12 +1,17 @@
 #pragma once
-#include "CommonUtilIncludes.hpp"
+#include <vector>
+#include <string>
+#include <boost/filesystem.hpp>
+#include "GLIncludes.hpp"
+
+namespace FS = boost::filesystem;
 
 class Mesh;
 enum class VertexAttributeLocation
 {
-	vertex = 0,
-	uv = 1,
-	normal = 2
+	Vertex = 0,
+	UV = 1,
+	Normal = 2
 };
 
 //Leftover from my own work that didn't rely as much on screen aligned quads

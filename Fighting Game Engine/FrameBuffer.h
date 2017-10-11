@@ -1,5 +1,8 @@
 #pragma once
-#include"CommonUtilIncludes.hpp"
+#include "GLIncludes.hpp"
+#include <GLM\glm.hpp>
+#include <vector>
+
 class FrameBuffer
 {
 	bool _valid;

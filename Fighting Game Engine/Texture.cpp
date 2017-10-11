@@ -1,6 +1,7 @@
 #include "Texture.h"
 #include "GLStateTrack.h"
 #include "DebugLog.h"
+#include <SOIL\src\SOIL.h>
 
 bool Texture::valid()
 {

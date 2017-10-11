@@ -10,6 +10,7 @@
 #include "GameStateManager.h"
 #include "Screen.h"
 #include "DebugLog.h"
+#include <GLM\glm.hpp>
 
 void GS_Intro::Init()
 {
@@ -19,11 +20,11 @@ void GS_Intro::Init()
 }
 void GS_Intro::GUI()
 {
-	Resource::GetMaterial("Materials/Intro/Intro_Screen.vmat")->uniformVectors["ve_color"].a = glm::clamp(glm::min(_levelTimer, 4 - _levelTimer), 0.0f, 1.0f);
+	Resource::GetMaterial("Materials/Intro/Intro_Screen.vmat")->uniformVectors["ve_color"].a = glm::clamp<float>(glm::min<float>(_levelTimer, 4 - _levelTimer), 0.0f, 1.0f);
 	Rendering::DrawScreenMesh(glm::vec4(0, 0, 1920, 1080), (Mesh*)nullptr, Resource::GetMaterial("Materials/Intro/Intro_Screen.vmat"));
 
-	Rendering::DrawScreenText(glm::vec4(0, 10, 100, 100), 24, std::to_string(std::min((int)std::round(1.0 / Time::smoothDeltaTime), 60)), nullptr);
-	Rendering::DrawScreenText(glm::vec4(0, 30, 100, 100), 24, std::to_string(std::max(((int)(Time::updateRate * 100))*0.01, 1.0)), nullptr);
+	Rendering::DrawScreenText(glm::vec4(0, 10, 100, 100), 24, std::to_string(glm::min<double>((int)std::round(1.0 / Time::smoothDeltaTime), 60)), nullptr);
+	Rendering::DrawScreenText(glm::vec4(0, 30, 100, 100), 24, std::to_string(glm::max<double>(((int)(Time::updateRate * 100))*0.01, 1.0)), nullptr);
 
 	int ind = 0;
 	for(auto& i : InputManager::_inputDevices)

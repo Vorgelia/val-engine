@@ -1,4 +1,5 @@
 #include "GLStateTrack.h"
+#include "Profiler.h"
 
 //Keeps track of current OpenGL states and prevents duplicate changes for performance improvements.
 namespace GLState
@@ -9,7 +10,7 @@ namespace GLState
 	GLuint boundFramebuffer;
 
 	std::vector<GLuint> *boundTextures;
-	std::map<GLenum, bool> glFeatures;
+	std::unordered_map<GLenum, bool> glFeatures;
 }
 
 void GLState::Init()

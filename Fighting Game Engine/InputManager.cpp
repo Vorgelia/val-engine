@@ -7,7 +7,7 @@
 
 namespace InputManager
 {
-	std::map<int, std::shared_ptr<InputDevice>> _inputDevices;
+	std::unordered_map<int, std::shared_ptr<InputDevice>> _inputDevices;
 	std::thread _inputCollectionThread;
 	int _p1Device;
 	int _p2Device;

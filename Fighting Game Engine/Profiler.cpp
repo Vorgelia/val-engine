@@ -1,6 +1,8 @@
 #include "Profiler.h"
 #include "Time.h"
 #include "DebugLog.h"
+#include "GLIncludes.hpp"
+
 //This profiler implementation is fairly simple. Just check the time that passed between profiler calls.
 //Structure modelled after Unity's Profiler.BeginSample and Profiler.EndSample.
 namespace Profiler

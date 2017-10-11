@@ -1,13 +1,14 @@
 #include "Shader.h"
 #include "GLStateTrack.h"
 #include "DebugLog.h"
-ShaderAttachment::ShaderAttachment(const string& code, GLenum type)
+
+ShaderAttachment::ShaderAttachment(const std::string& code, GLenum type)
 {
 	this->code = code;
 	this->type = type;
 }
 
-GLint Shader::UniformLocation(const string& str)
+GLint Shader::UniformLocation(const std::string& str)
 {
 	//Helper function for getting a uniform location
 	//Allocates it in uniformLocations when it's first required, then reads it from uniformLocations on subsequent uses.

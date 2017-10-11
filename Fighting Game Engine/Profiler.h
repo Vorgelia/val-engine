@@ -1,5 +1,7 @@
 #pragma once
-#include "CommonUtilIncludes.hpp"
+#include <unordered_map>
+#include <string>
+#include <GLM\glm.hpp>
 
 namespace Profiler
 {

@@ -1,5 +1,8 @@
 #pragma once
-#include "CommonUtilIncludes.hpp"
+#include <vector>
+#include "GLIncludes.hpp"
+#include <GLM\glm.hpp>
+
 namespace Screen
 {
 	extern GLFWmonitor* primaryMonitor;

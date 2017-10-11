@@ -1,5 +1,6 @@
 #pragma once
 #include<GLM\glm.hpp>
+
 class InputFrame
 {
 public:

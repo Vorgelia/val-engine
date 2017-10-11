@@ -4,6 +4,7 @@
 #include "Screen.h"
 #include "InputMotion.h"
 #include <iostream>
+#include<GLM\glm.hpp>
 
 //1200 keeps track of the last 20 seconds of inputs, but it can easily be increased if that's not enough
 #define VE_INPUT_BUFFER_SIZE 1200
@@ -178,7 +179,7 @@ int InputDevice::InputMotionDistance(int currentIndex, InputMotionComponent& mot
 			debugString += "--Invalid Frame " + std::to_string(cind) + " dur:" + std::to_string(duration) + "|" + std::to_string((int)_inputBuffer->at(cind)->axisState) + "," + std::to_string((int)_inputBuffer->at(cind)->buttonStates) + "\n";
 			if(duration >= motionComp.minDuration)
 			{
-				return glm::max(glm::abs(currentIndex - cind) - motionComp.minDuration + 1, 1);
+				return glm::max<int>(glm::abs(currentIndex - cind) - motionComp.minDuration + 1, 1);
 			}
 			else
 			{

@@ -14,6 +14,9 @@
 #include "PostEffect.h"
 #include "DebugLog.h"
 
+#include <GLM\gtc\matrix_transform.hpp>
+#include <GLM\gtc\type_ptr.hpp>
+
 //Define a default font.
 #define VE_FONT_DEFAULT "Fonts/Amble.ttf"
 //Auxiliary buffers are framebuffers used for multipass post processing effects.
@@ -41,6 +44,8 @@ void Rendering::Init()
 	{
 		auxBuffers.push_back(new FrameBuffer(Screen::size, 3, false, GL_RGBA16F));
 	}
+
+	glDepthFunc(GL_LEQUAL);
 
 	//The ortho mat and the screen mat might be confusing. It's less that they set a rendering resolution and more that they map the -1 to 1 coordinates to what is specified.
 	//Why do we need two different ones? Screen mat maps the screen pixels from the top-left corner(0,0) to the bottom-right(1920,1080) and it's used with UI elements.

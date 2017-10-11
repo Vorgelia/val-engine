@@ -1,6 +1,6 @@
 #pragma once
-#include<string>
-#include<map>
+#include <string>
+#include <unordered_map>
 
 enum class ScriptVariableType
 {
@@ -19,7 +19,7 @@ protected:
 	bool _const;
 	bool _initialized;
 
-	static const std::map<std::string, ScriptVariableType> variableTypeLookup;
+	static const std::unordered_map<std::string, ScriptVariableType> variableTypeLookup;
 public:
 
 	static ScriptVariableType GetVariableType(const std::string& token);

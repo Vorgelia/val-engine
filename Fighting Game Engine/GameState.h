@@ -1,5 +1,13 @@
 #pragma once
-#include "CommonUtilIncludes.hpp"
+#include <map>
+#include <vector>
+#include <string>
+#include <boost\filesystem.hpp>
+
+#include "Object.h"
+
+namespace FS = boost::filesystem;
+
 class Object;
 class GameState
 {
@@ -9,7 +17,7 @@ protected:
 
 	FS::path _dataPath;
 
-	std::map<int, Object*> _objects;
+	std::unordered_map<int, Object*> _objects;
 	std::vector<std::string> _postEffectsOrder;
 public:
 
@@ -32,6 +40,7 @@ public:
 	virtual std::string GameState::Serialize();
 	virtual void GameState::Deserialize(const std::string& data);
 	virtual const Object* FindObject(const std::string& name);
+
 	GameState(const FS::path& path);
 	virtual ~GameState();
 };
