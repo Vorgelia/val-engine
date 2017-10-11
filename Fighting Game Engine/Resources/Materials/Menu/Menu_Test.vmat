@@ -3,7 +3,7 @@
 //Properties bitmask. Maybe one day i'll let people add it in binary.
 //Bits: 8 Cull, 4 Blend, 2 ZTest, 1 ZWrite
 #PROPERTIES
-	properties=0
+	properties=3
 	shader=Shaders/Base/2D
 #UNIFORM_VEC4
 	ve_color=1,1,1,1

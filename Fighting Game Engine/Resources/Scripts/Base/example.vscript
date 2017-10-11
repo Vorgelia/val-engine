@@ -2,6 +2,7 @@
 
 //This function runs every frame
 function Main () : int
+	//ve_log(JustReturn666()-1)
 	return 0
 end
 
