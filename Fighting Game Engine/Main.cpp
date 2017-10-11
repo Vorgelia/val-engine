@@ -152,6 +152,7 @@ inline void GLInit()
 	glewExperimental = true;
 	glewInit();
 }
+
 inline void GLCleanup()
 {
 	//Cleanup GLFW
@@ -181,7 +182,7 @@ void BeginFrame()
 		Rendering::auxBuffers[i]->Clear();
 	}
 
-	Rendering::mainBuffer->Clear();//Also binds the main buffer	
+	Rendering::mainBuffer->Clear();//Also binds the main buffer
 }
 
 //Apply post processing effects and render the result to the main buffer
@@ -212,6 +213,7 @@ void EndFrame()
 	Rendering::DrawScreenMesh(glm::vec4(0, 0, 1920, 1080), Resource::GetMesh("Meshes/Base/screenQuad.vm"), Rendering::mainBuffer, Resource::GetMaterial("Materials/Base/Screen_FB.vmat"));
 	glfwSwapBuffers(Screen::window);
 }
+
 inline void EngineInit()
 {
 	DebugLog::Init();
@@ -224,6 +226,7 @@ inline void EngineInit()
 
 	DebugLog::Push("Full Init");
 }
+
 inline void EngineCleanup()
 {
 	ScriptManager::Cleanup();
@@ -234,6 +237,7 @@ inline void EngineCleanup()
 	GLState::Cleanup();
 	DebugLog::Cleanup();
 }
+
 //--
 //Component Handling
 //--
