@@ -4,7 +4,7 @@
 #include "ScriptOperator.h"
 #include "ScriptToken.h"
 
-const std::map<std::string, ScriptVariableType> BaseScriptVariable::variableTypeLookup =
+const std::unordered_map<std::string, ScriptVariableType> BaseScriptVariable::variableTypeLookup =
 {
 	{ ScriptToken::type_int, ScriptVariableType::Int },
 	{ ScriptToken::type_bool, ScriptVariableType::Bool },

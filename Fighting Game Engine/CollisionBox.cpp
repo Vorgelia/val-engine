@@ -15,7 +15,7 @@ CollisionBox CollisionBox::FromTopLeft(glm::vec4 rect)
 	return CollisionBox(glm::vec4(rect.x + rect.z*0.5, rect.y + rect.w*0.5, rect.z*0.5, rect.w*0.5));
 }
 
-CollisionBox CollisionBox::operator+(const glm::vec2 rhs)
+CollisionBox CollisionBox::operator+(const glm::vec2& rhs)
 {
 	return CollisionBox(glm::vec4(rect.x + rhs.x, rect.y + rhs.y, rect.z, rect.w));
 }

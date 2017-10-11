@@ -77,7 +77,6 @@
     <ClCompile Include="CachedMesh.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CharacterFrame.cpp" />
-    <ClCompile Include="CharacterState.cpp" />
     <ClCompile Include="ConnectionSocket.cpp" />
     <ClCompile Include="DebugLog.cpp" />
     <ClCompile Include="Font.cpp" />
@@ -137,7 +136,6 @@
     <ClInclude Include="CachedMesh.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CharacterFrame.h" />
-    <ClInclude Include="CharacterState.h" />
     <ClInclude Include="CircularBuffer.h" />
     <ClInclude Include="CommonUtilIncludes.hpp" />
     <ClInclude Include="ConnectionSocket.h" />
@@ -148,6 +146,7 @@
     <ClInclude Include="GameCharacter.h" />
     <ClInclude Include="GameState.h" />
     <ClInclude Include="GameStateManager.h" />
+    <ClInclude Include="GLIncludes.hpp" />
     <ClInclude Include="GLStateTrack.h" />
     <ClInclude Include="GS_Intro.h" />
     <ClInclude Include="GSIncludes.hpp" />

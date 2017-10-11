@@ -2,14 +2,14 @@
 #include "Script.h"
 #include "BaseScriptVariable.h"
 #include "ResourceLoader.h"
-#include <map>
+#include <unordered_map>
 
 #include "DebugLog.h"
 
 namespace ScriptManager
 {
-	std::map<std::string, std::shared_ptr<Script>> _scripts;
-	std::map<std::string, std::shared_ptr<BaseScriptVariable>> _globalVariables;
+	std::unordered_map<std::string, std::shared_ptr<Script>> _scripts;
+	std::unordered_map<std::string, std::shared_ptr<BaseScriptVariable>> _globalVariables;
 
 	void HandleScriptBindings(const std::shared_ptr<Script> script);
 }

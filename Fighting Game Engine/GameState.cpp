@@ -12,73 +12,73 @@ void GameState::LoadResources()
 {
 	_loaded = false;
 	_initialized = false;
-	if(!dataPath.empty())
+	if(!_dataPath.empty())
 	{
 		std::vector<std::string> rfl;
 
 		//Load Materials
 		try
 		{
-			rfl = ResourceLoader::ReturnFileLines(dataPath.string() + "/MaterialResources.txt", true);
+			rfl = ResourceLoader::ReturnFileLines(_dataPath.string() + "/MaterialResources.txt", true);
 			for(unsigned int i = 0; i < rfl.size(); ++i)
-			if(rfl[i].substr(0, 2) != "//" && rfl[i] != "")
-				Resource::GetMaterial(rfl[i]);//Materials also load their associated textures with them.
+				if(rfl[i].substr(0, 2) != "//" && rfl[i] != "")
+					Resource::GetMaterial(rfl[i]);//Materials also load their associated textures with them.
 		}
 		catch(ResourceError err)
 		{
-			DebugLog::Push(ResourceLoader::DecodeError(err) + "\n\t" + dataPath.string() + "/MaterialResources.txt");
+			DebugLog::Push(ResourceLoader::DecodeError(err) + "\n\t" + _dataPath.string() + "/MaterialResources.txt");
 		}
 		catch(...)
 		{
-			DebugLog::Push("Resource: Unidentified Exception when loading file \n\t" + dataPath.string() + "/MaterialResources.txt");
+			DebugLog::Push("Resource: Unidentified Exception when loading file \n\t" + _dataPath.string() + "/MaterialResources.txt");
 		}
 
 		//Load Meshes
 		try
 		{
-			rfl = ResourceLoader::ReturnFileLines(dataPath.string() + "/MeshResources.txt", true);
+			rfl = ResourceLoader::ReturnFileLines(_dataPath.string() + "/MeshResources.txt", true);
 			for(unsigned int i = 0; i < rfl.size(); ++i)
-			if(rfl[i].substr(0, 2) != "//" && rfl[i] != "")
-				Resource::GetMesh(rfl[i]);
+				if(rfl[i].substr(0, 2) != "//" && rfl[i] != "")
+					Resource::GetMesh(rfl[i]);
 		}
 		catch(ResourceError err)
 		{
-			DebugLog::Push(ResourceLoader::DecodeError(err) + "\n\t" + dataPath.string() + "/MeshResources.txt");
+			DebugLog::Push(ResourceLoader::DecodeError(err) + "\n\t" + _dataPath.string() + "/MeshResources.txt");
 		}
 		catch(...)
 		{
-			DebugLog::Push("Resource: Unidentified Exception when loading file \n\t" + dataPath.string() + "/MeshResources.txt");
+			DebugLog::Push("Resource: Unidentified Exception when loading file \n\t" + _dataPath.string() + "/MeshResources.txt");
 		}
 
 		//Load Textures
 		try
 		{
-			rfl = ResourceLoader::ReturnFileLines(dataPath.string() + "/TextureResources.txt", true);
+			rfl = ResourceLoader::ReturnFileLines(_dataPath.string() + "/TextureResources.txt", true);
 			for(unsigned int i = 0; i < rfl.size(); ++i)
-			if(rfl[i].substr(0, 2) != "//" && rfl[i] != "")
-				Resource::GetTexture(rfl[i]);
+				if(rfl[i].substr(0, 2) != "//" && rfl[i] != "")
+					Resource::GetTexture(rfl[i]);
 		}
 		catch(ResourceError err)
 		{
-			DebugLog::Push(ResourceLoader::DecodeError(err) + "\n\t" + dataPath.string() + "/TextureResources.txt");
+			DebugLog::Push(ResourceLoader::DecodeError(err) + "\n\t" + _dataPath.string() + "/TextureResources.txt");
 		}
 		catch(...)
 		{
-			DebugLog::Push("Resource: Unidentified Exception when loading file \n\t" + dataPath.string() + "/TextureResources.txt");
+			DebugLog::Push("Resource: Unidentified Exception when loading file \n\t" + _dataPath.string() + "/TextureResources.txt");
 		}
 
 		//Load Scene Objects
 		try
 		{
-			ResourceLoader::LoadObjects(dataPath.string() + "/SceneObjects.txt", &objects);
+			ResourceLoader::LoadObjects(_dataPath.string() + "/SceneObjects.txt", &_objects);
 		}
 		catch(ResourceError err)
 		{
-			DebugLog::Push(ResourceLoader::DecodeError(err) + "\n\t" + dataPath.string() + "/SceneObjects.txt");
+			DebugLog::Push(ResourceLoader::DecodeError(err) + "\n\t" + _dataPath.string() + "/SceneObjects.txt");
 		}
 		catch(...)
 		{
-			DebugLog::Push("Resource: Unidentified Exception when loading file \n\t" + dataPath.string() + "/SceneObjects.txt");
+			DebugLog::Push("Resource: Unidentified Exception when loading file \n\t" + _dataPath.string() + "/SceneObjects.txt");
 		}
 
 		//Load Post Effects
@@ -86,25 +86,25 @@ void GameState::LoadResources()
 		{
 			try
 			{
-				postEffectsOrder = ResourceLoader::ReturnFileLines(dataPath.string() + "/PostEffectsOrder.txt", true);
-				for(unsigned int i = 0; i < postEffectsOrder.size(); ++i)
-				if(postEffectsOrder[i].substr(0, 2) != "//" &&postEffectsOrder[i] != "")
-					Resource::GetPostEffect(postEffectsOrder[i]);
+				_postEffectsOrder = ResourceLoader::ReturnFileLines(_dataPath.string() + "/PostEffectsOrder.txt", true);
+				for(unsigned int i = 0; i < _postEffectsOrder.size(); ++i)
+					if(_postEffectsOrder[i].substr(0, 2) != "//" && _postEffectsOrder[i] != "")
+						Resource::GetPostEffect(_postEffectsOrder[i]);
 			}
 			catch(ResourceError err)
 			{
-				DebugLog::Push(ResourceLoader::DecodeError(err) + "\n\t" + dataPath.string() + "/PostEffectsOrder.txt");
+				DebugLog::Push(ResourceLoader::DecodeError(err) + "\n\t" + _dataPath.string() + "/PostEffectsOrder.txt");
 				throw;
 			}
 			catch(...)
 			{
-				DebugLog::Push("Resource: Unidentified Exception when loading file \n\t" + dataPath.string() + "/PostEffectsOrder.txt");
+				DebugLog::Push("Resource: Unidentified Exception when loading file \n\t" + _dataPath.string() + "/PostEffectsOrder.txt");
 				throw;
 			}
 		}
 		catch(...)
 		{
-			postEffectsOrder.clear();
+			_postEffectsOrder.clear();
 		}
 
 	}
@@ -115,6 +115,12 @@ bool GameState::loaded()
 {
 	return _loaded;
 }
+
+const std::vector<std::string>& GameState::postEffectsOrder()
+{
+	return _postEffectsOrder;
+}
+
 bool GameState::initialized()
 {
 	return _initialized;
@@ -164,26 +170,26 @@ void GameState::Deserialize(const std::string& data)
 
 void GameState::Cleanup()
 {
-	for(unsigned int i = 0; i < objects.size(); ++i)
-	if(objects[i] != nullptr)
-		delete objects[i];
-	objects.clear();
-	postEffectsOrder.clear();
+	for(unsigned int i = 0; i < _objects.size(); ++i)
+		if(_objects[i] != nullptr)
+			delete _objects[i];
+	_objects.clear();
+	_postEffectsOrder.clear();
 	_loaded = false;
 	_initialized = false;
 }
 
 void GameState::RenderObjects()
 {
-	for(auto i = objects.begin(); i != objects.end(); ++i)
+	for(auto i = _objects.begin(); i != _objects.end(); ++i)
 		i->second->Render();
 }
 
 const Object* GameState::FindObject(const std::string& name)
 {
-	for(auto i = objects.begin(); i != objects.end(); ++i)
-	if(i->second->name == name)
-		return i->second;
+	for(auto i = _objects.begin(); i != _objects.end(); ++i)
+		if(i->second->name == name)
+			return i->second;
 	return nullptr;
 }
 
@@ -191,8 +197,8 @@ GameState::GameState(const FS::path& path)
 {
 	_initialized = false;
 	_loaded = false;
-	this->dataPath = path;
-	postEffectsOrder.clear();
+	this->_dataPath = path;
+	_postEffectsOrder.clear();
 }
 
 GameState::~GameState()

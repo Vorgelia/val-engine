@@ -1,17 +1,17 @@
 #pragma once
-#include "CommonUtilIncludes.hpp"
-//Including all the input-related .h files here since they won't be changed at all after they're done.
-//Makes including all of them in other files less of a mess since they need to be along this one anyway
+#include <unordered_map>
+#include <memory>
+#include "GLIncludes.hpp"
 
 class InputDevice;
 
 namespace InputManager
 {
-	extern std::map<int, InputDevice*> inputDevices;
+	extern std::unordered_map<int, std::shared_ptr<InputDevice>> _inputDevices;
 
 	void Init();
 	void Update();
-	void BufferInputs();
 	void Cleanup();
+
 	void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 }

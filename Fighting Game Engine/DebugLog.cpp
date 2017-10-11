@@ -1,6 +1,9 @@
 #include "DebugLog.h"
+#include <windows.h>
 #include "Time.h"
 #include <thread>
+#include <sstream>
+#include <iostream>
 #include <fstream>
 #include <DbgHelp.h>
 #include <queue>
@@ -62,33 +65,40 @@ void DebugLog::WriteThread()
 		//Get stuff from the queue and then remove it. Then unlock the mutex, making it possible for other threads to access the queue again.
 		_queueMutex.unlock();
 
-		//Print different stuff to the console and the file based on the bessage type.
-		switch(li.type)
+		//Print different stuff to the console and the file based on the message type.
+
+		int stackAmount = 0;
+		std::string messagePrefix = "";
+
+		switch(li.type())
 		{
 		case LogItem::Type::Message:
-			_writeStream << "\n\n" + li.ToString();
-			std::clog << li.ToString(0) << std::endl << std::endl;
+			stackAmount = 0;
+			messagePrefix = "";
 			break;
 		case LogItem::Type::Error:
-			_writeStream << "\n\n-Error:\n" + li.ToString();
-			std::clog << li.ToString() << std::endl << std::endl;
+			stackAmount = -1;
+			messagePrefix = "-Error";
 #ifdef VE_DEBUG_ERRORTHROW
 			throw std::runtime_error(li.ToString());
 #endif
 			break;
 		case LogItem::Type::Log:
-			_writeStream << "\n\n-Log:\n" + li.ToString();
-			std::clog << li.ToString(1) << std::endl << std::endl;
+			messagePrefix = "-Log";
+			stackAmount = 1;
 			break;
 		case LogItem::Type::Warning:
-			_writeStream << "\n\n-Warning:\n" + li.ToString();
-			std::clog << li.ToString() << std::endl << std::endl;
+			messagePrefix = "-Warning";
+			stackAmount = 0;
 			break;
 		case LogItem::Type::ScriptLog:
-			_writeStream << "\n\n-Script Log:\n" + li.ToString();
-			std::clog << li.ToString(2) << std::endl << std::endl;
+			messagePrefix = "-Script Log";
+			stackAmount = 2;
 			break;
 		}
+
+		_writeStream << "\n\n" << messagePrefix << "\n" << li.ToString();
+		std::clog << li.ToString(stackAmount) << std::endl << std::endl;
 	}
 }
 
@@ -98,10 +108,9 @@ void DebugLog::Push(const std::string& data, LogItem::Type type)
 {
 	_queueMutex.lock();
 	_writeQueue.push(LogItem(data, type));
-	GetStackTrace(&_writeQueue.back().stack, 100);
+	GetStackTrace(_writeQueue.back().stack(), 100);
 	_queueMutex.unlock();
 }
-
 
 void DebugLog::GetStackTrace(std::vector<std::string>* storage, unsigned int stackSize)
 {

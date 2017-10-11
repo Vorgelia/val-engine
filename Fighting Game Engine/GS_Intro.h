@@ -1,15 +1,15 @@
 #pragma once
 #include "GameState.h"
+
 class GS_Intro :
 	public GameState
 {
+	float _levelTimer = 0;
 public:
-
-	float levelTimer = 0;
 
 	void Init();
 	void GUI();
 	void GameUpdate();
+
 	GS_Intro(const FS::path& path);
 };
-

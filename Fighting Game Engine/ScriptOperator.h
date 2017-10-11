@@ -1,5 +1,5 @@
 #pragma once
-#include <map>
+#include <unordered_map>
 #include <string>
 
 enum class ScriptOperatorType
@@ -32,7 +32,7 @@ enum class ScriptOperatorType
 class ScriptOperator
 {
 private:
-	static const std::map<std::string, ScriptOperator> _operatorLookup;
+	static const std::unordered_map<std::string, ScriptOperator> _operatorLookup;
 
 	ScriptOperatorType _type;
 	int _priority;

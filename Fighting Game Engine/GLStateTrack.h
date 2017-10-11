@@ -1,5 +1,8 @@
 #pragma once
-#include "CommonUtilIncludes.hpp"
+#include "GLIncludes.hpp"
+#include <vector>
+#include <unordered_map>
+
 namespace GLState
 {
 	extern GLuint activeTexture;
@@ -7,7 +10,8 @@ namespace GLState
 	extern GLuint boundVAO;
 	extern GLuint boundFramebuffer;
 	extern std::vector<GLuint> *boundTextures;
-	extern std::map<GLenum, bool> glFeatures;
+	extern std::unordered_map<GLenum, bool> glFeatures;
+
 	void Init();
 	void Cleanup();
 

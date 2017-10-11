@@ -4,6 +4,7 @@
 #include "Material.h"
 #include "Resource.h"
 #include "Rendering.h"
+
 Object::Object(const std::string& name, glm::vec2 pos, glm::vec2 scale, Mesh* mesh, Material* material, int id)
 {
 	this->name = name;

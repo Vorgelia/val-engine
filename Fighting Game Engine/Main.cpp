@@ -152,6 +152,7 @@ inline void GLInit()
 	glewExperimental = true;
 	glewInit();
 }
+
 inline void GLCleanup()
 {
 	//Cleanup GLFW
@@ -169,7 +170,7 @@ void BeginFrame()
 	//Reset certain rendering parameters that might have been overriden in the last frame.
 	//BlendFunc controls the way alpha blending happens
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
+	glDepthMask(GL_TRUE);
 	//Viewport controls the rendering size in pixels based on the actual window size.
 	//We set it to the full window size here to perform no added transformation to the ones we do when rendering. Try changing Screen::size.y to Screen::size.y*0.5.
 	//This will be used later to force the aspect ratio to 16/9
@@ -180,7 +181,8 @@ void BeginFrame()
 	{
 		Rendering::auxBuffers[i]->Clear();
 	}
-	Rendering::mainBuffer->Clear();//Also binds the main buffer	
+
+	Rendering::mainBuffer->Clear();//Also binds the main buffer
 }
 
 //Apply post processing effects and render the result to the main buffer
@@ -192,9 +194,9 @@ void EndFrame()
 		//Call the frame end callback on the current scene
 		GameStateManager::states[GameStateManager::currentState]->FrameEnd();
 		//Draw post effects specified in State/PostEffectsOrder.txt, in the order they were given
-		for(unsigned int i = 0; i < GameStateManager::states[GameStateManager::currentState]->postEffectsOrder.size(); ++i)
+		for(unsigned int i = 0; i < GameStateManager::states[GameStateManager::currentState]->postEffectsOrder().size(); ++i)
 		{
-			Rendering::DrawPostEffect(Resource::postEffects[GameStateManager::states[GameStateManager::currentState]->postEffectsOrder[i]]);
+			Rendering::DrawPostEffect(Resource::postEffects[GameStateManager::states[GameStateManager::currentState]->postEffectsOrder()[i]]);
 		}
 		//Tell the scene to draw its GUI now.
 		GameStateManager::states[GameStateManager::currentState]->GUI();
@@ -211,6 +213,7 @@ void EndFrame()
 	Rendering::DrawScreenMesh(glm::vec4(0, 0, 1920, 1080), Resource::GetMesh("Meshes/Base/screenQuad.vm"), Rendering::mainBuffer, Resource::GetMaterial("Materials/Base/Screen_FB.vmat"));
 	glfwSwapBuffers(Screen::window);
 }
+
 inline void EngineInit()
 {
 	DebugLog::Init();
@@ -223,6 +226,7 @@ inline void EngineInit()
 
 	DebugLog::Push("Full Init");
 }
+
 inline void EngineCleanup()
 {
 	ScriptManager::Cleanup();
@@ -233,6 +237,7 @@ inline void EngineCleanup()
 	GLState::Cleanup();
 	DebugLog::Cleanup();
 }
+
 //--
 //Component Handling
 //--

@@ -2,7 +2,7 @@
 #include <memory>
 #include <string>
 #include <vector>
-#include <map>
+#include <unordered_map>
 #include <stack>
 
 enum class ScriptExitCode;
@@ -24,9 +24,9 @@ class Script
 	std::vector<std::string> _rawLines;
 	std::vector<ScriptLine> _lines;
 
-	std::map<std::string, std::vector<std::string>> _pragmaDirectives;
+	std::unordered_map<std::string, std::vector<std::string>> _pragmaDirectives;
 
-	std::map<std::string, std::shared_ptr<BaseScriptVariable>(*)(const Script*, std::vector<std::shared_ptr<BaseScriptVariable>>&)> _boundFunctions;
+	std::unordered_map<std::string, std::shared_ptr<BaseScriptVariable>(*)(const Script*, std::vector<std::shared_ptr<BaseScriptVariable>>&)> _boundFunctions;
 
 	std::stack<std::shared_ptr<ScriptBlock>> _blockStack;
 	ScriptControlFlag _controlFlag;

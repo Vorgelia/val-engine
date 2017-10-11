@@ -1,11 +1,18 @@
 #pragma once
-#include "CommonUtilIncludes.hpp"
+#include "GLIncludes.hpp"
+#include <GLM\glm.hpp>
+#include <unordered_map>
+#include <boost\filesystem.hpp>
 #include<ft2build.h>
+
 #include FT_FREETYPE_H
+
+namespace FS = boost::filesystem;
 
 #define TEXT_SIZE 64
 #define FONT_ATLAS_SIZE 1024
 #define FONT_ATLAS_PADDING 2
+
 class Texture;
 enum class TextAlignment
 {
@@ -25,6 +32,7 @@ public:
 
 	FontCharacter(GLuint atlasIndex, glm::vec4 textureParams, glm::ivec2 size, glm::ivec2 bearing, GLuint advance);
 };
+
 class Font
 {
 	std::unordered_map <GLubyte, FontCharacter*> characters;
@@ -43,4 +51,3 @@ public:
 	Font(const FS::path& p);
 	~Font();
 };
-

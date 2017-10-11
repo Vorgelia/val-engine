@@ -1,5 +1,8 @@
 #pragma once
-#include "CommonUtilIncludes.hpp"
+#include <vector>
+#include <string>
+#include <unordered_map>
+#include <memory>
 #include "InputFrame.h"
 #include "InputEvent.h"
 #include "CircularBuffer.h"
@@ -14,12 +17,11 @@ enum class InputButton
 	Light = 1,
 	Medium = 2,
 	Heavy = 4,
-	Buttons = 7,//Convenience entry that represents any of the buttons
+	Attacks = 7,//Convenience entry that represents any of the buttons
 	Shield = 8,
 	Any = 15,//Convenience entry that represents any button
 	Select = 16,
 	Start = 32
-
 };
 
 enum class InputDirection
@@ -35,23 +37,27 @@ class InputDevice
 	int _deviceID;
 	std::string _deviceName;
 	std::string _deviceFilename;
-	std::vector<InputFrame> cachedInputFrames;
+	std::vector<InputFrame> _cachedInputFrames;
 
-	std::vector<unsigned char> cachedJoyButtons;
-	std::vector<float> cachedJoyAxes;
+	std::vector<unsigned char> _cachedJoyButtons;
+	std::vector<float> _cachedJoyAxes;
 
+	std::unordered_map<InputButton, InputEvent> _buttonMap;
+	std::unordered_map<InputDirection, InputEvent> _directionMap;
+
+	std::shared_ptr<InputBuffer> _inputBuffer;
 public:
-	std::unordered_map<InputButton, InputEvent> buttonMap;
-	std::unordered_map<InputDirection, InputEvent> directionMap;
-
-	InputBuffer* inputBuffer;
+	
+	int deviceID();
+	std::string deviceName();
+	const std::shared_ptr<InputBuffer> inputBuffer();
 
 	void PollInput();
 	void UpdateJoyInputs();
 	void PushInputsToBuffer();
-	int deviceID();
-	std::string deviceName();
+	
 	std::string Serialize();
+
 
 	bool EvaluateInput(InputEvent& ie);
 	bool EvaluateMotion(InputMotion& motion, bool inverse);

@@ -1,6 +1,7 @@
 #include "CachedMesh.h"
 #include "Mesh.h"
 #include "ResourceLoader.h"
+
 //Cached meshes are just raw vertex data that are stored in memory before being turned into meshes.
 //Helps with duplicating or editing meshes in realtime.
 //Probably unnecessary.
@@ -12,7 +13,7 @@ VertexAttribute::VertexAttribute(VertexAttributeLocation ind, GLint len)
 
 std::vector<VertexAttribute> VertexAttribute::defaultMesh()
 {
-	return{ VertexAttribute(VertexAttributeLocation::vertex, 2), VertexAttribute(VertexAttributeLocation::uv, 2), VertexAttribute(VertexAttributeLocation::normal, 3) };
+	return{ VertexAttribute(VertexAttributeLocation::Vertex, 2), VertexAttribute(VertexAttributeLocation::UV, 2), VertexAttribute(VertexAttributeLocation::Normal, 3) };
 }
 
 bool CachedMesh::RegisterOwner(Mesh* owner)
@@ -24,6 +25,7 @@ bool CachedMesh::RegisterOwner(Mesh* owner)
 			return false;
 		}
 	}
+
 	owners.push_back(owner);
 	owner->meshData = this;
 	return true;
@@ -55,7 +57,6 @@ CachedMesh::CachedMesh(const FS::path& path)
 	//if (path.extension().string() == "vm")
 	ResourceLoader::LoadMeshVM(path, &verts, &elements, &vertexFormat);
 }
-
 
 CachedMesh::~CachedMesh()
 {

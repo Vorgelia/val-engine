@@ -4,14 +4,16 @@
 #include "CommonUtilIncludes.hpp"
 #include "ResourceLoader.h"
 #include "Screen.h"
+
 namespace InputManager
 {
-	std::map<int, InputDevice*> inputDevices;
-	std::thread inputCollectionThread;
-	int p1Device;
-	int p2Device;
-	bool stopInputs = false;
+	std::unordered_map<int, std::shared_ptr<InputDevice>> _inputDevices;
+	std::thread _inputCollectionThread;
+	int _p1Device;
+	int _p2Device;
+	bool _stopInputs = false;
 }
+
 //Update list of valid input devices and have them poll for inputs
 void InputManager::Update()
 {
@@ -20,64 +22,42 @@ void InputManager::Update()
 	//inputCollectionThread.join();
 	for(int i = GLFW_JOYSTICK_1; i < GLFW_JOYSTICK_LAST; ++i)
 	{
-		if(glfwJoystickPresent(i) == GLFW_TRUE && (inputDevices.count(i) == 0))
+		if(glfwJoystickPresent(i) == GLFW_TRUE && (_inputDevices.count(i) == 0))
 		{
-			inputDevices.insert(std::pair<int, InputDevice*>(i, new InputDevice(i)));
-			p2Device = i;//For testing. Remove later.
+			_inputDevices.insert(std::pair<int, std::shared_ptr<InputDevice>>(i, std::make_shared<InputDevice>(i)));
 		}
-		else if(glfwJoystickPresent(i) == GLFW_FALSE && (inputDevices.count(i) > 0))
+		else if(glfwJoystickPresent(i) == GLFW_FALSE && (_inputDevices.count(i) > 0))
 		{
-			delete inputDevices.at(i);
-			inputDevices.erase(i);
-			if(p1Device == i)
-				p1Device = -2;
-			if(p2Device == i)
-				p2Device = -2;
+			_inputDevices.erase(i);
+			if(_p1Device == i)
+				_p1Device = -2;
+			if(_p2Device == i)
+				_p2Device = -2;
 		}
 	}
 
-	for(auto i = inputDevices.begin(); i != inputDevices.end(); ++i)
+	for(auto i : _inputDevices)
 	{
-		if(i->second != nullptr)
+		if(i.second != nullptr)
 		{
-			i->second->UpdateJoyInputs();
-			i->second->PollInput();
-			i->second->PushInputsToBuffer();
+			i.second->UpdateJoyInputs();
+			i.second->PollInput();
+			i.second->PushInputsToBuffer();
 		}
 	}
 	//inputCollectionThread = std::thread(BufferInputs);
-}
-void InputManager::BufferInputs()
-{
-	/*stopInputs = false;
-	do{
-	for (auto i = inputDevices.begin(); i != inputDevices.end(); ++i){
-	if (i->second != nullptr){
-	i->second->UpdateJoyInputs();
-	i->second->PollInput();
-	}
-	}
-
-	} while (stopInputs == false);*/
 }
 
 void InputManager::Init()
 {
-	inputDevices[-1] = new InputDevice(-1);
-	p1Device = -1;
-	p2Device = 0;
-	//inputCollectionThread = std::thread(BufferInputs);
+	_inputDevices[-1] = std::make_shared<InputDevice>(-1);
+	_p1Device = -1;
+	_p2Device = 0;
 }
 
 void InputManager::Cleanup()
 {
-	//stopInputs = true;
-	//inputCollectionThread.join();
-	for(auto i = inputDevices.begin(); i != inputDevices.end(); ++i)
-	{
-		delete(i->second);
-	}
-	inputDevices.clear();
+	_inputDevices.clear();
 }
 
 void InputManager::KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)

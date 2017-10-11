@@ -1,6 +1,7 @@
 #include "Font.h"
 #include "Texture.h"
 #include "DebugLog.h"
+
 FT_Library Font::library;
 bool Font::init = false;
 
@@ -27,6 +28,7 @@ Font::Font(const FS::path& p)
 			return;
 		}
 	}
+
 	height = 0;
 	name = p.string();
 	//Font loading
@@ -41,10 +43,12 @@ Font::Font(const FS::path& p)
 	int csk = 0;
 	std::vector<unsigned char> pixels(FONT_ATLAS_SIZE*FONT_ATLAS_SIZE);
 	glm::ivec2 cursor = glm::ivec2(0, 0);
+
 	for(GLubyte c = 0; c < 255; ++c)
 	{
 		if(FT_Load_Char(face, c, FT_LOAD_RENDER))
-		{//Load character texture to face->glyph->bitmap
+		{
+			//Load character texture to face->glyph->bitmap
 			DebugLog::Push("Unable to load character: " + c, LogItem::Type::Warning);
 			continue;
 		}
@@ -66,7 +70,8 @@ Font::Font(const FS::path& p)
 		for(int j = face->glyph->bitmap.rows - 1; j >= 0; --j)
 		{
 			for(unsigned int i = 0; i < face->glyph->bitmap.width; ++i)
-			{//Invert the pixels vertically.
+			{
+				//Invert the pixels vertically.
 				pixels[((cursor.y + j)*(FONT_ATLAS_SIZE)) + (cursor.x + i)] = face->glyph->bitmap.buffer[j*face->glyph->bitmap.width + i];
 			}
 		}
@@ -76,9 +81,10 @@ Font::Font(const FS::path& p)
 		cursor.x += face->glyph->bitmap.width + FONT_ATLAS_PADDING;
 
 		if(c == 'H')
-		{//Hack fraud method of finding the top bearing of the entire font by finding the top bearing of one of the tallest characters.
+		{
+			//Hack fraud method of finding the top bearing of the entire font by finding the top bearing of one of the tallest characters.
 			topBearing = face->glyph->bitmap_top;
-			this->height = glm::max(this->height, face->glyph->bitmap.rows);
+			this->height = glm::max<GLuint>(this->height, face->glyph->bitmap.rows);
 			//std::cout <<"H params: "<< params.x << "," << params.y << "," << params.z << "," << params.w << std::endl;
 		}
 	}
@@ -86,12 +92,13 @@ Font::Font(const FS::path& p)
 }
 Font::~Font()
 {
-	for(unsigned int i = 0; i<atlases.size(); ++i)
+	for(unsigned int i = 0; i < atlases.size(); ++i)
 		delete atlases[i];
 }
+
 FontCharacter* Font::Character(GLubyte ch)
 {
-	if(characters.count(ch)>0)
+	if(characters.count(ch) > 0)
 	{
 		return characters.find(ch)->second;
 	}

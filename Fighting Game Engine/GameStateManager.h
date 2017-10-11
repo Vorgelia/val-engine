@@ -1,12 +1,13 @@
 #pragma once
-#include "CommonUtilIncludes.hpp"
+#include <vector>
+
 class GameState;
 namespace GameStateManager
 {
 	//global state variables here
 	extern std::vector<GameState*> states;
 
-	extern int _stateToLoad;
+	extern int stateToLoad;
 	extern int currentState;
 	extern bool isLoading;
 

@@ -1,6 +1,6 @@
 #include "ScriptOperator.h"
 
-const std::map<std::string, ScriptOperator> ScriptOperator::_operatorLookup = {
+const std::unordered_map<std::string, ScriptOperator> ScriptOperator::_operatorLookup = {
 	{ "=", ScriptOperator(ScriptOperatorType::Assignment, 15) },
 
 	{ "+", ScriptOperator(ScriptOperatorType::Addition, 6) },

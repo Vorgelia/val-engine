@@ -1,5 +1,7 @@
 #include "Transform.h"
 
+#include <GLM\gtc\matrix_transform.hpp>
+#include<GLM\gtc\type_ptr.hpp>
 
 Transform::Transform(glm::ivec2 position, glm::vec3 rotation, glm::vec2 scale)
 {

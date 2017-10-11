@@ -255,9 +255,6 @@
     <ClCompile Include="GameCharacter.cpp">
       <Filter>Source Files\FG\Characters</Filter>
     </ClCompile>
-    <ClCompile Include="CharacterState.cpp">
-      <Filter>Source Files\FG\Characters</Filter>
-    </ClCompile>
     <ClCompile Include="CharacterFrame.cpp">
       <Filter>Source Files\FG\Characters</Filter>
     </ClCompile>
@@ -319,10 +316,10 @@
       <Filter>Source Files\FG\Scripting\Objects</Filter>
     </ClCompile>
     <ClCompile Include="ScriptRangedSwitchBlock.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\FG\Scripting\Objects\Blocks</Filter>
     </ClCompile>
     <ClCompile Include="ScriptLoopBlock.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\FG\Scripting\Objects\Blocks</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -443,9 +440,6 @@
     <ClInclude Include="GameCharacter.h">
       <Filter>Header Files\FG\Characters</Filter>
     </ClInclude>
-    <ClInclude Include="CharacterState.h">
-      <Filter>Header Files\FG\Characters</Filter>
-    </ClInclude>
     <ClInclude Include="CharacterFrame.h">
       <Filter>Header Files\FG\Characters</Filter>
     </ClInclude>
@@ -509,11 +503,14 @@
     <ClInclude Include="ScriptLine.h">
       <Filter>Header Files\FG\Scripting\Data</Filter>
     </ClInclude>
-    <ClInclude Include="ScriptRangedSwitchBlock.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ScriptLoopBlock.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\FG\Scripting\Objects\Blocks</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptRangedSwitchBlock.h">
+      <Filter>Header Files\FG\Scripting\Objects\Blocks</Filter>
+    </ClInclude>
+    <ClInclude Include="GLIncludes.hpp">
+      <Filter>Header Files\IncludeLists</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

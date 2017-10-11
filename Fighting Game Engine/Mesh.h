@@ -1,5 +1,7 @@
 #pragma once
-#include "CommonUtilIncludes.hpp"
+#include <string>
+#include "GLIncludes.hpp"
+
 class CachedMesh;
 
 class Mesh
@@ -19,8 +21,10 @@ public:
 
 	bool editable;//If set to true, prevent the vertices from being deleted while this mesh exists
 	bool valid();
-	Mesh(const std::string& name, CachedMesh* meshData, bool editable);
+	
 	void Update();
+
+	Mesh(const std::string& name, CachedMesh* meshData, bool editable);
 	~Mesh();
 };
 

@@ -1,12 +1,16 @@
 #pragma once
+#include <string>
+#include <unordered_map>
+#include "Script.h"
 
 class Object;
 class GameCharacter
 {
-public:
+	std::string _currentStateId;
+	int _currentFrame;
 
-	int currentState;
-	int currentFrame;
+	std::unordered_map<std::string, std::shared_ptr<Script>> _stateLookup;
+public:
 
 	Object* characterObject;
 

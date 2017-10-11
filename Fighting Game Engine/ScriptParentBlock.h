@@ -6,7 +6,7 @@ struct ScriptFunctionSignature;
 class ScriptParentBlock :
 	public ScriptBlock
 {
-	std::map<std::string, ScriptFunctionSignature> _functions;
+	std::unordered_map<std::string, ScriptFunctionSignature> _functions;
 
 	bool HandleControlFlag();
 

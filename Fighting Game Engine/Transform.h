@@ -1,5 +1,7 @@
 #pragma once
-#include "CommonUtilIncludes.hpp"
+#include <GLM\glm.hpp>
+#include <GLM\gtc\quaternion.hpp>
+
 class Transform
 {
 public:
