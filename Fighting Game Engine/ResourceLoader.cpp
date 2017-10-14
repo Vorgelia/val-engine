@@ -104,6 +104,7 @@ bool ResourceLoader::SaveFile(const FS::path& dir, std::string& content, int fla
 	ofs.close();
 	return true;
 }
+
 //Abstraction for turning a file into an array of its lines. Heavily used in parsing.
 std::vector<std::string> ResourceLoader::ReturnFileLines(const FS::path& dir, bool removeWhitespace = false)
 {
@@ -127,6 +128,11 @@ std::vector<std::string> ResourceLoader::ReturnFileLines(const FS::path& dir, bo
 		boost::algorithm::erase_all(content, " ");
 		boost::algorithm::erase_all(content, "\t");
 	}
+	if(content == "")
+	{
+		return std::vector<std::string>();
+	}
+
 	std::vector<std::string> lines;
 	boost::split(lines, content, boost::is_any_of("\n"), boost::token_compress_on);
 	return lines;

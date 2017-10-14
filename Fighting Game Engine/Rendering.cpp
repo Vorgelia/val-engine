@@ -374,7 +374,7 @@ void Rendering::DrawMesh(Transform* transform, Mesh* mesh, Material* mat, Camera
 	glDrawElements(GL_TRIANGLES, mesh->elementAmount, GL_UNSIGNED_INT, 0);
 }
 
-//TODO: Refactor
+//TODO: Refactor, use instancing
 void Rendering::DrawScreenText(glm::vec4 rect, GLuint size, std::string text, Font* font, TextAlignment alignment)
 {
 	if(text.size() == 0)

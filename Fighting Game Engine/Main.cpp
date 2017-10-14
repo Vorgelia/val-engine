@@ -90,10 +90,11 @@ int main()
 		UpdateComponents();//Some parts of the engine like timekeeping have to update as frequently as possible, regardless of whether it's game update time.
 
 		bool updatedFrame = false;//This is a variable that keeps track of whether we've run a game update on this iteration. If we have, this will tell the engine to render at the end.
-		if(!GameStateManager::isLoading)
+		if(!GameStateManager::isLoading())
 		{
+			//Run updates until running one would put us ahead of our current time
 			while(Time::lastUpdateTime + VE_FRAME_TIME <= Time::time)
-			{//Run updates until running one would put us ahead of our current time
+			{
 				updatedFrame = true;
 				Time::FrameUpdate();
 
@@ -189,17 +190,20 @@ void BeginFrame()
 void EndFrame()
 {
 	//Don't apply anything if the game state manager is loading.
-	if(!GameStateManager::isLoading)
+	if(!GameStateManager::isLoading())
 	{
 		//Call the frame end callback on the current scene
-		GameStateManager::states[GameStateManager::currentState]->FrameEnd();
+		GameStateManager::currentState()->FrameEnd();
 		//Draw post effects specified in State/PostEffectsOrder.txt, in the order they were given
-		for(unsigned int i = 0; i < GameStateManager::states[GameStateManager::currentState]->postEffectsOrder().size(); ++i)
+		for(unsigned int i = 0; i < GameStateManager::currentState()->postEffectsOrder().size(); ++i)
 		{
-			Rendering::DrawPostEffect(Resource::postEffects[GameStateManager::states[GameStateManager::currentState]->postEffectsOrder()[i]]);
+			Rendering::DrawPostEffect(
+				Resource::GetPostEffect(
+					GameStateManager::currentState()
+					->postEffectsOrder()[i]));
 		}
 		//Tell the scene to draw its GUI now.
-		GameStateManager::states[GameStateManager::currentState]->GUI();
+		GameStateManager::currentState()->GUI();
 	}
 	//Rendering::DrawScreenText(glm::vec4(1920 - 64, 0, 64, 64), 64, std::to_string(GameStateManager::currentState), nullptr, TextAlignment::Right);
 

@@ -2,57 +2,78 @@
 #include "FGIncludes.hpp"
 #include "Resource.h"
 #include "Rendering.h"
+#include <unordered_map>
+
 namespace GameStateManager
 {
-	static int stateToLoad = -1;
-	int currentState = -1;
-	bool isLoading = false;
-	std::vector<GameState*> states;
+	std::string _stateToLoad = "";
+	bool _isLoading = false;
+	std::unordered_map<std::string, std::shared_ptr<GameState> const> states;
+	std::shared_ptr<GameState> _currentState = nullptr;
 }
 
-void GameStateManager::LoadState(int stateIndex)
+std::shared_ptr<GameState>& GameStateManager::currentState()
 {
-	DebugLog::Push("----\n\n\n Loading State: " + std::to_string(stateIndex) + "\n\n\n----", LogItem::Type::Message);
-	stateToLoad = stateIndex;
+	return _currentState;
+}
+
+bool GameStateManager::isLoading()
+{
+	return _isLoading;
+}
+
+void GameStateManager::LoadState(const std::string& name)
+{
+	DebugLog::Push("----\n\n\n Loading State: " + name + "\n\n\n----", LogItem::Type::Message);
+	_stateToLoad = name;
 }
 
 //The game states are managed here. This is where state loading and cleanup, as well as their per-state callbacks are handled.
 void GameStateManager::FrameEnd()
 {
-	if(stateToLoad > -1)
+	if(!_stateToLoad.empty())
 	{
-		if(currentState > -1)
+		auto& iter = states.find(_stateToLoad);
+		if(iter == states.end())
 		{
-			states[currentState]->Cleanup();
+			DebugLog::Push("GameStateManager - Attempting to load invalid state " + _stateToLoad);
+			_stateToLoad.clear();
+		}
+
+		if(_currentState != nullptr)
+		{
+			_currentState->Cleanup();
 			Resource::Unload();
 		}
-		currentState = stateToLoad;
-		isLoading = true;
-		stateToLoad = -1;
-		states[currentState]->LoadResources();
+
+		_currentState = iter->second;
+		_isLoading = true;
+		_stateToLoad.clear();
+		_currentState->LoadResources();
 	}
 }
 
 void GameStateManager::Update()
 {
-	if(currentState > -1 && isLoading&&states[currentState]->loaded())
+	if(_currentState != nullptr && _isLoading&&_currentState->loaded())
 	{
-		isLoading = false;
-		Time::timeSinceLoad = 0;
-		Time::lastUpdateTime = Time::time - VE_FRAME_TIME;
-		states[currentState]->OnLoaded();
+		_isLoading = false;
+		Time::OnStateLoaded();
+		_currentState->OnLoaded();
 	}
 }
 
 void GameStateManager::Init()
 {
 	//Instantiate all the game states
-	//I kind of want to move this somewhere less obscure to make it easier to configure.
-	states.push_back(new GS_Intro("States/Intro"));
-	states.push_back(new GS_Menu("States/Menu"));
-	currentState = -1;
-	stateToLoad = 0;
-	isLoading = true;
+	//TODO: Make dynamic
+
+	states.insert(std::pair<std::string, std::shared_ptr<GameState>>("Intro", std::make_shared<GS_Intro>("States/Intro")));
+	states.insert(std::pair<std::string,std::shared_ptr<GameState>>("Menu", std::make_shared<GS_Menu>("States/Menu")));
+
+	_currentState = nullptr;
+	_stateToLoad = "Intro";
+	_isLoading = true;
 }
 
 void GameStateManager::Cleanup()
@@ -62,32 +83,32 @@ void GameStateManager::Cleanup()
 
 void GameStateManager::StateInit()
 {
-	if(currentState < 0 || isLoading)
+	if(_currentState == nullptr || _isLoading)
 		return;
-	if(!states[currentState]->initialized())
-		states[currentState]->Init();
+	if(!_currentState->initialized())
+		_currentState->Init();
 }
 
 void GameStateManager::StateUpdate()
 {
-	if(currentState < 0 || isLoading)
+	if(_currentState == nullptr || _isLoading)
 		return;
-	if(states[currentState]->initialized())
-		states[currentState]->Update();
+	if(_currentState->initialized())
+		_currentState->Update();
 }
 
 void GameStateManager::StateGameUpdate()
 {
-	if(currentState < 0 || isLoading)
+	if(_currentState == nullptr || _isLoading)
 		return;
-	if(states[currentState]->initialized())
-		states[currentState]->GameUpdate();
+	if(_currentState->initialized())
+		_currentState->GameUpdate();
 }
 
 void GameStateManager::StateRenderObjects()
 {
-	if(currentState < 0 || isLoading)
+	if(_currentState == nullptr || _isLoading)
 		return;
-	if(states[currentState]->initialized())
-		states[currentState]->RenderObjects();
+	if(_currentState->initialized())
+		_currentState->RenderObjects();
 }

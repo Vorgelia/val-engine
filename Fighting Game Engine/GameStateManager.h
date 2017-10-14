@@ -1,19 +1,16 @@
 #pragma once
+#include <memory>
 #include <vector>
 
 class GameState;
 namespace GameStateManager
 {
-	//global state variables here
-	extern std::vector<GameState*> states;
-
-	extern int stateToLoad;
-	extern int currentState;
-	extern bool isLoading;
+	std::shared_ptr<GameState>& currentState();
+	bool isLoading();
 
 	void Init();
 	void Update();
-	void LoadState(int stateIndex);
+	void LoadState(const std::string& name);
 	void FrameEnd();
 	void Cleanup();
 

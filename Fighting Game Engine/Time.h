@@ -10,10 +10,12 @@ namespace Time
 	extern double lastTime;
 	extern double lastUpdateTime;
 	extern double timeSinceLoad;
-	extern float updateRate;
-	extern unsigned long frameCount;
+	extern double updateRate;
+	extern unsigned long long frameCount;
+	extern unsigned long long frameCountSinceLoad;
 
 	void Update();
 	void FrameUpdate();
+	void OnStateLoaded();
 }
 
