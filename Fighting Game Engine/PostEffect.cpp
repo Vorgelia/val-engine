@@ -4,7 +4,7 @@
 
 PostEffect::PostEffect(const std::vector<PostEffectElement>& elements, bool cbBefore, bool cbAfter, int order)
 {
-	this->elementChain = elements;
+	elementChain = elements;
 	clearBuffersAfter = cbAfter;
 	clearBuffersBefore = cbBefore;
 	this->order = order;
@@ -12,5 +12,5 @@ PostEffect::PostEffect(const std::vector<PostEffectElement>& elements, bool cbBe
 
 PostEffect::PostEffect(const FS::path& path)
 {
-	ResourceLoader::LoadPostEffect(path, &elementChain, &clearBuffersBefore, &clearBuffersAfter, &order);
+	ResourceLoader::LoadPostEffect(path, elementChain, clearBuffersBefore, clearBuffersAfter, order);
 }

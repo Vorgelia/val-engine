@@ -26,11 +26,9 @@ Also included are unnecessary attempts at memory management as personal exercise
 TODO: Find a way to multithread input so inputs are received and timed properly on sub-60FPS.
 TODO: Add more customization over cleaning up framebuffers between frames.
 TODO: Check if a framebuffer was used last frame before cleaning it up.
-TODO: Add error checking to Network classes.
 -Cleanup and Efficiency
 TODO: Clean up includes. Change default function parameters to be defined in .h and not .cpp.
 TODO: Change some class variables to be private with getters.
-TODO: Replace some instances of map with unordered_map.
 ----
 Important defines:
 Resource.cpp:           VE_CREATE_DEFAULT_RESOURCES

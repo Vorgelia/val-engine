@@ -17,7 +17,10 @@ protected:
 
 	FS::path _dataPath;
 
-	std::unordered_map<int, Object*> _objects;
+	std::vector<std::unique_ptr<Object>> _objects;
+	std::unordered_map<long, Object*> _objectLookup;
+	std::unordered_map<std::string, Object*> _objectNameLookup;
+
 	std::vector<std::string> _postEffectsOrder;
 public:
 
@@ -39,7 +42,7 @@ public:
 	virtual void Cleanup();
 	virtual std::string GameState::Serialize();
 	virtual void GameState::Deserialize(const std::string& data);
-	virtual const Object* FindObject(const std::string& name);
+	virtual Object* FindObject(const std::string& name);
 
 	GameState(const FS::path& path);
 	virtual ~GameState();

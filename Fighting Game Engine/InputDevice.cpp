@@ -47,7 +47,7 @@ InputDevice::InputDevice(int deviceID)
 				c = '_';
 		}
 
-		ResourceLoader::LoadControlSettings("Settings/Input/" + this->_deviceFilename + ".vi", &(this->_directionMap), &(this->_buttonMap));
+		ResourceLoader::LoadControlSettings("Settings/Input/" + this->_deviceFilename + ".vi", (this->_directionMap), (this->_buttonMap));
 	}
 	_inputBuffer = std::make_shared<InputBuffer>(VE_INPUT_BUFFER_SIZE);
 
