@@ -12,12 +12,6 @@ enum class InputDirection;
 class InputEvent;
 class Object;
 
-enum class ResourceError
-{
-	FileUnavailable,
-	FileUnreadable
-};
-
 namespace ResourceLoader
 {
 	std::string LoadTextResource(int id, const std::string& type = "TEXT");
@@ -32,6 +26,4 @@ namespace ResourceLoader
 	void LoadPostEffect(const FS::path& path, std::vector<std::pair<int, Material*>>& elements, bool& cbBefore, bool& cbAfter, int& order);
 	void LoadControlSettings(const FS::path& path, std::unordered_map<InputDirection, InputEvent>& dir, std::unordered_map<InputButton, InputEvent>& bt);
 	void LoadObjects(const FS::path& path, std::vector<std::unique_ptr<Object>>& objects);
-
-	std::string DecodeError(ResourceError error);
 }

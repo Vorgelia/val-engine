@@ -63,6 +63,7 @@ void GS_Menu::GameUpdate()
 		InputManager::_inputDevices[0]->EvaluateMotion(qcf, false);
 	Rendering::cameras.at(0).position += InputManager::_inputDevices[-1]->inputBuffer()->back()->ToVector() * 500.0f * (float)VE_FRAME_TIME;
 }
+
 GS_Menu::GS_Menu(const FS::path& path) :GameState(path)
 {
 }

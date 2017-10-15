@@ -12,106 +12,45 @@ void GameState::LoadResources()
 {
 	_loaded = false;
 	_initialized = false;
-	if(!_dataPath.empty())
+	if(_dataPath.empty())
 	{
-		std::vector<std::string> rfl;
+		_loaded = true;
+		return;
+	}
 
-		//Load Materials
-		try
-		{
-			rfl = ResourceLoader::ReturnFileLines(_dataPath.string() + "/MaterialResources.txt", true);
-			for(unsigned int i = 0; i < rfl.size(); ++i)
-				if(rfl[i].substr(0, 2) != "//" && rfl[i] != "")
-					Resource::GetMaterial(rfl[i]);//Materials also load their associated textures with them.
-		}
-		catch(ResourceError err)
-		{
-			DebugLog::Push(ResourceLoader::DecodeError(err) + "\n\t" + _dataPath.string() + "/MaterialResources.txt");
-		}
-		catch(...)
-		{
-			DebugLog::Push("Resource: Unidentified Exception when loading file \n\t" + _dataPath.string() + "/MaterialResources.txt");
-		}
+	std::vector<std::string> rfl;
+	try
+	{
+		rfl = ResourceLoader::ReturnFileLines(_dataPath.string() + "/MaterialResources.txt", true);
+		for(unsigned int i = 0; i < rfl.size(); ++i)
+			if(rfl[i].substr(0, 2) != "//" && rfl[i] != "")
+				Resource::GetMaterial(rfl[i]);//Materials also load their associated textures with them.
 
-		//Load Meshes
-		try
+		rfl = ResourceLoader::ReturnFileLines(_dataPath.string() + "/MeshResources.txt", true);
+		for(unsigned int i = 0; i < rfl.size(); ++i)
+			if(rfl[i].substr(0, 2) != "//" && rfl[i] != "")
+				Resource::GetMesh(rfl[i]);
+
+		rfl = ResourceLoader::ReturnFileLines(_dataPath.string() + "/TextureResources.txt", true);
+		for(unsigned int i = 0; i < rfl.size(); ++i)
+			if(rfl[i].substr(0, 2) != "//" && rfl[i] != "")
+				Resource::GetTexture(rfl[i]);
+
+		ResourceLoader::LoadObjects(_dataPath.string() + "/SceneObjects.txt", _objects);
+		for(auto& iter : _objects)
 		{
-			rfl = ResourceLoader::ReturnFileLines(_dataPath.string() + "/MeshResources.txt", true);
-			for(unsigned int i = 0; i < rfl.size(); ++i)
-				if(rfl[i].substr(0, 2) != "//" && rfl[i] != "")
-					Resource::GetMesh(rfl[i]);
-		}
-		catch(ResourceError err)
-		{
-			DebugLog::Push(ResourceLoader::DecodeError(err) + "\n\t" + _dataPath.string() + "/MeshResources.txt");
-		}
-		catch(...)
-		{
-			DebugLog::Push("Resource: Unidentified Exception when loading file \n\t" + _dataPath.string() + "/MeshResources.txt");
+			_objectLookup.emplace(std::make_pair(iter->id, iter.get()));
+			_objectNameLookup.emplace(std::make_pair(iter->name, iter.get()));
 		}
 
-		//Load Textures
-		try
-		{
-			rfl = ResourceLoader::ReturnFileLines(_dataPath.string() + "/TextureResources.txt", true);
-			for(unsigned int i = 0; i < rfl.size(); ++i)
-				if(rfl[i].substr(0, 2) != "//" && rfl[i] != "")
-					Resource::GetTexture(rfl[i]);
-		}
-		catch(ResourceError err)
-		{
-			DebugLog::Push(ResourceLoader::DecodeError(err) + "\n\t" + _dataPath.string() + "/TextureResources.txt");
-		}
-		catch(...)
-		{
-			DebugLog::Push("Resource: Unidentified Exception when loading file \n\t" + _dataPath.string() + "/TextureResources.txt");
-		}
-
-		//Load Scene Objects
-		try
-		{
-			ResourceLoader::LoadObjects(_dataPath.string() + "/SceneObjects.txt", _objects);
-			for(auto& iter : _objects)
-			{
-				_objectLookup.emplace(std::make_pair(iter->id, iter.get()));
-				_objectNameLookup.emplace(std::make_pair(iter->name, iter.get()));
-			}
-		}
-		catch(ResourceError err)
-		{
-			DebugLog::Push(ResourceLoader::DecodeError(err) + "\n\t" + _dataPath.string() + "/SceneObjects.txt");
-		}
-		catch(...)
-		{
-			DebugLog::Push("Resource: Unidentified Exception when loading file \n\t" + _dataPath.string() + "/SceneObjects.txt");
-		}
-
-		//Load Post Effects
-		try
-		{
-			try
-			{
-				_postEffectsOrder = ResourceLoader::ReturnFileLines(_dataPath.string() + "/PostEffectsOrder.txt", true);
-				for(unsigned int i = 0; i < _postEffectsOrder.size(); ++i)
-					if(_postEffectsOrder[i].substr(0, 2) != "//" && _postEffectsOrder[i] != "")
-						Resource::GetPostEffect(_postEffectsOrder[i]);
-			}
-			catch(ResourceError err)
-			{
-				DebugLog::Push(ResourceLoader::DecodeError(err) + "\n\t" + _dataPath.string() + "/PostEffectsOrder.txt");
-				throw;
-			}
-			catch(...)
-			{
-				DebugLog::Push("Resource: Unidentified Exception when loading file \n\t" + _dataPath.string() + "/PostEffectsOrder.txt");
-				throw;
-			}
-		}
-		catch(...)
-		{
-			_postEffectsOrder.clear();
-		}
-
+		_postEffectsOrder = ResourceLoader::ReturnFileLines(_dataPath.string() + "/PostEffectsOrder.txt", true);
+		for(unsigned int i = 0; i < _postEffectsOrder.size(); ++i)
+			if(_postEffectsOrder[i].substr(0, 2) != "//" && _postEffectsOrder[i] != "")
+				Resource::GetPostEffect(_postEffectsOrder[i]);
+	}
+	catch(std::runtime_error err)
+	{
+		DebugLog::Push(err.what());
 	}
 	_loaded = true;
 }
@@ -143,6 +82,7 @@ void GameState::Update()
 		glfwSetWindowShouldClose(Screen::window, GLFW_TRUE);
 	}
 }
+
 void GameState::GameUpdate()
 {
 
@@ -176,7 +116,11 @@ void GameState::Deserialize(const std::string& data)
 void GameState::Cleanup()
 {
 	_objects.clear();
+	_objectLookup.clear();
+	_objectNameLookup.clear();
+
 	_postEffectsOrder.clear();
+
 	_loaded = false;
 	_initialized = false;
 }

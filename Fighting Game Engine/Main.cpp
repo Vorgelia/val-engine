@@ -13,6 +13,7 @@ SOIL http://www.lonesock.net/soil.html
 Boost http://www.boost.org/
 Freetype 2 https://www.freetype.org/
 FMTlib http://fmtlib.net
+Nlohmann JSON https://github.com/nlohmann/json
 Libraries planned to be used:
 IrrKlang
 
@@ -31,6 +32,7 @@ TODO: Clean up includes. Change default function parameters to be defined in .h 
 TODO: Change some class variables to be private with getters.
 ----
 Important defines:
+Main.cpp:               VE_USE_SINGLE_BUFFER
 Resource.cpp:           VE_CREATE_DEFAULT_RESOURCES
 InputDevice.cpp:        VE_INPUT_BUFFER_INIT
 -				        VE_INPUT_BUFFER_MID
@@ -45,6 +47,9 @@ ScriptParsingUtils.cpp: VE_TAB_SPACE_AMOUNT
 
 #include "SystemIncludes.hpp"
 #include "FGIncludes.hpp"
+
+//Controls whether a single render buffer should be used
+#define VE_USE_SINGLE_BUFFER
 
 void GLInit();
 void GLCleanup();
@@ -133,6 +138,9 @@ inline void GLInit()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+#ifdef VE_USE_SINGLE_BUFFER
+	glfwWindowHint(GLFW_DOUBLEBUFFER, GL_FALSE);
+#endif
 	//glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 	//glfwWindowHint(GLFW_DECORATED, GL_FALSE);
 
@@ -211,7 +219,12 @@ void EndFrame()
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	Rendering::DrawScreenMesh(glm::vec4(0, 0, 1920, 1080), Resource::GetMesh("Meshes/Base/screenQuad.vm"), Rendering::mainBuffer, Resource::GetMaterial("Materials/Base/Screen_FB.vmat"));
+
+#ifdef VE_USE_SINGLE_BUFFER
+	glFlush();
+#else
 	glfwSwapBuffers(Screen::window);
+#endif
 }
 
 inline void EngineInit()

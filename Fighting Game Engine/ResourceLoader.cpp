@@ -13,21 +13,7 @@
 #include "InputEvent.h"
 #include "InputFrame.h"
 #include "DebugLog.h"
-
-//TODO: Port to JSON
-
-//Turn a resource error into a readable string.
-std::string ResourceLoader::DecodeError(ResourceError error)
-{
-	switch(error)
-	{
-	case ResourceError::FileUnavailable:
-		return "Resource Error 0: Could not find file.";
-	case ResourceError::FileUnreadable:
-		return "Resource Error 1: Could not open file.";
-	}
-	return "Resource: UnknownError " + std::to_string(static_cast<int>(error));
-}
+#include <json.hpp>
 
 //Probably my least favourite part of making this engine is importing files.
 //The code always looks like a mess but at least i don't have to touch it after making it.
@@ -37,13 +23,13 @@ std::string ResourceLoader::LoadTextResource(int id, const std::string& type)
 	HRSRC hResource = FindResource(NULL, MAKEINTRESOURCE(id), (LPCSTR)type.c_str());
 	if(hResource == nullptr)
 	{
-		throw ResourceError::FileUnavailable;
+		throw std::runtime_error("Unable to find resource with ID " + std::to_string(id));
 	}
 
 	HGLOBAL hLoadedResource = LoadResource(NULL, hResource);
 	if(hLoadedResource == nullptr)
 	{
-		throw ResourceError::FileUnreadable;
+		throw std::runtime_error("Unable to load resource with ID " + std::to_string(id));
 	}
 
 	LPVOID pdata = LockResource(hLoadedResource);
@@ -59,13 +45,13 @@ std::vector<unsigned char> ResourceLoader::LoadBinaryResource(int id, const std:
 	HRSRC hResource = FindResource(NULL, MAKEINTRESOURCE(id), (LPCSTR)type.c_str());
 	if(hResource == 0)
 	{
-		throw ResourceError::FileUnavailable;
+		throw std::runtime_error("Unable to find binary resource with ID " + std::to_string(id));
 	}
 
 	HGLOBAL hLoadedResource = LoadResource(NULL, hResource);
 	if(hLoadedResource == 0)
 	{
-		throw ResourceError::FileUnreadable;
+		throw std::runtime_error("Unable to load binary resource with ID " + std::to_string(id));
 	}
 
 	LPVOID pdata = LockResource(hLoadedResource);
@@ -78,12 +64,12 @@ std::string ResourceLoader::ReturnFile(const FS::path& dir)
 {
 	//Abstraction for turning a file into a string.
 	if(!FS::exists(dir))
-		throw ResourceError::FileUnavailable;
+		throw std::runtime_error("Unable to find resource at " + dir.string());
 
 	std::ifstream ifs(dir.c_str());
 	if(!ifs.is_open())
 	{
-		throw ResourceError::FileUnreadable;
+		throw std::runtime_error("Unable to read resource at " + dir.string());
 	}
 
 	std::string content((std::istreambuf_iterator<char>(ifs)), (std::istreambuf_iterator<char>()));
@@ -99,7 +85,7 @@ bool ResourceLoader::SaveFile(const FS::path& dir, std::string& content, int fla
 	std::ofstream ofs(dir.c_str(), flags);
 	if(!ofs.is_open())
 	{
-		throw ResourceError::FileUnreadable;
+		throw std::runtime_error("Unable to read resource at " + dir.string());
 	}
 
 	ofs << content;
@@ -111,13 +97,13 @@ bool ResourceLoader::SaveFile(const FS::path& dir, std::string& content, int fla
 std::vector<std::string> ResourceLoader::ReturnFileLines(const FS::path& dir, bool removeWhitespace = false)
 {
 	if(!FS::exists(dir))
-		throw ResourceError::FileUnavailable;
+		throw std::runtime_error("Unable to find resource at " + dir.string());
 
 	std::ifstream ifs(dir.c_str());
 
 	if(!ifs.is_open())
 	{
-		throw ResourceError::FileUnreadable;
+		throw std::runtime_error("Unable to read resource at " + dir.string());
 	}
 
 	std::string content((std::istreambuf_iterator<char>(ifs)),
