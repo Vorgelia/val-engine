@@ -5,7 +5,7 @@
 class GameState;
 namespace GameStateManager
 {
-	std::shared_ptr<GameState>& currentState();
+	GameState* currentState();
 	bool isLoading();
 
 	void Init();

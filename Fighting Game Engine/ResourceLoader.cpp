@@ -298,14 +298,14 @@ void ResourceLoader::LoadPostEffect(const FS::path& path, std::vector<std::pair<
 	}
 }
 
-void ResourceLoader::LoadMaterial(const FS::path& path, Shader** shader, unsigned char* properties, std::unordered_map<std::string, GLfloat>* uniformFloats, std::unordered_map<std::string, MaterialTexture>* uniformTextures, std::unordered_map<std::string, glm::vec4>* uniformVectors)
+void ResourceLoader::LoadMaterial(const FS::path& path, Shader*& shader, unsigned char& properties, std::unordered_map<std::string, GLfloat>& uniformFloats, std::unordered_map<std::string, MaterialTexture>& uniformTextures, std::unordered_map<std::string, glm::vec4>& uniformVectors)
 {
 	std::vector<std::string> lines = ReturnFileLines(path, true);
 
 	int readState = 0;//0 Properties, 1 Uniform Floats, 2 Uniform Vectors, 3 Uniform Textures
-	uniformFloats->clear();
-	uniformTextures->clear();
-	uniformVectors->clear();
+	uniformFloats.clear();
+	uniformTextures.clear();
+	uniformVectors.clear();
 
 	std::string lastTexture;
 
@@ -335,16 +335,16 @@ void ResourceLoader::LoadMaterial(const FS::path& path, Shader** shader, unsigne
 			{
 			case 0:
 				if(spl[0] == "properties")
-					(*properties) = boost::lexical_cast<GLuint>(spl[1]);
+					properties = boost::lexical_cast<GLuint>(spl[1]);
 				else if(spl[0] == "shader")
-					(*shader) = Resource::GetShader(spl[1]);
+					shader = Resource::GetShader(spl[1]);
 				break;
 			case 1:
-				uniformFloats->insert(std::pair<std::string, GLfloat>(spl[0], boost::lexical_cast<GLfloat>(spl[1])));
+				uniformFloats.insert(std::pair<std::string, GLfloat>(spl[0], boost::lexical_cast<GLfloat>(spl[1])));
 				break;
 			case 2:
 				boost::split(spl2, spl[1], boost::is_any_of(","), boost::token_compress_on);
-				uniformVectors->insert(std::pair<std::string, glm::vec4>(spl[0],
+				uniformVectors.insert(std::pair<std::string, glm::vec4>(spl[0],
 					glm::vec4(
 						boost::lexical_cast<GLfloat>(spl2[0]),
 						boost::lexical_cast<GLfloat>(spl2[1]),
@@ -359,7 +359,7 @@ void ResourceLoader::LoadMaterial(const FS::path& path, Shader** shader, unsigne
 					boost::split(spl2, spl[1], boost::is_any_of(","), boost::token_compress_on);
 					if(spl2.size() < 4)
 						continue;
-					uniformTextures->at(lastTexture).params = glm::vec4(
+					uniformTextures.at(lastTexture).params = glm::vec4(
 						boost::lexical_cast<float>(spl2[0]),
 						boost::lexical_cast<float>(spl2[1]),
 						boost::lexical_cast<float>(spl2[2]),
@@ -368,7 +368,7 @@ void ResourceLoader::LoadMaterial(const FS::path& path, Shader** shader, unsigne
 				}
 				else
 				{
-					uniformTextures->insert(std::pair<std::string, MaterialTexture>(spl[0], MaterialTexture(Resource::GetTexture(spl[1]))));
+					uniformTextures.insert(std::pair<std::string, MaterialTexture>(spl[0], MaterialTexture(Resource::GetTexture(spl[1]))));
 					lastTexture = spl[0];
 				}
 				break;
@@ -377,24 +377,26 @@ void ResourceLoader::LoadMaterial(const FS::path& path, Shader** shader, unsigne
 	}
 }
 
-void ResourceLoader::LoadMeshVM(const FS::path& path, std::vector<float> **verts, std::vector<GLuint> **elements, std::vector<VertexAttribute> *vertexFormat)
+void ResourceLoader::LoadMeshVM(const FS::path& path, std::vector<float>& out_verts, std::vector<GLuint>& out_elements, std::vector<VertexAttribute>& out_vertexFormat)
 {
-
 	std::vector<std::string> lines = ReturnFileLines(path, true);
 
 	int readState = 0; //0 Attribs, 1 Vertices, 2 Elements
-	*verts = new std::vector<float>();
-	*elements = new std::vector<GLuint>();
+	out_verts.clear();
+	out_elements.clear();
 
 	//And here is my very loose implementation of a very loosely defined format. I present to you, ValMesh!
 	//Look at Meshes/quad.vm as an example of how it works. It's really simple.
 	//readState keeps track of what is currently being read, options being Attribs, Vertices and Elements.
 	for(unsigned int i = 0; i < lines.size(); ++i)
 	{
-		if(lines[i] == "" || lines[i].substr(0, 2) == "//")
+		if(lines[i].size() < 2 || lines[i].substr(0, 2) == "//")
+		{
 			continue;
+		}
 		else if(lines[i][0] == '#')
-		{//I'm cheating here and only checking for the first character after #
+		{
+			//I'm cheating here and only checking for the first character after #
 			if(lines[i][1] == 'A')
 				readState = 0;
 			else if(lines[i][1] == 'V')
@@ -407,23 +409,21 @@ void ResourceLoader::LoadMeshVM(const FS::path& path, std::vector<float> **verts
 			std::vector<std::string> split;
 			boost::split(split, lines[i], boost::is_any_of(","), boost::token_compress_on);//Split line by comma
 			switch(readState)
-			{//Indiscriminately add stuff to the arrays based on readState
+			{
+				//Indiscriminately add stuff to the arrays based on readState
 			case 0:
 				for(unsigned int j = 0; j < split.size(); ++j)//Cheating yet again. Not splitting VertexAttributes by - and just taking the first and third characters.
-					vertexFormat->push_back(VertexAttribute((VertexAttributeLocation)(boost::lexical_cast<int>(split[j][0])), boost::lexical_cast<int>(split[j][2])));
+					out_vertexFormat.push_back(VertexAttribute((VertexAttributeLocation)(boost::lexical_cast<int>(split[j][0])), boost::lexical_cast<int>(split[j][2])));
 				break;//I bet your favourite format doesn't omit error checking
 			case 1:
 				for(unsigned int j = 0; j < split.size(); ++j)
-					(*verts)->push_back(boost::lexical_cast<float>(split[j]));
+					out_verts.push_back(boost::lexical_cast<float>(split[j]));
 				break;
 			case 2:
 				for(unsigned int j = 0; j < split.size(); ++j)
-					(*elements)->push_back(boost::lexical_cast<GLuint>(split[j]));
+					out_elements.push_back(boost::lexical_cast<GLuint>(split[j]));
 				break;
 			}
 		}
 	}
-
-	//(*verts)->push_back();
-	//(*elements)->push_back();
 }

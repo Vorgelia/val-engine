@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <string>
+#include <unordered_set>
 #include <boost/filesystem.hpp>
 #include "GLIncludes.hpp"
 
@@ -30,15 +31,16 @@ class CachedMesh
 {
 public:
 	std::string name;
-	std::vector<float> *verts;
-	std::vector<GLuint> *elements;
+	std::vector<float> verts;
+	std::vector<GLuint> elements;
 	std::vector<VertexAttribute> vertexFormat;
-	std::vector<Mesh*> owners;
+
+	std::unordered_set<Mesh*> owners;
 
 	bool RegisterOwner(Mesh*);
 	bool UnregisterOwner(Mesh*);
 
-	CachedMesh(const std::string& name, std::vector<float> *verts, std::vector<GLuint> *elements, const std::vector<VertexAttribute>& vertexFormat);
+	CachedMesh(const std::string& name, std::vector<float>& verts, std::vector<GLuint>& elements, const std::vector<VertexAttribute>& vertexFormat);
 	CachedMesh(const FS::path& path);
 	~CachedMesh();
 };

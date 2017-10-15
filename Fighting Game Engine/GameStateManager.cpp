@@ -8,11 +8,11 @@ namespace GameStateManager
 {
 	std::string _stateToLoad = "";
 	bool _isLoading = false;
-	std::unordered_map<std::string, std::shared_ptr<GameState> const> states;
-	std::shared_ptr<GameState> _currentState = nullptr;
+	std::unordered_map<std::string, std::unique_ptr<GameState> const> states;
+	GameState* _currentState = nullptr;
 }
 
-std::shared_ptr<GameState>& GameStateManager::currentState()
+GameState* GameStateManager::currentState()
 {
 	return _currentState;
 }
@@ -46,7 +46,7 @@ void GameStateManager::FrameEnd()
 			Resource::Unload();
 		}
 
-		_currentState = iter->second;
+		_currentState = iter->second.get();
 		_isLoading = true;
 		_stateToLoad.clear();
 		_currentState->LoadResources();
@@ -68,8 +68,8 @@ void GameStateManager::Init()
 	//Instantiate all the game states
 	//TODO: Make dynamic
 
-	states.insert(std::pair<std::string, std::shared_ptr<GameState>>("Intro", std::make_shared<GS_Intro>("States/Intro")));
-	states.insert(std::pair<std::string,std::shared_ptr<GameState>>("Menu", std::make_shared<GS_Menu>("States/Menu")));
+	states.insert(std::make_pair("Intro", std::make_unique<GS_Intro>("States/Intro")));
+	states.insert(std::make_pair("Menu", std::make_unique<GS_Menu>("States/Menu")));
 
 	_currentState = nullptr;
 	_stateToLoad = "Intro";

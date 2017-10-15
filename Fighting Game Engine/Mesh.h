@@ -11,7 +11,7 @@ private:
 
 public:
 	std::string name;
-	CachedMesh *meshData;
+	CachedMesh* meshData;
 
 	GLuint vao;
 	GLuint vbo;
@@ -23,6 +23,8 @@ public:
 	bool valid();
 	
 	void Update();
+
+	void SetMeshData(CachedMesh* meshData);
 
 	Mesh(const std::string& name, CachedMesh* meshData, bool editable);
 	~Mesh();
