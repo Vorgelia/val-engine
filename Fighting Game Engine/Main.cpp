@@ -164,8 +164,6 @@ inline void GLCleanup()
 //Reset OpenGL rendering variables, clear buffers and prepare for rendering.
 void BeginFrame()
 {
-	//Not sure why this is here
-	glfwSwapInterval(0);
 	//Reset certain rendering parameters that might have been overriden in the last frame.
 	//BlendFunc controls the way alpha blending happens
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
