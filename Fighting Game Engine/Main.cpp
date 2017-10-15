@@ -26,11 +26,9 @@ Also included are unnecessary attempts at memory management as personal exercise
 TODO: Find a way to multithread input so inputs are received and timed properly on sub-60FPS.
 TODO: Add more customization over cleaning up framebuffers between frames.
 TODO: Check if a framebuffer was used last frame before cleaning it up.
-TODO: Add error checking to Network classes.
 -Cleanup and Efficiency
 TODO: Clean up includes. Change default function parameters to be defined in .h and not .cpp.
 TODO: Change some class variables to be private with getters.
-TODO: Replace some instances of map with unordered_map.
 ----
 Important defines:
 Resource.cpp:           VE_CREATE_DEFAULT_RESOURCES
@@ -90,10 +88,11 @@ int main()
 		UpdateComponents();//Some parts of the engine like timekeeping have to update as frequently as possible, regardless of whether it's game update time.
 
 		bool updatedFrame = false;//This is a variable that keeps track of whether we've run a game update on this iteration. If we have, this will tell the engine to render at the end.
-		if(!GameStateManager::isLoading)
+		if(!GameStateManager::isLoading())
 		{
+			//Run updates until running one would put us ahead of our current time
 			while(Time::lastUpdateTime + VE_FRAME_TIME <= Time::time)
-			{//Run updates until running one would put us ahead of our current time
+			{
 				updatedFrame = true;
 				Time::FrameUpdate();
 
@@ -165,8 +164,6 @@ inline void GLCleanup()
 //Reset OpenGL rendering variables, clear buffers and prepare for rendering.
 void BeginFrame()
 {
-	//Not sure why this is here
-	glfwSwapInterval(0);
 	//Reset certain rendering parameters that might have been overriden in the last frame.
 	//BlendFunc controls the way alpha blending happens
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -189,17 +186,20 @@ void BeginFrame()
 void EndFrame()
 {
 	//Don't apply anything if the game state manager is loading.
-	if(!GameStateManager::isLoading)
+	if(!GameStateManager::isLoading())
 	{
 		//Call the frame end callback on the current scene
-		GameStateManager::states[GameStateManager::currentState]->FrameEnd();
+		GameStateManager::currentState()->FrameEnd();
 		//Draw post effects specified in State/PostEffectsOrder.txt, in the order they were given
-		for(unsigned int i = 0; i < GameStateManager::states[GameStateManager::currentState]->postEffectsOrder().size(); ++i)
+		for(unsigned int i = 0; i < GameStateManager::currentState()->postEffectsOrder().size(); ++i)
 		{
-			Rendering::DrawPostEffect(Resource::postEffects[GameStateManager::states[GameStateManager::currentState]->postEffectsOrder()[i]]);
+			Rendering::DrawPostEffect(
+				Resource::GetPostEffect(
+					GameStateManager::currentState()
+					->postEffectsOrder()[i]));
 		}
 		//Tell the scene to draw its GUI now.
-		GameStateManager::states[GameStateManager::currentState]->GUI();
+		GameStateManager::currentState()->GUI();
 	}
 	//Rendering::DrawScreenText(glm::vec4(1920 - 64, 0, 64, 64), 64, std::to_string(GameStateManager::currentState), nullptr, TextAlignment::Right);
 

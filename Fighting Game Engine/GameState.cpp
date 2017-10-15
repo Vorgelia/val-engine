@@ -70,7 +70,12 @@ void GameState::LoadResources()
 		//Load Scene Objects
 		try
 		{
-			ResourceLoader::LoadObjects(_dataPath.string() + "/SceneObjects.txt", &_objects);
+			ResourceLoader::LoadObjects(_dataPath.string() + "/SceneObjects.txt", _objects);
+			for(auto& iter : _objects)
+			{
+				_objectLookup.emplace(std::make_pair(iter->id, iter.get()));
+				_objectNameLookup.emplace(std::make_pair(iter->name, iter.get()));
+			}
 		}
 		catch(ResourceError err)
 		{
@@ -170,9 +175,6 @@ void GameState::Deserialize(const std::string& data)
 
 void GameState::Cleanup()
 {
-	for(unsigned int i = 0; i < _objects.size(); ++i)
-		if(_objects[i] != nullptr)
-			delete _objects[i];
 	_objects.clear();
 	_postEffectsOrder.clear();
 	_loaded = false;
@@ -181,15 +183,20 @@ void GameState::Cleanup()
 
 void GameState::RenderObjects()
 {
-	for(auto i = _objects.begin(); i != _objects.end(); ++i)
-		i->second->Render();
+	for(auto& i : _objects)
+	{
+		i->Render();
+	}
 }
 
-const Object* GameState::FindObject(const std::string& name)
+Object* GameState::FindObject(const std::string& name)
 {
-	for(auto i = _objects.begin(); i != _objects.end(); ++i)
-		if(i->second->name == name)
-			return i->second;
+	auto& iter = _objectNameLookup.find(name);
+	if(iter != _objectNameLookup.end())
+	{
+		return iter->second;
+	}
+
 	return nullptr;
 }
 

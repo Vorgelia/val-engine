@@ -1,8 +1,9 @@
 #include "CachedMesh.h"
 #include "Mesh.h"
 #include "ResourceLoader.h"
+#include "DebugLog.h"
 
-//Cached meshes are just raw vertex data that are stored in memory before being turned into meshes.
+//Cached meshes are just raw vertex data that is stored in memory before being turned into meshes.
 //Helps with duplicating or editing meshes in realtime.
 //Probably unnecessary.
 VertexAttribute::VertexAttribute(VertexAttributeLocation ind, GLint len)
@@ -18,32 +19,27 @@ std::vector<VertexAttribute> VertexAttribute::defaultMesh()
 
 bool CachedMesh::RegisterOwner(Mesh* owner)
 {
-	for(auto iter = owners.begin(); iter < owners.end(); ++iter)
+	auto& result = owners.insert(owner);
+	if(result.second)
 	{
-		if(*iter == owner)
-		{
-			return false;
-		}
+		owner->SetMeshData(this);
 	}
-
-	owners.push_back(owner);
-	owner->meshData = this;
-	return true;
+	return result.second;
 }
+
 bool CachedMesh::UnregisterOwner(Mesh* owner)
 {
-	for(auto iter = owners.begin(); iter < owners.end(); ++iter)
+	auto& iter = owners.find(owner);
+	if(iter != owners.end())
 	{
-		if(*iter != nullptr&&*iter == owner)
-		{
-			(*iter)->meshData = nullptr;
-			owners.erase(iter);
-			return true;
-		}
+		owner->SetMeshData(nullptr);
+		owners.erase(iter);
+		return true;
 	}
 	return false;
 }
-CachedMesh::CachedMesh(const std::string& name, std::vector<float> *verts, std::vector<GLuint> *elements, const std::vector<VertexAttribute>& vertexFormat)
+
+CachedMesh::CachedMesh(const std::string& name, std::vector<float>& verts, std::vector<GLuint>& elements, const std::vector<VertexAttribute>& vertexFormat)
 {
 	this->name = name;
 	this->verts = verts;
@@ -54,16 +50,20 @@ CachedMesh::CachedMesh(const std::string& name, std::vector<float> *verts, std::
 CachedMesh::CachedMesh(const FS::path& path)
 {
 	this->name = path.string();
-	//if (path.extension().string() == "vm")
-	ResourceLoader::LoadMeshVM(path, &verts, &elements, &vertexFormat);
+	if (path.extension().string() == ".vm")
+		ResourceLoader::LoadMeshVM(path, verts, elements, vertexFormat);
+	else
+	{
+		DebugLog::Push("Unhandled mesh format: " + path.extension().string());
+		//TODO: Handle importing other meshes
+	}
 }
 
 CachedMesh::~CachedMesh()
 {
-	delete verts;
-	delete elements;
-	for(auto iter = owners.begin(); iter < owners.end(); ++iter)
+	for(auto& i : owners)
 	{
-		(*iter)->meshData = nullptr;
+		owners.erase(i);
+		i->SetMeshData(nullptr);
 	}
 }

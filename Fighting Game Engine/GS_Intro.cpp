@@ -37,14 +37,20 @@ void GS_Intro::GUI()
 void GS_Intro::GameUpdate()
 {
 	_levelTimer += (float)VE_FRAME_TIME;
-	if(_levelTimer > 4)
-		GameStateManager::LoadState(1);
-	else
+
+	bool playerInput = false;
+	for(auto& i : InputManager::_inputDevices)
 	{
-		for(auto& i : InputManager::_inputDevices)
-			if(i.second->inputBuffer()->back()->buttonStates > 0)
-				GameStateManager::LoadState(1);
+		if(i.second->inputBuffer()->back()->buttonStates > 0)
+		{
+			playerInput = true;
+			break;
+		}
 	}
+
+
+	if(_levelTimer > 4 || playerInput)
+		GameStateManager::LoadState("Menu");
 }
 
 GS_Intro::GS_Intro(const FS::path& path) :GameState(path)

@@ -19,7 +19,7 @@ public:
 
 	void Render();
 
-	Object(const std::string& name, glm::vec2 pos, glm::vec2 scale, Mesh* mesh = Resource::meshes["Materials/Base/quad.vm"], Material* material = Resource::materials["Materials/Base/Object2D.vmat"], int id = 0);
+	Object(const std::string& name, glm::vec2 pos, glm::vec2 scale, Mesh* mesh = Resource::GetMesh("Materials/Base/quad.vm"), Material* material = Resource::GetMaterial("Materials/Base/Object2D.vmat"), int id = 0);
 	Object();
 	~Object();
 };

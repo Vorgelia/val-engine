@@ -52,10 +52,12 @@ void DebugLog::WriteThread()
 {
 	while(!_endWrite.load())
 	{
-
 		//If the write queue is empty, no reason to keep running this thread.
-		while(_writeQueue.empty())
+		if(_writeQueue.empty())
+		{
 			std::this_thread::yield();
+			continue;
+		}
 
 		//Lock the queue mutex. This will not return until the queue mutex is unlocked, and will then lock it.
 		//The queue mutex should be locked every time anything wants to access the write queue.
@@ -79,9 +81,6 @@ void DebugLog::WriteThread()
 		case LogItem::Type::Error:
 			stackAmount = -1;
 			messagePrefix = "-Error";
-#ifdef VE_DEBUG_ERRORTHROW
-			throw std::runtime_error(li.ToString());
-#endif
 			break;
 		case LogItem::Type::Log:
 			messagePrefix = "-Log";
@@ -110,6 +109,13 @@ void DebugLog::Push(const std::string& data, LogItem::Type type)
 	_writeQueue.push(LogItem(data, type));
 	GetStackTrace(_writeQueue.back().stack(), 100);
 	_queueMutex.unlock();
+
+#ifdef VE_DEBUG_ERRORTHROW
+	if(type == LogItem::Type::Error)
+	{
+		throw std::runtime_error(data);
+	}
+#endif
 }
 
 void DebugLog::GetStackTrace(std::vector<std::string>* storage, unsigned int stackSize)

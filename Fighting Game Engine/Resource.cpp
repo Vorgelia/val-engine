@@ -9,6 +9,7 @@
 #include "Font.h"
 #include "ResourceInitializer.h"
 #include "DebugLog.h"
+#include <memory>
 
 //If the following define exists, the engine will create some default resource files if the folder structure is missing.
 //I opt to create and then read files rather than reading directly from the resources because the generated files have comments in them that explain how they work
@@ -17,28 +18,22 @@
 
 namespace Resource
 {
-	std::unordered_map<std::string, CachedMesh*> cachedMeshes;
-	std::unordered_map<std::string, Mesh*> meshes;
-	std::unordered_map<std::string, Texture*> textures;
-	std::unordered_map<std::string, Material*> materials;
-	std::unordered_map<std::string, Shader*> shaders;
-	std::unordered_map<std::string, Font*> fonts;
+	std::unordered_map<std::string, std::unique_ptr<CachedMesh>> cachedMeshes;
+	std::unordered_map<std::string, std::unique_ptr<Mesh>> meshes;
+	std::unordered_map<std::string, std::unique_ptr<Texture>> textures;
+	std::unordered_map<std::string, std::unique_ptr<Material>> materials;
+	std::unordered_map<std::string, std::unique_ptr<Shader>> shaders;
+	std::unordered_map<std::string, std::unique_ptr<Font>> fonts;
+	std::unordered_map<std::string, std::unique_ptr<PostEffect>> postEffects;
 
 	//Base
-	std::unordered_map<std::string, Mesh*> baseMeshes;
-	std::unordered_map<std::string, Texture*> baseTextures;
-	std::unordered_map<std::string, Material*> baseMaterials;
-	std::unordered_map<std::string, PostEffect*> postEffects;
+	std::unordered_map<std::string, std::unique_ptr<Mesh>> baseMeshes;
+	std::unordered_map<std::string, std::unique_ptr<Texture>> baseTextures;
+	std::unordered_map<std::string, std::unique_ptr<Material>> baseMaterials;
 }
 
 void Resource::Init()
 {
-	std::vector<float> pixels
-	{
-		1, 0, 1, 1,	 0, 0, 0, 1,
-		0, 0, 0, 1,	 1, 0, 1, 1
-	};
-
 #ifdef VE_CREATE_DEFAULT_RESOURCES
 	if(!FS::exists("Meshes/") || !FS::exists("Shaders/") || !FS::exists("Settings/") || !FS::exists("States/"))
 	{
@@ -48,13 +43,18 @@ void Resource::Init()
 #endif
 
 	//Initialization of base resources. These will not be unloaded throughout the program, but they can be overriden per GameState.
-	baseTextures.insert(std::pair<std::string, Texture*>("base_texture", new Texture("base_texture", pixels, glm::ivec2(2, 2), GL_RGBA, GL_NEAREST, GL_REPEAT)));
-	pixels = { 0, 0, 0, 1 };
+	std::vector<float>& pixels = std::vector<float>
+	{
+		1, 0, 1, 1,	 0, 0, 0, 1,
+		0, 0, 0, 1,	 1, 0, 1, 1
+	};
+	baseTextures.emplace(std::make_pair("base_texture", std::make_unique<Texture>("base_texture", pixels, glm::ivec2(2, 2), GL_RGBA, GL_NEAREST, GL_REPEAT)));
 
-	baseTextures.insert(std::pair<std::string, Texture*>("black", new Texture("black", pixels, glm::ivec2(1, 1), GL_RGBA, GL_NEAREST, GL_REPEAT)));
-	pixels = { 1, 1, 1, 1 };
+	pixels = std::vector<float>{ 0, 0, 0, 1 };
+	baseTextures.emplace(std::make_pair("black", std::make_unique<Texture>("black", pixels, glm::ivec2(1, 1), GL_RGBA, GL_NEAREST, GL_REPEAT)));
 
-	baseTextures.insert(std::pair<std::string, Texture*>("white", new Texture("white", pixels, glm::ivec2(1, 1), GL_RGBA, GL_NEAREST, GL_REPEAT)));
+	pixels = std::vector<float>{ 1, 1, 1, 1 };
+	baseTextures.emplace(std::make_pair("white", std::make_unique<Texture>("white", pixels, glm::ivec2(1, 1), GL_RGBA, GL_NEAREST, GL_REPEAT)));
 
 	//Base shaders
 	Resource::GetShader("Shaders/Base/2D");
@@ -75,160 +75,143 @@ void Resource::Update()
 
 Font* Resource::GetFont(FS::path path)
 {
-	Font* rf;
-	if(fonts.count(path.string()))
+	std::string pathString = path.string();
+	auto& iter = fonts.find(pathString);
+
+	if(iter != fonts.end())
 	{
-		rf = fonts[path.string()];
+		return iter->second.get();
 	}
-	else
+
+	if(!FS::exists(path))
 	{
-		if(!FS::exists(path))
-			return nullptr;
-		rf = new Font(path);
-		fonts.insert(std::pair<std::string, Font*>(path.string(), rf));
+		fonts.emplace(std::make_pair(pathString, nullptr));
+		DebugLog::Push("Failed to load Font " + pathString);
+		return nullptr;
 	}
-	return rf;
+
+	return fonts.emplace(
+		std::make_pair(pathString, std::make_unique<Font>(path))
+	).first->second.get();
 }
+
 //The way these functions work is similar. If the resource exists in the per GameState resources, retrieve a pointer to it.
 //Else, if the resource exists in the base resources, do the same.
 //Else, attempt to load the resource, caching it as nullptr if it doesn't exist, so no further loading attempts are made.
 Texture* Resource::GetTexture(FS::path path)
 {
-	Texture* rt = nullptr;
-	if(textures.count(path.string()) > 0)
-	{
-		rt = textures[path.string()];
-	}
-	else if(baseTextures.count(path.string()) > 0)
-	{
-		rt = baseTextures[path.string()];
-	}
-	else
-	{
-		try
-		{
-			rt = new Texture(path.string(), path, GL_RGBA, SOIL_LOAD_RGBA, GL_NEAREST, GL_REPEAT);
-		}
-		catch(ResourceError err)
-		{
-			DebugLog::Push(ResourceLoader::DecodeError(err) + "\n\t" + path.string(), LogItem::Type::Error);
-		}
-		catch(...)
-		{
-			DebugLog::Push("Resource: Unidentified Exception when loading file \n\t" + path.string(), LogItem::Type::Error);
-		}
+	std::string pathString = path.string();
 
-		if(path.parent_path().leaf().string() == "Base")
-			baseTextures.insert(std::pair<std::string, Texture*>(path.string(), rt));
-		else
-			textures.insert(std::pair<std::string, Texture*>(path.string(), rt));
-
+	auto& iter = textures.find(pathString);
+	if(iter != textures.end())
+	{
+		return iter->second.get();
 	}
 
-	if(rt == nullptr)
-		DebugLog::Push("Failed to load texture: " + path.string());
-	return rt;
+	iter = baseTextures.find(pathString);
+	if(iter != baseTextures.end())
+	{
+		return iter->second.get();
+	}
+
+	if(!FS::exists(path))
+	{
+		DebugLog::Push("Unable to find texture at " + pathString);
+		textures.emplace(std::make_pair(pathString, nullptr));
+		return nullptr;
+	}
+
+	auto* container = &textures;
+
+	if(path.parent_path().leaf().string() == "Base")
+	{
+		container = &baseTextures;
+	}
+
+	return container->emplace(
+		std::make_pair(
+			pathString,
+			std::make_unique<Texture>(pathString, path, GL_RGBA, SOIL_LOAD_RGBA, GL_NEAREST, GL_REPEAT))
+	).first->second.get();
 }
 
 PostEffect* Resource::GetPostEffect(FS::path path)
 {
+	std::string pathString = path.string();
+	auto& iter = postEffects.find(pathString);
 
-	PostEffect* rp = nullptr;
-	if(Resource::postEffects.count(path.string()) > 0)
+	if(iter != postEffects.end())
 	{
-		rp = Resource::postEffects[path.string()];
-	}
-	else
-	{
-		try
-		{
-			rp = new PostEffect(path.string());
-		}
-		catch(ResourceError err)
-		{
-			DebugLog::Push(ResourceLoader::DecodeError(err) + "\n\t" + path.string(), LogItem::Type::Error);
-		}
-		catch(...)
-		{
-			DebugLog::Push("Resource: Unidentified Exception when loading file \n\t" + path.string(), LogItem::Type::Error);
-		}
-
-		Resource::postEffects.insert(std::pair<std::string, PostEffect*>(path.string(), rp));
+		return iter->second.get();
 	}
 
-	if(rp == nullptr)
-		DebugLog::Push("Failed to load Post Effect: " + path.string());
-	return rp;
+	if(!FS::exists(path))
+	{
+		DebugLog::Push("Failed to load Texture " + pathString);
+		postEffects.emplace(std::make_pair(pathString, nullptr));
+		return nullptr;
+	}
+
+	return postEffects.emplace(std::make_pair(
+		pathString, std::make_unique<PostEffect>(pathString)
+	)).first->second.get();
 }
 
 Shader* Resource::GetShader(std::string name)
 {
-	Shader* rs = nullptr;
-	if(Resource::shaders.count(name) > 0)
-		rs = Resource::shaders[name];
-	else
+	auto& iter = shaders.find(name);
+	if(iter != shaders.end())
 	{
-		try
-		{
-			rs = new Shader(name, { ShaderAttachment(ResourceLoader::ReturnFile(name + ".vert"), GL_VERTEX_SHADER), ShaderAttachment(ResourceLoader::ReturnFile(name + ".frag"), GL_FRAGMENT_SHADER) });
-		}
-		catch(ResourceError err)
-		{
-			DebugLog::Push(ResourceLoader::DecodeError(err) + " " + name, LogItem::Type::Error);
-		}
-		catch(...)
-		{
-			DebugLog::Push("Resource: Unidentified Exception when loading file " + name, LogItem::Type::Error);
-		}
-
-		Resource::shaders.insert(std::pair<std::string, Shader*>(name, rs));
+		return iter->second.get();
 	}
 
-	if(rs != nullptr&&rs->valid())
-		return shaders[name];
-	else
+	if(!FS::exists(name + ".vert") || !FS::exists(name + ".frag"))
 	{
-		DebugLog::Push("Failed to load Shader: " + name);
+		shaders.emplace(std::pair<std::string, std::unique_ptr<Shader>>(name, nullptr));
+		DebugLog::Push("Failed to load Shader " + name);
 		return nullptr;
 	}
+
+	return shaders.emplace(std::pair<std::string, std::unique_ptr<Shader>>(
+		name,
+		std::make_unique<Shader>(name, std::vector<ShaderAttachment>{ ShaderAttachment(ResourceLoader::ReturnFile(name + ".vert"), GL_VERTEX_SHADER), ShaderAttachment(ResourceLoader::ReturnFile(name + ".frag"), GL_FRAGMENT_SHADER) })
+		)).first->second.get();
 }
 
 Material* Resource::GetMaterial(FS::path path)
 {
-	Material* rm = nullptr;
+	std::string pathString = path.string();
 
-	if(Resource::materials.count(path.string()) > 0)
+	auto& iter = materials.find(pathString);
+	if(iter != materials.end())
 	{
-		rm = Resource::materials[path.string()];
-	}
-	else if(Resource::baseMaterials.count(path.string()) > 0)
-	{
-		rm = Resource::baseMaterials[path.string()];
-	}
-	else
-	{
-		try
-		{
-			rm = new Material(path.string());
-		}
-		catch(ResourceError err)
-		{
-			DebugLog::Push(ResourceLoader::DecodeError(err) + "\n\t" + path.string(), LogItem::Type::Error);
-		}
-		catch(...)
-		{
-			DebugLog::Push("Resource: Unidentified Exception when loading file \n\t" + path.string(), LogItem::Type::Error);
-		}
-
-		if(path.parent_path().leaf().string() == "Base")
-			baseMaterials.insert(std::pair<std::string, Material*>(path.string(), rm));
-		else
-			materials.insert(std::pair<std::string, Material*>(path.string(), rm));
+		return iter->second.get();
 	}
 
-	if(rm == nullptr)
-		DebugLog::Push("Failed to load material: " + path.string());
-	return rm;
+	iter = baseMaterials.find(pathString);
+	if(iter != baseMaterials.end())
+	{
+		return iter->second.get();
+	}
+
+	if(!FS::exists(path))
+	{
+		materials.emplace(std::pair<std::string, std::unique_ptr<Material>>(pathString, nullptr));
+		DebugLog::Push("Failed to load material " + pathString);
+		return nullptr;
+	}
+
+	auto* container = &materials;
+
+	if(path.parent_path().leaf().string() == "Base")
+	{
+		container = &baseMaterials;
+	}
+
+	return container->emplace(std::pair<std::string, std::unique_ptr<Material>>(
+		pathString,
+		std::make_unique<Material>(pathString))
+	).first->second.get();
 }
 
 Material* Resource::CopyMaterial(Material* mat)
@@ -242,138 +225,78 @@ Material* Resource::CopyMaterial(Material* mat)
 		++copyIndex;
 	}
 
-	Material* rm;
-	rm = new Material(*mat);
-	rm->name = mat->name + "_Copy" + std::to_string(copyIndex);
-
-	materials.insert(std::pair<std::string, Material*>(rm->name, rm));
-	return materials[rm->name];
+	auto& iter =
+		materials.emplace(std::pair<std::string, std::unique_ptr<Material>>(
+			mat->name + "_Copy" + std::to_string(copyIndex),
+			std::make_unique<Material>(*mat)))
+		.first;
+	iter->second->name = mat->name + "_Copy" + std::to_string(copyIndex);
+	return iter->second.get();
 }
 
 Mesh* Resource::GetMesh(FS::path path, bool editable)
 {
+	std::string pathString = path.string();
 
-	Mesh* rm = nullptr;
-	if(meshes.count(path.string()) > 0)
+	auto& iter = meshes.find(pathString);
+	if(iter != meshes.end())
 	{
-		rm = meshes[path.string()];
-	}
-	else if(baseMeshes.count(path.string()) > 0)
-	{
-		rm = baseMeshes[path.string()];
-	}
-	else
-	{
-		try
-		{
-			if(cachedMeshes.count(path.string()) == 0)
-				cachedMeshes[path.string()] = new CachedMesh(path);
-
-			rm = new Mesh(path.string(), cachedMeshes[path.string()], editable);
-		}
-		catch(ResourceError err)
-		{
-			DebugLog::Push(ResourceLoader::DecodeError(err) + "\n\t" + path.string(), LogItem::Type::Error);
-		}
-		catch(...)
-		{
-			DebugLog::Push("Resource: Unidentified Exception when loading file \n\t" + path.string(), LogItem::Type::Error);
-		}
-
-		if(path.parent_path().leaf().string() == "Base")
-			meshes.insert(std::pair<std::string, Mesh*>(path.string(), rm));
-		else
-			baseMeshes.insert(std::pair<std::string, Mesh*>(path.string(), rm));
+		return iter->second.get();
 	}
 
-	if(rm == nullptr)
+	iter = baseMeshes.find(pathString);
+	if(iter != baseMeshes.end())
 	{
-		DebugLog::Push("Failed to load Mesh: " + path.string());
+		return iter->second.get();
 	}
-	else if(rm->valid() == false)
+
+	if(!FS::exists(path))
 	{
-		DebugLog::Push("Invalid Mesh: " + path.string());
-		delete rm;
-		rm = nullptr;
+		DebugLog::Push("Failed to load Mesh: " + pathString);
+		postEffects.emplace(std::pair<std::string, std::unique_ptr<PostEffect>>(pathString, nullptr));
+		return nullptr;
 	}
-	return rm;
+
+	auto& cachedMeshIter = cachedMeshes.find(pathString);
+
+	if(cachedMeshIter == cachedMeshes.end())
+	{
+		cachedMeshIter = cachedMeshes.emplace(
+			std::pair<std::string, std::unique_ptr<CachedMesh>>
+			(pathString, std::make_unique<CachedMesh>(path)))
+			.first;
+	}
+
+	iter = meshes.emplace(
+		std::pair<std::string, std::unique_ptr<Mesh>>
+		(pathString, std::make_unique<Mesh>(pathString, cachedMeshIter->second.get(), editable)))
+		.first;
+
+	if(!iter->second->valid())
+	{
+		DebugLog::Push("Imported invalid Mesh: " + pathString);
+	}
+
+	return iter->second.get();
 }
 
 void Resource::Unload()
 {
-	for(auto i = meshes.begin(); i != meshes.end(); ++i)
-	{
-		delete i->second;
-	}
 	meshes.clear();
-
-	//Clear all meshes before clearing cached meshes.
-	//Code is structured so that Meshes send messages to their cached meshes for memory management
-	for(auto i = cachedMeshes.begin(); i != cachedMeshes.end(); ++i)
-	{
-		if(i->second != nullptr)
-			delete i->second;
-	}
 	cachedMeshes.clear();
-
-	for(auto i = textures.begin(); i != textures.end(); ++i)
-	{
-		if(i->second != nullptr)
-			delete i->second;
-	}
 	textures.clear();
-
-	for(auto i = materials.begin(); i != materials.end(); ++i)
-	{
-		if(i->second != nullptr)
-			delete i->second;
-	}
 	materials.clear();
 }
 
 void Resource::Cleanup()
 {
-	for(auto i = baseMeshes.begin(); i != baseMeshes.end(); ++i)
-	{
-		if(i->second != nullptr)
-			delete i->second;
-	}
 	baseMeshes.clear();
 
 	Unload();
 
-	for(auto i = baseMaterials.begin(); i != baseMaterials.end(); ++i)
-	{
-		if(i->second != nullptr)
-			delete i->second;
-	}
 	baseMaterials.clear();
-
-	for(auto i = shaders.begin(); i != shaders.end(); ++i)
-	{
-		if(i->second != nullptr)
-			delete i->second;
-	}
 	shaders.clear();
-
-	for(auto i = baseTextures.begin(); i != baseTextures.end(); ++i)
-	{
-		if(i->second != nullptr)
-			delete i->second;
-	}
 	baseTextures.clear();
-
-	for(auto i = fonts.begin(); i != fonts.end(); ++i)
-	{
-		if(i->second != nullptr)
-			delete i->second;
-	}
 	fonts.clear();
-
-	for(auto i = postEffects.begin(); i != postEffects.end(); ++i)
-	{
-		if(i->second != nullptr)
-			delete i->second;
-	}
 	postEffects.clear();
 }

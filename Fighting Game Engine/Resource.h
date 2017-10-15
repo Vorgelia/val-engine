@@ -14,19 +14,6 @@ class Font;
 
 namespace Resource
 {
-	extern std::unordered_map<std::string, CachedMesh*> cachedMeshes;
-	extern std::unordered_map<std::string, Mesh*> meshes;
-	extern std::unordered_map<std::string, Texture*> textures;
-	extern std::unordered_map<std::string, Material*> materials;
-	extern std::unordered_map<std::string, PostEffect*> postEffects;
-
-	//Base
-	extern std::unordered_map<std::string, Mesh*> baseMeshes;
-	extern std::unordered_map<std::string, Texture*> baseTextures;
-	extern std::unordered_map<std::string, Material*> baseMaterials;
-	extern std::unordered_map<std::string, Shader*> shaders;
-	extern std::unordered_map<std::string, Font*> fonts;
-
 	void Init();
 	Mesh* GetMesh(FS::path path, bool editable = false);
 	Texture* GetTexture(FS::path path);
