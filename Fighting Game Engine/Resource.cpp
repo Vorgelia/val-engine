@@ -121,24 +121,18 @@ Texture* Resource::GetTexture(FS::path path)
 		return nullptr;
 	}
 
-	std::unordered_map<std::string, std::unique_ptr<Texture>>& storage = textures;
+	auto* container = &textures;
 
 	if(path.parent_path().leaf().string() == "Base")
 	{
-		return baseTextures.emplace(
-			std::make_pair(
-				pathString,
-				std::make_unique<Texture>(pathString, path, GL_RGBA, SOIL_LOAD_RGBA, GL_NEAREST, GL_REPEAT))
-		).first->second.get();
+		container = &baseTextures;
 	}
-	else
-	{
-		return textures.emplace(
-			std::make_pair(
-				pathString,
-				std::make_unique<Texture>(pathString, path, GL_RGBA, SOIL_LOAD_RGBA, GL_NEAREST, GL_REPEAT))
-		).first->second.get();
-	}
+
+	return container->emplace(
+		std::make_pair(
+			pathString,
+			std::make_unique<Texture>(pathString, path, GL_RGBA, SOIL_LOAD_RGBA, GL_NEAREST, GL_REPEAT))
+	).first->second.get();
 }
 
 PostEffect* Resource::GetPostEffect(FS::path path)
@@ -207,20 +201,17 @@ Material* Resource::GetMaterial(FS::path path)
 		return nullptr;
 	}
 
+	auto* container = &materials;
+
 	if(path.parent_path().leaf().string() == "Base")
 	{
-		return baseMaterials.emplace(std::pair<std::string, std::unique_ptr<Material>>(
-			pathString,
-			std::make_unique<Material>(pathString))
-		).first->second.get();
+		container = &baseMaterials;
 	}
-	else
-	{
-		return materials.emplace(std::pair<std::string, std::unique_ptr<Material>>(
-			pathString,
-			std::make_unique<Material>(pathString))
-		).first->second.get();
-	}
+
+	return container->emplace(std::pair<std::string, std::unique_ptr<Material>>(
+		pathString,
+		std::make_unique<Material>(pathString))
+	).first->second.get();
 }
 
 Material* Resource::CopyMaterial(Material* mat)
@@ -283,7 +274,7 @@ Mesh* Resource::GetMesh(FS::path path, bool editable)
 
 	if(!iter->second->valid())
 	{
-		DebugLog::Push("Invalid Mesh: " + pathString);
+		DebugLog::Push("Imported invalid Mesh: " + pathString);
 	}
 
 	return iter->second.get();

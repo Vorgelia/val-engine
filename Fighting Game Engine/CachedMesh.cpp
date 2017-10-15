@@ -3,7 +3,7 @@
 #include "ResourceLoader.h"
 #include "DebugLog.h"
 
-//Cached meshes are just raw vertex data that are stored in memory before being turned into meshes.
+//Cached meshes are just raw vertex data that is stored in memory before being turned into meshes.
 //Helps with duplicating or editing meshes in realtime.
 //Probably unnecessary.
 VertexAttribute::VertexAttribute(VertexAttributeLocation ind, GLint len)
@@ -26,6 +26,7 @@ bool CachedMesh::RegisterOwner(Mesh* owner)
 	}
 	return result.second;
 }
+
 bool CachedMesh::UnregisterOwner(Mesh* owner)
 {
 	auto& iter = owners.find(owner);
@@ -37,6 +38,7 @@ bool CachedMesh::UnregisterOwner(Mesh* owner)
 	}
 	return false;
 }
+
 CachedMesh::CachedMesh(const std::string& name, std::vector<float>& verts, std::vector<GLuint>& elements, const std::vector<VertexAttribute>& vertexFormat)
 {
 	this->name = name;
