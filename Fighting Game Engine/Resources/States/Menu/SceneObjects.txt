@@ -1,21 +1,34 @@
-#OBJECT{
-	id=2
-	name=Test Object
-	mesh=Meshes/Base/quad.vm
-	material=Materials/Menu/Menu_Test.vmat
-	position=0,0
-	scale=800,400
-	depth=0
-	render=t
-}
-
-#OBJECT{
-	id=1
-	name=Test Object
-	mesh=Meshes/Base/quad.vm
-	material=Materials/Menu/Menu_Test.vmat
-	position=0,1000
-	scale=3500,1800
-	depth=4
-	render=t
-}
+[
+   {
+	  "id":2,
+	  "name":"Foreground",
+	  "mesh":"Meshes/Base/quad.vm",
+	  "material":"Materials/Menu/Menu_Test.vmat",
+	  "position":{
+		 "x":0,
+		 "y":0
+	  },
+	  "scale":{
+		 "x":800,
+		 "y":400
+	  },
+	  "depth":0,
+	  "render":true
+   },
+   {
+	  "id":2,
+	  "name":"Background",
+	  "mesh":"Meshes/Base/quad.vm",
+	  "material":"Materials/Menu/Menu_Test.vmat",
+	  "position":{
+		 "x":0,
+		 "y":1000
+	  },
+	  "scale":{
+		 "x":3500,
+		 "y":1800
+	  },
+	  "depth":4,
+	  "render":true
+   }
+]

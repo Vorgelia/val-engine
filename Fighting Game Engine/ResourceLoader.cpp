@@ -15,6 +15,8 @@
 #include "DebugLog.h"
 #include <json.hpp>
 
+using json = nlohmann::json;
+
 //Probably my least favourite part of making this engine is importing files.
 //The code always looks like a mess but at least i don't have to touch it after making it.
 std::string ResourceLoader::LoadTextResource(int id, const std::string& type)
@@ -39,6 +41,7 @@ std::string ResourceLoader::LoadTextResource(int id, const std::string& type)
 	int size = SizeofResource(NULL, hResource) / sizeof(char);
 	return std::string(sText).substr(0, size);
 }
+
 std::vector<unsigned char> ResourceLoader::LoadBinaryResource(int id, const std::string& type)
 {
 	//Doesn't work, completely unused.
@@ -60,6 +63,7 @@ std::vector<unsigned char> ResourceLoader::LoadBinaryResource(int id, const std:
 	int size = SizeofResource(NULL, hResource) / sizeof(unsigned char);
 	return std::vector<unsigned char>((unsigned char*)sData, (unsigned char*)sData[size]);
 }
+
 std::string ResourceLoader::ReturnFile(const FS::path& dir)
 {
 	//Abstraction for turning a file into a string.
@@ -181,60 +185,49 @@ void ResourceLoader::LoadControlSettings(const FS::path& path, std::unordered_ma
 
 void ResourceLoader::LoadObjects(const FS::path& path, std::vector<std::unique_ptr<Object>>& objects)
 {
-	std::vector<std::string> lines = ReturnFileLines(path, true);
 	objects.clear();
+	std::string& file = ReturnFile(path);
 
-	std::unique_ptr<Object>* ref = nullptr;
-
-	for(unsigned int i = 0; i < lines.size(); ++i)
+	json j;
+	try
 	{
-		if(lines[i] == "}")
-		{
-			ref = nullptr;
-		}
-		else if(lines[i].size() < 2 || lines[i].substr(0, 2) == "//")
-		{
-			continue;
-		}
-		else if(lines[i] == "#OBJECT{")
-		{
-			if(ref != nullptr)
-			{
-				DebugLog::Push("Unterminated object definition when parsing " + path.string() + " at line " + std::to_string(i));
-			}
+		j = json::parse(file);
+	}
+	catch(std::invalid_argument err)
+	{
+		DebugLog::Push("Error when parsing JSON file " + path.string() + "\n\t" + err.what(), LogItem::Type::Error);
+		return;
+	}
+	catch(...)
+	{
+		DebugLog::Push("Unhandled exception when loading JSON file " + path.string(), LogItem::Type::Error);
+		return;
+	}
 
-			objects.emplace_back(std::make_unique<Object>());
-			ref = &(objects.back());
-		}
-		else if(ref != nullptr)
-		{
-			std::vector<std::string> spl;
-			boost::split(spl, lines[i], boost::is_any_of("="), boost::token_compress_on);
-			std::vector<std::string> spl2;
+	std::unique_ptr<Object>* ref;
+	for(auto& iter : j)
+	{
+		objects.emplace_back(std::make_unique<Object>());
+		ref = &(objects.back());
 
-			if(spl[0] == "name")
-				(*ref)->name = spl[1];
-			else if(spl[0] == "mesh")
-				(*ref)->mesh = Resource::GetMesh(spl[1], false);
-			else if(spl[0] == "material")
-				(*ref)->material = Resource::GetMaterial(spl[1]);
-			else if(spl[0] == "position")
-			{
-				boost::split(spl2, spl[1], boost::is_any_of(","), boost::token_compress_on);
-				(*ref)->transform->position = glm::ivec2(boost::lexical_cast<int>(spl2[0]), boost::lexical_cast<int>(spl2[1]));
-			}
-			else if(spl[0] == "scale")
-			{
-				boost::split(spl2, spl[1], boost::is_any_of(","), boost::token_compress_on);
-				(*ref)->transform->scale = glm::ivec2(boost::lexical_cast<int>(spl2[0]), boost::lexical_cast<int>(spl2[1]));
-			}
-			else if(spl[0] == "id")
-				(*ref)->id = boost::lexical_cast<int>(spl[1]);
-			else if(spl[0] == "depth")
-				(*ref)->transform->depth = boost::lexical_cast<float>(spl[1]);
-			else if(spl[0] == "render")
-				(*ref)->render = spl[1] == "t";
-		}
+		(*ref)->name = iter["name"].get<std::string>();
+
+		(*ref)->mesh = Resource::GetMesh(
+			iter["mesh"].get<std::string>());
+
+		(*ref)->material = Resource::GetMaterial(
+			iter["material"].get<std::string>());
+
+		(*ref)->transform->position = glm::ivec2(
+			iter["position"]["x"].get<int>(),
+			iter["position"]["y"].get<int>());
+
+		(*ref)->transform->scale = glm::ivec2(
+			iter["scale"]["x"].get<int>(),
+			iter["scale"]["y"].get<int>());
+
+		(*ref)->transform->depth = iter["depth"].get<float>();
+		(*ref)->render = iter["render"].get<bool>();
 	}
 }
 
