@@ -17,6 +17,11 @@
 
 using json = nlohmann::json;
 
+namespace ResourceLoader
+{
+	json LoadJsonResource(FS::path path);
+}
+
 //Probably my least favourite part of making this engine is importing files.
 //The code always looks like a mess but at least i don't have to touch it after making it.
 std::string ResourceLoader::LoadTextResource(int id, const std::string& type)
@@ -130,6 +135,29 @@ std::vector<std::string> ResourceLoader::ReturnFileLines(const FS::path& dir, bo
 	return lines;
 }
 
+json ResourceLoader::LoadJsonResource(FS::path path)
+{
+	std::string& file = ReturnFile(path);
+
+	json j;
+	try
+	{
+		j = json::parse(file);
+	}
+	catch(std::invalid_argument err)
+	{
+		DebugLog::Push("Error when parsing JSON file " + path.string() + "\n\t" + err.what(), LogItem::Type::Error);
+		j.clear();
+	}
+	catch(...)
+	{
+		DebugLog::Push("Unhandled exception when loading JSON file " + path.string(), LogItem::Type::Error);
+		j.clear();
+	}
+
+	return j;
+}
+
 //I lied. Parsing files that i wrote to be simple to parse is fun.
 //For some reason i'm using pointers to components instead of pointers to objects. Don't ask me why, but i stuck with it.
 //Most of these parsers work in similar ways.
@@ -186,23 +214,8 @@ void ResourceLoader::LoadControlSettings(const FS::path& path, std::unordered_ma
 void ResourceLoader::LoadObjects(const FS::path& path, std::vector<std::unique_ptr<Object>>& objects)
 {
 	objects.clear();
-	std::string& file = ReturnFile(path);
 
-	json j;
-	try
-	{
-		j = json::parse(file);
-	}
-	catch(std::invalid_argument err)
-	{
-		DebugLog::Push("Error when parsing JSON file " + path.string() + "\n\t" + err.what(), LogItem::Type::Error);
-		return;
-	}
-	catch(...)
-	{
-		DebugLog::Push("Unhandled exception when loading JSON file " + path.string(), LogItem::Type::Error);
-		return;
-	}
+	json& j = LoadJsonResource(path);
 
 	std::unique_ptr<Object>* ref;
 	for(auto& iter : j)
