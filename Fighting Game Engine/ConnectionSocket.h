@@ -34,7 +34,7 @@ public:
 	int port();
 
 	static int GetLastSocketError();
-	inline void Disconnect();
+	void Disconnect();
 	void FlushSendQueue();
 	bool SendData(NetworkMessage data);
 	bool BindAsServer();

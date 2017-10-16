@@ -15,7 +15,7 @@ int ConnectionSocket::GetLastSocketError()
 	return 0;
 }
 
-inline void ConnectionSocket::Disconnect()
+void ConnectionSocket::Disconnect()
 {
 	closesocket(sock);
 	mode = SocketMode::Uninitialized;
