@@ -39,8 +39,8 @@ void GameState::LoadResources()
 		ResourceLoader::LoadObjects(_dataPath.string() + "/SceneObjects.txt", _objects);
 		for(auto& iter : _objects)
 		{
-			_objectLookup.emplace(std::make_pair(iter->id, iter.get()));
-			_objectNameLookup.emplace(std::make_pair(iter->name, iter.get()));
+			_objectLookup.emplace(std::make_pair(iter->id(), iter.get()));
+			_objectNameLookup.emplace(std::make_pair(iter->name(), iter.get()));
 		}
 
 		_postEffectsOrder = ResourceLoader::ReturnFileLines(_dataPath.string() + "/PostEffectsOrder.txt", true);

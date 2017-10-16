@@ -5,31 +5,71 @@
 #include "Resource.h"
 #include "Rendering.h"
 
-Object::Object(const std::string& name, glm::vec2 pos, glm::vec2 scale, Mesh* mesh, Material* material, int id)
+std::string Object::name()
 {
-	this->name = name;
-	this->mesh = mesh;
-	this->material = material;
-	this->transform = new Transform(pos, glm::quat(), scale);
-	this->id = id;
-	this->render = true;
+	return _name;
 }
-Object::Object()
+
+int Object::id()
 {
-	this->name = "UNINITIALIZED";
-	this->mesh = nullptr;
-	this->material = nullptr;
-	this->transform = new Transform();
-	this->id = id;
-	this->render = true;
+	return _id;
 }
+
+Transform* Object::transform()
+{
+	return _transform.get();
+}
+
 void Object::Render()
 {
 	if(render)
-		Rendering::DrawMesh(transform, mesh, material);
+		Rendering::DrawMesh(_transform.get(), _mesh, _material);
+}
+
+Object::Object(const std::string& name, glm::vec2 pos, glm::vec2 scale, Mesh* mesh, Material* material, int id)
+{
+	this->_name = name;
+	this->_mesh = mesh;
+	this->_material = material;
+	this->_transform = std::make_unique<Transform>(pos, glm::quat(), scale);
+	this->_id = id;
+	this->render = true;
+}
+
+Object::Object(json j)
+{
+	_name = j["name"].get<std::string>();
+
+	_mesh = Resource::GetMesh(
+		j["mesh"].get<std::string>());
+
+	_material = Resource::GetMaterial(
+		j["material"].get<std::string>());
+
+	_transform = std::make_unique<Transform>();
+
+	_transform->position = glm::ivec2(
+		j["position"]["x"].get<int>(),
+		j["position"]["y"].get<int>());
+
+	_transform->scale = glm::ivec2(
+		j["scale"]["x"].get<int>(),
+		j["scale"]["y"].get<int>());
+
+	_transform->depth = j["depth"].get<float>();
+	render = j["render"].get<bool>();
+}
+
+Object::Object()
+{
+	this->_name = "UNINITIALIZED";
+	this->_mesh = nullptr;
+	this->_material = nullptr;
+	this->_transform = std::make_unique<Transform>();
+	this->_id = 0;
+	this->render = true;
 }
 
 Object::~Object()
 {
-	delete transform;
 }

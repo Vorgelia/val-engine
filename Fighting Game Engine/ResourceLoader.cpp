@@ -217,30 +217,9 @@ void ResourceLoader::LoadObjects(const FS::path& path, std::vector<std::unique_p
 
 	json& j = LoadJsonResource(path);
 
-	std::unique_ptr<Object>* ref;
 	for(auto& iter : j)
 	{
-		objects.emplace_back(std::make_unique<Object>());
-		ref = &(objects.back());
-
-		(*ref)->name = iter["name"].get<std::string>();
-
-		(*ref)->mesh = Resource::GetMesh(
-			iter["mesh"].get<std::string>());
-
-		(*ref)->material = Resource::GetMaterial(
-			iter["material"].get<std::string>());
-
-		(*ref)->transform->position = glm::ivec2(
-			iter["position"]["x"].get<int>(),
-			iter["position"]["y"].get<int>());
-
-		(*ref)->transform->scale = glm::ivec2(
-			iter["scale"]["x"].get<int>(),
-			iter["scale"]["y"].get<int>());
-
-		(*ref)->transform->depth = iter["depth"].get<float>();
-		(*ref)->render = iter["render"].get<bool>();
+		objects.emplace_back(std::make_unique<Object>(iter));
 	}
 }
 
