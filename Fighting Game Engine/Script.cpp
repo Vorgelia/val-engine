@@ -160,7 +160,9 @@ ScriptExitCode Script::Execute()
 	}
 	catch(ScriptError error)
 	{
-		DebugLog::Push("(" + _name + " : line " + std::to_string(_lines[_blockStack.top()->cursor()].index) + ") " + std::string(error.what()), LogItem::Type::Warning);
+		int blockCursor = _blockStack.empty() ? _parentBlock->cursor() : _blockStack.top()->cursor();
+
+		DebugLog::Push("(" + _name + " : line " + std::to_string(_lines[blockCursor].index) + ") " + std::string(error.what()), LogItem::Type::Warning);
 		_valid = false;
 		returnCode = ScriptExitCode::Failure;
 	}

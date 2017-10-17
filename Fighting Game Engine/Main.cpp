@@ -210,7 +210,6 @@ void EndFrame()
 		//Tell the scene to draw its GUI now.
 		GameStateManager::currentState()->GUI();
 	}
-	//Rendering::DrawScreenText(glm::vec4(1920 - 64, 0, 64, 64), 64, std::to_string(GameStateManager::currentState), nullptr, TextAlignment::Right);
 
 	//Finally, render the main buffer to the default buffer.
 	//Set the viewport to what was calculated for a forced 16:9 aspect ratio
