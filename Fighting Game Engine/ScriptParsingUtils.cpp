@@ -130,6 +130,8 @@ ScriptTokenType ScriptParsingUtils::GetTokenType(char character)
 		return ScriptTokenType::StringLiteral;
 	case '(':
 		return ScriptTokenType::ParenthesisGroup;
+	case '[':
+		return ScriptTokenType::SquareBracketGroup;
 	case ',':
 		return ScriptTokenType::Separator;
 	case ':':
@@ -192,6 +194,26 @@ ScriptTokenType ScriptParsingUtils::GetNextTokenType(const std::string& line, si
 				++parenthesisDepth;
 			}
 			else if(line[i] == ')')
+			{
+				if(--parenthesisDepth == 0)
+				{
+					out_endIndex = i;
+					break;
+				}
+			}
+		}
+	}
+	break;
+	case ScriptTokenType::SquareBracketGroup:
+	{
+		int parenthesisDepth = 0;
+		for(size_t i = startIndex; i < line.length(); ++i)
+		{
+			if(line[i] == '[')
+			{
+				++parenthesisDepth;
+			}
+			else if(line[i] == ']')
 			{
 				if(--parenthesisDepth == 0)
 				{
@@ -301,18 +323,24 @@ void ScriptParsingUtils::ParseLineTokens(const std::string& line, std::vector<Sc
 			return;
 		}
 
-		if(tokenType == ScriptTokenType::ParenthesisGroup || tokenType == ScriptTokenType::StringLiteral)
+		switch(tokenType)
 		{
+		case ScriptTokenType::ParenthesisGroup:
+		case ScriptTokenType::SquareBracketGroup:
+		case ScriptTokenType::StringLiteral:
 			out_tokens.push_back(ScriptToken{
 				line.substr(cursor + 1, endIndex - cursor - 1)
 				, tokenType });
-		}
-		else if(tokenType != ScriptTokenType::Whitespace)
-		{
+			break;
+		case ScriptTokenType::Whitespace:
+			break;
+		default:
 			out_tokens.push_back(ScriptToken{
 				line.substr(cursor, endIndex - cursor + 1)
 				, tokenType });
+			break;
 		}
+
 		cursor = endIndex + 1;
 	}
 }

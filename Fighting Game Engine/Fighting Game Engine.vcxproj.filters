@@ -321,6 +321,9 @@
     <ClCompile Include="ScriptLoopBlock.cpp">
       <Filter>Source Files\FG\Scripting\Objects\Blocks</Filter>
     </ClCompile>
+    <ClCompile Include="ScriptCollection.cpp">
+      <Filter>Source Files\FG\Scripting\Objects\Variables</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FGIncludes.hpp">
@@ -511,6 +514,9 @@
     </ClInclude>
     <ClInclude Include="GLIncludes.hpp">
       <Filter>Header Files\IncludeLists</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptCollection.h">
+      <Filter>Header Files\FG\Scripting\Objects\Variables</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

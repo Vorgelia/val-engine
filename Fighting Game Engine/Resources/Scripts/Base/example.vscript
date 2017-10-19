@@ -2,12 +2,14 @@
 
 //This function runs every frame
 function Main () : int
-	//ve_log(JustReturn666()-1)
 	return 0
 end
 
 //This function runs once when the script is loaded
 function Init():int
+	testCollection["test"] = 999
+	ve_log(testCollection["test"])
+
 	bool correctOperationOrder
 	int i=2*2+3
 	if(i==7)
@@ -25,17 +27,17 @@ function Init():int
 	
 	switch(4)
 		case (-5)->(5)
-		ve_log("Wow, ",4," is between -5 and 5")
+		  ve_log("Wow, ",4," is between -5 and 5")
 		case 0->666
-		ve_log("Whoops someone forgot a break statement")
+		  ve_log("Whoops someone forgot a break statement")
 	end
 	
 	switch(4)
 		case 4
-		ve_log("Wow, ",4," is also exactly 4")
-		break
+		  ve_log("Wow, ",4," is also exactly 4")
+		  break
 		case (JustReturn666())
-		ve_log("Oh no")
+		  ve_log("Oh no")
 	end
 	
 	ve_log(i=i/2)

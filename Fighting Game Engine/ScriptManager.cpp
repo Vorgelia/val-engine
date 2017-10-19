@@ -1,8 +1,11 @@
 #include "ScriptManager.h"
 #include "Script.h"
 #include "BaseScriptVariable.h"
+#include "ScriptVariable.h"
+#include "ScriptCollection.h"
 #include "ResourceLoader.h"
 #include <unordered_map>
+#include <memory>
 
 #include "DebugLog.h"
 
@@ -16,6 +19,10 @@ namespace ScriptManager
 
 void ScriptManager::Init()
 {
+	std::shared_ptr<ScriptCollection> collection = std::make_shared<ScriptCollection>();
+	collection->AddMember("test", std::make_shared<ScriptInt>(5));
+	_globalVariables.emplace(std::make_pair("testCollection", collection));
+
 	AddScript("Scripts/Base/example.vscript");
 }
 
