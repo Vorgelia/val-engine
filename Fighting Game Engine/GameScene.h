@@ -1,15 +1,18 @@
 #pragma once
 #include <map>
+#include <unordered_map>
 #include <vector>
 #include <string>
+#include <memory>
+#include <functional>
 #include <boost\filesystem.hpp>
-
-#include "Object.h"
 
 namespace FS = boost::filesystem;
 
 class Object;
-class GameState
+class Behaviour;
+
+class GameScene
 {
 protected:
 	bool _initialized;
@@ -22,6 +25,8 @@ protected:
 	std::unordered_map<std::string, Object*> _objectNameLookup;
 
 	std::vector<std::string> _postEffectsOrder;
+
+	void RunFunctionOnObjectBehaviours(std::function<void(Behaviour*)> func);
 public:
 
 	bool initialized();
@@ -36,15 +41,13 @@ public:
 	virtual void Update();
 	virtual void GameUpdate();
 	virtual void RenderObjects();
+	virtual void RenderUI();
 	virtual void FrameEnd();
-	virtual void GUI();
 
 	virtual void Cleanup();
-	virtual std::string GameState::Serialize();
-	virtual void GameState::Deserialize(const std::string& data);
 	virtual Object* FindObject(const std::string& name);
 
-	GameState(const FS::path& path);
-	virtual ~GameState();
+	GameScene(const FS::path& path);
+	virtual ~GameScene();
 };
 

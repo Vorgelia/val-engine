@@ -20,8 +20,9 @@ void GS_Menu::FrameEnd()
 	//Rendering::DrawScreenMesh(glm::vec4(0, 0, 1920, 1080), Resource::GetMesh("Meshes/Base/screenQuad.vm"), std::vector<Texture*>{ Resource::GetTexture("Textures/tex.png") }, Resource::GetMaterial("Materials/Base/Screen.vmat"));
 }
 
-void GS_Menu::GUI()
+void GS_Menu::RenderUI()
 {
+	GameScene::RenderUI();
 	Rendering::DrawScreenText(glm::vec4(0, 10, 100, 100), 24, std::to_string(glm::min<double>((int)std::round(1.0 / Time::smoothDeltaTime), 60)), nullptr);
 	Rendering::DrawScreenText(glm::vec4(0, 30, 100, 100), 24, std::to_string(glm::max<double>(((int)(Time::updateRate * 100))*0.01, 1.0)), nullptr);
 
@@ -64,7 +65,7 @@ void GS_Menu::GameUpdate()
 	Rendering::cameras.at(0).position += InputManager::_inputDevices[-1]->inputBuffer()->back()->ToVector() * 500.0f * (float)VE_FRAME_TIME;
 }
 
-GS_Menu::GS_Menu(const FS::path& path) :GameState(path)
+GS_Menu::GS_Menu(const FS::path& path) :GameScene(path)
 {
 }
 

@@ -74,6 +74,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AttackData.cpp" />
+    <ClCompile Include="Behaviour.cpp" />
     <ClCompile Include="CachedMesh.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CharacterFrame.cpp" />
@@ -82,8 +83,8 @@
     <ClCompile Include="Font.cpp" />
     <ClCompile Include="FrameBuffer.cpp" />
     <ClCompile Include="GameCharacter.cpp" />
-    <ClCompile Include="GameState.cpp" />
-    <ClCompile Include="GameStateManager.cpp" />
+    <ClCompile Include="GameScene.cpp" />
+    <ClCompile Include="GameSceneManager.cpp" />
     <ClCompile Include="GLStateTrack.cpp" />
     <ClCompile Include="GS_Intro.cpp" />
     <ClCompile Include="GS_Menu.cpp" />
@@ -93,6 +94,7 @@
     <ClCompile Include="InputFrame.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="InputMotion.cpp" />
+    <ClCompile Include="JSON.cpp" />
     <ClCompile Include="LogItem.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Material.cpp" />
@@ -100,6 +102,7 @@
     <ClCompile Include="NetworkEntity.cpp" />
     <ClCompile Include="NetworkMessage.cpp" />
     <ClCompile Include="Object.cpp" />
+    <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="ScriptCollection.cpp" />
     <ClCompile Include="ScriptExpression.cpp" />
     <ClCompile Include="ScriptLine.cpp" />
@@ -134,6 +137,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AttackData.h" />
+    <ClInclude Include="Behaviour.h" />
     <ClInclude Include="CachedMesh.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CharacterFrame.h" />
@@ -145,8 +149,8 @@
     <ClInclude Include="Font.h" />
     <ClInclude Include="FrameBuffer.h" />
     <ClInclude Include="GameCharacter.h" />
-    <ClInclude Include="GameState.h" />
-    <ClInclude Include="GameStateManager.h" />
+    <ClInclude Include="GameScene.h" />
+    <ClInclude Include="GameSceneManager.h" />
     <ClInclude Include="GLIncludes.hpp" />
     <ClInclude Include="GLStateTrack.h" />
     <ClInclude Include="GS_Intro.h" />
@@ -158,6 +162,7 @@
     <ClInclude Include="InputFrame.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="InputMotion.h" />
+    <ClInclude Include="JSON.h" />
     <ClInclude Include="LogItem.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="Mesh.h" />
@@ -166,6 +171,7 @@
     <ClInclude Include="Object.h" />
     <ClInclude Include="PostEffect.h" />
     <ClInclude Include="Profiler.h" />
+    <ClInclude Include="Renderer.h" />
     <ClInclude Include="Rendering.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="resource1.h" />

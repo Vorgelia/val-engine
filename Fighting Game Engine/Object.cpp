@@ -4,72 +4,68 @@
 #include "Material.h"
 #include "Resource.h"
 #include "Rendering.h"
+#include "Behaviour.h"
+#include "Renderer.h"
 
-std::string Object::name()
+std::string Object::name() const
 {
 	return _name;
 }
 
-int Object::id()
+int Object::id() const
 {
 	return _id;
 }
 
-Transform* Object::transform()
+Transform* Object::transform() const
 {
-	return _transform.get();
+	return _transform;
 }
 
-void Object::Render()
+Renderer* Object::renderer() const
 {
-	if(render)
-		Rendering::DrawMesh(_transform.get(), _mesh, _material);
+	return _renderer;
 }
 
-Object::Object(const std::string& name, glm::vec2 pos, glm::vec2 scale, Mesh* mesh, Material* material, int id)
+void Object::RunFunctionOnBehaviours(std::function<void(Behaviour*)> func)
+{
+	if(!enabled)
+	{
+		return;
+	}
+
+	for(auto& iter : _behaviours)
+	{
+		if(iter.second != nullptr)
+		{
+			func(iter.second.get());
+		}
+	}
+}
+
+Object::Object(const std::string& name, int id)
 {
 	this->_name = name;
-	this->_mesh = mesh;
-	this->_material = material;
-	this->_transform = std::make_unique<Transform>(pos, glm::quat(), scale);
 	this->_id = id;
-	this->render = true;
 }
 
-Object::Object(json j)
+Object::Object(const json & j)
 {
+	enabled = j["enabled"].get<bool>();
 	_name = j["name"].get<std::string>();
+	_id = j["id"].get<int>();
 
-	_mesh = Resource::GetMesh(
-		j["mesh"].get<std::string>());
-
-	_material = Resource::GetMaterial(
-		j["material"].get<std::string>());
-
-	_transform = std::make_unique<Transform>();
-
-	_transform->position = glm::ivec2(
-		j["position"]["x"].get<int>(),
-		j["position"]["y"].get<int>());
-
-	_transform->scale = glm::ivec2(
-		j["scale"]["x"].get<int>(),
-		j["scale"]["y"].get<int>());
-
-	_transform->depth = j["depth"].get<float>();
-	render = j["render"].get<bool>();
-}
-
-Object::Object()
-{
-	this->_name = "UNINITIALIZED";
-	this->_mesh = nullptr;
-	this->_material = nullptr;
-	this->_transform = std::make_unique<Transform>();
-	this->_id = 0;
-	this->render = true;
-}
-
-Object::~Object()
-{
+	for(auto& iter : j["behaviours"])
+	{
+		//TODO: Find a better way to do this.
+		std::string& behaviourName = iter["name"].get<std::string>();
+		if(behaviourName == "Transform")
+		{
+			_transform = static_cast<Transform*>(AddBehaviour<Transform>(behaviourName, iter));
+		}
+		else if(behaviourName == "Renderer")
+		{
+			_renderer = static_cast<Renderer*>(AddBehaviour<Renderer>(behaviourName, iter));
+		}
+	}
 }

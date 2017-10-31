@@ -1,3 +1,4 @@
+#include "JSON.h"
 #include "ResourceLoader.h"
 #include "Resource.h"
 #include "CachedMesh.h"
@@ -13,7 +14,6 @@
 #include "InputEvent.h"
 #include "InputFrame.h"
 #include "DebugLog.h"
-#include <json.hpp>
 
 using json = nlohmann::json;
 

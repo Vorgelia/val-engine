@@ -5,7 +5,6 @@
 class AttackData
 {
 public:
-	std::vector<CollisionBox> hitboxes;
 
 	AttackData();
 	~AttackData();

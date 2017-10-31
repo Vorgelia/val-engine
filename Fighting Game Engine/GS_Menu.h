@@ -1,16 +1,15 @@
 #pragma once
-#include "GameState.h"
+#include "GameScene.h"
 
 class GS_Menu :
-	public GameState
+	public GameScene
 {
 public:
 	void FrameEnd();
-	void GUI();
+	void RenderUI();
 	void Update();
 	void GameUpdate();
 	void Init();
 
 	GS_Menu(const FS::path& path);
 };
-

@@ -93,7 +93,7 @@ int main()
 		UpdateComponents();//Some parts of the engine like timekeeping have to update as frequently as possible, regardless of whether it's game update time.
 
 		bool updatedFrame = false;//This is a variable that keeps track of whether we've run a game update on this iteration. If we have, this will tell the engine to render at the end.
-		if(!GameStateManager::isLoading())
+		if(!GameSceneManager::isLoading())
 		{
 			//Run updates until running one would put us ahead of our current time
 			while(Time::lastUpdateTime + VE_FRAME_TIME <= Time::time)
@@ -104,21 +104,21 @@ int main()
 				InputManager::Update();
 				ScriptManager::Update();
 
-				GameStateManager::StateInit();
-				GameStateManager::StateGameUpdate();//Send a game update callback
+				GameSceneManager::StateInit();
+				GameSceneManager::StateGameUpdate();//Send a game update callback
 
 			}
-			GameStateManager::StateUpdate();//Send a loop update callback regardless of whether the previous loop ran
+			GameSceneManager::StateUpdate();//Send a loop update callback regardless of whether the previous loop ran
 		}
 
-		GameStateManager::FrameEnd();//Checks if a level needs to be loaded and raises the necessary flags, as well as call the necessary resource management functions
+		GameSceneManager::FrameEnd();//Checks if a level needs to be loaded and raises the necessary flags, as well as call the necessary resource management functions
 
 		if(updatedFrame)
 		{
 			//Reset OpenGL rendering variables, clear buffers and prepare for rendering.
 			BeginFrame();
 			//Render all objects in the current scene
-			GameStateManager::StateRenderObjects();
+			GameSceneManager::StateRenderObjects();
 			//Apply post processing effects and render the result to the main buffer
 			EndFrame();
 		}
@@ -195,20 +195,20 @@ void BeginFrame()
 void EndFrame()
 {
 	//Don't apply anything if the game state manager is loading.
-	if(!GameStateManager::isLoading())
+	if(!GameSceneManager::isLoading())
 	{
 		//Call the frame end callback on the current scene
-		GameStateManager::currentState()->FrameEnd();
+		GameSceneManager::currentState()->FrameEnd();
 		//Draw post effects specified in State/PostEffectsOrder.txt, in the order they were given
-		for(unsigned int i = 0; i < GameStateManager::currentState()->postEffectsOrder().size(); ++i)
+		for(unsigned int i = 0; i < GameSceneManager::currentState()->postEffectsOrder().size(); ++i)
 		{
 			Rendering::DrawPostEffect(
 				Resource::GetPostEffect(
-					GameStateManager::currentState()
+					GameSceneManager::currentState()
 					->postEffectsOrder()[i]));
 		}
 		//Tell the scene to draw its GUI now.
-		GameStateManager::currentState()->GUI();
+		GameSceneManager::currentState()->RenderUI();
 	}
 
 	//Finally, render the main buffer to the default buffer.
@@ -233,7 +233,7 @@ inline void EngineInit()
 	GLState::Init();
 	Resource::Init();
 	Rendering::Init();
-	GameStateManager::Init();
+	GameSceneManager::Init();
 	InputManager::Init();
 	ScriptManager::Init();
 
@@ -244,7 +244,7 @@ inline void EngineCleanup()
 {
 	ScriptManager::Cleanup();
 	InputManager::Cleanup();
-	GameStateManager::Cleanup();
+	GameSceneManager::Cleanup();
 	Rendering::Cleanup();
 	Resource::Cleanup();
 	GLState::Cleanup();
@@ -260,5 +260,5 @@ inline void UpdateComponents()
 	Time::Update();
 	Screen::Update();
 	Rendering::Update();
-	GameStateManager::Update();
+	GameSceneManager::Update();
 }

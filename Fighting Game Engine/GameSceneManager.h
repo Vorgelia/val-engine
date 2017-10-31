@@ -2,10 +2,10 @@
 #include <memory>
 #include <vector>
 
-class GameState;
-namespace GameStateManager
+class GameScene;
+namespace GameSceneManager
 {
-	GameState* currentState();
+	GameScene* currentState();
 	bool isLoading();
 
 	void Init();
