@@ -28,8 +28,7 @@ TODO: Find a way to multithread input so inputs are received and timed properly 
 TODO: Add more customization over cleaning up framebuffers between frames.
 TODO: Check if a framebuffer was used last frame before cleaning it up.
 -Cleanup and Efficiency
-TODO: Clean up includes. Change default function parameters to be defined in .h and not .cpp.
-TODO: Change some class variables to be private with getters.
+TODO: Cleanup main.cpp. Move functionality to proper management classes/namespaces
 ----
 Important defines:
 Resource.cpp:           VE_CREATE_DEFAULT_RESOURCES
@@ -87,11 +86,13 @@ inline void GLInit()
 #ifdef VE_USE_SINGLE_BUFFER
 	glfwWindowHint(GLFW_DOUBLEBUFFER, GL_FALSE);
 #endif
+
 	//glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 	//glfwWindowHint(GLFW_DECORATED, GL_FALSE);
 
 	//Initialize screen variables
 	Screen::Init();
+
 	//Initialize and store window
 	Screen::window = glfwCreateWindow(Screen::size.x, Screen::size.y, "Videogame", nullptr, nullptr);
 	glfwMakeContextCurrent(Screen::window);
@@ -111,6 +112,7 @@ inline void GLCleanup()
 	//Cleanup GLFW
 	glfwTerminate();
 }
+
 //--
 //Engine Handling
 //--
@@ -142,6 +144,7 @@ inline void EngineCleanup()
 //--
 //Component Handling
 //--
+
 inline void UpdateComponents()
 {
 	Profiler::Clear();
