@@ -87,8 +87,6 @@ bool GameSceneManager::HandleSceneUpdate()
 
 void GameSceneManager::HandleSceneLoad()
 {
-	VE_SCENE_FUNCTION_CALL(LateUpdate);
-
 	if(!_sceneToLoad.empty())
 	{
 		auto& iter = scenes.find(_sceneToLoad);
