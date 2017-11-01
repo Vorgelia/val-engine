@@ -58,9 +58,44 @@ void Rendering::Init()
 	Screen::screenUpdateCallbacks.push_back(&OnScreenResize);
 }
 
-void Rendering::Update()
+void Rendering::BeginFrame()
 {
+	//Reset certain rendering parameters that might have been overriden in the last frame.
+	//BlendFunc controls the way alpha blending happens
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glDepthMask(GL_TRUE);
+	//Viewport controls the rendering size in pixels based on the actual window size.
+	//We set it to the full window size here to perform no added transformation to the ones we do when rendering. Try changing Screen::size.y to Screen::size.y*0.5.
+	//This will be used later to force the aspect ratio to 16/9
+	glViewport(0, 0, Screen::size.x, Screen::size.y);
+
 	tintColor = glm::vec4(1, 1, 1, 1);
+
+	//Bind and clear all framebuffers.
+	for(unsigned int i = 0; i < auxBuffers.size(); ++i)
+	{
+		auxBuffers[i]->Clear();
+	}
+
+	mainBuffer->Clear();//Also binds the main buffer
+}
+
+void Rendering::EndFrame()
+{
+	//Render the main buffer to the default buffer.
+	//Set the viewport to what was calculated for a forced 16:9 aspect ratio
+	glViewport(Screen::viewportSize.x, Screen::viewportSize.y, Screen::viewportSize.z, Screen::viewportSize.w);
+	//Bind the default framebuffer, clear it and draw the main buffer directly.
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+	DrawScreenMesh(glm::vec4(0, 0, 1920, 1080), Resource::GetMesh("Meshes/Base/screenQuad.vm"), Rendering::mainBuffer, Resource::GetMaterial("Materials/Base/Screen_FB.vmat"));
+
+#ifdef VE_USE_SINGLE_BUFFER
+	glFlush();
+#else
+	glfwSwapBuffers(Screen::window);
+#endif
 }
 
 //Screen resize callback. Resize all framebuffers to match the screen size.

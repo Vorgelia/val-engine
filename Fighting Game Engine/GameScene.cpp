@@ -102,14 +102,14 @@ void GameScene::GameUpdate()
 	RunFunctionOnObjectBehaviours(VE_BEHAVIOUR_FUNCTION_CALLER(GameUpdate));
 }
 
-void GameScene::FrameEnd()
+void GameScene::LateUpdate()
 {
-
+	RunFunctionOnObjectBehaviours(VE_BEHAVIOUR_FUNCTION_CALLER(LateUpdate));
 }
 
 void GameScene::RenderUI()
 {
-	RunFunctionOnObjectBehaviours(VE_BEHAVIOUR_FUNCTION_CALLER(OnUIRenderPass));
+	RunFunctionOnObjectBehaviours(VE_BEHAVIOUR_FUNCTION_CALLER(OnRenderUI));
 }
 
 void GameScene::OnLoaded()
@@ -131,7 +131,16 @@ void GameScene::Cleanup()
 
 void GameScene::RenderObjects()
 {
-	RunFunctionOnObjectBehaviours(VE_BEHAVIOUR_FUNCTION_CALLER(OnSceneRenderPass));
+	RunFunctionOnObjectBehaviours(VE_BEHAVIOUR_FUNCTION_CALLER(OnRenderObjects));
+}
+
+void GameScene::ApplyPostEffects()
+{
+	for(auto& iter : _postEffectsOrder)
+	{
+		Rendering::DrawPostEffect(
+			Resource::GetPostEffect(iter));
+	}
 }
 
 Object* GameScene::FindObject(const std::string& name)

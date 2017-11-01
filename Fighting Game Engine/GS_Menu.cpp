@@ -15,11 +15,6 @@
 
 //This is where all of the testing ends up happening, which might explain why it's uncommented and a mess.
 
-void GS_Menu::FrameEnd()
-{
-	//Rendering::DrawScreenMesh(glm::vec4(0, 0, 1920, 1080), Resource::GetMesh("Meshes/Base/screenQuad.vm"), std::vector<Texture*>{ Resource::GetTexture("Textures/tex.png") }, Resource::GetMaterial("Materials/Base/Screen.vmat"));
-}
-
 void GS_Menu::RenderUI()
 {
 	GameScene::RenderUI();
@@ -52,6 +47,7 @@ InputMotion qcf = {
 };
 void GS_Menu::Update()
 {
+	GameScene::Update();
 	if(glfwGetKey(Screen::window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 	{
 		glfwSetWindowShouldClose(Screen::window, GLFW_TRUE);
@@ -60,6 +56,7 @@ void GS_Menu::Update()
 }
 void GS_Menu::GameUpdate()
 {
+	GameScene::GameUpdate();
 	if(InputManager::_inputDevices[0] != nullptr)
 		InputManager::_inputDevices[0]->EvaluateMotion(qcf, false);
 	Rendering::cameras.at(0).position += InputManager::_inputDevices[-1]->inputBuffer()->back()->ToVector() * 500.0f * (float)VE_FRAME_TIME;
@@ -67,11 +64,4 @@ void GS_Menu::GameUpdate()
 
 GS_Menu::GS_Menu(const FS::path& path) :GameScene(path)
 {
-}
-
-void GS_Menu::Init()
-{
-	_initialized = true;
-
-
 }

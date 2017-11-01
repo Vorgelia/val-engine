@@ -37,6 +37,7 @@ void GS_Intro::RenderUI()
 
 void GS_Intro::GameUpdate()
 {
+	GameScene::GameUpdate();
 	_levelTimer += (float)VE_FRAME_TIME;
 
 	bool playerInput = false;
@@ -51,7 +52,7 @@ void GS_Intro::GameUpdate()
 
 
 	if(_levelTimer > 4 || playerInput)
-		GameSceneManager::LoadState("Menu");
+		GameSceneManager::LoadScene("Menu");
 }
 
 GS_Intro::GS_Intro(const FS::path& path) :GameScene(path)

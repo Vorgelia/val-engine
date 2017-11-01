@@ -5,17 +5,12 @@
 class GameScene;
 namespace GameSceneManager
 {
-	GameScene* currentState();
+	GameScene* currentScene();
 	bool isLoading();
 
 	void Init();
 	void Update();
-	void LoadState(const std::string& name);
-	void FrameEnd();
+	void LoadScene(const std::string& name);
+	void RenderScene();
 	void Cleanup();
-
-	void StateInit();
-	void StateUpdate();
-	void StateGameUpdate();
-	void StateRenderObjects();
 }

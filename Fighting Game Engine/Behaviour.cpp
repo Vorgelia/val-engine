@@ -15,12 +15,22 @@ void Behaviour::GameUpdate()
 
 }
 
-void Behaviour::OnSceneRenderPass()
+void Behaviour::LateUpdate()
 {
 
 }
 
-void Behaviour::OnUIRenderPass()
+void Behaviour::OnRenderObjects()
+{
+
+}
+
+void Behaviour::OnApplyPostEffects()
+{
+
+}
+
+void Behaviour::OnRenderUI()
 {
 
 }

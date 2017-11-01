@@ -44,9 +44,16 @@ public:
 template<typename T, typename ... Types>
 Behaviour* Object::AddBehaviour(std::string behaviourName, Types ... args)
 {
-	return _behaviours.emplace(
+	Behaviour* behaviour = _behaviours.emplace(
 		std::pair<std::string, std::unique_ptr<T>>(
 			behaviourName, 
 			std::make_unique<T>(this, args...))
 	).first->second.get();
+
+	if(behaviour->usingInit())
+	{
+		behaviour->Init();
+	}
+
+	return behaviour;
 }

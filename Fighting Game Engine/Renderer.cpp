@@ -2,7 +2,7 @@
 #include "Rendering.h"
 #include <string>
 
-void Renderer::OnSceneRenderPass()
+void Renderer::OnRenderObjects()
 {
 	if(_owner->transform() == nullptr)
 	{

@@ -40,9 +40,10 @@ public:
 	virtual void Init();
 	virtual void Update();
 	virtual void GameUpdate();
+	virtual void LateUpdate();
 	virtual void RenderObjects();
+	virtual void ApplyPostEffects();
 	virtual void RenderUI();
-	virtual void FrameEnd();
 
 	virtual void Cleanup();
 	virtual Object* FindObject(const std::string& name);

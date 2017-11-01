@@ -12,7 +12,7 @@ public:
 
 	VE_BEHAVIOUR_NAME(Renderer);
 
-	VE_BEHAVIOUR_REGISTER_FUNCTION(OnSceneRenderPass);
+	VE_BEHAVIOUR_REGISTER_FUNCTION(OnRenderObjects);
 
 	Renderer(Object* owner, Mesh* mesh = Resource::GetMesh("Materials/Base/quad.vm"), Material* material = Resource::GetMaterial("Materials/Base/Object2D.vmat"));
 	Renderer(Object* owner, const json& j);

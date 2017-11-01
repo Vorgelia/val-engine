@@ -12,6 +12,9 @@ class FrameBuffer;
 class Shader;
 class PostEffect;
 
+//Controls whether a single render buffer should be used
+#define VE_USE_SINGLE_BUFFER
+
 namespace Rendering
 {
 	extern FrameBuffer* mainBuffer;
@@ -22,7 +25,8 @@ namespace Rendering
 	extern glm::vec4 tintColor;
 
 	void Init();
-	void Update();
+	void BeginFrame();
+	void EndFrame();
 	void Cleanup();
 
 	void DrawMesh(Transform* transform, Mesh* mesh, Material* mat, Camera* camera = nullptr);
