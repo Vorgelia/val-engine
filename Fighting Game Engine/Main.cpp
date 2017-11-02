@@ -66,6 +66,11 @@ int main()
 	while(!glfwWindowShouldClose(Screen::window))
 	{
 		UpdateComponents();
+
+		if(glfwGetKey(Screen::window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+		{
+			glfwSetWindowShouldClose(Screen::window, GLFW_TRUE);
+		}
 	}
 
 	EngineCleanup();

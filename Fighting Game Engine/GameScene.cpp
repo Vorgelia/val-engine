@@ -92,10 +92,7 @@ void GameScene::Init()
 
 void GameScene::Update()
 {
-	if(glfwGetKey(Screen::window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-	{
-		glfwSetWindowShouldClose(Screen::window, GLFW_TRUE);
-	}
+
 }
 
 void GameScene::GameUpdate()

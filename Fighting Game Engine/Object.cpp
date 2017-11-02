@@ -50,9 +50,8 @@ Object::Object(const std::string& name, int id)
 	this->_id = id;
 }
 
-
 #define VE_STRING_TO_BEHAVIOUR(name)\
-	if(behaviourName == "#name")\
+	if(behaviourName == #name)\
 		AddBehaviour<name>(behaviourName, iter);
 
 Object::Object(const json & j)

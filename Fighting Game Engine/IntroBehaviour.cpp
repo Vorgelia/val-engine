@@ -35,8 +35,6 @@ void IntroBehaviour::OnRenderUI()
 
 void IntroBehaviour::GameUpdate()
 {
-	Time::timeSinceLoad += (float)VE_FRAME_TIME;
-
 	bool playerInput = false;
 	for(auto& i : InputManager::_inputDevices)
 	{
@@ -46,7 +44,6 @@ void IntroBehaviour::GameUpdate()
 			break;
 		}
 	}
-
 
 	if(Time::timeSinceLoad > _introDuration || playerInput)
 		GameSceneManager::LoadScene("Menu");

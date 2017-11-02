@@ -28,5 +28,5 @@ using json = JSON::json_t;
 template<typename T>
 T JSON::Get(const json & j)
 {
-	return T();
+	return j.get<T>();
 }
