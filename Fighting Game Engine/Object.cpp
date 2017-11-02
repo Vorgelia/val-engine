@@ -2,6 +2,7 @@
 #include "Transform.h"
 #include "Mesh.h"
 #include "Material.h"
+#include "IntroBehaviour.h"
 #include "Resource.h"
 #include "Rendering.h"
 #include "Behaviour.h"
@@ -49,6 +50,11 @@ Object::Object(const std::string& name, int id)
 	this->_id = id;
 }
 
+
+#define VE_STRING_TO_BEHAVIOUR(name)\
+	if(behaviourName == "#name")\
+		AddBehaviour<name>(behaviourName, iter);
+
 Object::Object(const json & j)
 {
 	enabled = j["enabled"].get<bool>();
@@ -67,5 +73,8 @@ Object::Object(const json & j)
 		{
 			_renderer = static_cast<Renderer*>(AddBehaviour<Renderer>(behaviourName, iter));
 		}
+		VE_STRING_TO_BEHAVIOUR(IntroBehaviour);
 	}
 }
+
+#undef VE_STRING_TO_BEHAVIOUR(name)

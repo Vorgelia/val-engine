@@ -12,7 +12,7 @@ namespace GameSceneManager
 	std::string _sceneToLoad = "";
 	bool _isLoading = false;
 	std::unordered_map<std::string, std::unique_ptr<GameScene> const> scenes;
-	GameScene* _currentState = nullptr;
+	GameScene* _currentScene = nullptr;
 
 
 	void HandleSceneInit();
@@ -23,7 +23,7 @@ namespace GameSceneManager
 
 GameScene* GameSceneManager::currentScene()
 {
-	return _currentState;
+	return _currentScene;
 }
 
 bool GameSceneManager::isLoading()
@@ -33,7 +33,7 @@ bool GameSceneManager::isLoading()
 
 void GameSceneManager::LoadScene(const std::string& name)
 {
-	DebugLog::Push("----\n\n\n Loading State: " + name + "\n\n\n----", LogItem::Type::Message);
+	VE_DEBUG_LOG("----\n\n\n Loading State: " + name + "\n\n\n----", LogItem::Type::Message);
 	_sceneToLoad = name;
 }
 
@@ -52,10 +52,10 @@ void GameSceneManager::RenderScene()
 
 void GameSceneManager::HandleSceneInit()
 {
-	if(_isLoading && _currentState != nullptr && _currentState->loaded())
+	if(_isLoading && _currentScene != nullptr && _currentScene->loaded())
 	{
 		_isLoading = false;
-		Time::OnStateLoaded();
+		Time::OnSceneLoaded();
 		VE_SCENE_FUNCTION_CALL(Init, false);
 	}
 }
@@ -92,20 +92,20 @@ void GameSceneManager::HandleSceneLoad()
 		auto& iter = scenes.find(_sceneToLoad);
 		if(iter == scenes.end())
 		{
-			DebugLog::Push("GameSceneManager - Attempting to load invalid state " + _sceneToLoad);
+			VE_DEBUG_LOG("GameSceneManager - Attempting to load invalid state " + _sceneToLoad);
 			_sceneToLoad.clear();
 		}
 
-		if(_currentState != nullptr)
+		if(_currentScene != nullptr)
 		{
-			_currentState->Cleanup();
+			_currentScene->Cleanup();
 			Resource::Unload();
 		}
 
-		_currentState = iter->second.get();
+		_currentScene = iter->second.get();
 		_isLoading = true;
 		_sceneToLoad.clear();
-		_currentState->LoadResources();
+		_currentScene->LoadResources();
 	}
 }
 
@@ -125,10 +125,10 @@ void GameSceneManager::Init()
 {
 	//Instantiate all the game scenes
 	//TODO: Make dynamic
-	scenes.insert(std::make_pair("Intro", std::make_unique<GS_Intro>("States/Intro")));
+	scenes.insert(std::make_pair("Intro", std::make_unique<GameScene>("States/Intro")));
 	scenes.insert(std::make_pair("Menu", std::make_unique<GS_Menu>("States/Menu")));
 
-	_currentState = nullptr;
+	_currentScene = nullptr;
 	_sceneToLoad = "Intro";
 	_isLoading = true;
 }
@@ -140,8 +140,8 @@ void GameSceneManager::Cleanup()
 
 void GameSceneManager::ApplyFunctionToCurrentScene(std::function<void(GameScene*)> func, bool requiredInitializedState)
 {
-	if(_isLoading || _currentState == nullptr || (requiredInitializedState != _currentState->initialized()))
+	if(_isLoading || _currentScene == nullptr || (requiredInitializedState != _currentScene->initialized()))
 		return;
 
-	func(_currentState);
+	func(_currentScene);
 }

@@ -361,12 +361,12 @@ void Rendering::DrawMesh(Transform* transform, Mesh* mesh, Material* mat, Camera
 {
 	if(mesh == nullptr)
 	{
-		DebugLog::Push("Attempting to draw null mesh.", LogItem::Type::Warning);
+		VE_DEBUG_LOG("Attempting to draw null mesh.", LogItem::Type::Warning);
 		return;
 	}
 	else if(!mesh->valid())
 	{
-		DebugLog::Push("Attempting to draw invalid mesh: " + mesh->name, LogItem::Type::Warning);
+		VE_DEBUG_LOG("Attempting to draw invalid mesh: " + mesh->name, LogItem::Type::Warning);
 		return;
 	}
 
@@ -422,7 +422,7 @@ void Rendering::DrawScreenText(glm::vec4 rect, GLuint size, std::string text, Fo
 
 	if(currentFont == nullptr)
 	{
-		DebugLog::Push("Null font passed in DrawScreenText and VE_FONT_DEFAULT could not be loaded.", LogItem::Type::Error);
+		VE_DEBUG_LOG("Null font passed in DrawScreenText and VE_FONT_DEFAULT could not be loaded.", LogItem::Type::Error);
 		return;
 	}
 

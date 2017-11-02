@@ -22,7 +22,7 @@ bool FrameBuffer::Bind()
 		return true;
 	}
 
-	DebugLog::Push("Failed to bind invalid framebuffer.");
+	VE_DEBUG_LOG("Failed to bind invalid framebuffer.");
 	return false;
 }
 
@@ -95,7 +95,7 @@ void FrameBuffer::Update()
 
 	if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 	{
-		DebugLog::Push("Framebuffer generation failed.", LogItem::Type::Warning);
+		VE_DEBUG_LOG("Framebuffer generation failed.", LogItem::Type::Warning);
 	}
 	else
 	{

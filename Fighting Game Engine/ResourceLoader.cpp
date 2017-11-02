@@ -146,12 +146,12 @@ json ResourceLoader::LoadJsonResource(FS::path path)
 	}
 	catch(std::invalid_argument err)
 	{
-		DebugLog::Push("Error when parsing JSON file " + path.string() + "\n\t" + err.what(), LogItem::Type::Error);
+		VE_DEBUG_LOG("Error when parsing JSON file " + path.string() + "\n\t" + err.what(), LogItem::Type::Error);
 		j.clear();
 	}
 	catch(...)
 	{
-		DebugLog::Push("Unhandled exception when loading JSON file " + path.string(), LogItem::Type::Error);
+		VE_DEBUG_LOG("Unhandled exception when loading JSON file " + path.string(), LogItem::Type::Error);
 		j.clear();
 	}
 

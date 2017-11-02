@@ -57,7 +57,7 @@ std::shared_ptr<BaseScriptVariable> Script::GetVariable(const std::string& name)
 	}
 	catch(ScriptError error)
 	{
-		DebugLog::Push("Could not find variable " + name + " in script " + _name + ".", LogItem::Type::Warning);
+		VE_DEBUG_LOG("Could not find variable " + name + " in script " + _name + ".", LogItem::Type::Warning);
 		return nullptr;
 	}
 }
@@ -136,13 +136,13 @@ void Script::Init()
 	}
 	catch(ScriptError error)
 	{
-		DebugLog::Push("(Preprocessing " + _name + " : line " + std::to_string(_lines[_parentBlock->cursor()].index) + ") " + std::string(error.what()), LogItem::Type::Warning);
+		VE_DEBUG_LOG("(Preprocessing " + _name + " : line " + std::to_string(_lines[_parentBlock->cursor()].index) + ") " + std::string(error.what()), LogItem::Type::Warning);
 		_valid = false;
 	}
 
 	if(_blockStack.size() > 0)
 	{
-		DebugLog::Push("Block stack not empty after script " + _name + " execution.", LogItem::Type::Warning);
+		VE_DEBUG_LOG("Block stack not empty after script " + _name + " execution.", LogItem::Type::Warning);
 		while(_blockStack.size() > 0)
 		{
 			PopBlock();
@@ -162,20 +162,20 @@ ScriptExitCode Script::Execute()
 	{
 		int blockCursor = _blockStack.empty() ? _parentBlock->cursor() : _blockStack.top()->cursor();
 
-		DebugLog::Push("(" + _name + " : line " + std::to_string(_lines[blockCursor].index) + ") " + std::string(error.what()), LogItem::Type::Warning);
+		VE_DEBUG_LOG("(" + _name + " : line " + std::to_string(_lines[blockCursor].index) + ") " + std::string(error.what()), LogItem::Type::Warning);
 		_valid = false;
 		returnCode = ScriptExitCode::Failure;
 	}
 	catch(std::exception error)
 	{
-		DebugLog::Push("Unhandled exception on script[" + _name + "]:\n" + std::string(error.what()), LogItem::Type::Error);
+		VE_DEBUG_LOG("Unhandled exception on script[" + _name + "]:\n" + std::string(error.what()), LogItem::Type::Error);
 		_valid = false;
 		returnCode = ScriptExitCode::Exception;
 	}
 
 	if(_blockStack.size() > 0)
 	{
-		DebugLog::Push("Block stack not empty after script " + _name + " execution.", LogItem::Type::Error);
+		VE_DEBUG_LOG("Block stack not empty after script " + _name + " execution.", LogItem::Type::Error);
 		while(_blockStack.size() > 0)
 		{
 			PopBlock();

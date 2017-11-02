@@ -127,7 +127,7 @@ inline void EngineInit()
 	InputManager::Init();
 	ScriptManager::Init();
 
-	DebugLog::Push("Full Init");
+	VE_DEBUG_LOG("Full Init");
 }
 
 inline void EngineCleanup()

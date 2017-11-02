@@ -37,7 +37,7 @@ void Resource::Init()
 #ifdef VE_CREATE_DEFAULT_RESOURCES
 	if(!FS::exists("Meshes/") || !FS::exists("Shaders/") || !FS::exists("Settings/") || !FS::exists("States/"))
 	{
-		DebugLog::Push("-----\n\n\nFile structure invalid. Creating default resources.\n\n\n-----");
+		VE_DEBUG_LOG("-----\n\n\nFile structure invalid. Creating default resources.\n\n\n-----");
 		ResourceInitializer::Init();
 	}
 #endif
@@ -86,7 +86,7 @@ Font* Resource::GetFont(FS::path path)
 	if(!FS::exists(path))
 	{
 		fonts.emplace(std::make_pair(pathString, nullptr));
-		DebugLog::Push("Failed to load Font " + pathString);
+		VE_DEBUG_LOG("Failed to load Font " + pathString);
 		return nullptr;
 	}
 
@@ -116,7 +116,7 @@ Texture* Resource::GetTexture(FS::path path)
 
 	if(!FS::exists(path))
 	{
-		DebugLog::Push("Unable to find texture at " + pathString);
+		VE_DEBUG_LOG("Unable to find texture at " + pathString);
 		textures.emplace(std::make_pair(pathString, nullptr));
 		return nullptr;
 	}
@@ -147,7 +147,7 @@ PostEffect* Resource::GetPostEffect(FS::path path)
 
 	if(!FS::exists(path))
 	{
-		DebugLog::Push("Failed to load Texture " + pathString);
+		VE_DEBUG_LOG("Failed to load Texture " + pathString);
 		postEffects.emplace(std::make_pair(pathString, nullptr));
 		return nullptr;
 	}
@@ -168,7 +168,7 @@ Shader* Resource::GetShader(std::string name)
 	if(!FS::exists(name + ".vert") || !FS::exists(name + ".frag"))
 	{
 		shaders.emplace(std::pair<std::string, std::unique_ptr<Shader>>(name, nullptr));
-		DebugLog::Push("Failed to load Shader " + name);
+		VE_DEBUG_LOG("Failed to load Shader " + name);
 		return nullptr;
 	}
 
@@ -197,7 +197,7 @@ Material* Resource::GetMaterial(FS::path path)
 	if(!FS::exists(path))
 	{
 		materials.emplace(std::pair<std::string, std::unique_ptr<Material>>(pathString, nullptr));
-		DebugLog::Push("Failed to load material " + pathString);
+		VE_DEBUG_LOG("Failed to load material " + pathString);
 		return nullptr;
 	}
 
@@ -252,7 +252,7 @@ Mesh* Resource::GetMesh(FS::path path, bool editable)
 
 	if(!FS::exists(path))
 	{
-		DebugLog::Push("Failed to load Mesh: " + pathString);
+		VE_DEBUG_LOG("Failed to load Mesh: " + pathString);
 		postEffects.emplace(std::pair<std::string, std::unique_ptr<PostEffect>>(pathString, nullptr));
 		return nullptr;
 	}
@@ -274,7 +274,7 @@ Mesh* Resource::GetMesh(FS::path path, bool editable)
 
 	if(!iter->second->valid())
 	{
-		DebugLog::Push("Imported invalid Mesh: " + pathString);
+		VE_DEBUG_LOG("Imported invalid Mesh: " + pathString);
 	}
 
 	return iter->second.get();

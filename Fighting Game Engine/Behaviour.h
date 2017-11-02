@@ -5,10 +5,15 @@
 
 #define VE_BEHAVIOUR_NAME(nameStr)\
 	const std::string name() const override{ return std::string(#nameStr); };
+
 #define VE_BEHAVIOUR_FUNCTION(name)\
-	virtual void name(); inline virtual const bool using##name(){ return false; };
+	virtual void name(); \
+	inline virtual const bool using##name(){ return false; };
+
 #define VE_BEHAVIOUR_REGISTER_FUNCTION(name)\
-	void name() override; inline virtual const bool using##name() override{ return true; };
+	void name() override;\
+	inline virtual const bool using##name() override{ return true; };
+
 #define VE_BEHAVIOUR_FUNCTION_CALLER(name)\
 	[](Behaviour* behaviour)\
 		{ if(behaviour->using##name()) behaviour->name(); }
@@ -26,6 +31,7 @@ public:
 	virtual const std::string name() const = 0;
 
 	VE_BEHAVIOUR_FUNCTION(Init);
+	VE_BEHAVIOUR_FUNCTION(OnSceneInit);
 	VE_BEHAVIOUR_FUNCTION(Update);
 	VE_BEHAVIOUR_FUNCTION(GameUpdate);
 	VE_BEHAVIOUR_FUNCTION(LateUpdate);

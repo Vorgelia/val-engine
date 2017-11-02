@@ -5,6 +5,11 @@ void Behaviour::Init()
 
 }
 
+void Behaviour::OnSceneInit()
+{
+
+}
+
 void Behaviour::Update()
 {
 

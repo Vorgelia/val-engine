@@ -348,14 +348,17 @@
     <ClCompile Include="Object.cpp">
       <Filter>Source Files\Engine</Filter>
     </ClCompile>
-    <ClCompile Include="GameScene.cpp">
-      <Filter>Source Files\Game</Filter>
-    </ClCompile>
     <ClCompile Include="Behaviour.cpp">
       <Filter>Source Files\Engine\Behaviours</Filter>
     </ClCompile>
     <ClCompile Include="JSON.cpp">
       <Filter>Source Files\Engine\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="IntroBehaviour.cpp">
+      <Filter>Source Files\Game\Behaviours</Filter>
+    </ClCompile>
+    <ClCompile Include="GameScene.cpp">
+      <Filter>Source Files\Engine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -533,9 +536,6 @@
     <ClInclude Include="Transform.h">
       <Filter>Header Files\Engine\Behaviours</Filter>
     </ClInclude>
-    <ClInclude Include="GameScene.h">
-      <Filter>Header Files\Game\Scenes</Filter>
-    </ClInclude>
     <ClInclude Include="GLStateTrack.h">
       <Filter>Header Files\OpenGL</Filter>
     </ClInclude>
@@ -559,6 +559,12 @@
     </ClInclude>
     <ClInclude Include="JSON.h">
       <Filter>Header Files\Engine\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="IntroBehaviour.h">
+      <Filter>Header Files\Game\Behaviours</Filter>
+    </ClInclude>
+    <ClInclude Include="GameScene.h">
+      <Filter>Header Files\Engine</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

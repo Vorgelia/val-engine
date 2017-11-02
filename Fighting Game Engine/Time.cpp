@@ -35,7 +35,7 @@ void Time::FrameUpdate()
 	Time::lastUpdateTime += VE_FRAME_TIME;
 }
 
-void Time::OnStateLoaded()
+void Time::OnSceneLoaded()
 {
 	Time::timeSinceLoad = 0;
 	Time::lastUpdateTime = Time::time - VE_FRAME_TIME;

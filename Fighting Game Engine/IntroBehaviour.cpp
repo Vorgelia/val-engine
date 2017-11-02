@@ -1,4 +1,4 @@
-#include "GS_Intro.h"
+#include "IntroBehaviour.h"
 #include "Time.h"
 #include "Resource.h"
 #include "Rendering.h"
@@ -12,16 +12,14 @@
 #include "DebugLog.h"
 #include <GLM\glm.hpp>
 
-void GS_Intro::Init()
+void IntroBehaviour::OnSceneInit()
 {
 	VE_DEBUG_LOG("Start time: " + std::to_string(glfwGetTime()));
-	_levelTimer = 0;
-	_initialized = true;
 }
-void GS_Intro::RenderUI()
+
+void IntroBehaviour::OnRenderUI()
 {
-	GameScene::RenderUI();
-	Resource::GetMaterial("Materials/Intro/Intro_Screen.vmat")->uniformVectors["ve_color"].a = glm::clamp<float>(glm::min<float>(_levelTimer, 4 - _levelTimer), 0.0f, 1.0f);
+	Resource::GetMaterial("Materials/Intro/Intro_Screen.vmat")->uniformVectors["ve_color"].a = glm::clamp<float>(glm::min<float>(Time::timeSinceLoad, _introDuration - Time::timeSinceLoad), 0.0f, 1.0f);
 	Rendering::DrawScreenMesh(glm::vec4(0, 0, 1920, 1080), (Mesh*)nullptr, Resource::GetMaterial("Materials/Intro/Intro_Screen.vmat"));
 
 	Rendering::DrawScreenText(glm::vec4(0, 10, 100, 100), 24, std::to_string(glm::min<double>((int)std::round(1.0 / Time::smoothDeltaTime), 60)), nullptr);
@@ -35,10 +33,9 @@ void GS_Intro::RenderUI()
 	}
 }
 
-void GS_Intro::GameUpdate()
+void IntroBehaviour::GameUpdate()
 {
-	GameScene::GameUpdate();
-	_levelTimer += (float)VE_FRAME_TIME;
+	Time::timeSinceLoad += (float)VE_FRAME_TIME;
 
 	bool playerInput = false;
 	for(auto& i : InputManager::_inputDevices)
@@ -51,11 +48,16 @@ void GS_Intro::GameUpdate()
 	}
 
 
-	if(_levelTimer > 4 || playerInput)
+	if(Time::timeSinceLoad > _introDuration || playerInput)
 		GameSceneManager::LoadScene("Menu");
 }
 
-GS_Intro::GS_Intro(const FS::path& path) :GameScene(path)
+IntroBehaviour::IntroBehaviour(Object * owner) : Behaviour(owner)
 {
+	enabled = true;
+}
 
+IntroBehaviour::IntroBehaviour(Object * owner, const json & j) : Behaviour(owner, j)
+{
+	_introDuration = JSON::Get<float>(j["introDuration"]);
 }

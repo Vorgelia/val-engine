@@ -24,7 +24,7 @@ Font::Font(const FS::path& p)
 		init = FT_Init_FreeType(&library) == 0;
 		if(!init)
 		{
-			DebugLog::Push("Unable to init Freetype", LogItem::Type::Warning);
+			VE_DEBUG_LOG("Unable to init Freetype", LogItem::Type::Warning);
 			return;
 		}
 	}
@@ -34,7 +34,7 @@ Font::Font(const FS::path& p)
 	//Font loading
 	if(FT_New_Face(library, name.c_str(), 0, &face))
 	{
-		DebugLog::Push("Unable to load font: " + name, LogItem::Type::Warning);
+		VE_DEBUG_LOG("Unable to load font: " + name, LogItem::Type::Warning);
 		return;
 	}
 	FT_Set_Pixel_Sizes(face, 0, TEXT_SIZE);//Force the Y size to TEXT_SIZE, X size automatic.
@@ -49,7 +49,7 @@ Font::Font(const FS::path& p)
 		if(FT_Load_Char(face, c, FT_LOAD_RENDER))
 		{
 			//Load character texture to face->glyph->bitmap
-			DebugLog::Push("Unable to load character: " + c, LogItem::Type::Warning);
+			VE_DEBUG_LOG("Unable to load character: " + c, LogItem::Type::Warning);
 			continue;
 		}
 

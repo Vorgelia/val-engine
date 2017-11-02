@@ -53,7 +53,7 @@ void GameScene::LoadResources()
 	}
 	catch(std::runtime_error err)
 	{
-		DebugLog::Push(err.what());
+		VE_DEBUG_LOG(err.what());
 	}
 	_loaded = true;
 }
@@ -87,6 +87,7 @@ bool GameScene::initialized()
 void GameScene::Init()
 {
 	_initialized = true;
+	RunFunctionOnObjectBehaviours(VE_BEHAVIOUR_FUNCTION_CALLER(OnSceneInit));
 }
 
 void GameScene::Update()

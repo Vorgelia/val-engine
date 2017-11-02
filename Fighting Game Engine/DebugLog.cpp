@@ -28,6 +28,8 @@ namespace DebugLog
 	std::mutex _queueMutex;
 	//The function called with _writeThread runs on an infinite loop. _endWrite is a flag that tells that loop to end.
 	std::atomic<bool> _endWrite = false;
+
+	void Push(const std::string& data, LogItem::Type type = LogItem::Type::Log);
 }
 
 //Initialize the write stream and thread. Erase everything in log_output.txt and write a header in it.
@@ -116,6 +118,19 @@ void DebugLog::Push(const std::string& data, LogItem::Type type)
 		throw std::runtime_error(data);
 	}
 #endif
+}
+
+void DebugLog::Push(const std::string & data, std::string fileName, int fileLine, LogItem::Type type)
+{
+	size_t lastSlash = fileName.find_last_of('\\') + 1;
+	if(lastSlash == fileName.size())
+	{
+		Push(data, type);
+		return;
+	}
+
+	fileName = fileName.substr(lastSlash, fileName.length() - lastSlash);
+	Push("[" + fileName + ":" + std::to_string(fileLine) + "] " + data, type);
 }
 
 void DebugLog::GetStackTrace(std::vector<std::string>* storage, unsigned int stackSize)
