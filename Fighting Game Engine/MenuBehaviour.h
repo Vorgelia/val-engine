@@ -4,6 +4,7 @@
 class MenuBehaviour :
 	public Behaviour
 {
+	float _motionTimer;
 public:
 	VE_BEHAVIOUR_NAME(MenuBehaviour);
 

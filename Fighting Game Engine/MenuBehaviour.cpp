@@ -33,6 +33,11 @@ void MenuBehaviour::OnRenderUI()
 		++ind;
 	}
 
+	if(Time::timeSinceLoad < _motionTimer)
+	{
+		Rendering::DrawScreenText(glm::vec4(0, 1080 - 400, 1920, 60), 140, "MOTION", nullptr, TextAlignment::Center);
+	}
+
 	if(Time::timeSinceLoad < 1)
 	{
 		Rendering::tintColor.a = (float)(1.0 - (Time::timeSinceLoad));
@@ -41,10 +46,13 @@ void MenuBehaviour::OnRenderUI()
 
 }
 
-InputMotion qcf = {
-	InputMotionComponent(std::vector<InputButtonEvent>{}, (unsigned char)InputDirection::Left, 60, 20, false),
-	InputMotionComponent(std::vector<InputButtonEvent>{}, 4, 0, 10, false),
-	InputMotionComponent(std::vector<InputButtonEvent>{ InputButtonEvent((unsigned char)InputButton::Light, InputType::Pressed) }, 0, 0, 1, false)
+//Sonic boom motion
+
+//TODO: Fix negative edge
+InputMotion motion = {
+	InputMotionComponent(std::vector<InputButtonEvent>{}, (unsigned char)InputDirection::Left, 30, 20, false),
+	InputMotionComponent(std::vector<InputButtonEvent>{}, (unsigned char)InputDirection::Right, 0, 10, false),
+	InputMotionComponent(std::vector<InputButtonEvent>{ InputButtonEvent((unsigned char)InputButton::Light, InputType::Released) }, 0, 0, 10, false)
 };
 
 void MenuBehaviour::Update()
@@ -58,8 +66,13 @@ void MenuBehaviour::Update()
 
 void MenuBehaviour::GameUpdate()
 {
-	if(InputManager::_inputDevices[0] != nullptr)
-		InputManager::_inputDevices[0]->EvaluateMotion(qcf, false);
+	if(InputManager::_inputDevices[-1] != nullptr)
+	{
+		if(InputManager::_inputDevices[-1]->EvaluateMotion(motion, false))
+		{
+			_motionTimer = Time::timeSinceLoad + 1;
+		}
+	}
 	Rendering::cameras.at(0).position += InputManager::_inputDevices[-1]->inputBuffer()->back()->ToVector() * 500.0f * (float)VE_FRAME_TIME;
 }
 

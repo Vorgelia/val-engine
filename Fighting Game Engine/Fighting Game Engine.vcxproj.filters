@@ -352,7 +352,7 @@
       <Filter>Source Files\Engine\Management</Filter>
     </ClCompile>
     <ClCompile Include="MenuBehaviour.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Game\Behaviours</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -555,7 +555,7 @@
       <Filter>Header Files\Engine\Management</Filter>
     </ClInclude>
     <ClInclude Include="MenuBehaviour.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Game\Behaviours</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
