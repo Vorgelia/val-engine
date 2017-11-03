@@ -1,0 +1,15 @@
+[
+	{
+        "id":1,
+        "name":"IntroManager",
+        "enabled":true,
+        "behaviours":
+		[
+            {
+                "name":"IntroBehaviour",
+                "enabled":true,
+                "introDuration":4.0
+            }
+        ]
+    }
+]

@@ -12,10 +12,8 @@
 
 #include "Transform.h"
 #include "Object.h"
-#include "GameState.h"
-#include "GameStateManager.h"
-#include "GSIncludes.hpp"
-#include <irrKlang\include\irrKlang.h>
+#include "GameScene.h"
+#include "GameSceneManager.h"
 
 #include "ScriptManager.h"
 #include "Script.h"

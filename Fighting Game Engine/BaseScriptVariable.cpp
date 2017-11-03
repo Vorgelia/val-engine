@@ -9,6 +9,7 @@ const std::unordered_map<std::string, ScriptVariableType> BaseScriptVariable::va
 	{ ScriptToken::type_int, ScriptVariableType::Int },
 	{ ScriptToken::type_bool, ScriptVariableType::Bool },
 	{ ScriptToken::type_string, ScriptVariableType::String },
+	{ ScriptToken::type_collection, ScriptVariableType::Collection },
 };
 
 ScriptVariableType BaseScriptVariable::GetVariableType(const std::string & token)

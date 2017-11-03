@@ -36,5 +36,5 @@ void Profiler::Clear()
 void Profiler::Print()
 {
 	for(auto i = _elements.begin(); i != _elements.end(); ++i)
-		DebugLog::Push(Profiler::String(i->first), LogItem::Type::Message);
+		VE_DEBUG_LOG(Profiler::String(i->first), LogItem::Type::Message);
 }

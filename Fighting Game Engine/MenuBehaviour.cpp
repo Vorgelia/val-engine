@@ -1,4 +1,4 @@
-#include "GS_Menu.h"
+#include "MenuBehaviour.h"
 #include "Rendering.h"
 #include "Resource.h"
 #include "Texture.h"
@@ -12,15 +12,11 @@
 #include "InputMotion.h"
 #include "CircularBuffer.h"
 #include "Camera.h"
+#include "BehaviourFactory.h"
 
-//This is where all of the testing ends up happening, which might explain why it's uncommented and a mess.
+VE_BEHAVIOUR_REGISTER_TYPE(MenuBehaviour);
 
-void GS_Menu::FrameEnd()
-{
-	//Rendering::DrawScreenMesh(glm::vec4(0, 0, 1920, 1080), Resource::GetMesh("Meshes/Base/screenQuad.vm"), std::vector<Texture*>{ Resource::GetTexture("Textures/tex.png") }, Resource::GetMaterial("Materials/Base/Screen.vmat"));
-}
-
-void GS_Menu::GUI()
+void MenuBehaviour::OnRenderUI()
 {
 	Rendering::DrawScreenText(glm::vec4(0, 10, 100, 100), 24, std::to_string(glm::min<double>((int)std::round(1.0 / Time::smoothDeltaTime), 60)), nullptr);
 	Rendering::DrawScreenText(glm::vec4(0, 30, 100, 100), 24, std::to_string(glm::max<double>(((int)(Time::updateRate * 100))*0.01, 1.0)), nullptr);
@@ -37,6 +33,11 @@ void GS_Menu::GUI()
 		++ind;
 	}
 
+	if(Time::timeSinceLoad < _motionTimer)
+	{
+		Rendering::DrawScreenText(glm::vec4(0, 1080 - 400, 1920, 60), 140, "MOTION", nullptr, TextAlignment::Center);
+	}
+
 	if(Time::timeSinceLoad < 1)
 	{
 		Rendering::tintColor.a = (float)(1.0 - (Time::timeSinceLoad));
@@ -44,12 +45,17 @@ void GS_Menu::GUI()
 	}
 
 }
-InputMotion qcf = {
-	InputMotionComponent(std::vector<InputButtonEvent>{}, (unsigned char)InputDirection::Left, 60, 20, false),
-	InputMotionComponent(std::vector<InputButtonEvent>{}, 4, 0, 10, false),
-	InputMotionComponent(std::vector<InputButtonEvent>{ InputButtonEvent((unsigned char)InputButton::Light, InputType::Pressed) }, 0, 0, 1, false)
+
+//Sonic boom motion
+
+//TODO: Fix negative edge
+InputMotion motion = {
+	InputMotionComponent(std::vector<InputButtonEvent>{}, (unsigned char)InputDirection::Left, 30, 20, false),
+	InputMotionComponent(std::vector<InputButtonEvent>{}, (unsigned char)InputDirection::Right, 0, 10, false),
+	InputMotionComponent(std::vector<InputButtonEvent>{ InputButtonEvent((unsigned char)InputButton::Light, InputType::Released) }, 0, 0, 10, false)
 };
-void GS_Menu::Update()
+
+void MenuBehaviour::Update()
 {
 	if(glfwGetKey(Screen::window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 	{
@@ -57,20 +63,23 @@ void GS_Menu::Update()
 	}
 
 }
-void GS_Menu::GameUpdate()
+
+void MenuBehaviour::GameUpdate()
 {
-	if(InputManager::_inputDevices[0] != nullptr)
-		InputManager::_inputDevices[0]->EvaluateMotion(qcf, false);
+	if(InputManager::_inputDevices[-1] != nullptr)
+	{
+		if(InputManager::_inputDevices[-1]->EvaluateMotion(motion, false))
+		{
+			_motionTimer = Time::timeSinceLoad + 1;
+		}
+	}
 	Rendering::cameras.at(0).position += InputManager::_inputDevices[-1]->inputBuffer()->back()->ToVector() * 500.0f * (float)VE_FRAME_TIME;
 }
 
-GS_Menu::GS_Menu(const FS::path& path) :GameState(path)
+MenuBehaviour::MenuBehaviour(Object* owner, const json& j) : Behaviour(owner, j)
 {
 }
 
-void GS_Menu::Init()
+MenuBehaviour::~MenuBehaviour()
 {
-	_initialized = true;
-
-
 }

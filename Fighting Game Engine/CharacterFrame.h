@@ -7,7 +7,14 @@
 class CharacterFrame
 {
 	std::string _id;
-	std::vector<AttackData> _hitboxes;
+
+	std::vector<CollisionBox> _hitboxes;
+	std::vector<CollisionBox> _hurtboxes;
+	std::vector<CollisionBox> _collision;
+
+	int damage;
+	int hitstun;
+	int blockstun;
 public:
 
 	//Hitboxes

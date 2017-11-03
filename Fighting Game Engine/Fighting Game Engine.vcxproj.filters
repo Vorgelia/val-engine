@@ -13,42 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Header Files\GL">
-      <UniqueIdentifier>{8ce192c5-2989-49bf-b4c8-e37b2b7b2d1f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\FG">
-      <UniqueIdentifier>{a87446ba-8e9e-4121-b6f6-719f60ec81ec}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Rendering">
-      <UniqueIdentifier>{fd68cf88-a494-440d-bb81-b69d87f31c7f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\FG">
-      <UniqueIdentifier>{9ff2559f-15a9-4e73-8ebd-646934d32039}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Rendering">
-      <UniqueIdentifier>{952fa30b-0a91-44c9-bdbc-84c32fdd04a0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\GL">
-      <UniqueIdentifier>{443a4747-4d4b-47d7-b615-9a41fcb245ca}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Resource">
-      <UniqueIdentifier>{76e766fb-bf89-4072-b010-055d3903996f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Resource">
-      <UniqueIdentifier>{2ac95473-739c-4074-ae52-75d712ff8ab6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\FG\States">
-      <UniqueIdentifier>{127b0c24-dbdb-4662-b875-bd4bdb045520}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\FG\States">
-      <UniqueIdentifier>{ce5d2442-744a-456e-9785-eae75a39425f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\FG\Input">
-      <UniqueIdentifier>{3a2665ec-2e60-48b7-9248-f7022b9ddc52}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\FG\Input">
-      <UniqueIdentifier>{b4436c84-b5f1-4cb3-8e61-6979cc375585}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Resource Files\Fonts">
       <UniqueIdentifier>{a5dc5a84-6179-46bd-bc9e-c5cbdac91f76}</UniqueIdentifier>
     </Filter>
@@ -85,270 +49,330 @@
     <Filter Include="Resource Files\Textures\Intro">
       <UniqueIdentifier>{cce49813-dc4b-40c6-af73-21484adb3cd7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\FG\Networking">
-      <UniqueIdentifier>{1865e464-f120-4daf-82c0-d1c053d682dc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\FG\Networking">
-      <UniqueIdentifier>{fb16a9b8-c4f1-4763-a3b3-d58451dde0cc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\FG\Debug">
-      <UniqueIdentifier>{5269803f-189b-4e74-b25b-3427902e2ce7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\FG\Debug">
-      <UniqueIdentifier>{2fe19260-8c7f-4706-a39e-5ccb3a267514}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\FG\Characters">
-      <UniqueIdentifier>{f2fdefe9-8c7f-4369-a6da-19749600ca71}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\FG\Characters">
-      <UniqueIdentifier>{20190c51-8f38-47d7-91a0-be49bf78017c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\FG\Scripting">
-      <UniqueIdentifier>{aad99d76-6fde-4c72-b79e-7761f34ba28c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\FG\Scripting">
-      <UniqueIdentifier>{d9f6b802-75d8-448f-8e2f-e0cbbd44bc84}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\FG\Scripting\Objects">
-      <UniqueIdentifier>{14ae11ae-9dc7-4b06-9342-7e850546342f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\FG\Scripting\Objects">
-      <UniqueIdentifier>{d0b16b3f-9940-414f-8bf2-3176cc15a002}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\FG\Scripting\Objects\Blocks">
-      <UniqueIdentifier>{75bbc52f-7d15-4ff9-a210-e407101fa7b0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\FG\Scripting\Objects\Blocks">
-      <UniqueIdentifier>{4bc89b97-5ddc-4037-9be9-97a3cf4bbc41}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\IncludeLists">
       <UniqueIdentifier>{5eba43cb-9827-4311-9232-3cc2b0cc0846}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\FG\Scripting\Objects\Variables">
+    <Filter Include="Source Files\Engine">
+      <UniqueIdentifier>{55f3eb22-2990-47f2-ac5e-fc2b8e813ecc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\OpenGL">
+      <UniqueIdentifier>{7fa2cd40-0c7c-4644-a680-51f8b1cdb5c2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Game">
+      <UniqueIdentifier>{0224f232-e8c6-45d1-b427-6b34d04b5843}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Rendering">
+      <UniqueIdentifier>{952fa30b-0a91-44c9-bdbc-84c32fdd04a0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Resource">
+      <UniqueIdentifier>{2ac95473-739c-4074-ae52-75d712ff8ab6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Scripting">
+      <UniqueIdentifier>{d9f6b802-75d8-448f-8e2f-e0cbbd44bc84}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Scripting\Objects">
+      <UniqueIdentifier>{14ae11ae-9dc7-4b06-9342-7e850546342f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Scripting\Objects\Blocks">
+      <UniqueIdentifier>{4bc89b97-5ddc-4037-9be9-97a3cf4bbc41}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Scripting\Objects\Variables">
       <UniqueIdentifier>{b4360ee8-e052-41fd-b1ca-0c7b34622559}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\FG\Scripting\Objects\Variables">
-      <UniqueIdentifier>{d97bca5d-5f4c-47a6-86b2-ca676f6bd8fc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\FG\Scripting\Data">
-      <UniqueIdentifier>{307116f3-d56c-4d3d-afae-5a19d627947a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\FG\Scripting\Utilities">
-      <UniqueIdentifier>{5fb3cb63-294f-48b3-98d1-dede13a8d6fd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\FG\Scripting\Data">
+    <Filter Include="Source Files\Engine\Scripting\Data">
       <UniqueIdentifier>{10fd6aaa-03e5-443c-87c4-756485a630d4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\FG\Scripting\Utilities">
+    <Filter Include="Source Files\Engine\Scripting\Utilities">
       <UniqueIdentifier>{ce045fde-443f-47f3-905c-c24548f886c1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\FG\Utilities">
+    <Filter Include="Source Files\Engine\Input">
+      <UniqueIdentifier>{b4436c84-b5f1-4cb3-8e61-6979cc375585}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Debug">
+      <UniqueIdentifier>{5269803f-189b-4e74-b25b-3427902e2ce7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Networking">
+      <UniqueIdentifier>{fb16a9b8-c4f1-4763-a3b3-d58451dde0cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Management">
+      <UniqueIdentifier>{7e9eb8dc-e0e6-457b-b5f5-804a4079436c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Game\Characters">
+      <UniqueIdentifier>{20190c51-8f38-47d7-91a0-be49bf78017c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Game\Utilities">
       <UniqueIdentifier>{564001d8-db18-420f-bf6d-7f2d69f5ebee}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\FG\Utilities">
+    <Filter Include="Source Files\Engine\Behaviours">
+      <UniqueIdentifier>{649fd5c9-7abe-471c-ab40-94cd0927c7b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine">
+      <UniqueIdentifier>{cb848169-4507-40b7-8b3a-47d7ae29ba3e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Game">
+      <UniqueIdentifier>{ebb6467b-93ac-480d-9761-ad74dffddd81}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\OpenGL">
+      <UniqueIdentifier>{c1f656d7-3dae-4f4f-b825-8053f4d94bbe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Rendering">
+      <UniqueIdentifier>{fd68cf88-a494-440d-bb81-b69d87f31c7f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Resource">
+      <UniqueIdentifier>{76e766fb-bf89-4072-b010-055d3903996f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Management">
+      <UniqueIdentifier>{d1ce817d-6695-4ecd-80a7-719694732fac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Behaviours">
+      <UniqueIdentifier>{7cf1feb7-6d9f-4acb-b148-e4cc501c0d25}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Debug">
+      <UniqueIdentifier>{2fe19260-8c7f-4706-a39e-5ccb3a267514}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Input">
+      <UniqueIdentifier>{3a2665ec-2e60-48b7-9248-f7022b9ddc52}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Networking">
+      <UniqueIdentifier>{1865e464-f120-4daf-82c0-d1c053d682dc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Scripting">
+      <UniqueIdentifier>{aad99d76-6fde-4c72-b79e-7761f34ba28c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Scripting\Objects">
+      <UniqueIdentifier>{d0b16b3f-9940-414f-8bf2-3176cc15a002}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Scripting\Objects\Blocks">
+      <UniqueIdentifier>{75bbc52f-7d15-4ff9-a210-e407101fa7b0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Scripting\Objects\Variables">
+      <UniqueIdentifier>{d97bca5d-5f4c-47a6-86b2-ca676f6bd8fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Scripting\Data">
+      <UniqueIdentifier>{307116f3-d56c-4d3d-afae-5a19d627947a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Scripting\Utilities">
+      <UniqueIdentifier>{5fb3cb63-294f-48b3-98d1-dede13a8d6fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Game\Characters">
+      <UniqueIdentifier>{f2fdefe9-8c7f-4369-a6da-19749600ca71}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Game\Utilities">
       <UniqueIdentifier>{80649126-a9c1-4216-8108-32de985cd964}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Game\Behaviours">
+      <UniqueIdentifier>{d9d2eee2-a311-4516-bde6-88c61acca0c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Game\Behaviours">
+      <UniqueIdentifier>{e861f96b-6386-4226-a9e0-1d01aa169180}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Screen.cpp">
-      <Filter>Source Files\FG</Filter>
-    </ClCompile>
-    <ClCompile Include="Time.cpp">
-      <Filter>Source Files\FG</Filter>
-    </ClCompile>
     <ClCompile Include="Rendering.cpp">
-      <Filter>Source Files\Rendering</Filter>
+      <Filter>Source Files\Engine\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="Shader.cpp">
-      <Filter>Source Files\Rendering</Filter>
+      <Filter>Source Files\Engine\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="Texture.cpp">
-      <Filter>Source Files\Rendering</Filter>
+      <Filter>Source Files\Engine\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="Mesh.cpp">
-      <Filter>Source Files\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="GLStateTrack.cpp">
-      <Filter>Source Files\GL</Filter>
+      <Filter>Source Files\Engine\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="ResourceLoader.cpp">
-      <Filter>Source Files\Resource</Filter>
+      <Filter>Source Files\Engine\Resource</Filter>
     </ClCompile>
     <ClCompile Include="CachedMesh.cpp">
-      <Filter>Source Files\Resource</Filter>
+      <Filter>Source Files\Engine\Resource</Filter>
     </ClCompile>
     <ClCompile Include="FrameBuffer.cpp">
-      <Filter>Source Files\Rendering</Filter>
+      <Filter>Source Files\Engine\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="Material.cpp">
-      <Filter>Source Files\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="Transform.cpp">
-      <Filter>Source Files\FG</Filter>
+      <Filter>Source Files\Engine\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="Resource.cpp">
-      <Filter>Source Files\Resource</Filter>
+      <Filter>Source Files\Engine\Resource</Filter>
     </ClCompile>
     <ClCompile Include="Font.cpp">
-      <Filter>Source Files\Rendering</Filter>
+      <Filter>Source Files\Engine\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="PostEffect.cpp">
-      <Filter>Source Files\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="Profiler.cpp">
-      <Filter>Source Files\FG</Filter>
-    </ClCompile>
-    <ClCompile Include="Object.cpp">
-      <Filter>Source Files\FG</Filter>
-    </ClCompile>
-    <ClCompile Include="GameState.cpp">
-      <Filter>Source Files\FG</Filter>
-    </ClCompile>
-    <ClCompile Include="GameStateManager.cpp">
-      <Filter>Source Files\FG</Filter>
+      <Filter>Source Files\Engine\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="Camera.cpp">
-      <Filter>Source Files\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="GS_Intro.cpp">
-      <Filter>Source Files\FG\States</Filter>
-    </ClCompile>
-    <ClCompile Include="GS_Menu.cpp">
-      <Filter>Source Files\FG\States</Filter>
+      <Filter>Source Files\Engine\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="InputManager.cpp">
-      <Filter>Source Files\FG\Input</Filter>
+      <Filter>Source Files\Engine\Input</Filter>
     </ClCompile>
     <ClCompile Include="InputDevice.cpp">
-      <Filter>Source Files\FG\Input</Filter>
+      <Filter>Source Files\Engine\Input</Filter>
     </ClCompile>
     <ClCompile Include="InputFrame.cpp">
-      <Filter>Source Files\FG\Input</Filter>
+      <Filter>Source Files\Engine\Input</Filter>
     </ClCompile>
     <ClCompile Include="InputEvent.cpp">
-      <Filter>Source Files\FG\Input</Filter>
+      <Filter>Source Files\Engine\Input</Filter>
     </ClCompile>
     <ClCompile Include="InputMotion.cpp">
-      <Filter>Source Files\FG\Input</Filter>
+      <Filter>Source Files\Engine\Input</Filter>
     </ClCompile>
     <ClCompile Include="ResourceInitializer.cpp">
-      <Filter>Source Files\Resource</Filter>
+      <Filter>Source Files\Engine\Resource</Filter>
     </ClCompile>
     <ClCompile Include="ConnectionSocket.cpp">
-      <Filter>Source Files\FG\Networking</Filter>
+      <Filter>Source Files\Engine\Networking</Filter>
     </ClCompile>
     <ClCompile Include="NetworkMessage.cpp">
-      <Filter>Source Files\FG\Networking</Filter>
+      <Filter>Source Files\Engine\Networking</Filter>
     </ClCompile>
     <ClCompile Include="NetworkEntity.cpp">
-      <Filter>Source Files\FG\Networking</Filter>
+      <Filter>Source Files\Engine\Networking</Filter>
     </ClCompile>
     <ClCompile Include="DebugLog.cpp">
-      <Filter>Source Files\FG\Debug</Filter>
+      <Filter>Source Files\Engine\Debug</Filter>
     </ClCompile>
     <ClCompile Include="LogItem.cpp">
-      <Filter>Source Files\FG\Debug</Filter>
+      <Filter>Source Files\Engine\Debug</Filter>
     </ClCompile>
     <ClCompile Include="GameCharacter.cpp">
-      <Filter>Source Files\FG\Characters</Filter>
+      <Filter>Source Files\Game\Characters</Filter>
     </ClCompile>
     <ClCompile Include="CharacterFrame.cpp">
-      <Filter>Source Files\FG\Characters</Filter>
+      <Filter>Source Files\Game\Characters</Filter>
     </ClCompile>
     <ClCompile Include="AttackData.cpp">
-      <Filter>Source Files\FG\Characters</Filter>
+      <Filter>Source Files\Game\Characters</Filter>
     </ClCompile>
     <ClCompile Include="Script.cpp">
-      <Filter>Source Files\FG\Scripting</Filter>
+      <Filter>Source Files\Engine\Scripting</Filter>
     </ClCompile>
     <ClCompile Include="ScriptManager.cpp">
-      <Filter>Source Files\FG\Scripting</Filter>
+      <Filter>Source Files\Engine\Scripting</Filter>
     </ClCompile>
     <ClCompile Include="ScriptLinesView.cpp">
-      <Filter>Source Files\FG\Scripting\Data</Filter>
+      <Filter>Source Files\Engine\Scripting\Data</Filter>
     </ClCompile>
     <ClCompile Include="ScriptBlock.cpp">
-      <Filter>Source Files\FG\Scripting\Objects\Blocks</Filter>
+      <Filter>Source Files\Engine\Scripting\Objects\Blocks</Filter>
     </ClCompile>
     <ClCompile Include="ScriptFunctionBlock.cpp">
-      <Filter>Source Files\FG\Scripting\Objects\Blocks</Filter>
+      <Filter>Source Files\Engine\Scripting\Objects\Blocks</Filter>
     </ClCompile>
     <ClCompile Include="ScriptParentBlock.cpp">
-      <Filter>Source Files\FG\Scripting\Objects\Blocks</Filter>
+      <Filter>Source Files\Engine\Scripting\Objects\Blocks</Filter>
     </ClCompile>
     <ClCompile Include="ScriptError.cpp">
-      <Filter>Source Files\FG\Scripting\Data</Filter>
+      <Filter>Source Files\Engine\Scripting\Data</Filter>
     </ClCompile>
     <ClCompile Include="ScriptToken.cpp">
-      <Filter>Source Files\FG\Scripting\Data</Filter>
+      <Filter>Source Files\Engine\Scripting\Data</Filter>
     </ClCompile>
     <ClCompile Include="ScriptConditionalBlock.cpp">
-      <Filter>Source Files\FG\Scripting\Objects\Blocks</Filter>
+      <Filter>Source Files\Engine\Scripting\Objects\Blocks</Filter>
     </ClCompile>
     <ClCompile Include="ScriptFunctionSignature.cpp">
-      <Filter>Source Files\FG\Scripting\Data</Filter>
+      <Filter>Source Files\Engine\Scripting\Data</Filter>
     </ClCompile>
     <ClCompile Include="ScriptOperator.cpp">
-      <Filter>Source Files\FG\Scripting\Data</Filter>
+      <Filter>Source Files\Engine\Scripting\Data</Filter>
     </ClCompile>
     <ClCompile Include="BaseScriptVariable.cpp">
-      <Filter>Source Files\FG\Scripting\Objects\Variables</Filter>
+      <Filter>Source Files\Engine\Scripting\Objects\Variables</Filter>
     </ClCompile>
     <ClCompile Include="ScriptVariable.cpp">
-      <Filter>Source Files\FG\Scripting\Objects\Variables</Filter>
+      <Filter>Source Files\Engine\Scripting\Objects\Variables</Filter>
     </ClCompile>
     <ClCompile Include="ScriptParsingUtils.cpp">
-      <Filter>Source Files\FG\Scripting\Utilities</Filter>
+      <Filter>Source Files\Engine\Scripting\Utilities</Filter>
     </ClCompile>
     <ClCompile Include="ScriptVariableUtils.cpp">
-      <Filter>Source Files\FG\Scripting\Utilities</Filter>
+      <Filter>Source Files\Engine\Scripting\Utilities</Filter>
     </ClCompile>
     <ClCompile Include="CollisionBox.cpp">
-      <Filter>Source Files\FG\Utilities</Filter>
+      <Filter>Source Files\Game\Utilities</Filter>
     </ClCompile>
     <ClCompile Include="ScriptLine.cpp">
-      <Filter>Source Files\FG\Scripting\Data</Filter>
+      <Filter>Source Files\Engine\Scripting\Data</Filter>
     </ClCompile>
     <ClCompile Include="ScriptExpression.cpp">
-      <Filter>Source Files\FG\Scripting\Objects</Filter>
+      <Filter>Source Files\Engine\Scripting\Objects</Filter>
     </ClCompile>
     <ClCompile Include="ScriptRangedSwitchBlock.cpp">
-      <Filter>Source Files\FG\Scripting\Objects\Blocks</Filter>
+      <Filter>Source Files\Engine\Scripting\Objects\Blocks</Filter>
     </ClCompile>
     <ClCompile Include="ScriptLoopBlock.cpp">
-      <Filter>Source Files\FG\Scripting\Objects\Blocks</Filter>
+      <Filter>Source Files\Engine\Scripting\Objects\Blocks</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptCollection.cpp">
+      <Filter>Source Files\Engine\Scripting\Objects\Variables</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer.cpp">
+      <Filter>Source Files\Engine\Behaviours</Filter>
+    </ClCompile>
+    <ClCompile Include="Transform.cpp">
+      <Filter>Source Files\Engine\Behaviours</Filter>
+    </ClCompile>
+    <ClCompile Include="GLStateTrack.cpp">
+      <Filter>Source Files\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="Screen.cpp">
+      <Filter>Source Files\Engine\Management</Filter>
+    </ClCompile>
+    <ClCompile Include="Time.cpp">
+      <Filter>Source Files\Engine\Management</Filter>
+    </ClCompile>
+    <ClCompile Include="Profiler.cpp">
+      <Filter>Source Files\Engine\Management</Filter>
+    </ClCompile>
+    <ClCompile Include="GameSceneManager.cpp">
+      <Filter>Source Files\Engine\Management</Filter>
+    </ClCompile>
+    <ClCompile Include="Object.cpp">
+      <Filter>Source Files\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Behaviour.cpp">
+      <Filter>Source Files\Engine\Behaviours</Filter>
+    </ClCompile>
+    <ClCompile Include="JSON.cpp">
+      <Filter>Source Files\Engine\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="IntroBehaviour.cpp">
+      <Filter>Source Files\Game\Behaviours</Filter>
+    </ClCompile>
+    <ClCompile Include="GameScene.cpp">
+      <Filter>Source Files\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="BehaviourFactory.cpp">
+      <Filter>Source Files\Engine\Management</Filter>
+    </ClCompile>
+    <ClCompile Include="MenuBehaviour.cpp">
+      <Filter>Source Files\Game\Behaviours</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FGIncludes.hpp">
       <Filter>Header Files\IncludeLists</Filter>
     </ClInclude>
-    <ClInclude Include="GLStateTrack.h">
-      <Filter>Header Files\GL</Filter>
-    </ClInclude>
-    <ClInclude Include="Screen.h">
-      <Filter>Header Files\FG</Filter>
-    </ClInclude>
-    <ClInclude Include="Time.h">
-      <Filter>Header Files\FG</Filter>
-    </ClInclude>
     <ClInclude Include="Shader.h">
-      <Filter>Header Files\Rendering</Filter>
+      <Filter>Header Files\Engine\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="Rendering.h">
-      <Filter>Header Files\Rendering</Filter>
+      <Filter>Header Files\Engine\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="Texture.h">
-      <Filter>Header Files\Rendering</Filter>
+      <Filter>Header Files\Engine\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="Mesh.h">
-      <Filter>Header Files\Rendering</Filter>
+      <Filter>Header Files\Engine\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="ResourceLoader.h">
-      <Filter>Header Files\Resource</Filter>
+      <Filter>Header Files\Engine\Resource</Filter>
     </ClInclude>
     <ClInclude Include="SystemIncludes.hpp">
       <Filter>Header Files\IncludeLists</Filter>
@@ -357,160 +381,181 @@
       <Filter>Header Files\IncludeLists</Filter>
     </ClInclude>
     <ClInclude Include="CachedMesh.h">
-      <Filter>Header Files\Resource</Filter>
+      <Filter>Header Files\Engine\Resource</Filter>
     </ClInclude>
     <ClInclude Include="FrameBuffer.h">
-      <Filter>Header Files\Rendering</Filter>
+      <Filter>Header Files\Engine\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="Material.h">
-      <Filter>Header Files\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="Transform.h">
-      <Filter>Header Files\FG</Filter>
+      <Filter>Header Files\Engine\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="Resource.h">
-      <Filter>Header Files\Resource</Filter>
+      <Filter>Header Files\Engine\Resource</Filter>
     </ClInclude>
     <ClInclude Include="Font.h">
-      <Filter>Header Files\Rendering</Filter>
+      <Filter>Header Files\Engine\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="PostEffect.h">
-      <Filter>Header Files\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="Profiler.h">
-      <Filter>Header Files\FG</Filter>
-    </ClInclude>
-    <ClInclude Include="Object.h">
-      <Filter>Header Files\FG</Filter>
-    </ClInclude>
-    <ClInclude Include="GameState.h">
-      <Filter>Header Files\FG</Filter>
-    </ClInclude>
-    <ClInclude Include="GameStateManager.h">
-      <Filter>Header Files\FG</Filter>
-    </ClInclude>
-    <ClInclude Include="GSIncludes.hpp">
-      <Filter>Header Files\IncludeLists</Filter>
+      <Filter>Header Files\Engine\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="Camera.h">
-      <Filter>Header Files\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="GS_Intro.h">
-      <Filter>Header Files\FG\States</Filter>
-    </ClInclude>
-    <ClInclude Include="GS_Menu.h">
-      <Filter>Header Files\FG\States</Filter>
+      <Filter>Header Files\Engine\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="InputManager.h">
-      <Filter>Header Files\FG\Input</Filter>
+      <Filter>Header Files\Engine\Input</Filter>
     </ClInclude>
     <ClInclude Include="InputDevice.h">
-      <Filter>Header Files\FG\Input</Filter>
+      <Filter>Header Files\Engine\Input</Filter>
     </ClInclude>
     <ClInclude Include="InputFrame.h">
-      <Filter>Header Files\FG\Input</Filter>
+      <Filter>Header Files\Engine\Input</Filter>
     </ClInclude>
     <ClInclude Include="InputEvent.h">
-      <Filter>Header Files\FG\Input</Filter>
+      <Filter>Header Files\Engine\Input</Filter>
     </ClInclude>
     <ClInclude Include="InputMotion.h">
-      <Filter>Header Files\FG\Input</Filter>
+      <Filter>Header Files\Engine\Input</Filter>
     </ClInclude>
     <ClInclude Include="ResourceInitializer.h">
-      <Filter>Header Files\Resource</Filter>
+      <Filter>Header Files\Engine\Resource</Filter>
     </ClInclude>
     <ClInclude Include="resource1.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ConnectionSocket.h">
-      <Filter>Header Files\FG\Networking</Filter>
+      <Filter>Header Files\Engine\Networking</Filter>
     </ClInclude>
     <ClInclude Include="NetworkMessage.h">
-      <Filter>Header Files\FG\Networking</Filter>
+      <Filter>Header Files\Engine\Networking</Filter>
     </ClInclude>
     <ClInclude Include="NetworkEntity.h">
-      <Filter>Header Files\FG\Networking</Filter>
+      <Filter>Header Files\Engine\Networking</Filter>
     </ClInclude>
     <ClInclude Include="DebugLog.h">
-      <Filter>Header Files\FG\Debug</Filter>
+      <Filter>Header Files\Engine\Debug</Filter>
     </ClInclude>
     <ClInclude Include="LogItem.h">
-      <Filter>Header Files\FG\Debug</Filter>
+      <Filter>Header Files\Engine\Debug</Filter>
     </ClInclude>
     <ClInclude Include="GameCharacter.h">
-      <Filter>Header Files\FG\Characters</Filter>
+      <Filter>Header Files\Game\Characters</Filter>
     </ClInclude>
     <ClInclude Include="CharacterFrame.h">
-      <Filter>Header Files\FG\Characters</Filter>
+      <Filter>Header Files\Game\Characters</Filter>
     </ClInclude>
     <ClInclude Include="AttackData.h">
-      <Filter>Header Files\FG\Characters</Filter>
+      <Filter>Header Files\Game\Characters</Filter>
     </ClInclude>
     <ClInclude Include="Script.h">
-      <Filter>Header Files\FG\Scripting</Filter>
+      <Filter>Header Files\Engine\Scripting</Filter>
     </ClInclude>
     <ClInclude Include="ScriptManager.h">
-      <Filter>Header Files\FG\Scripting</Filter>
+      <Filter>Header Files\Engine\Scripting</Filter>
     </ClInclude>
     <ClInclude Include="ScriptLinesView.h">
-      <Filter>Header Files\FG\Scripting\Data</Filter>
+      <Filter>Header Files\Engine\Scripting\Data</Filter>
     </ClInclude>
     <ClInclude Include="ScriptBlock.h">
-      <Filter>Header Files\FG\Scripting\Objects\Blocks</Filter>
+      <Filter>Header Files\Engine\Scripting\Objects\Blocks</Filter>
     </ClInclude>
     <ClInclude Include="ScriptFunctionBlock.h">
-      <Filter>Header Files\FG\Scripting\Objects\Blocks</Filter>
+      <Filter>Header Files\Engine\Scripting\Objects\Blocks</Filter>
     </ClInclude>
     <ClInclude Include="ScriptParentBlock.h">
-      <Filter>Header Files\FG\Scripting\Objects\Blocks</Filter>
+      <Filter>Header Files\Engine\Scripting\Objects\Blocks</Filter>
     </ClInclude>
     <ClInclude Include="ScriptError.h">
-      <Filter>Header Files\FG\Scripting\Data</Filter>
+      <Filter>Header Files\Engine\Scripting\Data</Filter>
     </ClInclude>
     <ClInclude Include="ScriptToken.h">
-      <Filter>Header Files\FG\Scripting\Data</Filter>
+      <Filter>Header Files\Engine\Scripting\Data</Filter>
     </ClInclude>
     <ClInclude Include="ScriptConditionalBlock.h">
-      <Filter>Header Files\FG\Scripting\Objects\Blocks</Filter>
+      <Filter>Header Files\Engine\Scripting\Objects\Blocks</Filter>
     </ClInclude>
     <ClInclude Include="ScriptFunctionSignature.h">
-      <Filter>Header Files\FG\Scripting\Data</Filter>
+      <Filter>Header Files\Engine\Scripting\Data</Filter>
     </ClInclude>
     <ClInclude Include="ScriptOperator.h">
-      <Filter>Header Files\FG\Scripting\Data</Filter>
+      <Filter>Header Files\Engine\Scripting\Data</Filter>
     </ClInclude>
     <ClInclude Include="BaseScriptVariable.h">
-      <Filter>Header Files\FG\Scripting\Objects\Variables</Filter>
+      <Filter>Header Files\Engine\Scripting\Objects\Variables</Filter>
     </ClInclude>
     <ClInclude Include="ScriptVariable.h">
-      <Filter>Header Files\FG\Scripting\Objects\Variables</Filter>
+      <Filter>Header Files\Engine\Scripting\Objects\Variables</Filter>
     </ClInclude>
     <ClInclude Include="ScriptVariableUtils.h">
-      <Filter>Header Files\FG\Scripting\Utilities</Filter>
+      <Filter>Header Files\Engine\Scripting\Utilities</Filter>
     </ClInclude>
     <ClInclude Include="ScriptParsingUtils.h">
-      <Filter>Header Files\FG\Scripting\Utilities</Filter>
+      <Filter>Header Files\Engine\Scripting\Utilities</Filter>
     </ClInclude>
     <ClInclude Include="CircularBuffer.h">
-      <Filter>Header Files\FG\Utilities</Filter>
+      <Filter>Header Files\Game\Utilities</Filter>
     </ClInclude>
     <ClInclude Include="CollisionBox.h">
-      <Filter>Header Files\FG\Utilities</Filter>
+      <Filter>Header Files\Game\Utilities</Filter>
     </ClInclude>
     <ClInclude Include="ScriptExpression.h">
-      <Filter>Header Files\FG\Scripting\Objects</Filter>
+      <Filter>Header Files\Engine\Scripting\Objects</Filter>
     </ClInclude>
     <ClInclude Include="ScriptLine.h">
-      <Filter>Header Files\FG\Scripting\Data</Filter>
+      <Filter>Header Files\Engine\Scripting\Data</Filter>
     </ClInclude>
     <ClInclude Include="ScriptLoopBlock.h">
-      <Filter>Header Files\FG\Scripting\Objects\Blocks</Filter>
+      <Filter>Header Files\Engine\Scripting\Objects\Blocks</Filter>
     </ClInclude>
     <ClInclude Include="ScriptRangedSwitchBlock.h">
-      <Filter>Header Files\FG\Scripting\Objects\Blocks</Filter>
+      <Filter>Header Files\Engine\Scripting\Objects\Blocks</Filter>
     </ClInclude>
     <ClInclude Include="GLIncludes.hpp">
       <Filter>Header Files\IncludeLists</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptCollection.h">
+      <Filter>Header Files\Engine\Scripting\Objects\Variables</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer.h">
+      <Filter>Header Files\Engine\Behaviours</Filter>
+    </ClInclude>
+    <ClInclude Include="Transform.h">
+      <Filter>Header Files\Engine\Behaviours</Filter>
+    </ClInclude>
+    <ClInclude Include="GLStateTrack.h">
+      <Filter>Header Files\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="GameSceneManager.h">
+      <Filter>Header Files\Engine\Management</Filter>
+    </ClInclude>
+    <ClInclude Include="Profiler.h">
+      <Filter>Header Files\Engine\Management</Filter>
+    </ClInclude>
+    <ClInclude Include="Screen.h">
+      <Filter>Header Files\Engine\Management</Filter>
+    </ClInclude>
+    <ClInclude Include="Time.h">
+      <Filter>Header Files\Engine\Management</Filter>
+    </ClInclude>
+    <ClInclude Include="Object.h">
+      <Filter>Header Files\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Behaviour.h">
+      <Filter>Header Files\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="JSON.h">
+      <Filter>Header Files\Engine\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="IntroBehaviour.h">
+      <Filter>Header Files\Game\Behaviours</Filter>
+    </ClInclude>
+    <ClInclude Include="GameScene.h">
+      <Filter>Header Files\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="BehaviourFactory.h">
+      <Filter>Header Files\Engine\Management</Filter>
+    </ClInclude>
+    <ClInclude Include="MenuBehaviour.h">
+      <Filter>Header Files\Game\Behaviours</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

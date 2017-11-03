@@ -1,14 +1,17 @@
-#include "GameState.h"
+#include "GameScene.h"
 #include "Object.h"
 #include "ResourceLoader.h"
 #include "Rendering.h"
 #include "Resource.h"
 #include "Time.h"
 #include "Screen.h"
+#include "Behaviour.h"
 #include "DebugLog.h"
-//GameState variables are this engine's equivalent to levels. Why they were not named levels, who knows.
+#include "Object.h"
+
+//GameScene variables are this engine's equivalent to levels. Why they were not named levels, who knows.
 //The Unity style callbacks sort of betray my Unity background 
-void GameState::LoadResources()
+void GameScene::LoadResources()
 {
 	_loaded = false;
 	_initialized = false;
@@ -50,70 +53,69 @@ void GameState::LoadResources()
 	}
 	catch(std::runtime_error err)
 	{
-		DebugLog::Push(err.what());
+		VE_DEBUG_LOG(err.what());
 	}
 	_loaded = true;
 }
 
-bool GameState::loaded()
+bool GameScene::loaded()
 {
 	return _loaded;
 }
 
-const std::vector<std::string>& GameState::postEffectsOrder()
+const std::vector<std::string>& GameScene::postEffectsOrder()
 {
 	return _postEffectsOrder;
 }
 
-bool GameState::initialized()
+void GameScene::RunFunctionOnObjectBehaviours(std::function<void(Behaviour*)> func)
+{
+	for(auto& iter : _objects)
+	{
+		if(iter != nullptr && iter->enabled)
+		{
+			iter->RunFunctionOnBehaviours(func);
+		}
+	}
+}
+
+bool GameScene::initialized()
 {
 	return _initialized;
 }
 
-void GameState::Init()
+void GameScene::Init()
 {
 	_initialized = true;
+	RunFunctionOnObjectBehaviours(VE_BEHAVIOUR_FUNCTION_CALLER(OnSceneInit));
 }
 
-void GameState::Update()
-{
-	if(glfwGetKey(Screen::window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-	{
-		glfwSetWindowShouldClose(Screen::window, GLFW_TRUE);
-	}
-}
-
-void GameState::GameUpdate()
+void GameScene::Update()
 {
 
 }
 
-void GameState::FrameEnd()
+void GameScene::GameUpdate()
+{
+	RunFunctionOnObjectBehaviours(VE_BEHAVIOUR_FUNCTION_CALLER(GameUpdate));
+}
+
+void GameScene::LateUpdate()
+{
+	RunFunctionOnObjectBehaviours(VE_BEHAVIOUR_FUNCTION_CALLER(LateUpdate));
+}
+
+void GameScene::RenderUI()
+{
+	RunFunctionOnObjectBehaviours(VE_BEHAVIOUR_FUNCTION_CALLER(OnRenderUI));
+}
+
+void GameScene::OnLoaded()
 {
 
 }
 
-void GameState::GUI()
-{
-
-}
-
-void GameState::OnLoaded()
-{
-
-}
-
-std::string GameState::Serialize()
-{
-	return "ERROR";
-}
-
-void GameState::Deserialize(const std::string& data)
-{
-
-}
-
-void GameState::Cleanup()
+void GameScene::Cleanup()
 {
 	_objects.clear();
 	_objectLookup.clear();
@@ -125,15 +127,21 @@ void GameState::Cleanup()
 	_initialized = false;
 }
 
-void GameState::RenderObjects()
+void GameScene::RenderObjects()
 {
-	for(auto& i : _objects)
+	RunFunctionOnObjectBehaviours(VE_BEHAVIOUR_FUNCTION_CALLER(OnRenderObjects));
+}
+
+void GameScene::ApplyPostEffects()
+{
+	for(auto& iter : _postEffectsOrder)
 	{
-		i->Render();
+		Rendering::DrawPostEffect(
+			Resource::GetPostEffect(iter));
 	}
 }
 
-Object* GameState::FindObject(const std::string& name)
+Object* GameScene::FindObject(const std::string& name)
 {
 	auto& iter = _objectNameLookup.find(name);
 	if(iter != _objectNameLookup.end())
@@ -144,7 +152,7 @@ Object* GameState::FindObject(const std::string& name)
 	return nullptr;
 }
 
-GameState::GameState(const FS::path& path)
+GameScene::GameScene(const FS::path& path)
 {
 	_initialized = false;
 	_loaded = false;
@@ -152,7 +160,7 @@ GameState::GameState(const FS::path& path)
 	_postEffectsOrder.clear();
 }
 
-GameState::~GameState()
+GameScene::~GameScene()
 {
 	Cleanup();
 }

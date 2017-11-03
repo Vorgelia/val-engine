@@ -2,6 +2,7 @@
 #include "ScriptBlock.h"
 #include "ScriptToken.h"
 #include "ScriptVariable.h"
+#include "ScriptCollection.h"
 #include "ScriptVariableUtils.h"
 #include "ScriptParsingUtils.h"
 #include "ScriptOperator.h"
@@ -142,6 +143,9 @@ std::shared_ptr<BaseScriptVariable> ScriptExpression::Evaluate()
 			case ScriptVariableType::String:
 				newVariable = std::make_shared<ScriptString>();
 				break;
+			case ScriptVariableType::Collection:
+				newVariable = std::make_shared<ScriptCollection>();
+				break;
 			default:
 				throw ScriptError("Unhandled script variable type " + std::to_string((int)variableType));
 			}
@@ -186,12 +190,30 @@ std::shared_ptr<BaseScriptVariable> ScriptExpression::Evaluate()
 			}
 			else
 			{
-				if(i == _tokens.size() - 1 || _tokens[i + 1].type != ScriptTokenType::ParenthesisGroup)
+				if(i < _tokens.size() - 1 && _tokens[i + 1].type == ScriptTokenType::SquareBracketGroup)
 				{
 					evaluatedVar = _parent->GetVariable(token.token);
+					if(evaluatedVar->type() != ScriptVariableType::Collection)
+					{
+						throw ScriptError("Attempting to index member of a variable that isn't a collection.");
+					}
+
+					std::vector<ScriptToken> squareBracketTokens;
+					ScriptParsingUtils::ParseLineTokens(_tokens[i + 1].token, squareBracketTokens);
+
+					std::shared_ptr<BaseScriptVariable> squareBracketResult = std::make_unique<ScriptExpression>(_parent, squareBracketTokens)->Evaluate();
+					if(squareBracketResult->type() != ScriptVariableType::String)
+					{
+						throw ScriptError("Attempting to reference collection member with an invalid variable type.");
+					}
+
+					evaluatedVar = std::static_pointer_cast<ScriptCollection>(evaluatedVar)->GetMember(
+						std::static_pointer_cast<ScriptString>(squareBracketResult)->value());
+					i += 1;
 				}
-				else
+				else if(i < _tokens.size() - 1 && _tokens[i + 1].type == ScriptTokenType::ParenthesisGroup)
 				{
+
 					std::vector<ScriptToken> parenthesisTokens;
 					ScriptParsingUtils::ParseLineTokens(_tokens[i + 1].token, parenthesisTokens);
 					std::vector<std::shared_ptr<BaseScriptVariable>> variables;
@@ -213,6 +235,10 @@ std::shared_ptr<BaseScriptVariable> ScriptExpression::Evaluate()
 
 					evaluatedVar = _parent->RunFunction(token.token, variables);
 					i += 1;
+				}
+				else
+				{
+					evaluatedVar = _parent->GetVariable(token.token);
 				}
 			}
 

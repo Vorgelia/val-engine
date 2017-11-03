@@ -54,7 +54,7 @@ CachedMesh::CachedMesh(const FS::path& path)
 		ResourceLoader::LoadMeshVM(path, verts, elements, vertexFormat);
 	else
 	{
-		DebugLog::Push("Unhandled mesh format: " + path.extension().string());
+		VE_DEBUG_LOG("Unhandled mesh format: " + path.extension().string());
 		//TODO: Handle importing other meshes
 	}
 }

@@ -7,7 +7,8 @@ enum class ScriptVariableType
 	Null = 0,
 	Bool = 1,
 	Int = 2,
-	String = 3
+	String = 3,
+	Collection = 4,
 };
 
 enum class ScriptOperatorType;

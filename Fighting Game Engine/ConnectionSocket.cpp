@@ -9,7 +9,7 @@ int ConnectionSocket::GetLastSocketError()
 	//Naturally, we don't want that to be treated as an actual error reported to the user.
 	if(err > 0 && err != WSAEWOULDBLOCK)
 	{
-		DebugLog::Push("Socket Error: " + std::to_string(err));
+		VE_DEBUG_LOG("Socket Error: " + std::to_string(err));
 		return err;
 	}
 	return 0;
@@ -58,7 +58,7 @@ bool ConnectionSocket::SendData(NetworkMessage data)
 		{
 			sendQueue.push(data);
 			if(sendQueue.size() > 64)
-				DebugLog::Push("Send queue size warning. SocketID:" + id + " SendQueue size:" + std::to_string(sendQueue.size()));
+				VE_DEBUG_LOG("Send queue size warning. SocketID:" + id + " SendQueue size:" + std::to_string(sendQueue.size()));
 		}
 		return false;
 	}
@@ -104,7 +104,7 @@ void ConnectionSocket::DecodeStream(std::string stream)
 {
 	if(stream.length() == 0)
 	{
-		DebugLog::Push("Attempting to decode null stream.");
+		VE_DEBUG_LOG("Attempting to decode null stream.");
 		return;
 	}
 	unsigned int currentIndex = 0;
@@ -135,7 +135,7 @@ void ConnectionSocket::DecodeStream(std::string stream)
 					receiveQueue.push(NetworkMessage(stream.substr(currentIndex, nextIndex - currentIndex)));
 					break;
 				default:
-					DebugLog::Push("Invalid message type on decoding. Something went very wrong.");
+					VE_DEBUG_LOG("Invalid message type on decoding. Something went very wrong.");
 					return;
 			}
 		}

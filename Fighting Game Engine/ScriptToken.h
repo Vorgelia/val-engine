@@ -12,6 +12,7 @@ enum class ScriptTokenType
 	StringLiteral,
 
 	ParenthesisGroup,
+	SquareBracketGroup,
 
 	Separator,
 	Specifier,
@@ -47,6 +48,7 @@ struct ScriptToken
 	static const std::string type_int;
 	static const std::string type_bool;
 	static const std::string type_string;
+	static const std::string type_collection;
 
 #pragma endregion
 

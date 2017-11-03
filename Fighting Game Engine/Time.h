@@ -16,6 +16,6 @@ namespace Time
 
 	void Update();
 	void FrameUpdate();
-	void OnStateLoaded();
+	void OnSceneLoaded();
 }
 

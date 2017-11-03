@@ -12,6 +12,7 @@ class ScriptBlock;
 class ScriptParentBlock;
 class BaseScriptVariable;
 
+//TODO: Get rid of shared_ptr
 class Script
 {
 	friend class ScriptBlock;

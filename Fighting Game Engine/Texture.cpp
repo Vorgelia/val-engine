@@ -89,7 +89,7 @@ Texture::Texture(const std::string& nm, const FS::path& path, int format, int SO
 	if(pixels == nullptr)
 	{
 		name = "error";
-		DebugLog::Push("Texture load error:\n\t-" + path.string() + "\n\t-" + SOIL_last_result());
+		VE_DEBUG_LOG("Texture load error:\n\t-" + path.string() + "\n\t-" + SOIL_last_result());
 	}
 	else
 	{
@@ -117,7 +117,7 @@ void Texture::Create(const std::vector<float>& px)
 {
 	if(px.size() == 0)
 	{
-		DebugLog::Push("Invalid Texture: " + name);
+		VE_DEBUG_LOG("Invalid Texture: " + name);
 		return;
 	}
 
@@ -141,7 +141,7 @@ void Texture::Create(const std::vector<unsigned char>& px)
 {
 	if(px.size() == 0)
 	{
-		DebugLog::Push("Invalid Texture: " + name);
+		VE_DEBUG_LOG("Invalid Texture: " + name);
 		return;
 	}
 

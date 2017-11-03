@@ -1,4 +1,4 @@
-#include "GS_Intro.h"
+#include "IntroBehaviour.h"
 #include "Time.h"
 #include "Resource.h"
 #include "Rendering.h"
@@ -7,20 +7,22 @@
 #include "InputFrame.h"
 #include "InputDevice.h"
 #include "InputMotion.h"
-#include "GameStateManager.h"
+#include "GameSceneManager.h"
 #include "Screen.h"
 #include "DebugLog.h"
 #include <GLM\glm.hpp>
+#include "BehaviourFactory.h"
 
-void GS_Intro::Init()
+VE_BEHAVIOUR_REGISTER_TYPE(IntroBehaviour);
+
+void IntroBehaviour::OnSceneInit()
 {
-	DebugLog::Push("Start time: " + std::to_string(glfwGetTime()));
-	_levelTimer = 0;
-	_initialized = true;
+	VE_DEBUG_LOG("Start time: " + std::to_string(glfwGetTime()));
 }
-void GS_Intro::GUI()
+
+void IntroBehaviour::OnRenderUI()
 {
-	Resource::GetMaterial("Materials/Intro/Intro_Screen.vmat")->uniformVectors["ve_color"].a = glm::clamp<float>(glm::min<float>(_levelTimer, 4 - _levelTimer), 0.0f, 1.0f);
+	Resource::GetMaterial("Materials/Intro/Intro_Screen.vmat")->uniformVectors["ve_color"].a = glm::clamp<float>(glm::min<float>((float)Time::timeSinceLoad, _introDuration - Time::timeSinceLoad), 0.0f, 1.0f);
 	Rendering::DrawScreenMesh(glm::vec4(0, 0, 1920, 1080), (Mesh*)nullptr, Resource::GetMaterial("Materials/Intro/Intro_Screen.vmat"));
 
 	Rendering::DrawScreenText(glm::vec4(0, 10, 100, 100), 24, std::to_string(glm::min<double>((int)std::round(1.0 / Time::smoothDeltaTime), 60)), nullptr);
@@ -34,10 +36,8 @@ void GS_Intro::GUI()
 	}
 }
 
-void GS_Intro::GameUpdate()
+void IntroBehaviour::GameUpdate()
 {
-	_levelTimer += (float)VE_FRAME_TIME;
-
 	bool playerInput = false;
 	for(auto& i : InputManager::_inputDevices)
 	{
@@ -48,12 +48,16 @@ void GS_Intro::GameUpdate()
 		}
 	}
 
-
-	if(_levelTimer > 4 || playerInput)
-		GameStateManager::LoadState("Menu");
+	if((float)Time::timeSinceLoad > _introDuration || playerInput)
+		GameSceneManager::LoadScene("Menu");
 }
 
-GS_Intro::GS_Intro(const FS::path& path) :GameState(path)
+IntroBehaviour::IntroBehaviour(Object * owner) : Behaviour(owner)
 {
+	enabled = true;
+}
 
+IntroBehaviour::IntroBehaviour(Object * owner, const json & j) : Behaviour(owner, j)
+{
+	_introDuration = JSON::Get<float>(j["introDuration"]);
 }

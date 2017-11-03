@@ -28,17 +28,16 @@ TODO: Find a way to multithread input so inputs are received and timed properly 
 TODO: Add more customization over cleaning up framebuffers between frames.
 TODO: Check if a framebuffer was used last frame before cleaning it up.
 -Cleanup and Efficiency
-TODO: Clean up includes. Change default function parameters to be defined in .h and not .cpp.
-TODO: Change some class variables to be private with getters.
+TODO: Cleanup main.cpp. Move functionality to proper management classes/namespaces
 ----
 Important defines:
-Main.cpp:               VE_USE_SINGLE_BUFFER
 Resource.cpp:           VE_CREATE_DEFAULT_RESOURCES
 InputDevice.cpp:        VE_INPUT_BUFFER_INIT
 -				        VE_INPUT_BUFFER_MID
 Rendering.cpp:          VE_AUX_BUFFER_AMOUNT
 -				        VE_WORLD_SCALE
 -				        VE_FONT_DEFAULT
+Rendering.h:            VE_USE_SINGLE_BUFFER
 Time.h:			        VE_FRAME_TIME
 -				        VE_FRAME_RATE
 DebugLog.h:		        VE_DEBUG_ERRORTHROW
@@ -48,16 +47,11 @@ ScriptParsingUtils.cpp: VE_TAB_SPACE_AMOUNT
 #include "SystemIncludes.hpp"
 #include "FGIncludes.hpp"
 
-//Controls whether a single render buffer should be used
-#define VE_USE_SINGLE_BUFFER
-
 void GLInit();
 void GLCleanup();
 void EngineInit();
 void EngineCleanup();
 void UpdateComponents();
-void BeginFrame();
-void EndFrame();
 
 int main()
 {
@@ -71,56 +65,11 @@ int main()
 
 	while(!glfwWindowShouldClose(Screen::window))
 	{
-		//Aaand this is the main game loop. 
-		//There's two kinds of updates to keep track of. Loop updates, that just refer to a single iteration of the above loop running, and game updates, which refer to the fixed frame game state updates.
+		UpdateComponents();
 
-		//This is a fighting game, so we want a fixed game update rate of 60 per second. This isn't as simple as it might sound since a loop update might take much more or much less than 1/60th of a second.
-		//The current approach is as follows: Check how long it's been since the last loop update, update enough times for that time to be less than 1/60th of a second.
-
-		//It is crucial to note that every engine that isn't specialized on something as timing-precise as this one just updates as frequently as possible, while scaling timed operations
-		//by the amount of time that passed between frames. For instance, on a frame that takes 2/60 seconds:
-		//----OTHER ENGINE: Advance states like animations and movement at speed*2/60 -> render
-		//----VAL ENGINE: Advance states like animations and movement at speed*1/60 -> repeat once -> render
-		//And on a frame that takes 1/120 seconds.
-		//----OTHER ENGINE: Advance states at speed*1/120
-		//----VAL ENGINE: Do nothing until it's time to update, which is at another 1/120 seconds
-
-		//This is because fighting games are generally perceived as working on frames, with no middle states in between. It's easier for a designer to specify a move lasting 4 frames
-		//and have it concrete and easy to understand, rather than saying a move lasts 0.06666666 seconds and eeeeeh it depends on when we update.
-
-		//It's also of note that physics engines also operate on fixed update rates just to maintain precision on lower framerates.
-
-		UpdateComponents();//Some parts of the engine like timekeeping have to update as frequently as possible, regardless of whether it's game update time.
-
-		bool updatedFrame = false;//This is a variable that keeps track of whether we've run a game update on this iteration. If we have, this will tell the engine to render at the end.
-		if(!GameStateManager::isLoading())
+		if(glfwGetKey(Screen::window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		{
-			//Run updates until running one would put us ahead of our current time
-			while(Time::lastUpdateTime + VE_FRAME_TIME <= Time::time)
-			{
-				updatedFrame = true;
-				Time::FrameUpdate();
-
-				InputManager::Update();
-				ScriptManager::Update();
-
-				GameStateManager::StateInit();
-				GameStateManager::StateGameUpdate();//Send a game update callback
-
-			}
-			GameStateManager::StateUpdate();//Send a loop update callback regardless of whether the previous loop ran
-		}
-
-		GameStateManager::FrameEnd();//Checks if a level needs to be loaded and raises the necessary flags, as well as call the necessary resource management functions
-
-		if(updatedFrame)
-		{
-			//Reset OpenGL rendering variables, clear buffers and prepare for rendering.
-			BeginFrame();
-			//Render all objects in the current scene
-			GameStateManager::StateRenderObjects();
-			//Apply post processing effects and render the result to the main buffer
-			EndFrame();
+			glfwSetWindowShouldClose(Screen::window, GLFW_TRUE);
 		}
 	}
 
@@ -142,11 +91,13 @@ inline void GLInit()
 #ifdef VE_USE_SINGLE_BUFFER
 	glfwWindowHint(GLFW_DOUBLEBUFFER, GL_FALSE);
 #endif
+
 	//glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 	//glfwWindowHint(GLFW_DECORATED, GL_FALSE);
 
 	//Initialize screen variables
 	Screen::Init();
+
 	//Initialize and store window
 	Screen::window = glfwCreateWindow(Screen::size.x, Screen::size.y, "Videogame", nullptr, nullptr);
 	glfwMakeContextCurrent(Screen::window);
@@ -166,66 +117,10 @@ inline void GLCleanup()
 	//Cleanup GLFW
 	glfwTerminate();
 }
+
 //--
 //Engine Handling
 //--
-
-//Reset OpenGL rendering variables, clear buffers and prepare for rendering.
-void BeginFrame()
-{
-	//Reset certain rendering parameters that might have been overriden in the last frame.
-	//BlendFunc controls the way alpha blending happens
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glDepthMask(GL_TRUE);
-	//Viewport controls the rendering size in pixels based on the actual window size.
-	//We set it to the full window size here to perform no added transformation to the ones we do when rendering. Try changing Screen::size.y to Screen::size.y*0.5.
-	//This will be used later to force the aspect ratio to 16/9
-	glViewport(0, 0, Screen::size.x, Screen::size.y);
-
-	//Bind and clear all framebuffers.
-	for(unsigned int i = 0; i < Rendering::auxBuffers.size(); ++i)
-	{
-		Rendering::auxBuffers[i]->Clear();
-	}
-
-	Rendering::mainBuffer->Clear();//Also binds the main buffer
-}
-
-//Apply post processing effects and render the result to the main buffer
-void EndFrame()
-{
-	//Don't apply anything if the game state manager is loading.
-	if(!GameStateManager::isLoading())
-	{
-		//Call the frame end callback on the current scene
-		GameStateManager::currentState()->FrameEnd();
-		//Draw post effects specified in State/PostEffectsOrder.txt, in the order they were given
-		for(unsigned int i = 0; i < GameStateManager::currentState()->postEffectsOrder().size(); ++i)
-		{
-			Rendering::DrawPostEffect(
-				Resource::GetPostEffect(
-					GameStateManager::currentState()
-					->postEffectsOrder()[i]));
-		}
-		//Tell the scene to draw its GUI now.
-		GameStateManager::currentState()->GUI();
-	}
-
-	//Finally, render the main buffer to the default buffer.
-	//Set the viewport to what was calculated for a forced 16:9 aspect ratio
-	glViewport(Screen::viewportSize.x, Screen::viewportSize.y, Screen::viewportSize.z, Screen::viewportSize.w);
-	//Bind the default framebuffer, clear it and draw the main buffer directly.
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-	Rendering::DrawScreenMesh(glm::vec4(0, 0, 1920, 1080), Resource::GetMesh("Meshes/Base/screenQuad.vm"), Rendering::mainBuffer, Resource::GetMaterial("Materials/Base/Screen_FB.vmat"));
-
-#ifdef VE_USE_SINGLE_BUFFER
-	glFlush();
-#else
-	glfwSwapBuffers(Screen::window);
-#endif
-}
 
 inline void EngineInit()
 {
@@ -233,18 +128,18 @@ inline void EngineInit()
 	GLState::Init();
 	Resource::Init();
 	Rendering::Init();
-	GameStateManager::Init();
+	GameSceneManager::Init();
 	InputManager::Init();
 	ScriptManager::Init();
 
-	DebugLog::Push("Full Init");
+	VE_DEBUG_LOG("Full Init");
 }
 
 inline void EngineCleanup()
 {
 	ScriptManager::Cleanup();
 	InputManager::Cleanup();
-	GameStateManager::Cleanup();
+	GameSceneManager::Cleanup();
 	Rendering::Cleanup();
 	Resource::Cleanup();
 	GLState::Cleanup();
@@ -254,11 +149,11 @@ inline void EngineCleanup()
 //--
 //Component Handling
 //--
+
 inline void UpdateComponents()
 {
 	Profiler::Clear();
 	Time::Update();
 	Screen::Update();
-	Rendering::Update();
-	GameStateManager::Update();
+	GameSceneManager::Update();
 }
