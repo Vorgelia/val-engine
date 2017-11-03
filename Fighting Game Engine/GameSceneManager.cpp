@@ -126,7 +126,7 @@ void GameSceneManager::Init()
 	//Instantiate all the game scenes
 	//TODO: Make dynamic
 	scenes.insert(std::make_pair("Intro", std::make_unique<GameScene>("States/Intro")));
-	scenes.insert(std::make_pair("Menu", std::make_unique<GS_Menu>("States/Menu")));
+	scenes.insert(std::make_pair("Menu", std::make_unique<GameScene>("States/Menu")));
 
 	_currentScene = nullptr;
 	_sceneToLoad = "Intro";

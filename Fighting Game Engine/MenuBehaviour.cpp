@@ -1,4 +1,4 @@
-#include "GS_Menu.h"
+#include "MenuBehaviour.h"
 #include "Rendering.h"
 #include "Resource.h"
 #include "Texture.h"
@@ -12,12 +12,12 @@
 #include "InputMotion.h"
 #include "CircularBuffer.h"
 #include "Camera.h"
+#include "BehaviourFactory.h"
 
-//This is where all of the testing ends up happening, which might explain why it's uncommented and a mess.
+VE_BEHAVIOUR_REGISTER_TYPE(MenuBehaviour);
 
-void GS_Menu::RenderUI()
+void MenuBehaviour::OnRenderUI()
 {
-	GameScene::RenderUI();
 	Rendering::DrawScreenText(glm::vec4(0, 10, 100, 100), 24, std::to_string(glm::min<double>((int)std::round(1.0 / Time::smoothDeltaTime), 60)), nullptr);
 	Rendering::DrawScreenText(glm::vec4(0, 30, 100, 100), 24, std::to_string(glm::max<double>(((int)(Time::updateRate * 100))*0.01, 1.0)), nullptr);
 
@@ -40,28 +40,33 @@ void GS_Menu::RenderUI()
 	}
 
 }
+
 InputMotion qcf = {
 	InputMotionComponent(std::vector<InputButtonEvent>{}, (unsigned char)InputDirection::Left, 60, 20, false),
 	InputMotionComponent(std::vector<InputButtonEvent>{}, 4, 0, 10, false),
 	InputMotionComponent(std::vector<InputButtonEvent>{ InputButtonEvent((unsigned char)InputButton::Light, InputType::Pressed) }, 0, 0, 1, false)
 };
-void GS_Menu::Update()
+
+void MenuBehaviour::Update()
 {
-	GameScene::Update();
 	if(glfwGetKey(Screen::window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 	{
 		glfwSetWindowShouldClose(Screen::window, GLFW_TRUE);
 	}
 
 }
-void GS_Menu::GameUpdate()
+
+void MenuBehaviour::GameUpdate()
 {
-	GameScene::GameUpdate();
 	if(InputManager::_inputDevices[0] != nullptr)
 		InputManager::_inputDevices[0]->EvaluateMotion(qcf, false);
 	Rendering::cameras.at(0).position += InputManager::_inputDevices[-1]->inputBuffer()->back()->ToVector() * 500.0f * (float)VE_FRAME_TIME;
 }
 
-GS_Menu::GS_Menu(const FS::path& path) :GameScene(path)
+MenuBehaviour::MenuBehaviour(Object* owner, const json& j) : Behaviour(owner, j)
+{
+}
+
+MenuBehaviour::~MenuBehaviour()
 {
 }

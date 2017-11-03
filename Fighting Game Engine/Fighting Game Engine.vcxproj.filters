@@ -100,9 +100,6 @@
     <Filter Include="Source Files\Game\Characters">
       <UniqueIdentifier>{20190c51-8f38-47d7-91a0-be49bf78017c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Game\Scenes">
-      <UniqueIdentifier>{ce5d2442-744a-456e-9785-eae75a39425f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Game\Utilities">
       <UniqueIdentifier>{564001d8-db18-420f-bf6d-7f2d69f5ebee}</UniqueIdentifier>
     </Filter>
@@ -160,9 +157,6 @@
     <Filter Include="Header Files\Game\Characters">
       <UniqueIdentifier>{f2fdefe9-8c7f-4369-a6da-19749600ca71}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Game\Scenes">
-      <UniqueIdentifier>{127b0c24-dbdb-4662-b875-bd4bdb045520}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Game\Utilities">
       <UniqueIdentifier>{80649126-a9c1-4216-8108-32de985cd964}</UniqueIdentifier>
     </Filter>
@@ -212,12 +206,6 @@
     </ClCompile>
     <ClCompile Include="Camera.cpp">
       <Filter>Source Files\Engine\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="GS_Intro.cpp">
-      <Filter>Source Files\Game\Scenes</Filter>
-    </ClCompile>
-    <ClCompile Include="GS_Menu.cpp">
-      <Filter>Source Files\Game\Scenes</Filter>
     </ClCompile>
     <ClCompile Include="InputManager.cpp">
       <Filter>Source Files\Engine\Input</Filter>
@@ -361,6 +349,9 @@
       <Filter>Source Files\Engine</Filter>
     </ClCompile>
     <ClCompile Include="BehaviourFactory.cpp">
+      <Filter>Source Files\Engine\Management</Filter>
+    </ClCompile>
+    <ClCompile Include="MenuBehaviour.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -407,17 +398,8 @@
     <ClInclude Include="PostEffect.h">
       <Filter>Header Files\Engine\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="GSIncludes.hpp">
-      <Filter>Header Files\IncludeLists</Filter>
-    </ClInclude>
     <ClInclude Include="Camera.h">
       <Filter>Header Files\Engine\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="GS_Intro.h">
-      <Filter>Header Files\Game\Scenes</Filter>
-    </ClInclude>
-    <ClInclude Include="GS_Menu.h">
-      <Filter>Header Files\Game\Scenes</Filter>
     </ClInclude>
     <ClInclude Include="InputManager.h">
       <Filter>Header Files\Engine\Input</Filter>
@@ -570,6 +552,9 @@
       <Filter>Header Files\Engine</Filter>
     </ClInclude>
     <ClInclude Include="BehaviourFactory.h">
+      <Filter>Header Files\Engine\Management</Filter>
+    </ClInclude>
+    <ClInclude Include="MenuBehaviour.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

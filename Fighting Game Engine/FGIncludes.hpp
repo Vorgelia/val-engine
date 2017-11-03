@@ -14,7 +14,6 @@
 #include "Object.h"
 #include "GameScene.h"
 #include "GameSceneManager.h"
-#include "GSIncludes.hpp"
 #include <irrKlang\include\irrKlang.h>
 
 #include "ScriptManager.h"

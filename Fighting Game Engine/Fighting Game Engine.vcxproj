@@ -87,8 +87,6 @@
     <ClCompile Include="GameScene.cpp" />
     <ClCompile Include="GameSceneManager.cpp" />
     <ClCompile Include="GLStateTrack.cpp" />
-    <ClCompile Include="GS_Intro.cpp" />
-    <ClCompile Include="GS_Menu.cpp" />
     <ClCompile Include="CollisionBox.cpp" />
     <ClCompile Include="InputDevice.cpp" />
     <ClCompile Include="InputEvent.cpp" />
@@ -100,6 +98,7 @@
     <ClCompile Include="LogItem.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Material.cpp" />
+    <ClCompile Include="MenuBehaviour.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="NetworkEntity.cpp" />
     <ClCompile Include="NetworkMessage.cpp" />
@@ -156,9 +155,6 @@
     <ClInclude Include="GameSceneManager.h" />
     <ClInclude Include="GLIncludes.hpp" />
     <ClInclude Include="GLStateTrack.h" />
-    <ClInclude Include="GS_Intro.h" />
-    <ClInclude Include="GSIncludes.hpp" />
-    <ClInclude Include="GS_Menu.h" />
     <ClInclude Include="CollisionBox.h" />
     <ClInclude Include="InputDevice.h" />
     <ClInclude Include="InputEvent.h" />
@@ -169,6 +165,7 @@
     <ClInclude Include="JSON.h" />
     <ClInclude Include="LogItem.h" />
     <ClInclude Include="Material.h" />
+    <ClInclude Include="MenuBehaviour.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="NetworkEntity.h" />
     <ClInclude Include="NetworkMessage.h" />
