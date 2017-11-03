@@ -124,9 +124,22 @@ void GameSceneManager::Update()
 void GameSceneManager::Init()
 {
 	//Instantiate all the game scenes
-	//TODO: Make dynamic
-	scenes.insert(std::make_pair("Intro", std::make_unique<GameScene>("States/Intro")));
-	scenes.insert(std::make_pair("Menu", std::make_unique<GameScene>("States/Menu")));
+	FS::directory_iterator dir(FS::path("Scenes/"));
+	FS::directory_iterator end;
+
+	while(dir != end)
+	{
+		if(!FS::is_directory(*dir))
+		{
+			continue;
+		}
+
+		scenes.emplace(
+			std::make_pair(
+				dir->path().leaf().string(), 
+				std::make_unique<GameScene>(dir->path().string())));
+		++dir;
+	}
 
 	_currentScene = nullptr;
 	_sceneToLoad = "Intro";

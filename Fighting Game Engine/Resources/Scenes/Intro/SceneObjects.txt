@@ -8,7 +8,7 @@
             {
                 "name":"IntroBehaviour",
                 "enabled":true,
-                "introDuration":4
+                "introDuration":4.0
             }
         ]
     }
