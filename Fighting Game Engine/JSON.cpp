@@ -1,7 +1,7 @@
 #include "JSON.h"
 
 template<>
-glm::quat JSON::Get(const json& j)
+glm::quat JSON::Get(const json_t& j)
 {
 	return glm::quat(
 		j["w"].get<float>(),
@@ -12,7 +12,7 @@ glm::quat JSON::Get(const json& j)
 }
 
 template<>
-glm::ivec2 JSON::Get(const json& j)
+glm::ivec2 JSON::Get(const json_t& j)
 {
 	return glm::ivec2(
 		j["x"].get<int>(),
@@ -21,7 +21,7 @@ glm::ivec2 JSON::Get(const json& j)
 }
 
 template<>
-glm::vec2 JSON::Get(const json& j)
+glm::vec2 JSON::Get(const json_t& j)
 {
 	return glm::vec2(
 		j["x"].get<float>(),

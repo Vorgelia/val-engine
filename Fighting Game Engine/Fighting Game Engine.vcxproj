@@ -75,6 +75,7 @@
   <ItemGroup>
     <ClCompile Include="AttackData.cpp" />
     <ClCompile Include="Behaviour.cpp" />
+    <ClCompile Include="BehaviourFactory.cpp" />
     <ClCompile Include="CachedMesh.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CharacterFrame.cpp" />
@@ -139,6 +140,7 @@
   <ItemGroup>
     <ClInclude Include="AttackData.h" />
     <ClInclude Include="Behaviour.h" />
+    <ClInclude Include="BehaviourFactory.h" />
     <ClInclude Include="CachedMesh.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CharacterFrame.h" />

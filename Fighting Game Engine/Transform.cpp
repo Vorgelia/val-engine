@@ -1,8 +1,10 @@
 #include "Transform.h"
 #include "JSON.h"
-
 #include <GLM\gtc\matrix_transform.hpp>
 #include <GLM\gtc\type_ptr.hpp>
+#include "BehaviourFactory.h"
+
+VE_BEHAVIOUR_REGISTER_TYPE(Transform);
 
 Transform::Transform(Object* owner, glm::ivec2 position, glm::vec3 eulerRotation, glm::vec2 scale) : Behaviour(owner)
 {

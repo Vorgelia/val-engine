@@ -1,6 +1,9 @@
 #include "Renderer.h"
 #include "Rendering.h"
 #include <string>
+#include "BehaviourFactory.h"
+
+VE_BEHAVIOUR_REGISTER_TYPE(Renderer);
 
 void Renderer::OnRenderObjects()
 {

@@ -50,10 +50,6 @@ Object::Object(const std::string& name, int id)
 	this->_id = id;
 }
 
-#define VE_STRING_TO_BEHAVIOUR(name)\
-	if(behaviourName == #name)\
-		AddBehaviour<name>(behaviourName, iter);
-
 Object::Object(const json & j)
 {
 	enabled = j["enabled"].get<bool>();
@@ -64,16 +60,15 @@ Object::Object(const json & j)
 	{
 		//TODO: Find a better way to do this.
 		std::string& behaviourName = iter["name"].get<std::string>();
+		Behaviour* addedBehaviour = AddBehaviour(behaviourName, iter);
+
 		if(behaviourName == "Transform")
 		{
-			_transform = static_cast<Transform*>(AddBehaviour<Transform>(behaviourName, iter));
+			_transform = static_cast<Transform*>(addedBehaviour);
 		}
 		else if(behaviourName == "Renderer")
 		{
-			_renderer = static_cast<Renderer*>(AddBehaviour<Renderer>(behaviourName, iter));
+			_renderer = static_cast<Renderer*>(addedBehaviour);
 		}
-		VE_STRING_TO_BEHAVIOUR(IntroBehaviour);
 	}
 }
-
-#undef VE_STRING_TO_BEHAVIOUR(name)

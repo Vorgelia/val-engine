@@ -5,7 +5,7 @@
 #include <GLM\glm.hpp>
 #include <functional>
 #include "JSON.h"
-
+#include "BehaviourFactory.h"
 class Transform;
 class Mesh;
 class Material;
@@ -31,7 +31,7 @@ public:
 	Transform* transform() const;
 	Renderer* renderer() const;
 
-	template <typename T, typename ... Types>
+	template <typename ... Types>
 	Behaviour* AddBehaviour(std::string name, Types ... args);
 
 	void RunFunctionOnBehaviours(std::function<void(Behaviour*)> func);
@@ -41,13 +41,13 @@ public:
 	~Object() = default;
 };
 
-template<typename T, typename ... Types>
+template<typename ... Types>
 Behaviour* Object::AddBehaviour(std::string behaviourName, Types ... args)
 {
 	Behaviour* behaviour = _behaviours.emplace(
-		std::pair<std::string, std::unique_ptr<T>>(
-			behaviourName, 
-			std::make_unique<T>(this, args...))
+		std::make_pair(
+			behaviourName,
+			BehaviourFactory::Create(behaviourName, this, args...))
 	).first->second.get();
 
 	if(behaviour->usingInit())
