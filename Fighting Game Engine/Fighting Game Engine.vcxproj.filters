@@ -166,6 +166,9 @@
     <Filter Include="Source Files\Game\Behaviours">
       <UniqueIdentifier>{e861f96b-6386-4226-a9e0-1d01aa169180}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Engine\Utilities">
+      <UniqueIdentifier>{bfae6287-0837-4733-8676-ad799dcdb240}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -562,6 +565,12 @@
     </ClInclude>
     <ClInclude Include="ScriptBehaviour.h">
       <Filter>Header Files\Engine\Behaviours</Filter>
+    </ClInclude>
+    <ClInclude Include="MathIncludes.hpp">
+      <Filter>Header Files\IncludeLists</Filter>
+    </ClInclude>
+    <ClInclude Include="GLMExtensions.h">
+      <Filter>Header Files\Engine\Utilities</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

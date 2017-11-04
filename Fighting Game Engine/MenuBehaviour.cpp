@@ -70,7 +70,7 @@ void MenuBehaviour::GameUpdate()
 	{
 		if(InputManager::_inputDevices[-1]->EvaluateMotion(motion, false))
 		{
-			_motionTimer = Time::timeSinceLoad + 1;
+			_motionTimer = (float)Time::timeSinceLoad + 1;
 		}
 	}
 	Rendering::cameras.at(0).position += InputManager::_inputDevices[-1]->inputBuffer()->back()->ToVector() * 500.0f * (float)VE_FRAME_TIME;

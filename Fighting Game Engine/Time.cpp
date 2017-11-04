@@ -1,7 +1,7 @@
 #include "Time.h"
 #include <windows.h>
 #include "GLIncludes.hpp"
-#include <GLM\glm.hpp>
+#include "MathIncludes.hpp"
 
 //Time-keeping variables
 namespace Time
@@ -22,8 +22,8 @@ void Time::Update()
 	Time::lastTime = Time::time;
 	Time::time = glfwGetTime();
 	Time::deltaTime = Time::time - Time::lastTime;
-	Time::smoothDeltaTime = glm::max<double>(Time::smoothDeltaTime + (Time::deltaTime - Time::smoothDeltaTime)*0.01, Time::deltaTime);
-	Time::updateRate = glm::max<double>(updateRate + (Time::deltaTime * VE_FRAME_RATE - updateRate) * 0.01, Time::deltaTime * VE_FRAME_RATE);
+	Time::smoothDeltaTime = glm::max<double>(glm::lerp<double>(Time::smoothDeltaTime, Time::deltaTime, Time::deltaTime * 3), Time::deltaTime);
+	Time::updateRate = glm::max<double>(glm::lerp<double>(Time::updateRate, Time::deltaTime * VE_FRAME_RATE, Time::deltaTime * 3), Time::deltaTime * VE_FRAME_RATE);
 	Time::timeSinceLoad += deltaTime;
 }
 
@@ -39,6 +39,6 @@ void Time::OnSceneLoaded()
 {
 	Time::timeSinceLoad = 0;
 	Time::lastUpdateTime = Time::time - VE_FRAME_TIME;
-	Time::frameCountSinceLoad = -1;
+	Time::frameCountSinceLoad = 0;
 	Time::updateRate = 0;
 }

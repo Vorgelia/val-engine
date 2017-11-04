@@ -150,7 +150,7 @@ void DebugLog::GetStackTrace(std::vector<std::string>* storage, unsigned int sta
 	symbol->MaxNameLen = 255;
 	symbol->SizeOfStruct = sizeof(SYMBOL_INFO);
 	storage->reserve(frames);
-	frames = (frames - 5) > stackSize ? stackSize : (frames - 5);
+	frames = (frames - 5) > (int)stackSize ? (int)stackSize : (frames - 5);
 	for(i = 0; i < frames; i++)
 	{
 		SymFromAddr(process, (DWORD64)(stack[i]), 0, symbol);

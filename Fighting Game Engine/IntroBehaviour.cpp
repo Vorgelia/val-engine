@@ -22,7 +22,7 @@ void IntroBehaviour::OnSceneInit()
 
 void IntroBehaviour::OnRenderUI()
 {
-	Resource::GetMaterial("Materials/Intro/Intro_Screen.vmat")->uniformVectors["ve_color"].a = glm::clamp<float>(glm::min<float>((float)Time::timeSinceLoad, _introDuration - Time::timeSinceLoad), 0.0f, 1.0f);
+	Resource::GetMaterial("Materials/Intro/Intro_Screen.vmat")->uniformVectors["ve_color"].a = glm::clamp<float>(glm::min<float>((float)Time::timeSinceLoad, _introDuration - (float)Time::timeSinceLoad), 0.0f, 1.0f);
 	Rendering::DrawScreenMesh(glm::vec4(0, 0, 1920, 1080), (Mesh*)nullptr, Resource::GetMaterial("Materials/Intro/Intro_Screen.vmat"));
 
 	Rendering::DrawScreenText(glm::vec4(0, 10, 100, 100), 24, std::to_string(glm::min<double>((int)std::round(1.0 / Time::smoothDeltaTime), 60)), nullptr);
