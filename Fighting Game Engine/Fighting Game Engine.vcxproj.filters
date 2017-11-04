@@ -355,7 +355,7 @@
       <Filter>Source Files\Game\Behaviours</Filter>
     </ClCompile>
     <ClCompile Include="ScriptBehaviour.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Engine\Behaviours</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -561,7 +561,7 @@
       <Filter>Header Files\Game\Behaviours</Filter>
     </ClInclude>
     <ClInclude Include="ScriptBehaviour.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Engine\Behaviours</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
