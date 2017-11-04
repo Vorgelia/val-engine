@@ -137,7 +137,6 @@ void Script::Init()
 	try
 	{
 		_parentBlock = std::make_shared<ScriptParentBlock>(ScriptLinesView(&_lines), 0, this);
-		ExecuteFunction("Init", std::vector<std::shared_ptr<BaseScriptVariable>>());
 	}
 	catch(ScriptError error)
 	{
