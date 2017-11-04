@@ -104,6 +104,7 @@
     <ClCompile Include="NetworkMessage.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="Renderer.cpp" />
+    <ClCompile Include="ScriptBehaviour.cpp" />
     <ClCompile Include="ScriptCollection.cpp" />
     <ClCompile Include="ScriptExpression.cpp" />
     <ClCompile Include="ScriptLine.cpp" />
@@ -180,6 +181,7 @@
     <ClInclude Include="ResourceLoader.h" />
     <ClInclude Include="Screen.h" />
     <ClInclude Include="Script.h" />
+    <ClInclude Include="ScriptBehaviour.h" />
     <ClInclude Include="ScriptBlock.h" />
     <ClInclude Include="ScriptCollection.h" />
     <ClInclude Include="ScriptConditionalBlock.h" />

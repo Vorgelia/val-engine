@@ -33,6 +33,11 @@ bool ScriptParentBlock::HandleControlFlag()
 	return false;
 }
 
+bool ScriptParentBlock::HasFunction(std::string name)
+{
+	return _functions.find(name) != _functions.end();
+}
+
 //Create a new function script block and add some variables to it based on the function signature.
 std::shared_ptr<BaseScriptVariable> ScriptParentBlock::RunFunction(std::string name, std::vector<std::shared_ptr<BaseScriptVariable>> &variables)
 {

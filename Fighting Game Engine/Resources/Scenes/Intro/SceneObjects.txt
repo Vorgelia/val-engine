@@ -9,7 +9,12 @@
                 "name":"IntroBehaviour",
                 "enabled":true,
                 "introDuration":4.0
-            }
+            },
+			{
+				"name":"ScriptBehaviour",
+				"enabled":true,
+				"script":"Scripts/Base/example.vscript"
+			}
         ]
     }
 ]

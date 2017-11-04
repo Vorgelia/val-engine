@@ -33,7 +33,6 @@ bool GameSceneManager::isLoading()
 
 void GameSceneManager::LoadScene(const std::string& name)
 {
-	VE_DEBUG_LOG("----\n\n\n Loading State: " + name + "\n\n\n----", LogItem::Type::Message);
 	_sceneToLoad = name;
 }
 
@@ -89,10 +88,12 @@ void GameSceneManager::HandleSceneLoad()
 {
 	if(!_sceneToLoad.empty())
 	{
+		VE_DEBUG_LOG("----\n\n\n Loading Scene: " + _sceneToLoad + "\n\n\n----", LogItem::Type::Message);
+
 		auto& iter = scenes.find(_sceneToLoad);
 		if(iter == scenes.end())
 		{
-			VE_DEBUG_LOG("GameSceneManager - Attempting to load invalid state " + _sceneToLoad);
+			VE_DEBUG_LOG("GameSceneManager - Attempting to load invalid scene " + _sceneToLoad);
 			_sceneToLoad.clear();
 		}
 

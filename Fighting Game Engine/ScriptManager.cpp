@@ -9,13 +9,8 @@
 
 #include "DebugLog.h"
 
-namespace ScriptManager
-{
-	std::unordered_map<std::string, std::shared_ptr<Script>> _scripts;
-	std::unordered_map<std::string, std::shared_ptr<BaseScriptVariable>> _globalVariables;
-
-	void HandleScriptBindings(const std::shared_ptr<Script> script);
-}
+std::unordered_map<std::string, std::unique_ptr<Script>> ScriptManager::_scripts;
+std::unordered_map<std::string, std::shared_ptr<BaseScriptVariable>> ScriptManager::_globalVariables;
 
 void ScriptManager::Init()
 {
@@ -26,21 +21,23 @@ void ScriptManager::Init()
 	AddScript("Scripts/Base/example.vscript");
 }
 
-void ScriptManager::AddScript(const FS::path& path)
+Script* ScriptManager::AddScript(const FS::path& path)
 {
 	std::vector<std::string> lines = ResourceLoader::ReturnFileLines(path, false);
 	if(lines.size() > 0)
 	{
 		const std::string& scriptName = path.leaf().generic_string();
-		std::shared_ptr<Script> script = std::make_shared<Script>(scriptName, lines);
-		_scripts.emplace(scriptName, script);
+		Script* script = _scripts.emplace(std::make_pair(scriptName, std::make_unique<Script>(scriptName, lines))).first->second.get();
 
 		HandleScriptBindings(script);
 		script->Init();
+		return script;
 	}
+
+	return nullptr;
 }
 
-void ScriptManager::HandleScriptBindings(const std::shared_ptr<Script> script)
+void ScriptManager::HandleScriptBindings(Script* script)
 {
 	std::vector<std::string> &bindings = script->GetPragmaDirectives("Bind");
 
@@ -62,6 +59,11 @@ void ScriptManager::AddVariable(const std::string& name, const std::shared_ptr<B
 	_globalVariables.emplace(name, variable);
 }
 
+void ScriptManager::RemoveScript(const FS::path & path)
+{
+	_scripts.erase(path.string());
+}
+
 std::shared_ptr<BaseScriptVariable> ScriptManager::GetVariable(const std::string& name)
 {
 	auto& iter = _globalVariables.find(name);
@@ -74,16 +76,11 @@ std::shared_ptr<BaseScriptVariable> ScriptManager::GetVariable(const std::string
 
 void ScriptManager::Update()
 {
-	for(auto& script : _scripts)
-	{
-		if(script.second->valid())
-		{
-			script.second->Execute();
-		}
-	}
+
 }
 
 void ScriptManager::Cleanup()
 {
 	_scripts.clear();
+	_globalVariables.clear();
 }

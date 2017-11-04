@@ -1,7 +1,8 @@
 #pragma Bind Debug
 
 //This function runs every frame
-function Main () : int
+function GameUpdate() : int
+	//ve_log(testCollection["test"])
 	return 0
 end
 
