@@ -147,6 +147,7 @@ ScriptTokenType ScriptParsingUtils::GetTokenType(char character)
 	case '<':
 	case '!':
 	case '~':
+	case '%':
 		return ScriptTokenType::Operator;
 	case '#':
 		return ScriptTokenType::Preprocessor;

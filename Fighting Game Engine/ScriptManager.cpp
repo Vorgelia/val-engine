@@ -6,8 +6,9 @@
 #include "ResourceLoader.h"
 #include <unordered_map>
 #include <memory>
-
+#include "ScriptBehaviour.h"
 #include "DebugLog.h"
+#include "Time.h"
 
 std::unordered_map<std::string, std::unique_ptr<Script>> ScriptManager::_scripts;
 std::unordered_map<std::string, std::shared_ptr<BaseScriptVariable>> ScriptManager::_globalVariables;
@@ -49,7 +50,19 @@ void ScriptManager::HandleScriptBindings(Script* script)
 		}
 		else if(directive == "Debug")
 		{
-			script->BindFunction("ve_log", &DebugLog::Push);
+			script->BindFunction("ve_log",
+				[](const Script* sc, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
+			{
+				return DebugLog::Push(sc, args);
+			});
+		}
+		else if(directive == "Time")
+		{
+			script->BindFunction("time_frameCount",
+				[](const Script*, ScriptArgumentCollection&)->std::shared_ptr<BaseScriptVariable>
+			{
+				return std::make_shared<ScriptInt>((long)Time::frameCount);
+			});
 		}
 	}
 }

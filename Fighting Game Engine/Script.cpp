@@ -29,7 +29,7 @@ bool Script::HasFunction(std::string name)
 	return _parentBlock != nullptr && _parentBlock->HasFunction(name);
 }
 
-void Script::BindFunction(std::string name, std::shared_ptr<BaseScriptVariable>(*func)(const Script*, std::vector<std::shared_ptr<BaseScriptVariable>>&))
+void Script::BindFunction(std::string name, std::function<std::shared_ptr<BaseScriptVariable>(const Script*, ScriptArgumentCollection&)> func)
 {
 	_boundFunctions[name] = func;
 }

@@ -4,6 +4,8 @@
 class ScriptBehaviour :
 	public Behaviour
 {
+	friend class ScriptManager;
+
 	Script* _script;
 
 	void RunScriptFunction(std::string name);

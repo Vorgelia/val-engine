@@ -17,7 +17,6 @@ class ScriptManager
 	static void HandleScriptBindings(Script* script);
 
 public:
-
 	static void Init();
 	static void Update();
 	static void Cleanup();
