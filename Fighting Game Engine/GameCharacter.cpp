@@ -25,7 +25,12 @@ const CharacterFrame * GameCharacter::currentFrame()
 	return _currentFrame;
 }
 
-GameCharacter::GameCharacter(Object* obj, const json& j) : Behaviour(obj, j)
+glm::vec2 GameCharacter::sizeMultiplier()
+{
+	return _sizeMultiplier;
+}
+
+GameCharacter::GameCharacter(Object* owner, const json& j) : Behaviour(owner, j)
 {
 	for(auto& iter : j["states"])
 	{
@@ -37,6 +42,7 @@ GameCharacter::GameCharacter(Object* obj, const json& j) : Behaviour(obj, j)
 		
 	}
 
+	_sizeMultiplier = JSON::Get<glm::vec2>(j["sizeMultiplier"]);
 	_characterScript = ScriptManager::GetScript(JSON::Get<std::string>(j["characterScript"]));
 }
 

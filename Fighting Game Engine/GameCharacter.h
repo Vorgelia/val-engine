@@ -29,6 +29,8 @@ class GameCharacter :
 
 	//TODO: Player owner
 
+	glm::vec2 _sizeMultiplier;
+
 	std::unordered_map<std::string, std::unique_ptr<CharacterState>> _stateLookup;
 	std::unordered_map<std::string, std::unique_ptr<CharacterFrame>> _frameLookup;
 
@@ -44,7 +46,8 @@ public:
 	VE_BEHAVIOUR_REGISTER_FUNCTION(GameUpdate);
 
 	const CharacterFrame* currentFrame();
+	glm::vec2 sizeMultiplier();
 
-	GameCharacter(Object* obj, const json& j);
+	GameCharacter(Object* owner, const json& j);
 	~GameCharacter();
 };
