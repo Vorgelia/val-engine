@@ -169,6 +169,15 @@
     <Filter Include="Header Files\Engine\Utilities">
       <UniqueIdentifier>{bfae6287-0837-4733-8676-ad799dcdb240}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Game\Characters\Hit Data">
+      <UniqueIdentifier>{56f1dab2-5d7c-4237-b4f6-f4ea159d669e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Game\Characters\State">
+      <UniqueIdentifier>{1fd4a1fb-751e-4fd8-9677-1697dae9cb0e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Game\Characters\Frame">
+      <UniqueIdentifier>{615b4344-ec17-4486-9a90-d76d50e310d4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -360,6 +369,21 @@
     <ClCompile Include="ScriptBehaviour.cpp">
       <Filter>Source Files\Engine\Behaviours</Filter>
     </ClCompile>
+    <ClCompile Include="DefenceData.cpp">
+      <Filter>Source Files\Game\Characters</Filter>
+    </ClCompile>
+    <ClCompile Include="CharacterHitData.cpp">
+      <Filter>Source Files\Game\Characters</Filter>
+    </ClCompile>
+    <ClCompile Include="CharacterSprite.cpp">
+      <Filter>Source Files\Game\Characters</Filter>
+    </ClCompile>
+    <ClCompile Include="CharacterState.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CharacterRenderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FGIncludes.hpp">
@@ -444,12 +468,6 @@
       <Filter>Header Files\Engine\Debug</Filter>
     </ClInclude>
     <ClInclude Include="GameCharacter.h">
-      <Filter>Header Files\Game\Characters</Filter>
-    </ClInclude>
-    <ClInclude Include="CharacterFrame.h">
-      <Filter>Header Files\Game\Characters</Filter>
-    </ClInclude>
-    <ClInclude Include="AttackData.h">
       <Filter>Header Files\Game\Characters</Filter>
     </ClInclude>
     <ClInclude Include="Script.h">
@@ -571,6 +589,27 @@
     </ClInclude>
     <ClInclude Include="GLMExtensions.h">
       <Filter>Header Files\Engine\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="AttackData.h">
+      <Filter>Header Files\Game\Characters\Hit Data</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterHitData.h">
+      <Filter>Header Files\Game\Characters\Hit Data</Filter>
+    </ClInclude>
+    <ClInclude Include="DefenceData.h">
+      <Filter>Header Files\Game\Characters\Hit Data</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterFrame.h">
+      <Filter>Header Files\Game\Characters\Frame</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterSprite.h">
+      <Filter>Header Files\Game\Characters\Frame</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterState.h">
+      <Filter>Header Files\Game\Characters\State</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterRenderer.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

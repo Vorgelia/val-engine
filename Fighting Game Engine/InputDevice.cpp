@@ -205,17 +205,17 @@ bool InputDevice::InputMotionFrameCheck(InputMotionComponent& motionComp, int in
 	}
 	for(auto& i : motionComp.buttons)
 	{
-		if((int)i.second | (int)InputType::Pressed)
+		if((int)i.second | (int)InputTypeMask::Pressed)
 		{
 			if((inpf->buttonStates & i.first) && ((inpfp->buttonStates & i.first) == 0))
 				continue;
 		}
-		if((int)i.second | (int)InputType::Released)
+		if((int)i.second | (int)InputTypeMask::Released)
 		{
 			if((inpfp->buttonStates & i.first) && ((inpf->buttonStates & i.first) == 0))
 				continue;
 		}
-		if((int)i.second | (int)InputType::Held)
+		if((int)i.second | (int)InputTypeMask::Held)
 		{
 			if((inpf->buttonStates & i.first))
 				continue;

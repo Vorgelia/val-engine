@@ -22,12 +22,23 @@ void ScriptManager::Init()
 	AddScript("Scripts/Base/example.vscript");
 }
 
+Script * ScriptManager::GetScript(const FS::path & path)
+{
+	auto& iter = _scripts.find(path.string());
+	if(iter == _scripts.end())
+	{
+		return AddScript(path);
+	}
+
+	return iter->second.get();
+}
+
 Script* ScriptManager::AddScript(const FS::path& path)
 {
 	std::vector<std::string> lines = ResourceLoader::ReturnFileLines(path, false);
 	if(lines.size() > 0)
 	{
-		const std::string& scriptName = path.leaf().generic_string();
+		const std::string& scriptName = path.string();
 		Script* script = _scripts.emplace(std::make_pair(scriptName, std::make_unique<Script>(scriptName, lines))).first->second.get();
 
 		HandleScriptBindings(script);

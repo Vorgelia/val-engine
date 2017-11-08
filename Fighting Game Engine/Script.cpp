@@ -154,13 +154,16 @@ void Script::Init()
 	}
 }
 
-ScriptExitCode Script::Execute()
+void Script::Execute()
 {
-	ScriptExitCode returnCode = ScriptExitCode::Success;
+	ExecuteFunction("Main", std::vector<std::shared_ptr<BaseScriptVariable>>());
+}
 
+void Script::ExecuteFunction(std::string name, std::vector<std::shared_ptr<BaseScriptVariable>> &variables)
+{
 	try
 	{
-		ExecuteFunction("Main", std::vector<std::shared_ptr<BaseScriptVariable>>());
+		_parentBlock->RunFunction(name, variables);
 	}
 	catch(ScriptError error)
 	{
@@ -168,13 +171,11 @@ ScriptExitCode Script::Execute()
 
 		VE_DEBUG_LOG("(" + _name + " : line " + std::to_string(_lines[blockCursor].index) + ") " + std::string(error.what()), LogItem::Type::Warning);
 		_valid = false;
-		returnCode = ScriptExitCode::Failure;
 	}
 	catch(std::exception error)
 	{
 		VE_DEBUG_LOG("Unhandled exception on script[" + _name + "]:\n" + std::string(error.what()), LogItem::Type::Error);
 		_valid = false;
-		returnCode = ScriptExitCode::Exception;
 	}
 
 	if(_blockStack.size() > 0)
@@ -185,13 +186,6 @@ ScriptExitCode Script::Execute()
 			PopBlock();
 		}
 	}
-
-	return returnCode;
-}
-
-void Script::ExecuteFunction(std::string name, std::vector<std::shared_ptr<BaseScriptVariable>> &variables)
-{
-	_parentBlock->RunFunction(name, variables);
 }
 
 Script::Script(std::string name, std::vector<std::string> lines)

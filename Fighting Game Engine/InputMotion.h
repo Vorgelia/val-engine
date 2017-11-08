@@ -1,8 +1,9 @@
 #pragma once
 #include <vector>
+#include "JSON.h"
 
 //Bitmask, even though it might not look like it.
-enum class InputType
+enum class InputTypeMask
 {
 	Pressed = 1,
 	Released = 2,
@@ -10,7 +11,7 @@ enum class InputType
 	Held = 4
 };
 
-typedef std::pair<unsigned char, InputType> InputButtonEvent;
+typedef std::pair<unsigned char, InputTypeMask> InputButtonEvent;
 
 class InputMotionComponent
 {
@@ -22,5 +23,7 @@ public:
 	int minDuration;//Minimum duration for this input.
 
 	InputMotionComponent(std::vector<InputButtonEvent>& buttons, unsigned char direction, int minDuration = 0, int leniency = -1, bool strict = false);
+	InputMotionComponent(const json& j);
 };
+
 typedef std::vector<InputMotionComponent> InputMotion;

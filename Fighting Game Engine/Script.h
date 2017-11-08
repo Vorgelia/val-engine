@@ -61,8 +61,8 @@ public:
 	void ConsumeControlFlag();
 
 	void Init();
-	ScriptExitCode Execute();
-	void ExecuteFunction(std::string name, std::vector<std::shared_ptr<BaseScriptVariable>> &variables);
+	void Execute();
+	void ExecuteFunction(std::string name, std::vector<std::shared_ptr<BaseScriptVariable>> &variables = std::vector<std::shared_ptr<BaseScriptVariable>>());
 
 	Script(std::string name, std::vector<std::string> lines);
 	~Script();

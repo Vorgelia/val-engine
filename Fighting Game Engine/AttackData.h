@@ -1,11 +1,24 @@
 #pragma once
 #include <vector>
-#include "CollisionBox.h"
+#include "CharacterHitData.h"
 
-class AttackData
+class AttackData :
+	public CharacterHitData
 {
-public:
+	int _damage;
+	int _hitstun;
+	int _blockstun;
 
-	AttackData();
+	//projectile, high, unblockable, throw
+	std::vector<std::string> _flags;
+
+public:
+	int damage();
+	int hitstun();
+	int blockstun();
+
+	const std::vector<std::string>& flags();
+
+	AttackData(const json& j);
 	~AttackData();
 };

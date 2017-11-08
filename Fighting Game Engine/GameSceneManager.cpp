@@ -4,8 +4,8 @@
 #include "Rendering.h"
 #include <unordered_map>
 
-#define VE_SCENE_FUNCTION_CALL(name, ...)\
-	ApplyFunctionToCurrentScene([](GameScene* scene) { scene->name(); }, ##__VA_ARGS__);
+#define VE_SCENE_FUNCTION_CALL(fnName, ...)\
+	ApplyFunctionToCurrentScene([](GameScene* scene) { scene->fnName(); }, ##__VA_ARGS__);
 
 namespace GameSceneManager
 {
@@ -76,6 +76,7 @@ bool GameSceneManager::HandleSceneUpdate()
 			ScriptManager::Update();
 
 			VE_SCENE_FUNCTION_CALL(GameUpdate);
+			VE_SCENE_FUNCTION_CALL(LateGameUpdate);
 		}
 
 		VE_SCENE_FUNCTION_CALL(LateUpdate);//Send a late game loop update regardless of game updates

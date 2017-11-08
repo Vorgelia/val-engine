@@ -52,7 +52,7 @@ void MenuBehaviour::OnRenderUI()
 InputMotion motion = {
 	InputMotionComponent(std::vector<InputButtonEvent>{}, (unsigned char)InputDirection::Left, 30, 20, false),
 	InputMotionComponent(std::vector<InputButtonEvent>{}, (unsigned char)InputDirection::Right, 0, 10, false),
-	InputMotionComponent(std::vector<InputButtonEvent>{ InputButtonEvent((unsigned char)InputButton::Light, InputType::Released) }, 0, 0, 10, false)
+	InputMotionComponent(std::vector<InputButtonEvent>{ InputButtonEvent((unsigned char)InputButton::Light, InputTypeMask::Released) }, 0, 0, 10, false)
 };
 
 void MenuBehaviour::Update()

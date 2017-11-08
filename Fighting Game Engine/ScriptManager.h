@@ -21,6 +21,7 @@ public:
 	static void Update();
 	static void Cleanup();
 
+	static Script* GetScript(const FS::path& path);
 	static Script* AddScript(const FS::path& path);
 	static void AddVariable(const std::string& name, const std::shared_ptr<BaseScriptVariable>& variable);
 

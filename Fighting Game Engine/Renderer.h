@@ -6,8 +6,10 @@
 class Renderer :
 	public Behaviour
 {
+protected:
 	Mesh* _mesh;
 	Material* _material;
+
 public:
 
 	VE_BEHAVIOUR_NAME(Renderer);

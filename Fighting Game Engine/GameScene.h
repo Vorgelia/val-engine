@@ -40,6 +40,7 @@ public:
 	virtual void Init();
 	virtual void Update();
 	virtual void GameUpdate();
+	virtual void LateGameUpdate();
 	virtual void LateUpdate();
 	virtual void RenderObjects();
 	virtual void ApplyPostEffects();
@@ -51,4 +52,3 @@ public:
 	GameScene(const FS::path& path);
 	virtual ~GameScene();
 };
-

@@ -9,3 +9,20 @@ InputMotionComponent::InputMotionComponent(std::vector<InputButtonEvent>& button
 	this->minDuration = glm::max(minDuration, 1);
 	this->leniency = leniency;
 }
+
+InputMotionComponent::InputMotionComponent(const json& j)
+{
+	for(auto& iter : j["buttons"])
+	{
+		buttons.push_back(
+		std::make_pair(
+			JSON::Get<unsigned char>(iter["button"]),
+			(InputTypeMask)JSON::Get<unsigned char>(iter["type"])
+		));
+	}
+
+	direction = JSON::Get<unsigned char>(j["direction"]);
+	minDuration = JSON::Get<int>(j["minDuration"]);
+	leniency = JSON::Get<int>(j["leniency"]);
+	strict = JSON::Get<bool>(j["strict"]);
+}
