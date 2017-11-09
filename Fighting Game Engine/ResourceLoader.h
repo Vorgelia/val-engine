@@ -26,4 +26,5 @@ namespace ResourceLoader
 	void LoadPostEffect(const FS::path& path, std::vector<std::pair<int, Material*>>& elements, bool& cbBefore, bool& cbAfter, int& order);
 	void LoadControlSettings(const FS::path& path, std::unordered_map<InputDirection, InputEvent>& dir, std::unordered_map<InputButton, InputEvent>& bt);
 	void LoadObjects(const FS::path& path, std::vector<std::unique_ptr<Object>>& objects);
+	std::unique_ptr<Object> LoadObject(const FS::path& path);
 }

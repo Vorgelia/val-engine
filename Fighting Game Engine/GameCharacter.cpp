@@ -34,12 +34,22 @@ GameCharacter::GameCharacter(Object* owner, const json& j) : Behaviour(owner, j)
 {
 	for(auto& iter : j["states"])
 	{
+		std::string path = JSON::Get<std::string>(iter);
 		//TODO:
 		//if file
 		//	load
 		//if folder
 		//	load everything in folder
-		
+	}
+
+	for(auto& iter : j["frames"])
+	{
+		std::string path = JSON::Get<std::string>(iter);
+		//TODO:
+		//if file
+		//	load
+		//if folder
+		//	load everything in folder
 	}
 
 	_sizeMultiplier = JSON::Get<glm::vec2>(j["sizeMultiplier"]);

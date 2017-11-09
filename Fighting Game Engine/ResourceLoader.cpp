@@ -213,14 +213,18 @@ void ResourceLoader::LoadControlSettings(const FS::path& path, std::unordered_ma
 
 void ResourceLoader::LoadObjects(const FS::path& path, std::vector<std::unique_ptr<Object>>& objects)
 {
-	objects.clear();
-
 	json& j = LoadJsonResource(path);
 
 	for(auto& iter : j)
 	{
 		objects.emplace_back(std::make_unique<Object>(iter));
 	}
+}
+
+std::unique_ptr<Object> ResourceLoader::LoadObject(const FS::path& path)
+{
+	json& j = LoadJsonResource(path);
+	return std::make_unique<Object>(j);
 }
 
 void ResourceLoader::LoadPostEffect(const FS::path& path, std::vector<std::pair<int, Material*>>& elements, bool& cbBefore, bool& cbAfter, int& order)

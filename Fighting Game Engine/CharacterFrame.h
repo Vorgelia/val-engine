@@ -17,11 +17,10 @@ class CharacterFrame
 	std::vector<DefenceData> _hurtboxes;
 	std::vector<CollisionBox> _collision;
 
-	std::unique_ptr<CharacterSprite> _frameData;
+	std::unique_ptr<CharacterSprite> _spriteData;
 
 public:
-
-	const CharacterSprite* frameData() const;
+	const CharacterSprite* spriteData() const;
 
 	CharacterFrame(const json& j);
 	~CharacterFrame();

@@ -27,6 +27,9 @@ protected:
 	std::vector<std::string> _postEffectsOrder;
 
 	void RunFunctionOnObjectBehaviours(std::function<void(Behaviour*)> func);
+
+	void RegisterObject(Object* obj);
+	void UnregisterObject(Object* obj);
 public:
 
 	bool initialized();
@@ -45,8 +48,9 @@ public:
 	virtual void RenderObjects();
 	virtual void ApplyPostEffects();
 	virtual void RenderUI();
-
 	virtual void Cleanup();
+
+	virtual Object* AddObject(const std::string& prefabPath);
 	virtual Object* FindObject(const std::string& name);
 
 	GameScene(const FS::path& path);

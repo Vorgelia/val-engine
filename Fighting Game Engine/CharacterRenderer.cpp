@@ -26,11 +26,11 @@ void CharacterRenderer::OnRenderObjects()
 		}
 	}
 	
-	const CharacterSprite* frameData = _character->currentFrame()->frameData();
-	Texture* frameTex = Resource::GetTexture(frameData->sprite());
+	const CharacterSprite* spriteData = _character->currentFrame()->spriteData();
+	Texture* frameTex = Resource::GetTexture(spriteData->sprite());
 
-	HandleRenderingMaterial(frameData, frameTex);
-	HandleRenderingTransform(frameData, frameTex);
+	HandleRenderingMaterial(spriteData, frameTex);
+	HandleRenderingTransform(spriteData, frameTex);
 
 	Rendering::DrawMesh(_renderingTransform.get(), _mesh, _material);
 }
