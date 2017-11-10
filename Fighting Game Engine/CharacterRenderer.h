@@ -15,7 +15,7 @@ class CharacterRenderer :
 
 	glm::vec2 _pixelsToWorldUnits;
 
-	void HandleRenderingMaterial(const CharacterSprite* spriteData, Texture* texture);
+	void HandleRenderingMaterial(const CharacterSprite* spriteData, Texture* texture, bool flipped);
 	void HandleRenderingTransform(const CharacterSprite* spriteData, Texture* texture);
 
 public:

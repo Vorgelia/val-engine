@@ -20,6 +20,8 @@ enum class CharacterStateFlagType
 class GameCharacter :
 	public Behaviour
 {
+	std::string _dataPath;
+
 	std::string _currentStateId;
 	CharacterState* _currentState;
 	int _currentStateFrame;
@@ -30,6 +32,7 @@ class GameCharacter :
 	//TODO: Player owner
 
 	glm::vec2 _sizeMultiplier;
+	bool _flipped;
 
 	std::unordered_map<std::string, std::unique_ptr<CharacterState>> _stateLookup;
 	std::unordered_map<std::string, std::unique_ptr<CharacterFrame>> _frameLookup;
@@ -39,7 +42,7 @@ class GameCharacter :
 	//Throw invuln, air invuln, etc
 	std::unordered_map<CharacterStateFlagType, std::vector<std::string>> _flags;
 
-
+	void HandleCharacterData(const json& j);
 public:
 	VE_BEHAVIOUR_NAME(GameCharacter);
 
@@ -47,6 +50,8 @@ public:
 
 	const CharacterFrame* currentFrame();
 	glm::vec2 sizeMultiplier();
+
+	bool flipped();
 
 	GameCharacter(Object* owner, const json& j);
 	~GameCharacter();

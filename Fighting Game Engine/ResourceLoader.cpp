@@ -15,13 +15,6 @@
 #include "InputFrame.h"
 #include "DebugLog.h"
 
-using json = nlohmann::json;
-
-namespace ResourceLoader
-{
-	json LoadJsonResource(FS::path path);
-}
-
 //Probably my least favourite part of making this engine is importing files.
 //The code always looks like a mess but at least i don't have to touch it after making it.
 std::string ResourceLoader::LoadTextResource(int id, const std::string& type)
@@ -133,6 +126,23 @@ std::vector<std::string> ResourceLoader::ReturnFileLines(const FS::path& dir, bo
 	std::vector<std::string> lines;
 	boost::split(lines, content, boost::is_any_of("\n"), boost::token_compress_on);
 	return lines;
+}
+
+void ResourceLoader::ApplyFunctionToFiles(const FS::path& dir, std::function<void(const FS::path&)> func)
+{
+	if(!FS::is_directory(dir))
+	{
+		func(dir);
+		return;
+	}
+
+	for(auto& iter : boost::make_iterator_range(FS::directory_iterator(dir)))
+	{
+		if(!FS::is_directory(iter.path()))
+		{
+			func(iter.path());
+		}
+	}
 }
 
 json ResourceLoader::LoadJsonResource(FS::path path)

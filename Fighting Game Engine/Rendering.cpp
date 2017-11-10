@@ -50,7 +50,7 @@ void Rendering::Init()
 	//The ortho mat and the screen mat might be confusing. It's less that they set a rendering resolution and more that they map the -1 to 1 coordinates to what is specified.
 	//Why do we need two different ones? Screen mat maps the screen pixels from the top-left corner(0,0) to the bottom-right(1920,1080) and it's used with UI elements.
 	//The ortho mat is used for rendering objects into the world and essentially controlling what the camera is seeing. Which is why it's modifiable with the world scale, and also has its center be (0,0).
-	orthoMat = glm::ortho(-960.0*VE_WORLD_SCALE, 960.0*VE_WORLD_SCALE, -540.0*VE_WORLD_SCALE, 540.0*VE_WORLD_SCALE, 0.0, 1.0);
+	orthoMat = glm::ortho(-960.0*VE_WORLD_SCALE, 960.0*VE_WORLD_SCALE, 0.0, 1080.0*VE_WORLD_SCALE, 0.0, 1.0);
 	screenMat = glm::ortho(0.0, 1920.0, 1080.0, 0.0, 0.0, 1.0);
 	cameras.push_back(Camera(glm::vec2(0, 0), &orthoMat));
 
@@ -397,7 +397,7 @@ void Rendering::DrawMesh(Transform* transform, Mesh* mesh, Material* mat, Camera
 
 	//Here we don't have to generate any matrices. Get all the matrices from either rendering parameters or the object's transform, multiply them, done.
 	glUniformMatrix4fv(mat->shader->UniformLocation("ve_matrix_model"), 1, false, glm::value_ptr(transform->ModelMatrix()));
-	glUniformMatrix4fv(mat->shader->UniformLocation("ve_matrix_view"), 1, false, glm::value_ptr(cCam->ViewMatrix()));
+	glUniformMatrix4fv(mat->shader->UniformLocation("ve_matrix_view"), 1, false, glm::value_ptr(cCam->ViewMatrix(transform->depth)));
 	glUniformMatrix4fv(mat->shader->UniformLocation("ve_matrix_projection"), 1, false, glm::value_ptr(*(cCam->projectionMatrix)));
 	glUniformMatrix4fv(mat->shader->UniformLocation("ve_matrix_mvp"), 1, false, glm::value_ptr(*(cCam->projectionMatrix)*cCam->ViewMatrix(transform->depth)*transform->ModelMatrix()));
 

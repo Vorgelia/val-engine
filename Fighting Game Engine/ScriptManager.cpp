@@ -22,8 +22,13 @@ void ScriptManager::Init()
 	AddScript("Scripts/Base/example.vscript");
 }
 
-Script * ScriptManager::GetScript(const FS::path & path)
+Script* ScriptManager::GetScript(const FS::path & path)
 {
+	if(path.empty())
+	{
+		return nullptr;
+	}
+
 	auto& iter = _scripts.find(path.string());
 	if(iter == _scripts.end())
 	{

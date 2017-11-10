@@ -15,6 +15,8 @@ class Behaviour;
 class GameScene
 {
 protected:
+	std::string _name;
+
 	bool _initialized;
 	bool _loaded;
 
@@ -31,6 +33,7 @@ protected:
 	void RegisterObject(Object* obj);
 	void UnregisterObject(Object* obj);
 public:
+	std::string name();
 
 	bool initialized();
 	bool loaded();

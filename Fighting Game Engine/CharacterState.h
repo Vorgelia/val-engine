@@ -12,7 +12,7 @@ class CharacterState
 	std::string _name;
 	int _priority;
 
-	std::unique_ptr<Script> _script;
+	Script* _script;
 	std::vector<std::string> _stateTypeFlags;
 	std::vector<InputMotionComponent> _associatedMotion;
 

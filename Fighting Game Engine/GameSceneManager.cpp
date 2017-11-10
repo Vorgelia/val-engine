@@ -13,7 +13,7 @@ namespace GameSceneManager
 	bool _isLoading = false;
 	std::unordered_map<std::string, std::unique_ptr<GameScene> const> scenes;
 	GameScene* _currentScene = nullptr;
-
+	std::string _currentSceneName = "";
 
 	void HandleSceneInit();
 	bool HandleSceneUpdate();
@@ -34,6 +34,14 @@ bool GameSceneManager::isLoading()
 void GameSceneManager::LoadScene(const std::string& name)
 {
 	_sceneToLoad = name;
+}
+
+void GameSceneManager::ReloadScene()
+{
+	if(_currentScene != nullptr && !_isLoading)
+	{
+		LoadScene(_currentSceneName);
+	}
 }
 
 void GameSceneManager::RenderScene()
@@ -106,6 +114,7 @@ void GameSceneManager::HandleSceneLoad()
 
 		_currentScene = iter->second.get();
 		_isLoading = true;
+		_currentSceneName = _sceneToLoad;
 		_sceneToLoad.clear();
 		_currentScene->LoadResources();
 	}

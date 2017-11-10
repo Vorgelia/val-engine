@@ -15,10 +15,10 @@ template<>
 glm::ivec4 JSON::Get(const json_t& j)
 {
 	return glm::ivec4(
-		j["w"].get<int>(),
 		j["x"].get<int>(),
 		j["y"].get<int>(),
-		j["z"].get<int>()
+		j["z"].get<int>(),
+		j["w"].get<int>()
 	);
 }
 
@@ -26,10 +26,10 @@ template<>
 glm::vec4 JSON::Get(const json_t& j)
 {
 	return glm::vec4(
-		j["w"].get<float>(),
 		j["x"].get<float>(),
 		j["y"].get<float>(),
-		j["z"].get<float>()
+		j["z"].get<float>(),
+		j["w"].get<float>()
 	);
 }
 

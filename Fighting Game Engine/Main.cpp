@@ -71,6 +71,11 @@ int main()
 		{
 			glfwSetWindowShouldClose(Screen::window, GLFW_TRUE);
 		}
+
+		if(glfwGetKey(Screen::window, GLFW_KEY_F2))
+		{
+			GameSceneManager::ReloadScene();
+		}
 	}
 
 	EngineCleanup();

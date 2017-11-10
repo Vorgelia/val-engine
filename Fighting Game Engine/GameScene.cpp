@@ -90,6 +90,11 @@ void GameScene::UnregisterObject(Object* obj)
 	_objectLookup.erase(obj->id());
 }
 
+std::string GameScene::name()
+{
+	return _name;
+}
+
 bool GameScene::initialized()
 {
 	return _initialized;
