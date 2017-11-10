@@ -89,7 +89,6 @@ bool GameCharacter::flipped()
 
 GameCharacter::GameCharacter(Object* owner, const json& j) : Behaviour(owner, j)
 {
-	_flipped = JSON::Get<bool>(j["flipped"]);
 	_dataPath = JSON::Get<std::string>(j["dataPath"]);
 	HandleCharacterData(
 		ResourceLoader::LoadJsonResource(_dataPath));

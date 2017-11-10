@@ -1,0 +1,7 @@
+#pragma Bind Debug
+#pragma Bind Time
+
+//This function runs every frame
+function CharacterUpdate() : int
+	return 0
+end

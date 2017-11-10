@@ -1,0 +1,14 @@
+{
+	"states":[
+		"Characters/Fritz/States"
+	],
+	"frames":[
+		"Characters/Fritz/Frames"
+	],
+	"sizeMultiplier":
+	{
+		"x":6,
+		"y":6
+	},
+	"characterScript":"Characters/Fritz/Fritz.vscript"
+}

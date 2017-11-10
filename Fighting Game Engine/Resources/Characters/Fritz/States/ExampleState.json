@@ -1,0 +1,21 @@
+[
+    {
+        "name":"FRITZ_IDLE",
+        "priority":0,
+        "script":"Characters/Fritz/Scripts/FRITZ_IDLE.vscript",
+        "flags":[
+            "VE_GROUNDED"
+        ],
+        "motion":[
+            {
+                "buttons":[
+
+                ],
+                "direction":0,
+                "minDuration":0,
+                "leniency":0,
+                "strict":true
+            }
+        ]
+    }
+]

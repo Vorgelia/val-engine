@@ -8,7 +8,7 @@
 #UNIFORM_VEC4
 	ve_color=1,1,1,1
 #UNIFORM_TEX
-	tex0=Textures/Menu/Background/Front.png
+	tex0=Textures/Menu/Background/Back.png
 	.properties=0,0,1,1
 //These properties have to do with moving and scaling the texture when drawing with this material
 //Translation X , Translation Y , Scaling X, Scaling Y
