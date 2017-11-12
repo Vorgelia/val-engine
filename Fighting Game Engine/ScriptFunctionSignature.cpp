@@ -13,7 +13,7 @@ ScriptFunctionSignature::ScriptFunctionSignature(std::string& name, int start, i
 ScriptVariableSignature::ScriptVariableSignature(ScriptVariableType type, std::string name)
 {
 	this->type = type;
-	this->name == name;
+	this->name = name;
 }
 
 ScriptFunctionSignature::ScriptFunctionSignature()

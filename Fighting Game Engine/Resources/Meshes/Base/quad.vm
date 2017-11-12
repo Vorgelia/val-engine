@@ -5,10 +5,10 @@
 //Vertices. Separated by attribs with whitespace that will get deleted anyway
 //(XY,UV,Normal)
 #VERTICES
--0.5,0.5 , 0,1 , -0.6,0,0.4
-0.5,0.5 , 1,1 , 0.6,0,0.4
+-0.5,0.5  , 0,1 , -0.6,0,0.4
+0.5,0.5   , 1,1 , 0.6,0,0.4
 -0.5,-0.5 , 0,0 , -0.6,0,0.4
-0.5,-0.5 , 1,0 , 0.6,0,0.4
+0.5,-0.5  , 1,0 , 0.6,0,0.4
 //Elements, forming triangles
 #ELEMENTS
 0,1,3

@@ -28,6 +28,12 @@ void CharacterRenderer::OnRenderObjects()
 		}
 	}
 
+	if(_character->currentFrame() == nullptr)
+	{
+		Renderer::OnRenderObjects();
+		return;
+	}
+
 	const CharacterSprite* spriteData = _character->currentFrame()->spriteData();
 	Texture* frameTex = Resource::GetTexture(spriteData->sprite());
 

@@ -7,10 +7,11 @@
 #include <unordered_map>
 #include <memory>
 #include "ScriptBehaviour.h"
+#include "GameCharacter.h"
 #include "DebugLog.h"
 #include "Time.h"
 
-std::unordered_map<std::string, std::unique_ptr<Script>> ScriptManager::_scripts;
+std::unordered_set<std::shared_ptr<Script>> ScriptManager::_scripts;
 std::unordered_map<std::string, std::shared_ptr<BaseScriptVariable>> ScriptManager::_globalVariables;
 
 void ScriptManager::Init()
@@ -29,13 +30,7 @@ Script* ScriptManager::GetScript(const FS::path & path)
 		return nullptr;
 	}
 
-	auto& iter = _scripts.find(path.string());
-	if(iter == _scripts.end())
-	{
-		return AddScript(path);
-	}
-
-	return iter->second.get();
+	return AddScript(path);
 }
 
 Script* ScriptManager::AddScript(const FS::path& path)
@@ -44,10 +39,11 @@ Script* ScriptManager::AddScript(const FS::path& path)
 	if(lines.size() > 0)
 	{
 		const std::string& scriptName = path.string();
-		Script* script = _scripts.emplace(std::make_pair(scriptName, std::make_unique<Script>(scriptName, lines))).first->second.get();
+		Script* script = _scripts.emplace(std::make_unique<Script>(scriptName, lines)).first->get();
 
 		HandleScriptBindings(script);
 		script->Init();
+
 		return script;
 	}
 
@@ -79,6 +75,12 @@ void ScriptManager::HandleScriptBindings(Script* script)
 			{
 				return std::make_shared<ScriptInt>((long)Time::frameCount);
 			});
+
+			script->BindFunction("time_frameCountSinceLoad",
+				[](const Script*, ScriptArgumentCollection&)->std::shared_ptr<BaseScriptVariable>
+			{
+				return std::make_shared<ScriptInt>((long)Time::frameCountSinceLoad);
+			});
 		}
 	}
 }
@@ -88,9 +90,52 @@ void ScriptManager::AddVariable(const std::string& name, const std::shared_ptr<B
 	_globalVariables.emplace(name, variable);
 }
 
-void ScriptManager::RemoveScript(const FS::path & path)
+void ScriptManager::HandleScriptCharacterBindings(GameCharacter& character, Script* script)
 {
-	_scripts.erase(path.string());
+	script->BindFunction("character_startState",
+		[&character](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
+	{
+		if(args.size() >= 1 && args[0]->type() == ScriptVariableType::String)
+			return std::make_shared<ScriptBool>(
+				character.StartState(std::static_pointer_cast<ScriptString>(args[0])->value()));
+		return std::make_shared<ScriptBool>(false);
+	});
+
+	script->BindFunction("character_restartState",
+		[&character](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
+	{
+		return std::make_shared<ScriptBool>(character.RestartState());
+	});
+
+	script->BindFunction("character_setFrame",
+		[&character](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
+	{
+		if(args.size() >= 1 && args[0]->type() == ScriptVariableType::String)
+			return std::make_shared<ScriptBool>(
+				character.SetFrame(std::static_pointer_cast<ScriptString>(args[0])->value()));
+		return std::make_shared<ScriptBool>(false);
+	});
+
+	script->BindFunction("character_modifyStateFrame",
+		[&character](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
+	{
+		if(args.size() >= 1 && args[0]->type() == ScriptVariableType::Int)
+			return std::make_shared<ScriptBool>(
+				character.ModifyCurrentStateFrame(std::static_pointer_cast<ScriptInt>(args[0])->value()));
+		return std::make_shared<ScriptBool>(false);
+	});
+}
+
+void ScriptManager::RemoveScript(Script* script)
+{
+	for(auto& iter : _scripts)
+	{
+		if(script == iter.get())
+		{
+			_scripts.erase(iter);
+			return;
+		}
+	}
 }
 
 std::shared_ptr<BaseScriptVariable> ScriptManager::GetVariable(const std::string& name)

@@ -53,6 +53,7 @@ void Rendering::Init()
 	orthoMat = glm::ortho(-960.0*VE_WORLD_SCALE, 960.0*VE_WORLD_SCALE, 0.0, 1080.0*VE_WORLD_SCALE, 0.0, 1.0);
 	screenMat = glm::ortho(0.0, 1920.0, 1080.0, 0.0, 0.0, 1.0);
 	cameras.push_back(Camera(glm::vec2(0, 0), &orthoMat));
+	cameras.back().zoomLevel = 1.25;
 
 	//Register a callback for the screen resizing
 	Screen::screenUpdateCallbacks.push_back(&OnScreenResize);

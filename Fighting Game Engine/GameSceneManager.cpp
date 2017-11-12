@@ -74,8 +74,9 @@ bool GameSceneManager::HandleSceneUpdate()
 	{
 		VE_SCENE_FUNCTION_CALL(Update);//Send a game loop update regardless of game updates
 
+		int updateCount = 20;
 		//Run game updates until running one would put us ahead of our current time
-		while(Time::lastUpdateTime + VE_FRAME_TIME <= Time::time)
+		while((Time::lastUpdateTime + VE_FRAME_TIME <= Time::time) && ((--updateCount) >= 0))
 		{
 			gameUpdated = true;
 
@@ -147,7 +148,7 @@ void GameSceneManager::Init()
 
 		scenes.emplace(
 			std::make_pair(
-				dir->path().leaf().string(), 
+				dir->path().leaf().string(),
 				std::make_unique<GameScene>(dir->path().string())));
 		++dir;
 	}

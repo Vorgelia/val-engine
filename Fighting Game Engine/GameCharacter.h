@@ -20,12 +20,15 @@ enum class CharacterStateFlagType
 class GameCharacter :
 	public Behaviour
 {
+	friend class ScriptManager;
+
 	std::string _dataPath;
 
 	std::string _currentStateId;
 	CharacterState* _currentState;
-	int _currentStateFrame;
 	CharacterFrame* _currentFrame;
+
+	int _currentStateFrame;
 
 	Script* _characterScript;
 
@@ -33,6 +36,8 @@ class GameCharacter :
 
 	glm::vec2 _sizeMultiplier;
 	bool _flipped;
+
+	bool _initialized;
 
 	std::unordered_map<std::string, std::unique_ptr<CharacterState>> _stateLookup;
 	std::unordered_map<std::string, std::unique_ptr<CharacterFrame>> _frameLookup;
@@ -43,6 +48,11 @@ class GameCharacter :
 	std::unordered_map<CharacterStateFlagType, std::vector<std::string>> _flags;
 
 	void HandleCharacterData(const json& j);
+
+	void CharacterInit();
+	void CharacterUpdate();
+	void StateUpdate();
+
 public:
 	VE_BEHAVIOUR_NAME(GameCharacter);
 
@@ -52,6 +62,11 @@ public:
 	glm::vec2 sizeMultiplier();
 
 	bool flipped();
+
+	bool StartState(std::string name);
+	bool SetFrame(std::string name);
+	bool ModifyCurrentStateFrame(int newFrame);
+	bool RestartState();
 
 	GameCharacter(Object* owner, const json& j);
 	~GameCharacter();

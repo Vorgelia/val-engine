@@ -143,15 +143,6 @@ void Script::Init()
 		VE_DEBUG_LOG("(Preprocessing " + _name + " : line " + std::to_string(_lines[_parentBlock->cursor()].index) + ") " + std::string(error.what()), LogItem::Type::Warning);
 		_valid = false;
 	}
-
-	if(_blockStack.size() > 0)
-	{
-		VE_DEBUG_LOG("Block stack not empty after script " + _name + " execution.", LogItem::Type::Warning);
-		while(_blockStack.size() > 0)
-		{
-			PopBlock();
-		}
-	}
 }
 
 void Script::Execute()
@@ -176,15 +167,6 @@ void Script::ExecuteFunction(std::string name, std::vector<std::shared_ptr<BaseS
 	{
 		VE_DEBUG_LOG("Unhandled exception on script[" + _name + "]:\n" + std::string(error.what()), LogItem::Type::Error);
 		_valid = false;
-	}
-
-	if(_blockStack.size() > 0)
-	{
-		VE_DEBUG_LOG("Block stack not empty after script " + _name + " execution.", LogItem::Type::Error);
-		while(_blockStack.size() > 0)
-		{
-			PopBlock();
-		}
 	}
 }
 

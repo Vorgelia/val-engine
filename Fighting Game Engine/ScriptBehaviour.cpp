@@ -53,7 +53,7 @@ void ScriptBehaviour::Cleanup()
 
 	if(_script != nullptr)
 	{
-		ScriptManager::RemoveScript(_script->name());
+		ScriptManager::RemoveScript(_script);
 	}
 }
 

@@ -7,8 +7,8 @@
 	],
 	"sizeMultiplier":
 	{
-		"x":6,
-		"y":6
+		"x":5,
+		"y":5
 	},
 	"characterScript":"Characters/Fritz/Fritz.vscript"
 }
