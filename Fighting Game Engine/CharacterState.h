@@ -17,12 +17,13 @@ class CharacterState
 	std::vector<InputMotionComponent> _associatedMotion;
 
 public:
-	std::string name();
-	int priority();
+	std::string name() const;
+	int priority() const;
 
 	Script* script();
 	//air, crouching, light, medium, etc
-	const std::vector<std::string> stateTypeFlags();
+	const std::vector<std::string>& stateTypeFlags() const;
+	const std::vector<InputMotionComponent>& associatedMotion() const;
 
 	CharacterState(const json& j);
 	~CharacterState();

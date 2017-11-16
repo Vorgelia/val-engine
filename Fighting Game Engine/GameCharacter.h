@@ -23,21 +23,20 @@ class GameCharacter :
 	friend class ScriptManager;
 
 	std::string _dataPath;
+	bool _initialized;
+
+	Script* _characterScript;
 
 	std::string _currentStateId;
 	CharacterState* _currentState;
 	CharacterFrame* _currentFrame;
-
 	int _currentStateFrame;
-
-	Script* _characterScript;
+	bool _stateEnded;
 
 	//TODO: Player owner
 
 	glm::vec2 _sizeMultiplier;
 	bool _flipped;
-
-	bool _initialized;
 
 	std::unordered_map<std::string, std::unique_ptr<CharacterState>> _stateLookup;
 	std::unordered_map<std::string, std::unique_ptr<CharacterFrame>> _frameLookup;
@@ -53,6 +52,8 @@ class GameCharacter :
 	void CharacterUpdate();
 	void StateUpdate();
 
+	void EvaluateNextState();
+
 public:
 	VE_BEHAVIOUR_NAME(GameCharacter);
 
@@ -67,6 +68,7 @@ public:
 	bool SetFrame(std::string name);
 	bool ModifyCurrentStateFrame(int newFrame);
 	bool RestartState();
+	void MarkStateEnded();
 
 	GameCharacter(Object* owner, const json& j);
 	~GameCharacter();

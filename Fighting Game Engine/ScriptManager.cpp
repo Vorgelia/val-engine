@@ -107,6 +107,13 @@ void ScriptManager::HandleScriptCharacterBindings(GameCharacter& character, Scri
 		return std::make_shared<ScriptBool>(character.RestartState());
 	});
 
+	script->BindFunction("character_markStateEnded",
+		[&character](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
+	{
+		character.MarkStateEnded();
+		return std::make_shared<ScriptBool>(true);
+	});
+
 	script->BindFunction("character_setFrame",
 		[&character](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
 	{

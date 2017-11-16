@@ -7,8 +7,26 @@
 #include "ResourceLoader.h"
 #include "DebugLog.h"
 #include "Time.h"
+#include "InputManager.h"
+#include "InputDevice.h"
+#include "InputMotion.h"
 
 VE_BEHAVIOUR_REGISTER_TYPE(GameCharacter);
+
+const CharacterFrame* GameCharacter::currentFrame()
+{
+	return _currentFrame;
+}
+
+glm::vec2 GameCharacter::sizeMultiplier()
+{
+	return _sizeMultiplier;
+}
+
+bool GameCharacter::flipped()
+{
+	return _flipped;
+}
 
 //TODO: I'm not particularly happy about resource management here. Figure out something better.
 void GameCharacter::HandleCharacterData(const json& j)
@@ -74,6 +92,8 @@ void GameCharacter::CharacterUpdate()
 		CharacterInit();
 	}
 
+	EvaluateNextState();
+
 	if(_characterScript != nullptr)
 	{
 		_characterScript->ExecuteFunction("CharacterUpdate");
@@ -92,26 +112,36 @@ void GameCharacter::StateUpdate()
 	}
 }
 
+void GameCharacter::EvaluateNextState()
+{
+	const CharacterState* nextState = nullptr;
+
+	for(auto& i : _stateLookup)
+	{
+		if(InputManager::_inputDevices[-1]->EvaluateMotion(std::vector<InputMotionComponent>(i.second->associatedMotion()), _flipped))
+		{
+			if(nextState == nullptr || nextState->priority() < i.second->priority())
+			{
+				nextState = i.second.get();
+			}
+		}
+	}
+
+	if(nextState != _currentState)
+	{
+		StartState(nextState->name());
+	}
+	else if(_stateEnded)
+	{
+		RestartState();
+	}
+}
+
 void GameCharacter::GameUpdate()
 {
 	CharacterUpdate();
 
 	StateUpdate();
-}
-
-const CharacterFrame* GameCharacter::currentFrame()
-{
-	return _currentFrame;
-}
-
-glm::vec2 GameCharacter::sizeMultiplier()
-{
-	return _sizeMultiplier;
-}
-
-bool GameCharacter::flipped()
-{
-	return _flipped;
 }
 
 bool GameCharacter::StartState(std::string name)
@@ -121,7 +151,8 @@ bool GameCharacter::StartState(std::string name)
 	{
 		_currentState = iter->second.get();
 		_currentStateId = name;
-		_currentStateFrame = 0;
+		_currentStateFrame = -1;
+		_stateEnded = false;
 		StateUpdate();
 		return true;
 	}
@@ -144,12 +175,18 @@ bool GameCharacter::SetFrame(std::string name)
 bool GameCharacter::ModifyCurrentStateFrame(int newFrame)
 {
 	_currentStateFrame = newFrame;
+	_stateEnded = false;
 	return true;
 }
 
 bool GameCharacter::RestartState()
 {
 	return StartState(_currentStateId);
+}
+
+void GameCharacter::MarkStateEnded()
+{
+	_stateEnded = true;
 }
 
 GameCharacter::GameCharacter(Object* owner, const json& j) : Behaviour(owner, j)

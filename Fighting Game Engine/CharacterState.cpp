@@ -3,12 +3,12 @@
 #include "InputMotion.h"
 #include "ScriptManager.h"
 
-std::string CharacterState::name()
+std::string CharacterState::name() const
 {
 	return _name;
 }
 
-int CharacterState::priority()
+int CharacterState::priority() const
 {
 	return _priority;
 }
@@ -18,9 +18,14 @@ Script * CharacterState::script()
 	return _script;
 }
 
-const std::vector<std::string> CharacterState::stateTypeFlags()
+const std::vector<std::string>& CharacterState::stateTypeFlags() const
 {
 	return _stateTypeFlags;
+}
+
+const std::vector<InputMotionComponent>& CharacterState::associatedMotion() const
+{
+	return _associatedMotion;
 }
 
 CharacterState::CharacterState(const json& j)
