@@ -23,12 +23,13 @@ const std::vector<std::string>& CharacterState::stateTypeFlags() const
 	return _stateTypeFlags;
 }
 
-const std::vector<InputMotionComponent>& CharacterState::associatedMotion() const
+const InputMotion& CharacterState::associatedMotion() const
 {
 	return _associatedMotion;
 }
 
-CharacterState::CharacterState(const json& j)
+CharacterState::CharacterState(const json& j):
+	_associatedMotion(j["motion"])
 {
 	_name = JSON::Get<std::string>(j["name"]);
 	_priority = JSON::Get<int>(j["priority"]);
@@ -38,12 +39,6 @@ CharacterState::CharacterState(const json& j)
 	for(auto& iter : j["flags"])
 	{
 		_stateTypeFlags.push_back(JSON::Get<std::string>(iter));
-	}
-
-	_associatedMotion.reserve(j["motion"].size());
-	for(auto& iter : j["motion"])
-	{
-		_associatedMotion.push_back(InputMotionComponent(iter));
 	}
 }
 

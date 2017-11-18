@@ -1,28 +1,20 @@
 #include "InputMotion.h"
-#include <GLM\glm.hpp>
+#include "InputMotionComponent.h"
 
-InputMotionComponent::InputMotionComponent(std::vector<InputButtonEvent>& buttons, unsigned char direction, int minDuration, int leniency, bool strict)
+InputMotion::InputMotion(const json & j)
 {
-	this->buttons = buttons;
-	this->direction = direction;
-	this->strict = strict;//Strict makes checking the input only trigger if it's exactly the one specified. Otherwise, down for instance can be triggered with downback, or downforward as well.
-	this->minDuration = glm::max(minDuration, 1);
-	this->leniency = leniency;
+	_components.reserve(j.size());
+	for(auto& iter : j)
+	{
+		_components.push_back(InputMotionComponent(iter));
+	}
 }
 
-InputMotionComponent::InputMotionComponent(const json& j)
+InputMotion::InputMotion(const std::vector<InputMotionComponent>& components) :
+	_components(components)
 {
-	for(auto& iter : j["buttons"])
-	{
-		buttons.push_back(
-		std::make_pair(
-			JSON::Get<unsigned char>(iter["button"]),
-			(InputTypeMask)JSON::Get<unsigned char>(iter["type"])
-		));
-	}
+}
 
-	direction = JSON::Get<unsigned char>(j["direction"]);
-	minDuration = JSON::Get<int>(j["minDuration"]);
-	leniency = JSON::Get<int>(j["leniency"]);
-	strict = JSON::Get<bool>(j["strict"]);
+InputMotion::~InputMotion()
+{
 }

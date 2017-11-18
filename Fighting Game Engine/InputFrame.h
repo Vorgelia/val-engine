@@ -3,12 +3,17 @@
 
 class InputFrame
 {
-public:
-	unsigned char buttonStates;
-	unsigned char axisState;
+	friend class InputDevice;
 
-	InputFrame flipped();
-	glm::vec2 ToVector();
+	unsigned char _buttonStates;
+	unsigned char _axisState;
+
+public:
+	unsigned char buttonStates() const;
+	unsigned char axisState() const;
+
+	InputFrame flipped() const;
+	glm::vec2 ToVector() const;
 
 	InputFrame(unsigned char buttonStates, unsigned char axisState);
 	InputFrame();

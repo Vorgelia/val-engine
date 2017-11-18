@@ -2,11 +2,14 @@
 
 class InputEvent
 {
+	friend class InputDevice;
+
+	int _inputID;
+	float _inputValue;
+	bool _isAxis;
+	float _deadzone;
+
 public:
-	int inputID;
-	float inputValue;
-	bool isAxis;
-	float deadzone;
 	InputEvent(int id, bool axis, float value, float deadzone);
 };
 

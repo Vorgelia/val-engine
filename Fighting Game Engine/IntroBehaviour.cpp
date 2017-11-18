@@ -17,7 +17,7 @@ VE_BEHAVIOUR_REGISTER_TYPE(IntroBehaviour);
 
 void IntroBehaviour::OnSceneInit()
 {
-	VE_DEBUG_LOG("Start time: " + std::to_string(glfwGetTime()));
+	VE_DEBUG_LOG("Pause time: " + std::to_string(glfwGetTime()));
 }
 
 void IntroBehaviour::OnRenderUI()
@@ -31,7 +31,7 @@ void IntroBehaviour::OnRenderUI()
 	int ind = 0;
 	for(auto& i : InputManager::_inputDevices)
 	{
-		Rendering::DrawScreenText(glm::vec4(0, 60 + ind * 30, 100, 100), 24, std::to_string(i.first) + ":" + std::to_string(i.second->inputBuffer()->back()->buttonStates) + ":" + std::to_string(i.second->inputBuffer()->back()->axisState), nullptr);
+		Rendering::DrawScreenText(glm::vec4(0, 60 + ind * 30, 100, 100), 24, std::to_string(i.first) + ":" + std::to_string(i.second->inputBuffer()->back().buttonStates()) + ":" + std::to_string(i.second->inputBuffer()->back().axisState()), nullptr);
 		++ind;
 	}
 }
@@ -41,7 +41,7 @@ void IntroBehaviour::GameUpdate()
 	bool playerInput = false;
 	for(auto& i : InputManager::_inputDevices)
 	{
-		if(i.second->inputBuffer()->back()->buttonStates > 0)
+		if(i.second->inputBuffer()->back().buttonStates() > 0)
 		{
 			playerInput = true;
 			break;

@@ -118,7 +118,7 @@ void GameCharacter::EvaluateNextState()
 
 	for(auto& i : _stateLookup)
 	{
-		if(InputManager::_inputDevices[-1]->EvaluateMotion(std::vector<InputMotionComponent>(i.second->associatedMotion()), _flipped))
+		if(InputManager::_inputDevices[-1]->EvaluateMotion(i.second->associatedMotion()))
 		{
 			if(nextState == nullptr || nextState->priority() < i.second->priority())
 			{
@@ -127,13 +127,10 @@ void GameCharacter::EvaluateNextState()
 		}
 	}
 
-	if(nextState != _currentState)
+	//TODO: Add cancelling rules
+	if(_stateEnded)
 	{
 		StartState(nextState->name());
-	}
-	else if(_stateEnded)
-	{
-		RestartState();
 	}
 }
 

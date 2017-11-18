@@ -6,17 +6,23 @@
 template <class T>
 class CircularBuffer
 {
-	std::vector<T>* _buffer;
+	std::unique_ptr<std::vector<T>> _buffer;
 	int _bufferEnd;
-public:
 
-	T* at(int index);//Relative to the beginning of the vector.
-	T* at_relative(int index);//Relative to the latest entry
-	T* back();//Latest entry
-	T* end();//Earliest entry, to be overwritten.
+public:
+	T& at(int index);//Relative to the beginning of the vector.
+	T& at_relative(int index);//Relative to the latest entry
+	T& back();//Latest entry
+	T& end();//Earliest entry, to be overwritten.
+
+	const T& at(int index) const;//Relative to the beginning of the vector.
+	const T& at_relative(int index) const;//Relative to the latest entry
+	const T& back() const;//Latest entry
+	const T& end() const;//Earliest entry, to be overwritten.
+
 	int position();
 
-	int InternalIndex(int index);
+	int InternalIndex(int index) const;
 
 	void Advance();
 	void Advance(T& placedVar);//Quick helper function for adding an element and incrementing _bufferEnd
@@ -31,43 +37,75 @@ public:
 };
 
 template <class T>
-T* CircularBuffer<T>::at(int index)
+T& CircularBuffer<T>::at(int index)
 {
 	if(_buffer->size() == 0)
-		return nullptr;
-	return &_buffer->at(InternalIndex(index));
+		throw std::out_of_range("Attempted to index element in empty circular buffer");
+	return _buffer->at(InternalIndex(index));
 }
 
 template <class T>
-T* CircularBuffer<T>::at_relative(int index)
+T& CircularBuffer<T>::at_relative(int index)
 {
 	if(_buffer->size() == 0)
-		return nullptr;
-	return &_buffer->at(InternalIndex(_bufferEnd - 1 + index));
+		throw std::out_of_range("Attempted to index element in empty circular buffer");
+	return _buffer->at(InternalIndex(_bufferEnd - 1 + index));
 }
 
 template <class T>
-T* CircularBuffer<T>::back()
+T& CircularBuffer<T>::back()
 {
 	if(_buffer->size() == 0)
-		return nullptr;
-	return &_buffer->at(InternalIndex(_bufferEnd - 1));
+		throw std::out_of_range("Attempted to index element in empty circular buffer");
+	return _buffer->at(InternalIndex(_bufferEnd - 1));
 }
 
 template <class T>
-T* CircularBuffer<T>::end()
+T& CircularBuffer<T>::end()
 {
 	if(_buffer->size() == 0)
-		return nullptr;
-	return &_buffer->at(_bufferEnd);
+		throw std::out_of_range("Attempted to index element in empty circular buffer");
+	return _buffer->at(_bufferEnd);
 }
 
 template <class T>
-int CircularBuffer<T>::InternalIndex(int index)
+const T& CircularBuffer<T>::at(int index) const
+{
+	if(_buffer->size() == 0)
+		throw std::out_of_range("Attempted to index element in empty circular buffer");
+	return _buffer->at(InternalIndex(index));
+}
+
+template <class T>
+const T& CircularBuffer<T>::at_relative(int index) const
+{
+	if(_buffer->size() == 0)
+		throw std::out_of_range("Attempted to index element in empty circular buffer");
+	return _buffer->at(InternalIndex(_bufferEnd - 1 + index));
+}
+
+template <class T>
+const T& CircularBuffer<T>::back() const
+{
+	if(_buffer->size() == 0)
+		throw std::out_of_range("Attempted to index element in empty circular buffer");
+	return _buffer->at(InternalIndex(_bufferEnd - 1));
+}
+
+template <class T>
+const T& CircularBuffer<T>::end() const
+{
+	if(_buffer->size() == 0)
+		throw std::out_of_range("Attempted to index element in empty circular buffer");
+	return _buffer->at(_bufferEnd);
+}
+
+template <class T>
+int CircularBuffer<T>::InternalIndex(int index) const
 {
 	if(index < 0)
 	{
-		return _buffer->size() - 1 - index%_buffer->size();
+		return _buffer->size() - 1 - index % _buffer->size();
 	}
 	else
 		return index % _buffer->size();
@@ -118,7 +156,7 @@ void CircularBuffer<T>::Reset()
 template <class T>
 CircularBuffer<T>::CircularBuffer(int size)
 {
-	_buffer = new std::vector<T>();
+	_buffer = std::make_unique<std::vector<T>>();
 	_buffer->resize(size);
 	_bufferEnd = 0;
 }
@@ -126,5 +164,4 @@ CircularBuffer<T>::CircularBuffer(int size)
 template<class T>
 CircularBuffer<T>::~CircularBuffer()
 {
-	delete _buffer;
 }

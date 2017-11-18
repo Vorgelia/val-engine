@@ -98,6 +98,7 @@
     <ClCompile Include="InputEvent.cpp" />
     <ClCompile Include="InputFrame.cpp" />
     <ClCompile Include="InputManager.cpp" />
+    <ClCompile Include="InputMotionComponent.cpp" />
     <ClCompile Include="InputMotion.cpp" />
     <ClCompile Include="IntroBehaviour.cpp" />
     <ClCompile Include="JSON.cpp" />
@@ -172,7 +173,9 @@
     <ClInclude Include="InputDevice.h" />
     <ClInclude Include="InputEvent.h" />
     <ClInclude Include="InputFrame.h" />
+    <ClInclude Include="InputIdentifiers.h" />
     <ClInclude Include="InputManager.h" />
+    <ClInclude Include="InputMotionComponent.h" />
     <ClInclude Include="InputMotion.h" />
     <ClInclude Include="IntroBehaviour.h" />
     <ClInclude Include="JSON.h" />
