@@ -110,6 +110,7 @@
     <ClCompile Include="NetworkEntity.cpp" />
     <ClCompile Include="NetworkMessage.cpp" />
     <ClCompile Include="Object.cpp" />
+    <ClCompile Include="PlayerManager.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="ScriptBehaviour.cpp" />
     <ClCompile Include="ScriptCollection.cpp" />
@@ -187,6 +188,7 @@
     <ClInclude Include="NetworkEntity.h" />
     <ClInclude Include="NetworkMessage.h" />
     <ClInclude Include="Object.h" />
+    <ClInclude Include="PlayerManager.h" />
     <ClInclude Include="PostEffect.h" />
     <ClInclude Include="Profiler.h" />
     <ClInclude Include="Renderer.h" />

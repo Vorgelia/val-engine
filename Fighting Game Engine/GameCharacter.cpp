@@ -118,6 +118,7 @@ void GameCharacter::EvaluateNextState()
 
 	for(auto& i : _stateLookup)
 	{
+		//TODO: Evaluate motion on input device of owner
 		if(InputManager::_inputDevices[-1]->EvaluateMotion(i.second->associatedMotion()))
 		{
 			if(nextState == nullptr || nextState->priority() < i.second->priority())

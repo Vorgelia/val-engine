@@ -152,6 +152,8 @@ void Script::Execute()
 
 void Script::ExecuteFunction(std::string name, std::vector<std::shared_ptr<BaseScriptVariable>> &variables)
 {
+	size_t blockStackSize = _blockStack.size();
+
 	try
 	{
 		_parentBlock->RunFunction(name, variables);
@@ -167,6 +169,15 @@ void Script::ExecuteFunction(std::string name, std::vector<std::shared_ptr<BaseS
 	{
 		VE_DEBUG_LOG("Unhandled exception on script[" + _name + "]:\n" + std::string(error.what()), LogItem::Type::Error);
 		_valid = false;
+	}
+
+	if(blockStackSize != _blockStack.size())
+	{
+		VE_DEBUG_LOG("Function " + name + " execution did not properly clear the block stack.", LogItem::Type::Error);
+		while(blockStackSize < _blockStack.size())
+		{
+			_blockStack.pop();
+		}
 	}
 }
 

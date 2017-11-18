@@ -399,6 +399,9 @@
     <ClCompile Include="GameCharacter.cpp">
       <Filter>Source Files\Game\Behaviours</Filter>
     </ClCompile>
+    <ClCompile Include="PlayerManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FGIncludes.hpp">
@@ -631,6 +634,9 @@
     </ClInclude>
     <ClInclude Include="GameCharacter.h">
       <Filter>Header Files\Game\Behaviours</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerManager.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
