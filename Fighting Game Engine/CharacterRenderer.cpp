@@ -38,7 +38,7 @@ void CharacterRenderer::OnRenderObjects()
 	const CharacterSprite* spriteData = _character->_stateManager->_currentFrame->spriteData();
 	Texture* frameTex = Resource::GetTexture(spriteData->sprite());
 
-	HandleRenderingMaterial(spriteData, frameTex, _character->flipped());
+	HandleRenderingMaterial(spriteData, frameTex, _character->_flipped);
 	HandleRenderingTransform(spriteData, frameTex);
 
 	Rendering::DrawMesh(_renderingTransform.get(), _mesh, _material);
@@ -66,7 +66,7 @@ void CharacterRenderer::HandleRenderingMaterial(const CharacterSprite* spriteDat
 void CharacterRenderer::HandleRenderingTransform(const CharacterSprite* spriteData, Texture* texture)
 {
 	glm::ivec2 originOffset = spriteData->originOffset();
-	glm::vec2 sizeMultiplier = _character->sizeMultiplier();
+	glm::vec2 sizeMultiplier = _character->_sizeMultiplier;
 	glm::ivec4 pixelRect = spriteData->pixelRect();
 
 	_renderingTransform->SnapTo(*_owner->transform());

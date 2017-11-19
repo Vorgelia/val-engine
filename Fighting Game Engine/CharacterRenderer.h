@@ -10,7 +10,7 @@ class CharacterSprite;
 class CharacterRenderer :
 	public Renderer
 {
-	GameCharacter* _character;
+	const GameCharacter* _character;
 	std::unique_ptr<Transform> _renderingTransform;
 
 	glm::vec2 _pixelsToWorldUnits;

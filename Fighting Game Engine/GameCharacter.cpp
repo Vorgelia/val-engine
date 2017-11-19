@@ -11,16 +11,6 @@ CharacterStateManager* GameCharacter::stateManager()
 	return _stateManager.get();
 }
 
-glm::vec2 GameCharacter::sizeMultiplier()
-{
-	return _sizeMultiplier;
-}
-
-bool GameCharacter::flipped()
-{
-	return _flipped;
-}
-
 //TODO: I'm not particularly happy about resource management here. Figure out something better.
 void GameCharacter::HandleCharacterData(const json& j)
 {
