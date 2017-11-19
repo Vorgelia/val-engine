@@ -84,12 +84,14 @@
     <ClCompile Include="CharacterRenderer.cpp" />
     <ClCompile Include="CharacterSprite.cpp" />
     <ClCompile Include="CharacterState.cpp" />
+    <ClCompile Include="CharacterStateManager.cpp" />
     <ClCompile Include="ConnectionSocket.cpp" />
     <ClCompile Include="DebugLog.cpp" />
     <ClCompile Include="DefenceData.cpp" />
     <ClCompile Include="Font.cpp" />
     <ClCompile Include="FrameBuffer.cpp" />
     <ClCompile Include="GameCharacter.cpp" />
+    <ClCompile Include="GamePlayer.cpp" />
     <ClCompile Include="GameScene.cpp" />
     <ClCompile Include="GameSceneManager.cpp" />
     <ClCompile Include="GLStateTrack.cpp" />
@@ -156,6 +158,7 @@
     <ClInclude Include="CharacterRenderer.h" />
     <ClInclude Include="CharacterSprite.h" />
     <ClInclude Include="CharacterState.h" />
+    <ClInclude Include="CharacterStateManager.h" />
     <ClInclude Include="CircularBuffer.h" />
     <ClInclude Include="CommonUtilIncludes.hpp" />
     <ClInclude Include="ConnectionSocket.h" />
@@ -165,6 +168,7 @@
     <ClInclude Include="Font.h" />
     <ClInclude Include="FrameBuffer.h" />
     <ClInclude Include="GameCharacter.h" />
+    <ClInclude Include="GamePlayer.h" />
     <ClInclude Include="GameScene.h" />
     <ClInclude Include="GameSceneManager.h" />
     <ClInclude Include="GLIncludes.hpp" />

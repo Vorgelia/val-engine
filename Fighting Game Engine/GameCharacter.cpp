@@ -1,21 +1,14 @@
 #include "GameCharacter.h"
 #include "Script.h"
 #include "ScriptManager.h"
-#include "ScriptVariable.h"
-#include "CharacterFrame.h"
-#include "CharacterState.h"
 #include "ResourceLoader.h"
-#include "DebugLog.h"
-#include "Time.h"
-#include "InputManager.h"
-#include "InputDevice.h"
-#include "InputMotion.h"
+#include "CharacterStateManager.h"
 
 VE_BEHAVIOUR_REGISTER_TYPE(GameCharacter);
 
-const CharacterFrame* GameCharacter::currentFrame()
+CharacterStateManager* GameCharacter::stateManager()
 {
-	return _currentFrame;
+	return _stateManager.get();
 }
 
 glm::vec2 GameCharacter::sizeMultiplier()
@@ -31,44 +24,7 @@ bool GameCharacter::flipped()
 //TODO: I'm not particularly happy about resource management here. Figure out something better.
 void GameCharacter::HandleCharacterData(const json& j)
 {
-	for(auto& iter : j["states"])
-	{
-		std::string path = JSON::Get<std::string>(iter);
-		ResourceLoader::ApplyFunctionToFiles(path, [this](const FS::path path)
-		{
-			if(path.extension().string() != ".json")
-			{
-				return;
-			}
-			const json& stateJson = ResourceLoader::LoadJsonResource(path);
-			for(auto& iter : stateJson)
-			{
-				auto& result = this->_stateLookup.insert(std::make_pair(
-					JSON::Get<std::string>(iter["name"]),
-					std::make_unique<CharacterState>(iter)));
-				ScriptManager::HandleScriptCharacterBindings(*this, result.first->second->script());
-			}
-		});
-	}
-
-	for(auto& iter : j["frames"])
-	{
-		std::string path = JSON::Get<std::string>(iter);
-		ResourceLoader::ApplyFunctionToFiles(path, [this](const FS::path path)
-		{
-			if(path.extension().string() != ".json")
-			{
-				return;
-			}
-			const json& frameJson = ResourceLoader::LoadJsonResource(path);
-			for(auto& iter : frameJson)
-			{
-				this->_frameLookup.insert(std::make_pair(
-					JSON::Get<std::string>(iter["id"]),
-					std::make_unique<CharacterFrame>(iter)));
-			}
-		});
-	}
+	_stateManager = std::make_unique<CharacterStateManager>(this, j["states"], j["frames"]);
 
 	_sizeMultiplier = JSON::Get<glm::vec2>(j["sizeMultiplier"]);
 
@@ -92,7 +48,7 @@ void GameCharacter::CharacterUpdate()
 		CharacterInit();
 	}
 
-	EvaluateNextState();
+	_stateManager->EvaluateNextState();
 
 	if(_characterScript != nullptr)
 	{
@@ -100,91 +56,11 @@ void GameCharacter::CharacterUpdate()
 	}
 }
 
-void GameCharacter::StateUpdate()
-{
-	if(_currentState != nullptr)
-	{
-		_currentStateFrame += 1;
-
-		_currentState->script()->ExecuteFunction("StateUpdate",
-			std::vector<std::shared_ptr<BaseScriptVariable>>{
-			std::make_shared<ScriptInt>(_currentStateFrame)});
-	}
-}
-
-void GameCharacter::EvaluateNextState()
-{
-	const CharacterState* nextState = nullptr;
-
-	for(auto& i : _stateLookup)
-	{
-		//TODO: Evaluate motion on input device of owner
-		if(InputManager::_inputDevices[-1]->EvaluateMotion(i.second->associatedMotion()))
-		{
-			if(nextState == nullptr || nextState->priority() < i.second->priority())
-			{
-				nextState = i.second.get();
-			}
-		}
-	}
-
-	//TODO: Add cancelling rules
-	if(_stateEnded)
-	{
-		StartState(nextState->name());
-	}
-}
-
 void GameCharacter::GameUpdate()
 {
 	CharacterUpdate();
 
-	StateUpdate();
-}
-
-bool GameCharacter::StartState(std::string name)
-{
-	auto& iter = _stateLookup.find(name);
-	if(iter != _stateLookup.end())
-	{
-		_currentState = iter->second.get();
-		_currentStateId = name;
-		_currentStateFrame = -1;
-		_stateEnded = false;
-		StateUpdate();
-		return true;
-	}
-
-	return false;
-}
-
-bool GameCharacter::SetFrame(std::string name)
-{
-	auto& iter = _frameLookup.find(name);
-	if(iter != _frameLookup.end())
-	{
-		_currentFrame = iter->second.get();
-		return true;
-	}
-
-	return false;
-}
-
-bool GameCharacter::ModifyCurrentStateFrame(int newFrame)
-{
-	_currentStateFrame = newFrame;
-	_stateEnded = false;
-	return true;
-}
-
-bool GameCharacter::RestartState()
-{
-	return StartState(_currentStateId);
-}
-
-void GameCharacter::MarkStateEnded()
-{
-	_stateEnded = true;
+	_stateManager->StateUpdate();
 }
 
 GameCharacter::GameCharacter(Object* owner, const json& j) : Behaviour(owner, j)

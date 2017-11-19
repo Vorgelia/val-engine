@@ -8,6 +8,7 @@
 #include <memory>
 #include "ScriptBehaviour.h"
 #include "GameCharacter.h"
+#include "CharacterStateManager.h"
 #include "DebugLog.h"
 #include "Time.h"
 
@@ -97,20 +98,20 @@ void ScriptManager::HandleScriptCharacterBindings(GameCharacter& character, Scri
 	{
 		if(args.size() >= 1 && args[0]->type() == ScriptVariableType::String)
 			return std::make_shared<ScriptBool>(
-				character.StartState(std::static_pointer_cast<ScriptString>(args[0])->value()));
+				character.stateManager()->StartState(std::static_pointer_cast<ScriptString>(args[0])->value()));
 		return std::make_shared<ScriptBool>(false);
 	});
 
 	script->BindFunction("character_restartState",
 		[&character](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
 	{
-		return std::make_shared<ScriptBool>(character.RestartState());
+		return std::make_shared<ScriptBool>(character.stateManager()->RestartState());
 	});
 
 	script->BindFunction("character_markStateEnded",
 		[&character](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
 	{
-		character.MarkStateEnded();
+		character.stateManager()->MarkStateEnded();
 		return std::make_shared<ScriptBool>(true);
 	});
 
@@ -119,7 +120,7 @@ void ScriptManager::HandleScriptCharacterBindings(GameCharacter& character, Scri
 	{
 		if(args.size() >= 1 && args[0]->type() == ScriptVariableType::String)
 			return std::make_shared<ScriptBool>(
-				character.SetFrame(std::static_pointer_cast<ScriptString>(args[0])->value()));
+				character.stateManager()->SetFrame(std::static_pointer_cast<ScriptString>(args[0])->value()));
 		return std::make_shared<ScriptBool>(false);
 	});
 
@@ -128,7 +129,7 @@ void ScriptManager::HandleScriptCharacterBindings(GameCharacter& character, Scri
 	{
 		if(args.size() >= 1 && args[0]->type() == ScriptVariableType::Int)
 			return std::make_shared<ScriptBool>(
-				character.ModifyCurrentStateFrame(std::static_pointer_cast<ScriptInt>(args[0])->value()));
+				character.stateManager()->ModifyCurrentStateFrame(std::static_pointer_cast<ScriptInt>(args[0])->value()));
 		return std::make_shared<ScriptBool>(false);
 	});
 }
