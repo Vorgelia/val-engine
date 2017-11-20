@@ -20,7 +20,7 @@ void ScriptManager::Init()
 	std::shared_ptr<ScriptCollection> collection = std::make_shared<ScriptCollection>();
 	collection->AddMember("test", std::make_shared<ScriptInt>(5));
 	_globalVariables.emplace(std::make_pair("testCollection", collection));
-
+	HandleCharacterStateVariables();
 	AddScript("Scripts/Base/example.vscript");
 }
 
@@ -86,6 +86,14 @@ void ScriptManager::HandleScriptBindings(Script* script)
 	}
 }
 
+void ScriptManager::HandleCharacterStateVariables()
+{
+	_globalVariables.emplace(std::make_pair("VE_STATE_FLAG_GENERIC", std::make_shared<ScriptInt>((int)CharacterStateFlagType::Generic)));
+	_globalVariables.emplace(std::make_pair("VE_STATE_FLAG_INVULN", std::make_shared<ScriptInt>((int)CharacterStateFlagType::Invuln)));
+	_globalVariables.emplace(std::make_pair("VE_STATE_FLAG_CANCEL_TARGET", std::make_shared<ScriptInt>((int)CharacterStateFlagType::CancelTargets)));
+	_globalVariables.emplace(std::make_pair("VE_STATE_FLAG_CANCEL_REQUIREMENT", std::make_shared<ScriptInt>((int)CharacterStateFlagType::CancelRequirements)));
+}
+
 void ScriptManager::AddVariable(const std::string& name, const std::shared_ptr<BaseScriptVariable>& variable)
 {
 	_globalVariables.emplace(name, variable);
@@ -131,6 +139,35 @@ void ScriptManager::HandleScriptCharacterBindings(GameCharacter& character, Scri
 			return std::make_shared<ScriptBool>(
 				character.stateManager()->ModifyCurrentStateFrame(std::static_pointer_cast<ScriptInt>(args[0])->value()));
 		return std::make_shared<ScriptBool>(false);
+	});
+
+	script->BindFunction("character_addFlag",
+		[&character](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
+	{
+		if(args.size() == 2 && args[0]->type() == ScriptVariableType::Int && args[1]->type() == ScriptVariableType::String)
+			return std::make_shared<ScriptBool>(
+				character.stateManager()->AddFlag(
+				(CharacterStateFlagType)std::static_pointer_cast<ScriptInt>(args[0])->value(),
+					std::static_pointer_cast<ScriptString>(args[1])->value()));
+		return std::make_shared<ScriptBool>(false);
+	});
+
+	script->BindFunction("character_removeFlag",
+		[&character](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
+	{
+		if(args.size() == 2 && args[0]->type() == ScriptVariableType::Int && args[1]->type() == ScriptVariableType::String)
+			return std::make_shared<ScriptBool>(
+				character.stateManager()->AddFlag(
+				(CharacterStateFlagType)std::static_pointer_cast<ScriptInt>(args[0])->value(),
+					std::static_pointer_cast<ScriptString>(args[0])->value()));
+		return std::make_shared<ScriptBool>(false);
+	});
+
+	script->BindFunction("character_clearFlags",
+		[&character](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
+	{
+		character.stateManager()->ClearFlags();
+		return std::make_shared<ScriptBool>(true);
 	});
 }
 

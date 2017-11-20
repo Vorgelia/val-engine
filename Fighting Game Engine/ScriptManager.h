@@ -15,8 +15,9 @@ class ScriptManager
 {
 	static std::unordered_map<std::string, std::shared_ptr<BaseScriptVariable>> _globalVariables;
 	static std::unordered_set<std::shared_ptr<Script>> _scripts;
+	
 	static void HandleScriptBindings(Script* script);
-
+	static void HandleCharacterStateVariables();
 public:
 	static void Init();
 	static void Update();

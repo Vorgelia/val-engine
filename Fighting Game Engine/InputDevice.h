@@ -6,15 +6,26 @@
 #include "InputFrame.h"
 #include "InputEvent.h"
 #include "CircularBuffer.h"
-#include "Time.h"
 #include "InputIdentifiers.h"
+#include "GLIncludes.hpp"
 
 class InputMotion;
 class InputMotionComponent;
 typedef CircularBuffer<InputFrame> InputBuffer;
 
+enum class InputDeviceId
+{
+	Network = -3,
+	Invalid = -2,
+	Keyboard = -1,
+	JoystickFirst = GLFW_JOYSTICK_1,
+	JoystickLast = GLFW_JOYSTICK_LAST
+};
+
 class InputDevice
 {
+	friend class GamePlayer;
+
 	int _deviceID;
 	std::string _deviceName;
 	std::string _deviceFilename;

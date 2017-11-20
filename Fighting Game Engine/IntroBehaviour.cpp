@@ -29,7 +29,7 @@ void IntroBehaviour::OnRenderUI()
 	Rendering::DrawScreenText(glm::vec4(0, 30, 100, 100), 24, std::to_string(glm::max<double>(((int)(Time::updateRate * 100))*0.01, 1.0)), nullptr);
 
 	int ind = 0;
-	for(auto& i : InputManager::_inputDevices)
+	for(auto& i : InputManager::inputDevices())
 	{
 		Rendering::DrawScreenText(glm::vec4(0, 60 + ind * 30, 100, 100), 24, std::to_string(i.first) + ":" + std::to_string(i.second->inputBuffer()->back().buttonStates()) + ":" + std::to_string(i.second->inputBuffer()->back().axisState()), nullptr);
 		++ind;
@@ -39,7 +39,7 @@ void IntroBehaviour::OnRenderUI()
 void IntroBehaviour::GameUpdate()
 {
 	bool playerInput = false;
-	for(auto& i : InputManager::_inputDevices)
+	for(auto& i : InputManager::inputDevices())
 	{
 		if(i.second->inputBuffer()->back().buttonStates() > 0)
 		{

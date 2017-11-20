@@ -2,6 +2,8 @@
 #include "ResourceLoader.h"
 #include "Time.h"
 #include "Screen.h"
+#include "InputFrame.h"
+#include "InputEvent.h"
 #include "InputMotion.h"
 #include "InputMotionComponent.h"
 #include <iostream>
@@ -31,17 +33,24 @@ const int& InputDevice::deviceID() const
 InputDevice::InputDevice(int deviceID)
 {
 	this->_deviceID = deviceID;
-	//Device IDs map to GLFW device IDs, with two extra ones. -1 for keyboard and -2 for inactive
-	if(deviceID == -2)
+	if(deviceID == (int)InputDeviceId::Network)
 	{
-		this->_deviceName = std::string("Inactive");
+		this->_deviceName = std::string("Network");
+	}
+	else if(deviceID == (int)InputDeviceId::Invalid)
+	{
+		this->_deviceName = std::string("Invalid");
 	}
 	else
 	{
-		if(deviceID == -1)
+		if(deviceID == (int)InputDeviceId::Keyboard)
+		{
 			this->_deviceName = std::string("Keyboard");
+		}
 		else
+		{
 			this->_deviceName = std::string(glfwGetJoystickName(deviceID));
+		}
 
 		this->_deviceFilename = this->_deviceName;
 
@@ -53,6 +62,7 @@ InputDevice::InputDevice(int deviceID)
 
 		ResourceLoader::LoadControlSettings("Settings/Input/" + this->_deviceFilename + ".vi", _directionMap, _buttonMap);
 	}
+
 	_inputBuffer = std::make_shared<InputBuffer>(VE_INPUT_BUFFER_SIZE);
 }
 
@@ -64,11 +74,11 @@ InputDevice::~InputDevice()
 //Needed to abstract checking for buttons and axes to a single function with boolean output.
 bool InputDevice::EvaluateInput(const InputEvent& ie)
 {
-	if(this->_deviceID == -2)
+	if(this->_deviceID == (int)InputDeviceId::Invalid)
 	{
 		return false;
 	}
-	else if(this->_deviceID == -1)
+	else if(this->_deviceID == (int)InputDeviceId::Keyboard)
 	{
 		return glfwGetKey(Screen::window, ie._inputID) == GLFW_PRESS;
 	}
@@ -223,7 +233,7 @@ void InputDevice::PollInput()
 		_cachedInputFrames.push_back(InputFrame(0, 0));
 	}
 
-	if(_deviceID > -1 && !glfwJoystickPresent(_deviceID))
+	if(_deviceID >= (int)InputDeviceId::JoystickFirst && !glfwJoystickPresent(_deviceID))
 		return;
 
 	glm::ivec2 dir;

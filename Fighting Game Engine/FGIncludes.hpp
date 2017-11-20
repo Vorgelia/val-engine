@@ -15,6 +15,8 @@
 #include "GameScene.h"
 #include "GameSceneManager.h"
 
+#include "PlayerManager.h"
+
 #include "ScriptManager.h"
 #include "Script.h"
 

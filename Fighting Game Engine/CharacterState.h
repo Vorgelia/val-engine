@@ -1,6 +1,6 @@
 #pragma once
 #include <memory>
-#include <vector>
+#include <unordered_set>
 #include <string>
 #include "JSON.h"
 #include "InputMotion.h"
@@ -15,7 +15,7 @@ class CharacterState
 	int _priority;
 
 	Script* _script;
-	std::vector<std::string> _stateTypeFlags;
+	std::unordered_set<std::string> _stateTypeFlags;
 	InputMotion _associatedMotion;
 
 public:
@@ -25,7 +25,7 @@ public:
 	Script* script();
 
 	//air, crouching, light, medium, etc
-	const std::vector<std::string>& stateTypeFlags() const;
+	const std::unordered_set<std::string>& stateTypeFlags() const;
 	const InputMotion& associatedMotion() const;
 
 	CharacterState(const json& j);

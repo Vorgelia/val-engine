@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <unordered_map>
+#include <unordered_set>
 #include <memory>
 #include "JSON.h"
 
@@ -11,6 +12,8 @@ enum class CharacterStateFlagType
 {
 	Generic = 0,
 	Invuln = 1,
+	CancelTargets = 2,
+	CancelRequirements = 3,
 };
 
 class CharacterStateManager
@@ -31,7 +34,7 @@ class CharacterStateManager
 	std::unordered_map<std::string, std::unique_ptr<CharacterFrame>> _frameLookup;
 
 	//Throw invuln, air invuln, etc
-	std::unordered_map<CharacterStateFlagType, std::vector<std::string>> _flags;
+	std::unordered_map<CharacterStateFlagType, std::unordered_set<std::string>> _flags;
 
 	void EvaluateNextState();
 
@@ -43,8 +46,12 @@ class CharacterStateManager
 	bool RestartState();
 	void MarkStateEnded();
 
-public:
+	bool AddFlag(CharacterStateFlagType type, std::string flag);
+	bool RemoveFlag(CharacterStateFlagType type, std::string flag);
+	void ClearFlags();
+	const std::unordered_set<std::string>& GetFlags(CharacterStateFlagType type);
 
+public:
 	CharacterStateManager(GameCharacter* owner, const json& states, const json& frames);
 	~CharacterStateManager();
 };

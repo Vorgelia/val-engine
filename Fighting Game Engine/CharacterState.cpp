@@ -18,7 +18,7 @@ Script * CharacterState::script()
 	return _script;
 }
 
-const std::vector<std::string>& CharacterState::stateTypeFlags() const
+const std::unordered_set<std::string>& CharacterState::stateTypeFlags() const
 {
 	return _stateTypeFlags;
 }
@@ -38,7 +38,7 @@ CharacterState::CharacterState(const json& j):
 
 	for(auto& iter : j["flags"])
 	{
-		_stateTypeFlags.push_back(JSON::Get<std::string>(iter));
+		_stateTypeFlags.emplace(JSON::Get<std::string>(iter));
 	}
 }
 

@@ -136,6 +136,7 @@ inline void EngineInit()
 	GameSceneManager::Init();
 	InputManager::Init();
 	ScriptManager::Init();
+	PlayerManager::Init();
 
 	VE_DEBUG_LOG("Full Init");
 }

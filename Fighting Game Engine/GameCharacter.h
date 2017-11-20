@@ -11,17 +11,19 @@ class BaseScriptVariable;
 class CharacterState;
 class CharacterFrame;
 class CharacterStateManager;
+class GamePlayer;
 
 class GameCharacter :
 	public Behaviour
 {
 	friend class ScriptManager;
 	friend class CharacterRenderer;
+	friend class CharacterStateManager;
 
 	std::string _dataPath;
 	bool _initialized;
 
-	//TODO: Player owner
+	GamePlayer* owner;
 
 	glm::vec2 _sizeMultiplier;
 	bool _flipped;
@@ -42,8 +44,6 @@ public:
 	VE_BEHAVIOUR_REGISTER_FUNCTION(GameUpdate);
 
 	CharacterStateManager* stateManager();
-	glm::vec2 sizeMultiplier();
-	bool flipped();
 
 	GameCharacter(Object* owner, const json& j);
 	~GameCharacter();
