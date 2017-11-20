@@ -1,23 +1,50 @@
 #pragma once
+#include "Behaviour.h"
 #include <string>
 #include <unordered_map>
+#include <unordered_set>
 #include <memory>
 
 class Object;
 class Script;
+class BaseScriptVariable;
+class CharacterState;
+class CharacterFrame;
+class CharacterStateManager;
+class GamePlayer;
 
-class GameCharacter
+class GameCharacter :
+	public Behaviour
 {
-	std::string _currentStateId;
-	Script* _currentState;
+	friend class ScriptManager;
+	friend class CharacterRenderer;
+	friend class CharacterStateManager;
 
-	int _currentFrame;
+	std::string _dataPath;
+	bool _initialized;
 
-	std::unordered_map<std::string, std::unique_ptr<Script>> _stateLookup;
+	GamePlayer* owner;
+
+	glm::vec2 _sizeMultiplier;
+	bool _flipped;
+
+	Script* _characterScript;
+	std::unordered_map<std::string, std::shared_ptr<BaseScriptVariable>> _variables;
+
+	std::unique_ptr<CharacterStateManager> _stateManager;
+
+	void HandleCharacterData(const json& j);
+
+	void CharacterInit();
+	void CharacterUpdate();
+
 public:
+	VE_BEHAVIOUR_NAME(GameCharacter);
 
-	Object* characterObject;
+	VE_BEHAVIOUR_REGISTER_FUNCTION(GameUpdate);
 
-	GameCharacter();
+	CharacterStateManager* stateManager();
+
+	GameCharacter(Object* owner, const json& j);
 	~GameCharacter();
 };

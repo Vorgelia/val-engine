@@ -11,6 +11,7 @@ namespace GameSceneManager
 	void Init();
 	void Update();
 	void LoadScene(const std::string& name);
+	void ReloadScene();
 	void RenderScene();
 	void Cleanup();
 }

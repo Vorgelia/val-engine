@@ -34,6 +34,7 @@ public:
 	VE_BEHAVIOUR_FUNCTION(OnSceneInit);
 	VE_BEHAVIOUR_FUNCTION(Update);
 	VE_BEHAVIOUR_FUNCTION(GameUpdate);
+	VE_BEHAVIOUR_FUNCTION(LateGameUpdate);
 	VE_BEHAVIOUR_FUNCTION(LateUpdate);
 	VE_BEHAVIOUR_FUNCTION(OnRenderObjects);
 	VE_BEHAVIOUR_FUNCTION(OnApplyPostEffects);
@@ -42,5 +43,5 @@ public:
 
 	Behaviour(Object* owner);
 	Behaviour(Object* owner, const json& j);
-	~Behaviour();
+	virtual ~Behaviour();
 };

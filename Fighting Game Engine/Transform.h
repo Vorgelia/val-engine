@@ -15,6 +15,8 @@ public:
 
 	glm::mat4 ModelMatrix();
 
+	void SnapTo(const Transform& tr);
+
 	Transform(Object* owner, glm::ivec2 position, glm::vec3 eulerRotation, glm::vec2 scale);
 	Transform(Object* owner, glm::ivec2 position, glm::quat rotation, glm::vec2 scale);
 	Transform(Object* owner, const json& j);

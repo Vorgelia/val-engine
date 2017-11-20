@@ -166,6 +166,33 @@
     <Filter Include="Source Files\Game\Behaviours">
       <UniqueIdentifier>{e861f96b-6386-4226-a9e0-1d01aa169180}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Engine\Utilities">
+      <UniqueIdentifier>{bfae6287-0837-4733-8676-ad799dcdb240}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Game\Characters\Hit Data">
+      <UniqueIdentifier>{56f1dab2-5d7c-4237-b4f6-f4ea159d669e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Game\Characters\State">
+      <UniqueIdentifier>{1fd4a1fb-751e-4fd8-9677-1697dae9cb0e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Game\Characters\Frame">
+      <UniqueIdentifier>{615b4344-ec17-4486-9a90-d76d50e310d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Input\Data">
+      <UniqueIdentifier>{4baa3415-4370-4140-8dd5-329a5632dd93}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Game\Characters\Frame">
+      <UniqueIdentifier>{9ac3d79c-4247-474b-a37a-a0336199e690}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Game\Characters\HitData">
+      <UniqueIdentifier>{dae32af9-fd61-4558-a306-281475f9022d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Game\Characters\State">
+      <UniqueIdentifier>{29fb28d9-3067-44f0-8527-094c8c2136b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Input\Data">
+      <UniqueIdentifier>{b65182ad-dbcc-401e-b6af-223431a0bee1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -213,15 +240,6 @@
     <ClCompile Include="InputDevice.cpp">
       <Filter>Source Files\Engine\Input</Filter>
     </ClCompile>
-    <ClCompile Include="InputFrame.cpp">
-      <Filter>Source Files\Engine\Input</Filter>
-    </ClCompile>
-    <ClCompile Include="InputEvent.cpp">
-      <Filter>Source Files\Engine\Input</Filter>
-    </ClCompile>
-    <ClCompile Include="InputMotion.cpp">
-      <Filter>Source Files\Engine\Input</Filter>
-    </ClCompile>
     <ClCompile Include="ResourceInitializer.cpp">
       <Filter>Source Files\Engine\Resource</Filter>
     </ClCompile>
@@ -239,15 +257,6 @@
     </ClCompile>
     <ClCompile Include="LogItem.cpp">
       <Filter>Source Files\Engine\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="GameCharacter.cpp">
-      <Filter>Source Files\Game\Characters</Filter>
-    </ClCompile>
-    <ClCompile Include="CharacterFrame.cpp">
-      <Filter>Source Files\Game\Characters</Filter>
-    </ClCompile>
-    <ClCompile Include="AttackData.cpp">
-      <Filter>Source Files\Game\Characters</Filter>
     </ClCompile>
     <ClCompile Include="Script.cpp">
       <Filter>Source Files\Engine\Scripting</Filter>
@@ -354,6 +363,54 @@
     <ClCompile Include="MenuBehaviour.cpp">
       <Filter>Source Files\Game\Behaviours</Filter>
     </ClCompile>
+    <ClCompile Include="ScriptBehaviour.cpp">
+      <Filter>Source Files\Engine\Behaviours</Filter>
+    </ClCompile>
+    <ClCompile Include="CharacterRenderer.cpp">
+      <Filter>Source Files\Game\Behaviours</Filter>
+    </ClCompile>
+    <ClCompile Include="AttackData.cpp">
+      <Filter>Source Files\Game\Characters\HitData</Filter>
+    </ClCompile>
+    <ClCompile Include="CharacterFrame.cpp">
+      <Filter>Source Files\Game\Characters\Frame</Filter>
+    </ClCompile>
+    <ClCompile Include="CharacterHitData.cpp">
+      <Filter>Source Files\Game\Characters\HitData</Filter>
+    </ClCompile>
+    <ClCompile Include="CharacterSprite.cpp">
+      <Filter>Source Files\Game\Characters\Frame</Filter>
+    </ClCompile>
+    <ClCompile Include="CharacterState.cpp">
+      <Filter>Source Files\Game\Characters\State</Filter>
+    </ClCompile>
+    <ClCompile Include="DefenceData.cpp">
+      <Filter>Source Files\Game\Characters\HitData</Filter>
+    </ClCompile>
+    <ClCompile Include="GameCharacter.cpp">
+      <Filter>Source Files\Game\Behaviours</Filter>
+    </ClCompile>
+    <ClCompile Include="InputMotion.cpp">
+      <Filter>Source Files\Engine\Input\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="InputFrame.cpp">
+      <Filter>Source Files\Engine\Input\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="InputEvent.cpp">
+      <Filter>Source Files\Engine\Input\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="InputMotionComponent.cpp">
+      <Filter>Source Files\Engine\Input\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerManager.cpp">
+      <Filter>Source Files\Engine\Management</Filter>
+    </ClCompile>
+    <ClCompile Include="GamePlayer.cpp">
+      <Filter>Source Files\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="CharacterStateManager.cpp">
+      <Filter>Source Files\Game\Characters\State</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FGIncludes.hpp">
@@ -407,15 +464,6 @@
     <ClInclude Include="InputDevice.h">
       <Filter>Header Files\Engine\Input</Filter>
     </ClInclude>
-    <ClInclude Include="InputFrame.h">
-      <Filter>Header Files\Engine\Input</Filter>
-    </ClInclude>
-    <ClInclude Include="InputEvent.h">
-      <Filter>Header Files\Engine\Input</Filter>
-    </ClInclude>
-    <ClInclude Include="InputMotion.h">
-      <Filter>Header Files\Engine\Input</Filter>
-    </ClInclude>
     <ClInclude Include="ResourceInitializer.h">
       <Filter>Header Files\Engine\Resource</Filter>
     </ClInclude>
@@ -436,15 +484,6 @@
     </ClInclude>
     <ClInclude Include="LogItem.h">
       <Filter>Header Files\Engine\Debug</Filter>
-    </ClInclude>
-    <ClInclude Include="GameCharacter.h">
-      <Filter>Header Files\Game\Characters</Filter>
-    </ClInclude>
-    <ClInclude Include="CharacterFrame.h">
-      <Filter>Header Files\Game\Characters</Filter>
-    </ClInclude>
-    <ClInclude Include="AttackData.h">
-      <Filter>Header Files\Game\Characters</Filter>
     </ClInclude>
     <ClInclude Include="Script.h">
       <Filter>Header Files\Engine\Scripting</Filter>
@@ -556,6 +595,63 @@
     </ClInclude>
     <ClInclude Include="MenuBehaviour.h">
       <Filter>Header Files\Game\Behaviours</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptBehaviour.h">
+      <Filter>Header Files\Engine\Behaviours</Filter>
+    </ClInclude>
+    <ClInclude Include="MathIncludes.hpp">
+      <Filter>Header Files\IncludeLists</Filter>
+    </ClInclude>
+    <ClInclude Include="GLMExtensions.h">
+      <Filter>Header Files\Engine\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="AttackData.h">
+      <Filter>Header Files\Game\Characters\Hit Data</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterHitData.h">
+      <Filter>Header Files\Game\Characters\Hit Data</Filter>
+    </ClInclude>
+    <ClInclude Include="DefenceData.h">
+      <Filter>Header Files\Game\Characters\Hit Data</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterFrame.h">
+      <Filter>Header Files\Game\Characters\Frame</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterSprite.h">
+      <Filter>Header Files\Game\Characters\Frame</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterState.h">
+      <Filter>Header Files\Game\Characters\State</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterRenderer.h">
+      <Filter>Header Files\Game\Behaviours</Filter>
+    </ClInclude>
+    <ClInclude Include="InputIdentifiers.h">
+      <Filter>Header Files\Engine\Input\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="GameCharacter.h">
+      <Filter>Header Files\Game\Behaviours</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerManager.h">
+      <Filter>Header Files\Engine\Management</Filter>
+    </ClInclude>
+    <ClInclude Include="InputMotion.h">
+      <Filter>Header Files\Engine\Input\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="InputEvent.h">
+      <Filter>Header Files\Engine\Input\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="InputFrame.h">
+      <Filter>Header Files\Engine\Input\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="InputMotionComponent.h">
+      <Filter>Header Files\Engine\Input\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="GamePlayer.h">
+      <Filter>Header Files\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterStateManager.h">
+      <Filter>Header Files\Game\Characters\State</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

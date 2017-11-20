@@ -1,0 +1,11 @@
+#pragma Bind Debug
+#pragma Bind Time
+
+function CharacterInit() : int
+	character_startState("FRITZ_IDLE")
+end
+
+//This function runs every frame
+function CharacterUpdate() : int
+	return 0
+end

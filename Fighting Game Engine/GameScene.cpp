@@ -42,8 +42,7 @@ void GameScene::LoadResources()
 		ResourceLoader::LoadObjects(_dataPath.string() + "/SceneObjects.txt", _objects);
 		for(auto& iter : _objects)
 		{
-			_objectLookup.emplace(std::make_pair(iter->id(), iter.get()));
-			_objectNameLookup.emplace(std::make_pair(iter->name(), iter.get()));
+			RegisterObject(iter.get());
 		}
 
 		_postEffectsOrder = ResourceLoader::ReturnFileLines(_dataPath.string() + "/PostEffectsOrder.txt", true);
@@ -79,6 +78,23 @@ void GameScene::RunFunctionOnObjectBehaviours(std::function<void(Behaviour*)> fu
 	}
 }
 
+void GameScene::RegisterObject(Object* obj)
+{
+	_objectNameLookup.insert(std::make_pair(obj->name(), obj));
+	_objectLookup.insert(std::make_pair(obj->id(), obj));
+}
+
+void GameScene::UnregisterObject(Object* obj)
+{
+	_objectNameLookup.erase(obj->name());
+	_objectLookup.erase(obj->id());
+}
+
+std::string GameScene::name()
+{
+	return _name;
+}
+
 bool GameScene::initialized()
 {
 	return _initialized;
@@ -100,6 +116,11 @@ void GameScene::GameUpdate()
 	RunFunctionOnObjectBehaviours(VE_BEHAVIOUR_FUNCTION_CALLER(GameUpdate));
 }
 
+void GameScene::LateGameUpdate()
+{
+	RunFunctionOnObjectBehaviours(VE_BEHAVIOUR_FUNCTION_CALLER(LateGameUpdate));
+}
+
 void GameScene::LateUpdate()
 {
 	RunFunctionOnObjectBehaviours(VE_BEHAVIOUR_FUNCTION_CALLER(LateUpdate));
@@ -115,18 +136,6 @@ void GameScene::OnLoaded()
 
 }
 
-void GameScene::Cleanup()
-{
-	_objects.clear();
-	_objectLookup.clear();
-	_objectNameLookup.clear();
-
-	_postEffectsOrder.clear();
-
-	_loaded = false;
-	_initialized = false;
-}
-
 void GameScene::RenderObjects()
 {
 	RunFunctionOnObjectBehaviours(VE_BEHAVIOUR_FUNCTION_CALLER(OnRenderObjects));
@@ -139,6 +148,28 @@ void GameScene::ApplyPostEffects()
 		Rendering::DrawPostEffect(
 			Resource::GetPostEffect(iter));
 	}
+}
+
+void GameScene::Cleanup()
+{
+	_objects.clear();
+	_objectLookup.clear();
+	_objectNameLookup.clear();
+
+	_postEffectsOrder.clear();
+
+	_loaded = false;
+	_initialized = false;
+}
+
+Object * GameScene::AddObject(const std::string & prefabPath)
+{
+	_objects.emplace_back(ResourceLoader::LoadObject(prefabPath));
+	Object* result = _objects.back().get();
+
+	RegisterObject(result);
+	
+	return result;
 }
 
 Object* GameScene::FindObject(const std::string& name)

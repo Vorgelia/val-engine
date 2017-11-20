@@ -4,6 +4,7 @@
 #include <vector>
 #include <unordered_map>
 #include <stack>
+#include <functional>
 
 enum class ScriptExitCode;
 enum class ScriptControlFlag;
@@ -11,6 +12,8 @@ struct ScriptLine;
 class ScriptBlock;
 class ScriptParentBlock;
 class BaseScriptVariable;
+
+typedef std::vector<std::shared_ptr<BaseScriptVariable>> ScriptArgumentCollection;
 
 //TODO: Get rid of shared_ptr
 class Script
@@ -27,7 +30,7 @@ class Script
 
 	std::unordered_map<std::string, std::vector<std::string>> _pragmaDirectives;
 
-	std::unordered_map<std::string, std::shared_ptr<BaseScriptVariable>(*)(const Script*, std::vector<std::shared_ptr<BaseScriptVariable>>&)> _boundFunctions;
+	std::unordered_map<std::string, std::function<std::shared_ptr<BaseScriptVariable>(const Script*, ScriptArgumentCollection&)>> _boundFunctions;
 
 	std::stack<std::shared_ptr<ScriptBlock>> _blockStack;
 	ScriptControlFlag _controlFlag;
@@ -46,7 +49,9 @@ public:
 
 	ScriptControlFlag controlFlag();
 
-	void BindFunction(std::string name, std::shared_ptr<BaseScriptVariable>(*func)(const Script*, std::vector<std::shared_ptr<BaseScriptVariable>>&));
+	bool HasFunction(std::string name);
+
+	void BindFunction(std::string name, std::function<std::shared_ptr<BaseScriptVariable>(const Script*, ScriptArgumentCollection&)> func);
 	std::shared_ptr<BaseScriptVariable> CallBoundFunction(std::string name, std::vector<std::shared_ptr<BaseScriptVariable>> &variables);
 
 	std::vector<std::string> GetPragmaDirectives(std::string id);
@@ -56,8 +61,8 @@ public:
 	void ConsumeControlFlag();
 
 	void Init();
-	ScriptExitCode Execute();
-	void ExecuteFunction(std::string name, std::vector<std::shared_ptr<BaseScriptVariable>> &variables);
+	void Execute();
+	void ExecuteFunction(std::string name, std::vector<std::shared_ptr<BaseScriptVariable>> &variables = std::vector<std::shared_ptr<BaseScriptVariable>>());
 
 	Script(std::string name, std::vector<std::string> lines);
 	~Script();

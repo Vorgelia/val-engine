@@ -20,6 +20,11 @@ void Behaviour::GameUpdate()
 
 }
 
+void Behaviour::LateGameUpdate()
+{
+
+}
+
 void Behaviour::LateUpdate()
 {
 

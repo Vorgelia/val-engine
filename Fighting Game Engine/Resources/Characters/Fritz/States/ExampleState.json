@@ -1,0 +1,45 @@
+[
+    {
+        "name":"FRITZ_IDLE",
+        "priority":0,
+        "script":"Characters/Fritz/Scripts/FRITZ_IDLE.vscript",
+        "flags":[
+            "VE_GROUNDED"
+        ],
+        "motion":[
+            {
+                "buttons":[
+
+                ],
+                "direction":0,
+                "minDuration":0,
+                "leniency":0,
+                "strict":true
+            }
+        ]
+    },
+	{
+        "name":"FRITZ_5A",
+        "priority":10,
+        "script":"Characters/Fritz/Scripts/FRITZ_5A.vscript",
+        "flags":[
+            "VE_GROUNDED",
+            "VE_LIGHT",
+            "VE_NORMAL"
+        ],
+        "motion":[
+            {
+                "buttons":[
+					{
+						"button": 1,
+						"type": 1
+					}
+                ],
+                "direction":0,
+                "minDuration":0,
+                "leniency":0,
+                "strict":true
+            }
+        ]
+    }
+]

@@ -1,0 +1,27 @@
+#pragma Bind Debug
+#pragma Bind Time
+
+function StateInit() : int
+	character_addFlag(VE_STATE_FLAG_CANCEL_TARGET, "VE_NORMAL")
+end
+
+//This function runs every frame
+function StateUpdate(int frame) : int
+	switch(frame)
+		case 0->4
+		  character_setFrame("fritz_idle_01")
+		  break
+		case 5->10
+		  character_setFrame("fritz_idle_02")
+		  break
+		case 11->15
+		  character_setFrame("fritz_idle_03")
+		  break
+		case 20
+		  character_markStateEnded()
+		case 16->20
+		  character_setFrame("fritz_idle_04")
+		  break
+	end
+	return 0
+end

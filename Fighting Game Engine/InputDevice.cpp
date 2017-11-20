@@ -2,24 +2,30 @@
 #include "ResourceLoader.h"
 #include "Time.h"
 #include "Screen.h"
+#include "InputFrame.h"
+#include "InputEvent.h"
 #include "InputMotion.h"
+#include "InputMotionComponent.h"
 #include <iostream>
-#include<GLM\glm.hpp>
+#include <GLM\glm.hpp>
 
+//Default input leniency. We want the first input of every move to only count if it's the latest one by default.
+#define INPUT_BUFFER_INIT 1
+#define INPUT_BUFFER_MID 8
 //1200 keeps track of the last 20 seconds of inputs, but it can easily be increased if that's not enough
 #define VE_INPUT_BUFFER_SIZE 1200
 
-std::string InputDevice::deviceName()
+const std::string& InputDevice::deviceName() const
 {
 	return _deviceName;
 }
 
-const std::shared_ptr<InputBuffer> InputDevice::inputBuffer()
+const InputBuffer* InputDevice::inputBuffer() const
 {
-	return _inputBuffer;
+	return _inputBuffer.get();
 }
 
-int InputDevice::deviceID()
+const int& InputDevice::deviceID() const
 {
 	return _deviceID;
 }
@@ -27,17 +33,24 @@ int InputDevice::deviceID()
 InputDevice::InputDevice(int deviceID)
 {
 	this->_deviceID = deviceID;
-	//Device IDs map to GLFW device IDs, with two extra ones. -1 for keyboard and -2 for inactive
-	if(deviceID == -2)
+	if(deviceID == (int)InputDeviceId::Network)
 	{
-		this->_deviceName = std::string("Inactive");
+		this->_deviceName = std::string("Network");
+	}
+	else if(deviceID == (int)InputDeviceId::Invalid)
+	{
+		this->_deviceName = std::string("Invalid");
 	}
 	else
 	{
-		if(deviceID == -1)
+		if(deviceID == (int)InputDeviceId::Keyboard)
+		{
 			this->_deviceName = std::string("Keyboard");
+		}
 		else
+		{
 			this->_deviceName = std::string(glfwGetJoystickName(deviceID));
+		}
 
 		this->_deviceFilename = this->_deviceName;
 
@@ -47,103 +60,81 @@ InputDevice::InputDevice(int deviceID)
 				c = '_';
 		}
 
-		ResourceLoader::LoadControlSettings("Settings/Input/" + this->_deviceFilename + ".vi", (this->_directionMap), (this->_buttonMap));
+		ResourceLoader::LoadControlSettings("Settings/Input/" + this->_deviceFilename + ".vi", _directionMap, _buttonMap);
 	}
-	_inputBuffer = std::make_shared<InputBuffer>(VE_INPUT_BUFFER_SIZE);
 
+	_inputBuffer = std::make_shared<InputBuffer>(VE_INPUT_BUFFER_SIZE);
 }
+
 InputDevice::~InputDevice()
 {
 }
+
 //Helper function for evaluating whether a specific input event is occuring.
 //Needed to abstract checking for buttons and axes to a single function with boolean output.
-bool InputDevice::EvaluateInput(InputEvent& ie)
+bool InputDevice::EvaluateInput(const InputEvent& ie)
 {
-	if(this->_deviceID == -2)
+	if(this->_deviceID == (int)InputDeviceId::Invalid)
 	{
 		return false;
 	}
-	else if(this->_deviceID == -1)
+	else if(this->_deviceID == (int)InputDeviceId::Keyboard)
 	{
-		return glfwGetKey(Screen::window, ie.inputID) == GLFW_PRESS;
+		return glfwGetKey(Screen::window, ie._inputID) == GLFW_PRESS;
 	}
 	else
 	{
-		if(!ie.isAxis)
+		if(!ie._isAxis)
 		{
-			return _cachedJoyButtons[ie.inputID] > 0;
+			return _cachedJoyButtons[ie._inputID] > 0;
 		}
 		else
 		{
-			return (glm::abs(_cachedJoyAxes[ie.inputID]) > ie.deadzone) && (glm::sign(_cachedJoyAxes[ie.inputID]) == glm::sign(ie.inputValue));
+			return (glm::abs(_cachedJoyAxes[ie._inputID]) > ie._deadzone) && (glm::sign(_cachedJoyAxes[ie._inputID]) == glm::sign(ie._inputValue));
 		}
 	}
 }
-//Default input leniency. We want the first input of every move to only count if it's the latest one by default.
-#define INPUT_BUFFER_INIT 1
-#define INPUT_BUFFER_MID 8
-std::string debugString;
+
 //This function is fairly simple. It checks if a specific motion has been performed by validating every part of the motion based on the distance of its beginning.
 //For a quarter circle forward L, it would check if L has been pressed, then the distance between L and a forward input, then the distance between the forward input to the down-forward input, etc
 //The distance checking is abstracted in the InputMotionDistance function.
-bool InputDevice::EvaluateMotion(InputMotion& motion, bool inverse)
+bool InputDevice::EvaluateMotion(const InputMotion& motion)
 {
-	if(motion.size() == 0)
+	if(motion._components.size() == 0)
 		return false;
 
-	int buf = motion.back().leniency > -1 ? motion.back().leniency : INPUT_BUFFER_INIT;
+	int buf = motion._components.back().leniency > -1 ? motion._components.back().leniency : INPUT_BUFFER_INIT;
 	int bufferIndex = _inputBuffer->position() - 1;
-	debugString = "";
 
-	for(int i = motion.size() - 1; i >= 0;)
+	for(int i = motion._components.size() - 1; i >= 0;)
 	{
-		debugString += "Checking frame: " + std::to_string(bufferIndex) + "\n";
-		debugString += "-Requirements: " + std::to_string((int)motion[i].direction) + ":";
-
-		for(unsigned int bti = 0; bti < motion[i].buttons.size(); ++bti)
-		{
-			debugString += std::to_string((int)motion[i].buttons[0].first) + ",";
-		}
-
-		debugString += '\n';
-
-		int distance = InputMotionDistance(bufferIndex, motion[i], buf, i == 0);
+		int distance = InputMotionDistance(bufferIndex, motion._components[i], buf, i == 0);
 		if(distance >= 0 && distance <= buf)
 		{
-			debugString += "-Succeeded. Distance=" + std::to_string(distance) + "\n";
-
-			bufferIndex -= distance + motion[i].minDuration - 1;
+			bufferIndex -= distance + motion._components[i].minDuration - 1;
 			--i;
 			if(i <= -1)
 			{
-				//std::cout << "MotionDebug: Frame " << Time::frameCount << std::endl << debugString << "--SUCCESS--\n--------" << std::endl;
 				return true;
 			}
 			else
 			{
-				buf = motion[i].leniency > -1 ? motion[i].leniency : INPUT_BUFFER_MID;
+				buf = motion._components[i].leniency > -1 ? motion._components[i].leniency : INPUT_BUFFER_MID;
 			}
 		}
-		else /*if(buf<=-1)*/
+		else
 		{
-			//if (i != motion.size() - 1)
-			//std::cout << "MotionDebug: Frame " << Time::frameCount << std::endl << debugString << "--FAILED--\n--------" << std::endl;
 			return false;
 		}
-		/*else{
-			//debugString += "-Failed\n";
-			//bufferIndex -= 1;
-			return false;
-			}*/
 	}
-	//std::cout << "MotionDebug: " << Time::frameCount << std::endl << debugString << "--FAILED OUTSIDE--\n--------" << std::endl;
+
 	return false;
 }
 
 //This function checks the distance from an input's beginning by checking back in the buffer until the specified input exceeds its necessary duration and stops being valid.
 //For instance, holding forward in a quarter circle forward for 4 frames means the input is valid since it turns invalid after a 10f window.
 //Max buffer is used as an early out to prevent from checking too far if we're going to discard based on distance being too high anyway
-int InputDevice::InputMotionDistance(int currentIndex, InputMotionComponent& motionComp, int maxBuffer, bool firstInput)
+int InputDevice::InputMotionDistance(int currentIndex, InputMotionComponent motionComp, int maxBuffer, bool firstInput)
 {
 	int cind = currentIndex;
 	int duration = 0;
@@ -153,7 +144,6 @@ int InputDevice::InputMotionDistance(int currentIndex, InputMotionComponent& mot
 		//If the duration is over the needed duration, keep checking to see when the input started
 		if(InputMotionFrameCheck(motionComp, cind))
 		{
-			debugString += "--Valid Frame " + std::to_string(cind) + " dur:" + std::to_string(duration + 1) + "|" + std::to_string((int)_inputBuffer->at(cind)->axisState) + "," + std::to_string((int)_inputBuffer->at(cind)->buttonStates) + "\n";
 			++duration;
 			if(duration >= motionComp.minDuration)
 			{
@@ -161,13 +151,12 @@ int InputDevice::InputMotionDistance(int currentIndex, InputMotionComponent& mot
 				//Or, charging back to count for all the frames after back has been held for the needed duration.
 				if(firstInput)
 				{
-					debugString += "---Last Input: Early Out\n";
 					return 0;
 				}
 				//To prevent different inputs being counted as the same with motions not marked strict, change the checks to return false if the input changes at all.
 				if(motionComp.direction != 0)
 				{
-					motionComp.direction = _inputBuffer->at(cind)->axisState;
+					motionComp.direction = _inputBuffer->at(cind)._axisState;
 					motionComp.strict = true;
 				}
 			}
@@ -176,7 +165,6 @@ int InputDevice::InputMotionDistance(int currentIndex, InputMotionComponent& mot
 		else
 		{
 			//Only consider returning if the motion is invalid, which means we only check if the input has been valid after it's over
-			debugString += "--Invalid Frame " + std::to_string(cind) + " dur:" + std::to_string(duration) + "|" + std::to_string((int)_inputBuffer->at(cind)->axisState) + "," + std::to_string((int)_inputBuffer->at(cind)->buttonStates) + "\n";
 			if(duration >= motionComp.minDuration)
 			{
 				return glm::max<int>(glm::abs(currentIndex - cind) - motionComp.minDuration + 1, 1);
@@ -191,33 +179,37 @@ int InputDevice::InputMotionDistance(int currentIndex, InputMotionComponent& mot
 
 	return -1;//-1 is used for invalid results.
 }
-bool InputDevice::InputMotionFrameCheck(InputMotionComponent& motionComp, int index)
+
+bool InputDevice::InputMotionFrameCheck(const InputMotionComponent& motionComp, int index)
 {
-	InputFrame* inpf = _inputBuffer->at(index);//Current checked frame
-	InputFrame* inpfp = _inputBuffer->at(index - 1);//Current checked frame -1, to check for button events
+	InputFrame& inputFrame = _inputBuffer->at(index);//Current checked frame
+	InputFrame& inputFramePrevious = _inputBuffer->at(index - 1);//Current checked frame -1, to check for button events
 
 	if(motionComp.direction != 0)
 	{
-		if((inpf->axisState&motionComp.direction) == 0)
+		if((inputFrame._axisState&motionComp.direction) == 0)
 			return false;
-		if(motionComp.strict && (inpf->axisState != motionComp.direction))
+		if(motionComp.strict && (inputFrame._axisState != motionComp.direction))
 			return false;
 	}
+
 	for(auto& i : motionComp.buttons)
 	{
-		if((int)i.second | (int)InputType::Pressed)
+		if((int)i.second | (int)InputTypeMask::Pressed)
 		{
-			if((inpf->buttonStates & i.first) && ((inpfp->buttonStates & i.first) == 0))
+			if(((inputFrame._buttonStates & i.first) != 0)
+				&& ((inputFramePrevious._buttonStates & i.first) == 0))
 				continue;
 		}
-		if((int)i.second | (int)InputType::Released)
+		if((int)i.second | (int)InputTypeMask::Released)
 		{
-			if((inpfp->buttonStates & i.first) && ((inpf->buttonStates & i.first) == 0))
+			if(((inputFramePrevious._buttonStates & i.first) != 0)
+				&& ((inputFrame._buttonStates & i.first) == 0))
 				continue;
 		}
-		if((int)i.second | (int)InputType::Held)
+		if((int)i.second | (int)InputTypeMask::Held)
 		{
-			if((inpf->buttonStates & i.first))
+			if((inputFrame._buttonStates & i.first))
 				continue;
 		}
 		return false;
@@ -241,11 +233,11 @@ void InputDevice::PollInput()
 		_cachedInputFrames.push_back(InputFrame(0, 0));
 	}
 
-	if(_deviceID > -1 && !glfwJoystickPresent(_deviceID))
+	if(_deviceID >= (int)InputDeviceId::JoystickFirst && !glfwJoystickPresent(_deviceID))
 		return;
 
 	glm::ivec2 dir;
-	_cachedInputFrames.back().axisState = 0;
+	_cachedInputFrames.back()._axisState = 0;
 	for(auto& i : _directionMap)
 	{
 		if(EvaluateInput(i.second))
@@ -269,25 +261,24 @@ void InputDevice::PollInput()
 	}
 
 	if(dir.x > 0)
-		_cachedInputFrames.back().axisState |= (unsigned char)(InputDirection::Right);
+		_cachedInputFrames.back()._axisState |= (unsigned char)(InputDirection::Right);
 	else if(dir.x < 0)
-		_cachedInputFrames.back().axisState |= (unsigned char)(InputDirection::Left);
+		_cachedInputFrames.back()._axisState |= (unsigned char)(InputDirection::Left);
 	if(dir.y > 0)
-		_cachedInputFrames.back().axisState |= (unsigned char)(InputDirection::Up);
+		_cachedInputFrames.back()._axisState |= (unsigned char)(InputDirection::Up);
 	else if(dir.y < 0)
-		_cachedInputFrames.back().axisState |= (unsigned char)(InputDirection::Down);
+		_cachedInputFrames.back()._axisState |= (unsigned char)(InputDirection::Down);
 
 	for(auto& i : _buttonMap)
 	{
 		if(EvaluateInput(i.second))
 		{
-			_cachedInputFrames.back().buttonStates |= (unsigned char)(i.first);
+			_cachedInputFrames.back()._buttonStates |= (unsigned char)(i.first);
 		}
-		//else
-		//	cachedInputFrames.back().buttonStates &= ~((unsigned char)(i->first));
 	}
 
 }
+
 void InputDevice::PushInputsToBuffer()
 {
 	for(auto& frame : _cachedInputFrames)
@@ -296,6 +287,7 @@ void InputDevice::PushInputsToBuffer()
 	}
 	_cachedInputFrames.clear();
 }
+
 //Default settings are saved per input device type. This means your fightstick can remember its settings even if you plug it out.
 //Of course, support for temporary changes should be available in a finished product.
 std::string InputDevice::Serialize()
@@ -303,10 +295,10 @@ std::string InputDevice::Serialize()
 	std::stringstream str;
 	str << "#BUTTONS\n";
 	for(auto& i : _buttonMap)
-		str << (int)i.first << ":" << (i.second.isAxis ? "t," : "f,") << i.second.inputID << "," << (int)glm::sign(i.second.inputValue) << "\n";
+		str << (int)i.first << ":" << (i.second._isAxis ? "t," : "f,") << i.second._inputID << "," << (int)glm::sign(i.second._inputValue) << "\n";
 
 	str << "#AXES\n";
 	for(auto& i : _directionMap)
-		str << (int)i.first << ":" << (i.second.isAxis ? "t," : "f,") << i.second.inputID << "," << (int)glm::sign(i.second.inputValue) << "\n";
+		str << (int)i.first << ":" << (i.second._isAxis ? "t," : "f,") << i.second._inputID << "," << (int)glm::sign(i.second._inputValue) << "\n";
 	return str.str();
 }

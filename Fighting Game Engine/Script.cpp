@@ -24,7 +24,12 @@ ScriptControlFlag Script::controlFlag()
 	return _controlFlag;
 }
 
-void Script::BindFunction(std::string name, std::shared_ptr<BaseScriptVariable>(*func)(const Script*, std::vector<std::shared_ptr<BaseScriptVariable>>&))
+bool Script::HasFunction(std::string name)
+{
+	return _parentBlock != nullptr && _parentBlock->HasFunction(name);
+}
+
+void Script::BindFunction(std::string name, std::function<std::shared_ptr<BaseScriptVariable>(const Script*, ScriptArgumentCollection&)> func)
 {
 	_boundFunctions[name] = func;
 }
@@ -132,31 +137,26 @@ void Script::Init()
 	try
 	{
 		_parentBlock = std::make_shared<ScriptParentBlock>(ScriptLinesView(&_lines), 0, this);
-		ExecuteFunction("Init", std::vector<std::shared_ptr<BaseScriptVariable>>());
 	}
 	catch(ScriptError error)
 	{
 		VE_DEBUG_LOG("(Preprocessing " + _name + " : line " + std::to_string(_lines[_parentBlock->cursor()].index) + ") " + std::string(error.what()), LogItem::Type::Warning);
 		_valid = false;
 	}
-
-	if(_blockStack.size() > 0)
-	{
-		VE_DEBUG_LOG("Block stack not empty after script " + _name + " execution.", LogItem::Type::Warning);
-		while(_blockStack.size() > 0)
-		{
-			PopBlock();
-		}
-	}
 }
 
-ScriptExitCode Script::Execute()
+void Script::Execute()
 {
-	ScriptExitCode returnCode = ScriptExitCode::Success;
+	ExecuteFunction("Main", std::vector<std::shared_ptr<BaseScriptVariable>>());
+}
+
+void Script::ExecuteFunction(std::string name, std::vector<std::shared_ptr<BaseScriptVariable>> &variables)
+{
+	size_t blockStackSize = _blockStack.size();
 
 	try
 	{
-		ExecuteFunction("Main", std::vector<std::shared_ptr<BaseScriptVariable>>());
+		_parentBlock->RunFunction(name, variables);
 	}
 	catch(ScriptError error)
 	{
@@ -164,30 +164,21 @@ ScriptExitCode Script::Execute()
 
 		VE_DEBUG_LOG("(" + _name + " : line " + std::to_string(_lines[blockCursor].index) + ") " + std::string(error.what()), LogItem::Type::Warning);
 		_valid = false;
-		returnCode = ScriptExitCode::Failure;
 	}
 	catch(std::exception error)
 	{
 		VE_DEBUG_LOG("Unhandled exception on script[" + _name + "]:\n" + std::string(error.what()), LogItem::Type::Error);
 		_valid = false;
-		returnCode = ScriptExitCode::Exception;
 	}
 
-	if(_blockStack.size() > 0)
+	if(blockStackSize != _blockStack.size())
 	{
-		VE_DEBUG_LOG("Block stack not empty after script " + _name + " execution.", LogItem::Type::Error);
-		while(_blockStack.size() > 0)
+		VE_DEBUG_LOG("Function " + name + " execution did not properly clear the block stack.", LogItem::Type::Error);
+		while(blockStackSize < _blockStack.size())
 		{
-			PopBlock();
+			_blockStack.pop();
 		}
 	}
-
-	return returnCode;
-}
-
-void Script::ExecuteFunction(std::string name, std::vector<std::shared_ptr<BaseScriptVariable>> &variables)
-{
-	_parentBlock->RunFunction(name, variables);
 }
 
 Script::Script(std::string name, std::vector<std::string> lines)

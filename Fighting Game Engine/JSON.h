@@ -16,9 +16,15 @@ namespace JSON
 	template<>
 	glm::quat Get(const json_t& j);
 	template<>
+	glm::ivec4 Get(const json_t& j);
+	template<>
+	glm::vec4 Get(const json_t& j);
+	template<>
 	glm::ivec2 Get(const json_t& j);
 	template<>
 	glm::vec2 Get(const json_t& j);
+	template<>
+	unsigned char Get(const json_t& j);
 }
 
 using json = JSON::json_t;

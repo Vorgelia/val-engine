@@ -4,8 +4,8 @@
 #include "Rendering.h"
 #include <unordered_map>
 
-#define VE_SCENE_FUNCTION_CALL(name, ...)\
-	ApplyFunctionToCurrentScene([](GameScene* scene) { scene->name(); }, ##__VA_ARGS__);
+#define VE_SCENE_FUNCTION_CALL(fnName, ...)\
+	ApplyFunctionToCurrentScene([](GameScene* scene) { scene->fnName(); }, ##__VA_ARGS__);
 
 namespace GameSceneManager
 {
@@ -13,7 +13,7 @@ namespace GameSceneManager
 	bool _isLoading = false;
 	std::unordered_map<std::string, std::unique_ptr<GameScene> const> scenes;
 	GameScene* _currentScene = nullptr;
-
+	std::string _currentSceneName = "";
 
 	void HandleSceneInit();
 	bool HandleSceneUpdate();
@@ -33,8 +33,15 @@ bool GameSceneManager::isLoading()
 
 void GameSceneManager::LoadScene(const std::string& name)
 {
-	VE_DEBUG_LOG("----\n\n\n Loading State: " + name + "\n\n\n----", LogItem::Type::Message);
 	_sceneToLoad = name;
+}
+
+void GameSceneManager::ReloadScene()
+{
+	if(_currentScene != nullptr && !_isLoading)
+	{
+		LoadScene(_currentSceneName);
+	}
 }
 
 void GameSceneManager::RenderScene()
@@ -67,8 +74,9 @@ bool GameSceneManager::HandleSceneUpdate()
 	{
 		VE_SCENE_FUNCTION_CALL(Update);//Send a game loop update regardless of game updates
 
+		int updateCount = 20;
 		//Run game updates until running one would put us ahead of our current time
-		while(Time::lastUpdateTime + VE_FRAME_TIME <= Time::time)
+		while((Time::lastUpdateTime + VE_FRAME_TIME <= Time::time) && ((--updateCount) >= 0))
 		{
 			gameUpdated = true;
 
@@ -77,6 +85,7 @@ bool GameSceneManager::HandleSceneUpdate()
 			ScriptManager::Update();
 
 			VE_SCENE_FUNCTION_CALL(GameUpdate);
+			VE_SCENE_FUNCTION_CALL(LateGameUpdate);
 		}
 
 		VE_SCENE_FUNCTION_CALL(LateUpdate);//Send a late game loop update regardless of game updates
@@ -89,10 +98,12 @@ void GameSceneManager::HandleSceneLoad()
 {
 	if(!_sceneToLoad.empty())
 	{
+		VE_DEBUG_LOG("----\n\n\n Loading Scene: " + _sceneToLoad + "\n\n\n----", LogItem::Type::Message);
+
 		auto& iter = scenes.find(_sceneToLoad);
 		if(iter == scenes.end())
 		{
-			VE_DEBUG_LOG("GameSceneManager - Attempting to load invalid state " + _sceneToLoad);
+			VE_DEBUG_LOG("GameSceneManager - Attempting to load invalid scene " + _sceneToLoad);
 			_sceneToLoad.clear();
 		}
 
@@ -104,6 +115,7 @@ void GameSceneManager::HandleSceneLoad()
 
 		_currentScene = iter->second.get();
 		_isLoading = true;
+		_currentSceneName = _sceneToLoad;
 		_sceneToLoad.clear();
 		_currentScene->LoadResources();
 	}
@@ -136,7 +148,7 @@ void GameSceneManager::Init()
 
 		scenes.emplace(
 			std::make_pair(
-				dir->path().leaf().string(), 
+				dir->path().leaf().string(),
 				std::make_unique<GameScene>(dir->path().string())));
 		++dir;
 	}

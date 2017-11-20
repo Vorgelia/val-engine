@@ -43,6 +43,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <OutDir>..\Build\</OutDir>
+    <CodeAnalysisRuleSet>NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -79,11 +80,18 @@
     <ClCompile Include="CachedMesh.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CharacterFrame.cpp" />
+    <ClCompile Include="CharacterHitData.cpp" />
+    <ClCompile Include="CharacterRenderer.cpp" />
+    <ClCompile Include="CharacterSprite.cpp" />
+    <ClCompile Include="CharacterState.cpp" />
+    <ClCompile Include="CharacterStateManager.cpp" />
     <ClCompile Include="ConnectionSocket.cpp" />
     <ClCompile Include="DebugLog.cpp" />
+    <ClCompile Include="DefenceData.cpp" />
     <ClCompile Include="Font.cpp" />
     <ClCompile Include="FrameBuffer.cpp" />
     <ClCompile Include="GameCharacter.cpp" />
+    <ClCompile Include="GamePlayer.cpp" />
     <ClCompile Include="GameScene.cpp" />
     <ClCompile Include="GameSceneManager.cpp" />
     <ClCompile Include="GLStateTrack.cpp" />
@@ -92,6 +100,7 @@
     <ClCompile Include="InputEvent.cpp" />
     <ClCompile Include="InputFrame.cpp" />
     <ClCompile Include="InputManager.cpp" />
+    <ClCompile Include="InputMotionComponent.cpp" />
     <ClCompile Include="InputMotion.cpp" />
     <ClCompile Include="IntroBehaviour.cpp" />
     <ClCompile Include="JSON.cpp" />
@@ -103,7 +112,9 @@
     <ClCompile Include="NetworkEntity.cpp" />
     <ClCompile Include="NetworkMessage.cpp" />
     <ClCompile Include="Object.cpp" />
+    <ClCompile Include="PlayerManager.cpp" />
     <ClCompile Include="Renderer.cpp" />
+    <ClCompile Include="ScriptBehaviour.cpp" />
     <ClCompile Include="ScriptCollection.cpp" />
     <ClCompile Include="ScriptExpression.cpp" />
     <ClCompile Include="ScriptLine.cpp" />
@@ -143,33 +154,45 @@
     <ClInclude Include="CachedMesh.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CharacterFrame.h" />
+    <ClInclude Include="CharacterHitData.h" />
+    <ClInclude Include="CharacterRenderer.h" />
+    <ClInclude Include="CharacterSprite.h" />
+    <ClInclude Include="CharacterState.h" />
+    <ClInclude Include="CharacterStateManager.h" />
     <ClInclude Include="CircularBuffer.h" />
     <ClInclude Include="CommonUtilIncludes.hpp" />
     <ClInclude Include="ConnectionSocket.h" />
     <ClInclude Include="DebugLog.h" />
+    <ClInclude Include="DefenceData.h" />
     <ClInclude Include="FGIncludes.hpp" />
     <ClInclude Include="Font.h" />
     <ClInclude Include="FrameBuffer.h" />
     <ClInclude Include="GameCharacter.h" />
+    <ClInclude Include="GamePlayer.h" />
     <ClInclude Include="GameScene.h" />
     <ClInclude Include="GameSceneManager.h" />
     <ClInclude Include="GLIncludes.hpp" />
+    <ClInclude Include="GLMExtensions.h" />
     <ClInclude Include="GLStateTrack.h" />
     <ClInclude Include="CollisionBox.h" />
     <ClInclude Include="InputDevice.h" />
     <ClInclude Include="InputEvent.h" />
     <ClInclude Include="InputFrame.h" />
+    <ClInclude Include="InputIdentifiers.h" />
     <ClInclude Include="InputManager.h" />
+    <ClInclude Include="InputMotionComponent.h" />
     <ClInclude Include="InputMotion.h" />
     <ClInclude Include="IntroBehaviour.h" />
     <ClInclude Include="JSON.h" />
     <ClInclude Include="LogItem.h" />
     <ClInclude Include="Material.h" />
+    <ClInclude Include="MathIncludes.hpp" />
     <ClInclude Include="MenuBehaviour.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="NetworkEntity.h" />
     <ClInclude Include="NetworkMessage.h" />
     <ClInclude Include="Object.h" />
+    <ClInclude Include="PlayerManager.h" />
     <ClInclude Include="PostEffect.h" />
     <ClInclude Include="Profiler.h" />
     <ClInclude Include="Renderer.h" />
@@ -180,6 +203,7 @@
     <ClInclude Include="ResourceLoader.h" />
     <ClInclude Include="Screen.h" />
     <ClInclude Include="Script.h" />
+    <ClInclude Include="ScriptBehaviour.h" />
     <ClInclude Include="ScriptBlock.h" />
     <ClInclude Include="ScriptCollection.h" />
     <ClInclude Include="ScriptConditionalBlock.h" />

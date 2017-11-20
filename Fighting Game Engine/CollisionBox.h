@@ -1,16 +1,18 @@
 #pragma once
 #include <GLM\glm.hpp>
+#include "JSON.h"
 
 class CollisionBox
 {
 public:
-	glm::vec4 rect;//Center X, Center Y, Width/2, Height/2
+	glm::ivec4 rect;//Center X, Center Y, Width/2, Height/2
 
-	bool Overlap(CollisionBox* hitbox);
 	CollisionBox flipped();
 
-	CollisionBox operator+(const glm::vec2& rhs);
+	bool Overlaps(CollisionBox* hitbox);
 
-	static CollisionBox FromTopLeft(glm::vec4 rect);
-	CollisionBox(glm::vec4 rect);
+	CollisionBox operator+(const glm::ivec2& rhs);
+
+	static CollisionBox FromTopLeft(glm::ivec4 rect);
+	CollisionBox(glm::ivec4 rect);
 };

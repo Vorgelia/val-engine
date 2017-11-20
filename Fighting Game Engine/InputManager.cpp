@@ -1,4 +1,5 @@
 #include "InputManager.h"
+#include <unordered_set>
 #include "InputDevice.h"
 #include "InputFrame.h"
 #include "CommonUtilIncludes.hpp"
@@ -9,8 +10,6 @@ namespace InputManager
 {
 	std::unordered_map<int, std::shared_ptr<InputDevice>> _inputDevices;
 	std::thread _inputCollectionThread;
-	int _p1Device;
-	int _p2Device;
 	bool _stopInputs = false;
 }
 
@@ -18,8 +17,6 @@ namespace InputManager
 void InputManager::Update()
 {
 	glfwPollEvents();
-	//stopInputs = true;
-	//inputCollectionThread.join();
 	for(int i = GLFW_JOYSTICK_1; i < GLFW_JOYSTICK_LAST; ++i)
 	{
 		if(glfwJoystickPresent(i) == GLFW_TRUE && (_inputDevices.count(i) == 0))
@@ -29,10 +26,6 @@ void InputManager::Update()
 		else if(glfwJoystickPresent(i) == GLFW_FALSE && (_inputDevices.count(i) > 0))
 		{
 			_inputDevices.erase(i);
-			if(_p1Device == i)
-				_p1Device = -2;
-			if(_p2Device == i)
-				_p2Device = -2;
 		}
 	}
 
@@ -45,19 +38,32 @@ void InputManager::Update()
 			i.second->PushInputsToBuffer();
 		}
 	}
-	//inputCollectionThread = std::thread(BufferInputs);
 }
 
 void InputManager::Init()
 {
-	_inputDevices[-1] = std::make_shared<InputDevice>(-1);
-	_p1Device = -1;
-	_p2Device = 0;
+	_inputDevices[(int)InputDeviceId::Keyboard] = std::make_shared<InputDevice>((int)InputDeviceId::Keyboard);
 }
 
 void InputManager::Cleanup()
 {
 	_inputDevices.clear();
+}
+
+const std::unordered_map<int, std::shared_ptr<InputDevice>>& InputManager::inputDevices()
+{
+	return _inputDevices;
+}
+
+InputDevice* InputManager::GetInputDevice(int id)
+{
+	auto& iter = _inputDevices.find(id);
+	if(iter == _inputDevices.end())
+	{
+		return nullptr;
+	}
+
+	return iter->second.get();
 }
 
 void InputManager::KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)

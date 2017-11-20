@@ -1,25 +1,27 @@
 #pragma once
 #include <vector>
+#include <memory>
 #include <string>
-#include "AttackData.h"
+#include "JSON.h"
 
+class AttackData;
+class DefenceData;
+class CollisionBox;
+class CharacterSprite;
 
 class CharacterFrame
 {
 	std::string _id;
 
-	std::vector<CollisionBox> _hitboxes;
-	std::vector<CollisionBox> _hurtboxes;
+	std::vector<AttackData> _hitboxes;
+	std::vector<DefenceData> _hurtboxes;
 	std::vector<CollisionBox> _collision;
 
-	int damage;
-	int hitstun;
-	int blockstun;
+	std::unique_ptr<CharacterSprite> _spriteData;
+
 public:
+	const CharacterSprite* spriteData() const;
 
-	//Hitboxes
-	//Hurtboxes
-
-	CharacterFrame();
+	CharacterFrame(const json& j);
 	~CharacterFrame();
 };

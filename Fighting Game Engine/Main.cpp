@@ -71,6 +71,11 @@ int main()
 		{
 			glfwSetWindowShouldClose(Screen::window, GLFW_TRUE);
 		}
+
+		if(glfwGetKey(Screen::window, GLFW_KEY_F2))
+		{
+			GameSceneManager::ReloadScene();
+		}
 	}
 
 	EngineCleanup();
@@ -131,6 +136,7 @@ inline void EngineInit()
 	GameSceneManager::Init();
 	InputManager::Init();
 	ScriptManager::Init();
+	PlayerManager::Init();
 
 	VE_DEBUG_LOG("Full Init");
 }

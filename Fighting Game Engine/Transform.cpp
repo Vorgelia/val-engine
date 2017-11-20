@@ -6,6 +6,23 @@
 
 VE_BEHAVIOUR_REGISTER_TYPE(Transform);
 
+glm::mat4 Transform::ModelMatrix()
+{
+	glm::mat4 tl, rot, sc;
+	tl = glm::translate(glm::mat4(), glm::vec3((float)position.x, (float)position.y, -1.0 + 1.0 / (1.0 + glm::abs(depth))));
+	rot = glm::mat4_cast(rotation);
+	sc = glm::scale(glm::mat4(), glm::vec3(this->scale.x, this->scale.y, 1));
+	return tl*rot*sc;
+}
+
+void Transform::SnapTo(const Transform& tr)
+{
+	position = tr.position;
+	rotation = tr.rotation;
+	depth = tr.depth;
+	scale = tr.scale;
+}
+
 Transform::Transform(Object* owner, glm::ivec2 position, glm::vec3 eulerRotation, glm::vec2 scale) : Behaviour(owner)
 {
 	this->position = position;
@@ -36,13 +53,4 @@ Transform::Transform(Object* owner) : Behaviour(owner)
 	this->scale = glm::vec2(1, 1);
 	this->rotation = glm::quat();
 	this->depth = 0;
-}
-
-glm::mat4 Transform::ModelMatrix()
-{
-	glm::mat4 tl, rot, sc;
-	tl = glm::translate(glm::mat4(), glm::vec3((float)position.x / (1.0 + depth), (float)position.y / (1.0 + depth), -1.0 + 1.0 / (1.0 + glm::abs(depth))));
-	rot = glm::mat4_cast(rotation);
-	sc = glm::scale(glm::mat4(), glm::vec3(this->scale.x, this->scale.y, 1));
-	return tl*rot*sc;
 }

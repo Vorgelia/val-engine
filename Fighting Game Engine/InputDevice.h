@@ -6,34 +6,26 @@
 #include "InputFrame.h"
 #include "InputEvent.h"
 #include "CircularBuffer.h"
-#include "Time.h"
+#include "InputIdentifiers.h"
+#include "GLIncludes.hpp"
 
+class InputMotion;
 class InputMotionComponent;
-typedef std::vector<InputMotionComponent> InputMotion;
 typedef CircularBuffer<InputFrame> InputBuffer;
 
-enum class InputButton
+enum class InputDeviceId
 {
-	Light = 1,
-	Medium = 2,
-	Heavy = 4,
-	Attacks = 7,//Convenience entry that represents any of the buttons
-	Shield = 8,
-	Any = 15,//Convenience entry that represents any button
-	Select = 16,
-	Start = 32
-};
-
-enum class InputDirection
-{
-	Up = 1,
-	Down = 2,
-	Right = 4,
-	Left = 8
+	Network = -3,
+	Invalid = -2,
+	Keyboard = -1,
+	JoystickFirst = GLFW_JOYSTICK_1,
+	JoystickLast = GLFW_JOYSTICK_LAST
 };
 
 class InputDevice
 {
+	friend class GamePlayer;
+
 	int _deviceID;
 	std::string _deviceName;
 	std::string _deviceFilename;
@@ -46,11 +38,13 @@ class InputDevice
 	std::unordered_map<InputDirection, InputEvent> _directionMap;
 
 	std::shared_ptr<InputBuffer> _inputBuffer;
+
+	int InputMotionDistance(int currentIndex, InputMotionComponent motionComp, int maxBuffer = 1199, bool firstInput = false);
 public:
 	
-	int deviceID();
-	std::string deviceName();
-	const std::shared_ptr<InputBuffer> inputBuffer();
+	const int& deviceID() const;
+	const std::string& deviceName() const;
+	const InputBuffer* inputBuffer() const;
 
 	void PollInput();
 	void UpdateJoyInputs();
@@ -58,11 +52,10 @@ public:
 	
 	std::string Serialize();
 
+	bool EvaluateInput(const InputEvent& ie);
+	bool EvaluateMotion(const InputMotion& motion);
+	bool InputMotionFrameCheck(const InputMotionComponent& motionComp, int index);
 
-	bool EvaluateInput(InputEvent& ie);
-	bool EvaluateMotion(InputMotion& motion, bool inverse);
-	int InputMotionDistance(int currentIndex, InputMotionComponent& motionComp, int maxBuffer = 1199, bool firstInput = false);
-	bool InputMotionFrameCheck(InputMotionComponent& motionComp, int index);
 	InputDevice(int deviceID);
 	~InputDevice();
 };

@@ -15,6 +15,8 @@ class Behaviour;
 class GameScene
 {
 protected:
+	std::string _name;
+
 	bool _initialized;
 	bool _loaded;
 
@@ -27,7 +29,11 @@ protected:
 	std::vector<std::string> _postEffectsOrder;
 
 	void RunFunctionOnObjectBehaviours(std::function<void(Behaviour*)> func);
+
+	void RegisterObject(Object* obj);
+	void UnregisterObject(Object* obj);
 public:
+	std::string name();
 
 	bool initialized();
 	bool loaded();
@@ -40,15 +46,16 @@ public:
 	virtual void Init();
 	virtual void Update();
 	virtual void GameUpdate();
+	virtual void LateGameUpdate();
 	virtual void LateUpdate();
 	virtual void RenderObjects();
 	virtual void ApplyPostEffects();
 	virtual void RenderUI();
-
 	virtual void Cleanup();
+
+	virtual Object* AddObject(const std::string& prefabPath);
 	virtual Object* FindObject(const std::string& name);
 
 	GameScene(const FS::path& path);
 	virtual ~GameScene();
 };
-

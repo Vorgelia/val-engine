@@ -1,12 +1,19 @@
 #pragma Bind Debug
+#pragma Bind Time
 
 //This function runs every frame
-function Main () : int
+function GameUpdate() : int
+	int frameCount = time_frameCount()
+	
+	if((frameCount % 80) == 0)
+		ve_log("FrameCount: ",frameCount)
+	end
+	
 	return 0
 end
 
 //This function runs once when the script is loaded
-function Init():int
+function Init() : int
 	testCollection["test"] = 999
 	ve_log(testCollection["test"])
 

@@ -149,7 +149,7 @@ void ScriptBlock::HandleConditionalDeclarationLine(std::vector<ScriptToken>& tok
 				_owner->PopBlock();
 			}
 
-			if(out_blockEnd + 2 >= _lines.lines()->size())
+			if(out_blockEnd + 2 >= (int)_lines.lines()->size())
 			{
 				break;
 			}

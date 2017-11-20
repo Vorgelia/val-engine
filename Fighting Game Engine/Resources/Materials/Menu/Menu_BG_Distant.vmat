@@ -1,0 +1,16 @@
+//Hello~ It's me again, val's awful proprietary format. We're well on our way to becoming best friends.
+//I hope you've figured out by now, comments are only supported when they take up the entire line. Booooriiiiing.
+//Properties bitmask. Maybe one day i'll let people add it in binary.
+//Bits: 8 Cull, 4 Blend, 2 ZTest, 1 ZWrite
+#PROPERTIES
+	properties=7
+	shader=Shaders/Base/2D
+#UNIFORM_VEC4
+	ve_color=1,1,1,1
+#UNIFORM_TEX
+	tex0=Textures/Menu/Background/Back.png
+	.properties=0,0,1,1
+//These properties have to do with moving and scaling the texture when drawing with this material
+//Translation X , Translation Y , Scaling X, Scaling Y
+//I'm really boring so properties are initialized as 0,0,1,1 when the texture uniform is read, then
+//properties: xxxx sends properties to the last texture that was read.
