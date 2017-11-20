@@ -106,7 +106,7 @@
             {
                 "name":"CharacterRenderer",
                 "enabled":true,
-                "mesh":"Meshes/Base/quad_sprite.vm",
+                "mesh":"Meshes/Base/quad_sprite_character.vm",
                 "material":"Materials/Menu/Menu_Test.vmat"
             }
         ]
