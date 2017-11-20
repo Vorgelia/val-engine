@@ -132,6 +132,14 @@ void ScriptManager::HandleScriptCharacterBindings(GameCharacter& character, Scri
 		return std::make_shared<ScriptBool>(false);
 	});
 
+	script->BindFunction("character_allowStateSelfChaining",
+		[&character](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
+	{
+		if(args.size() >= 1 && args[0]->type() == ScriptVariableType::Bool)
+			character.stateManager()->_allowStateSelfCancelling = std::static_pointer_cast<ScriptBool>(args[0])->value();
+		return std::make_shared<ScriptBool>(true);
+	});
+
 	script->BindFunction("character_modifyStateFrame",
 		[&character](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
 	{

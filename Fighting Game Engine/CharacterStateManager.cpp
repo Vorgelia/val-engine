@@ -33,6 +33,11 @@ void CharacterStateManager::EvaluateNextState()
 
 	for(auto& i : _stateLookup)
 	{
+		if(!_allowStateSelfCancelling && !_stateEnded && i.second.get() == _currentState)
+		{
+			continue;
+		}
+
 		//TODO: Evaluate motion on input device of owner
 		if(InputManager::GetInputDevice(-1)->EvaluateMotion(i.second->associatedMotion()))
 		{
@@ -73,7 +78,7 @@ void CharacterStateManager::EvaluateNextState()
 	}
 
 	//TODO: Add cancelling rules
-	if(nextState != nullptr && _stateEnded)
+	if(nextState != nullptr)
 	{
 		StartState(nextState->name());
 	}

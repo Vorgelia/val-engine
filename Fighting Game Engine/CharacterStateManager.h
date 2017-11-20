@@ -28,6 +28,8 @@ class CharacterStateManager
 	CharacterState* _currentState;
 	CharacterFrame* _currentFrame;
 	int _currentStateFrame;
+
+	bool _allowStateSelfCancelling;
 	bool _stateEnded;
 
 	std::unordered_map<std::string, std::unique_ptr<CharacterState>> _stateLookup;
