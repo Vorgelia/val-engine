@@ -31,17 +31,22 @@ TODO: Check if a framebuffer was used last frame before cleaning it up.
 TODO: Cleanup main.cpp. Move functionality to proper management classes/namespaces
 ----
 Important defines:
+--Engine--
 Resource.cpp:           VE_CREATE_DEFAULT_RESOURCES
 InputDevice.cpp:        VE_INPUT_BUFFER_INIT
--				        VE_INPUT_BUFFER_MID
+-                       VE_INPUT_BUFFER_MID
 Rendering.cpp:          VE_AUX_BUFFER_AMOUNT
--				        VE_WORLD_SCALE
--				        VE_FONT_DEFAULT
+-                       VE_WORLD_SCALE
+-                       VE_FONT_DEFAULT
 Rendering.h:            VE_USE_SINGLE_BUFFER
-Time.h:			        VE_FRAME_TIME
--				        VE_FRAME_RATE
+Time.h:                 VE_FRAME_TIME
+-                       VE_FRAME_RATE
 DebugLog.h:		        VE_DEBUG_ERRORTHROW
 ScriptParsingUtils.cpp: VE_TAB_SPACE_AMOUNT
+
+--Game--
+PlayerManager.cpp:      VE_MAX_PLAYERS
+-                       VE_MAX_SPECTATORS
 */
 
 #include "SystemIncludes.hpp"

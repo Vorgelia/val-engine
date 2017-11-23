@@ -68,22 +68,21 @@ InputDevice::InputDevice(int deviceID)
 
 InputDevice::~InputDevice()
 {
+	DeviceRemoved();
 }
 
 //Helper function for evaluating whether a specific input event is occuring.
 //Needed to abstract checking for buttons and axes to a single function with boolean output.
 bool InputDevice::EvaluateInput(const InputEvent& ie)
 {
-	if(this->_deviceID == (int)InputDeviceId::Invalid)
+	switch(_deviceID)
 	{
+	case (int)InputDeviceId::Network:
+	case (int)InputDeviceId::Invalid:
 		return false;
-	}
-	else if(this->_deviceID == (int)InputDeviceId::Keyboard)
-	{
+	case(int)InputDeviceId::Keyboard:
 		return glfwGetKey(Screen::window, ie._inputID) == GLFW_PRESS;
-	}
-	else
-	{
+	default:
 		if(!ie._isAxis)
 		{
 			return _cachedJoyButtons[ie._inputID] > 0;

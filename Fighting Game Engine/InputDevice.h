@@ -8,6 +8,7 @@
 #include "CircularBuffer.h"
 #include "InputIdentifiers.h"
 #include "GLIncludes.hpp"
+#include "Delegate.h"
 
 class InputMotion;
 class InputMotionComponent;
@@ -41,7 +42,9 @@ class InputDevice
 
 	int InputMotionDistance(int currentIndex, InputMotionComponent motionComp, int maxBuffer = 1199, bool firstInput = false);
 public:
-	
+	typedef Delegate<> EventHandler;
+	EventHandler DeviceRemoved;
+
 	const int& deviceID() const;
 	const std::string& deviceName() const;
 	const InputBuffer* inputBuffer() const;

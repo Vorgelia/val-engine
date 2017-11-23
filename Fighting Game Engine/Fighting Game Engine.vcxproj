@@ -88,6 +88,7 @@
     <ClCompile Include="ConnectionSocket.cpp" />
     <ClCompile Include="DebugLog.cpp" />
     <ClCompile Include="DefenceData.cpp" />
+    <ClCompile Include="Delegate.cpp" />
     <ClCompile Include="Font.cpp" />
     <ClCompile Include="FrameBuffer.cpp" />
     <ClCompile Include="GameCharacter.cpp" />
@@ -110,6 +111,7 @@
     <ClCompile Include="MenuBehaviour.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="NetworkEntity.cpp" />
+    <ClCompile Include="NetworkGamePlayer.cpp" />
     <ClCompile Include="NetworkMessage.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="PlayerManager.cpp" />
@@ -164,6 +166,7 @@
     <ClInclude Include="ConnectionSocket.h" />
     <ClInclude Include="DebugLog.h" />
     <ClInclude Include="DefenceData.h" />
+    <ClInclude Include="Delegate.h" />
     <ClInclude Include="FGIncludes.hpp" />
     <ClInclude Include="Font.h" />
     <ClInclude Include="FrameBuffer.h" />
@@ -190,6 +193,7 @@
     <ClInclude Include="MenuBehaviour.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="NetworkEntity.h" />
+    <ClInclude Include="NetworkGamePlayer.h" />
     <ClInclude Include="NetworkMessage.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="PlayerManager.h" />

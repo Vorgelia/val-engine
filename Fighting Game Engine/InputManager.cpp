@@ -9,6 +9,7 @@
 namespace InputManager
 {
 	std::unordered_map<int, std::shared_ptr<InputDevice>> _inputDevices;
+	std::vector<std::unique_ptr<InputDevice>> _temporaryNetworkDevices;
 	std::thread _inputCollectionThread;
 	bool _stopInputs = false;
 }
@@ -48,6 +49,7 @@ void InputManager::Init()
 void InputManager::Cleanup()
 {
 	_inputDevices.clear();
+	_temporaryNetworkDevices.clear();
 }
 
 const std::unordered_map<int, std::shared_ptr<InputDevice>>& InputManager::inputDevices()
@@ -57,13 +59,37 @@ const std::unordered_map<int, std::shared_ptr<InputDevice>>& InputManager::input
 
 InputDevice* InputManager::GetInputDevice(int id)
 {
-	auto& iter = _inputDevices.find(id);
-	if(iter == _inputDevices.end())
+	switch(id)
 	{
+	case (int)InputDeviceId::Invalid:
+	case (int)InputDeviceId::Network:
 		return nullptr;
-	}
+	default:
+		auto& iter = _inputDevices.find(id);
+		if(iter == _inputDevices.end())
+		{
+			return nullptr;
+		}
 
-	return iter->second.get();
+		return iter->second.get();
+	}
+}
+
+InputDevice* InputManager::GetTemporaryNetworkDevice()
+{
+	_temporaryNetworkDevices.emplace_back(std::make_unique<InputDevice>((int)InputDeviceId::Network));
+	return _temporaryNetworkDevices.back().get();
+}
+
+void InputManager::ReleaseTemporaryNetworkDevice(InputDevice* device)
+{
+	for(auto iter = _temporaryNetworkDevices.begin(); iter != _temporaryNetworkDevices.end(); ++iter)
+	{
+		if(iter->get() == device)
+		{
+			_temporaryNetworkDevices.erase(iter);
+		}
+	}
 }
 
 void InputManager::KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
