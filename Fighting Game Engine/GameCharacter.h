@@ -23,7 +23,7 @@ class GameCharacter :
 	std::string _dataPath;
 	bool _initialized;
 
-	GamePlayer* owner;
+	GamePlayer* _playerOwner;
 
 	glm::vec2 _sizeMultiplier;
 	bool _flipped;

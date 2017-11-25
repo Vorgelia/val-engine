@@ -8,6 +8,9 @@
 
 namespace InputManager
 {
+	DeviceEventHandler DeviceAdded;
+	DeviceEventHandler DeviceRemoved;
+
 	std::unordered_map<int, std::shared_ptr<InputDevice>> _inputDevices;
 	std::vector<std::unique_ptr<InputDevice>> _temporaryNetworkDevices;
 	std::thread _inputCollectionThread;
@@ -22,15 +25,21 @@ void InputManager::Update()
 	{
 		if(glfwJoystickPresent(i) == GLFW_TRUE && (_inputDevices.count(i) == 0))
 		{
-			_inputDevices.insert(std::pair<int, std::shared_ptr<InputDevice>>(i, std::make_shared<InputDevice>(i)));
+			InputDevice* addedDevice = _inputDevices.insert(std::pair<int, std::shared_ptr<InputDevice>>(i, std::make_shared<InputDevice>(i))).first->second.get();
+			DeviceAdded(addedDevice);
 		}
-		else if(glfwJoystickPresent(i) == GLFW_FALSE && (_inputDevices.count(i) > 0))
+		else if(glfwJoystickPresent(i) == GLFW_FALSE)
 		{
-			_inputDevices.erase(i);
+			auto& iter = _inputDevices.find(i);
+			if(iter != _inputDevices.end())
+			{
+				DeviceRemoved(iter->second.get());
+				_inputDevices.erase(iter);
+			}
 		}
 	}
 
-	for(auto i : _inputDevices)
+	for(auto& i : _inputDevices)
 	{
 		if(i.second != nullptr)
 		{

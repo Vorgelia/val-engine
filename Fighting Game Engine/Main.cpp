@@ -166,5 +166,6 @@ inline void UpdateComponents()
 	Profiler::Clear();
 	Time::Update();
 	Screen::Update();
+	PlayerManager::Update();
 	GameSceneManager::Update();
 }

@@ -41,11 +41,9 @@ class InputDevice
 	std::shared_ptr<InputBuffer> _inputBuffer;
 
 	int InputMotionDistance(int currentIndex, InputMotionComponent motionComp, int maxBuffer = 1199, bool firstInput = false);
-public:
-	typedef Delegate<> EventHandler;
-	EventHandler DeviceRemoved;
 
-	const int& deviceID() const;
+public:
+	const int deviceID() const;
 	const std::string& deviceName() const;
 	const InputBuffer* inputBuffer() const;
 

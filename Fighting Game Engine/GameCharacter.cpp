@@ -3,6 +3,8 @@
 #include "ScriptManager.h"
 #include "ResourceLoader.h"
 #include "CharacterStateManager.h"
+#include "GamePlayer.h"
+#include "Delegate.h"
 
 VE_BEHAVIOUR_REGISTER_TYPE(GameCharacter);
 
@@ -59,6 +61,8 @@ GameCharacter::GameCharacter(Object* owner, const json& j) : Behaviour(owner, j)
 	_dataPath = JSON::Get<std::string>(j["dataPath"]);
 	HandleCharacterData(
 		ResourceLoader::LoadJsonResource(_dataPath));
+
+	//player owner
 }
 
 GameCharacter::~GameCharacter()

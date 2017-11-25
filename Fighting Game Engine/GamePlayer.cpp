@@ -7,14 +7,19 @@ void GamePlayer::Update()
 
 }
 
+void GamePlayer::HandleDeviceRemoved(InputDevice* device)
+{
+	if(device == _inputDevice)
+	{
+		_inputDevice = nullptr;
+	}
+}
+
 GamePlayer::GamePlayer(GamePlayerType type, int deviceId)
 {
 	_type = type;
 	_inputDevice = InputManager::GetInputDevice(deviceId);
-	if(_inputDevice != nullptr)
-	{
-		_inputDevice->DeviceRemoved += InputDevice::EventHandler::func_t([this]() { _inputDevice = nullptr; });
-	}
+	InputManager::DeviceRemoved += InputManager::DeviceEventHandler::func_t([this](InputDevice* device) { HandleDeviceRemoved(device); });
 }
 
 GamePlayer::~GamePlayer()

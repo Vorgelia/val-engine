@@ -4,11 +4,16 @@
 #include <memory>
 #include <functional>
 #include "GLIncludes.hpp"
+#include "Delegate.h"
 
 class InputDevice;
 
 namespace InputManager
 {
+	typedef Delegate<InputDevice*> DeviceEventHandler;
+	extern DeviceEventHandler DeviceAdded;
+	extern DeviceEventHandler DeviceRemoved;
+
 	void Init();
 	void Update();
 	void Cleanup();

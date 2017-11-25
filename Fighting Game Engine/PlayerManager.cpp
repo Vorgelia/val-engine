@@ -5,6 +5,8 @@
 #define VE_MAX_SPECTATORS 14
 
 std::unordered_map<int, std::unique_ptr<GamePlayer>> PlayerManager::_players;
+PlayerManager::PlayerEventHandler PlayerManager::PlayerAdded;
+PlayerManager::PlayerEventHandler PlayerManager::PlayerRemoved;
 
 GamePlayer* PlayerManager::GetPlayer(int playerId)
 {

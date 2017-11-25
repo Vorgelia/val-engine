@@ -17,14 +17,18 @@ class GamePlayer
 	friend class PlayerManager;
 
 protected:
-	std::string _id;
+	int _id;
+	std::string _name;
 	GamePlayerType _type;
 
 	InputDevice* _inputDevice;
 
 	virtual void Update();
 
+	void HandleDeviceRemoved(InputDevice* device);
+
 public:
+	void SetDevice(int deviceId);
 
 	GamePlayer(GamePlayerType type, int deviceId);
 	~GamePlayer();

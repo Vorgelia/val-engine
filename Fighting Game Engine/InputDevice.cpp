@@ -25,7 +25,7 @@ const InputBuffer* InputDevice::inputBuffer() const
 	return _inputBuffer.get();
 }
 
-const int& InputDevice::deviceID() const
+const int InputDevice::deviceID() const
 {
 	return _deviceID;
 }
@@ -68,7 +68,6 @@ InputDevice::InputDevice(int deviceID)
 
 InputDevice::~InputDevice()
 {
-	DeviceRemoved();
 }
 
 //Helper function for evaluating whether a specific input event is occuring.
