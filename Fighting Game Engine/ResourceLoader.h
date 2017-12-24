@@ -1,6 +1,13 @@
 #pragma once
-#include "CommonUtilIncludes.hpp"
 #include "JSON.h"
+#include <boost\filesystem.hpp>
+#include <string>
+#include <vector>
+#include <memory>
+#include <functional>
+#include <iostream>
+
+namespace FS = boost::filesystem;
 
 class VertexAttribute;
 class Shader;
@@ -24,6 +31,8 @@ namespace ResourceLoader
 	void ApplyFunctionToFiles(const FS::path& dir, std::function<void(const FS::path&)> func);
 
 	bool SaveFile(const FS::path& dir, std::string& content, int flags = std::ios::out | std::ios::trunc);
+
+	void LoadTexture(const FS::path& path, std::vector<unsigned char>& out_pixels, glm::ivec2& out_size);
 	void LoadMeshVM(const FS::path& path, std::vector<float>& out_verts, std::vector<GLuint>& out_elements, std::vector<VertexAttribute>& out_vertexFormat);
 	void LoadMaterial(const FS::path& path, Shader*& shader, unsigned char& properties, std::unordered_map<std::string, GLfloat>& uniformFloats, std::unordered_map<std::string, MaterialTexture>& uniformTextures, std::unordered_map<std::string, glm::vec4>& uniformVectors);
 	void LoadPostEffect(const FS::path& path, std::vector<std::pair<int, Material*>>& elements, bool& cbBefore, bool& cbAfter, int& order);

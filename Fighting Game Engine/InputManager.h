@@ -3,20 +3,27 @@
 #include <unordered_set>
 #include <memory>
 #include <functional>
+#include "BaseService.h"
 #include "GLIncludes.hpp"
 #include "Delegate.h"
 
 class InputDevice;
 
-namespace InputManager
+class InputManager : public BaseService
 {
-	typedef Delegate<InputDevice*> DeviceEventHandler;
-	extern DeviceEventHandler DeviceAdded;
-	extern DeviceEventHandler DeviceRemoved;
+private:
+	std::unordered_map<int, std::shared_ptr<InputDevice>> _inputDevices;
+	std::vector<std::unique_ptr<InputDevice>> _temporaryNetworkDevices;
+	std::thread _inputCollectionThread;
+	bool _stopInputs = false;
 
-	void Init();
+public:
+	typedef Delegate<InputDevice*> DeviceEventHandler;
+	DeviceEventHandler DeviceAdded;
+	DeviceEventHandler DeviceRemoved;
+
+	void FrameUpdate();
 	void Update();
-	void Cleanup();
 
 	//TODO: Create temporary network device
 	const std::unordered_map<int, std::shared_ptr<InputDevice>>& inputDevices();
@@ -25,5 +32,6 @@ namespace InputManager
 	InputDevice* GetTemporaryNetworkDevice();
 	void ReleaseTemporaryNetworkDevice(InputDevice* device);
 
-	void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
-}
+	InputManager(ServiceManager* serviceManager);
+	~InputManager();
+};

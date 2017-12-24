@@ -2,12 +2,19 @@
 #include "GLIncludes.hpp"
 #include <GLM\glm.hpp>
 #include <vector>
+#include <memory>
+
+class Texture;
 
 class FrameBuffer
 {
+	friend class GraphicsGL;
+
+private:
 	bool _valid;
+
 public:
-	std::vector<GLuint> textures;
+	std::vector<std::unique_ptr<Texture>> textures;
 
 	glm::vec4 clearColor;
 	GLuint format;
@@ -23,12 +30,6 @@ public:
 
 	GLuint clearFlags;
 
-	bool valid();
-	void Clear();
-	void Destroy();
-	void Update();
-	bool Bind();
-
-	FrameBuffer(glm::ivec2, int texAmount, bool depthStencil = true, GLint format = GL_RGBA, glm::vec4 clearColor = glm::vec4(0, 0, 0, 0), GLint filtering = GL_LINEAR, GLuint clearFlags = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-	~FrameBuffer();
+	FrameBuffer(glm::ivec2 size, int texAmount, bool depthStencil, GLint format, glm::vec4 clearColor, GLint filtering, GLuint clearFlags);
+	~FrameBuffer() = default;
 };

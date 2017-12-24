@@ -62,7 +62,7 @@ std::shared_ptr<BaseScriptVariable> Script::GetVariable(const std::string& name)
 	}
 	catch(ScriptError error)
 	{
-		VE_DEBUG_LOG("Could not find variable " + name + " in script " + _name + ".", LogItem::Type::Warning);
+		VE_LOG("Could not find variable " + name + " in script " + _name + ".", LogItem::Type::Warning);
 		return nullptr;
 	}
 }
@@ -140,7 +140,7 @@ void Script::Init()
 	}
 	catch(ScriptError error)
 	{
-		VE_DEBUG_LOG("(Preprocessing " + _name + " : line " + std::to_string(_lines[_parentBlock->cursor()].index) + ") " + std::string(error.what()), LogItem::Type::Warning);
+		VE_LOG("(Preprocessing " + _name + " : line " + std::to_string(_lines[_parentBlock->cursor()].index) + ") " + std::string(error.what()), LogItem::Type::Warning);
 		_valid = false;
 	}
 }
@@ -162,18 +162,18 @@ void Script::ExecuteFunction(std::string name, std::vector<std::shared_ptr<BaseS
 	{
 		int blockCursor = _blockStack.empty() ? _parentBlock->cursor() : _blockStack.top()->cursor();
 
-		VE_DEBUG_LOG("(" + _name + " : line " + std::to_string(_lines[blockCursor].index) + ") " + std::string(error.what()), LogItem::Type::Warning);
+		VE_LOG("(" + _name + " : line " + std::to_string(_lines[blockCursor].index) + ") " + std::string(error.what()), LogItem::Type::Warning);
 		_valid = false;
 	}
 	catch(std::exception error)
 	{
-		VE_DEBUG_LOG("Unhandled exception on script[" + _name + "]:\n" + std::string(error.what()), LogItem::Type::Error);
+		VE_LOG("Unhandled exception on script[" + _name + "]:\n" + std::string(error.what()), LogItem::Type::Error);
 		_valid = false;
 	}
 
 	if(blockStackSize != _blockStack.size())
 	{
-		VE_DEBUG_LOG("Function " + name + " execution did not properly clear the block stack.", LogItem::Type::Error);
+		VE_LOG("Function " + name + " execution did not properly clear the block stack.", LogItem::Type::Error);
 		while(blockStackSize < _blockStack.size())
 		{
 			_blockStack.pop();

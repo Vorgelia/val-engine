@@ -420,6 +420,12 @@
     <ClCompile Include="Delegate.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ServiceManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseService.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FGIncludes.hpp">
@@ -666,6 +672,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Delegate.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ServiceManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseService.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

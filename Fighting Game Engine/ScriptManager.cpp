@@ -1,5 +1,6 @@
 #include "ScriptManager.h"
 #include "Script.h"
+#include "ServiceManager.h"
 #include "BaseScriptVariable.h"
 #include "ScriptVariable.h"
 #include "ScriptCollection.h"
@@ -12,17 +13,7 @@
 #include "DebugLog.h"
 #include "Time.h"
 
-std::unordered_set<std::shared_ptr<Script>> ScriptManager::_scripts;
-std::unordered_map<std::string, std::shared_ptr<BaseScriptVariable>> ScriptManager::_globalVariables;
-
-void ScriptManager::Init()
-{
-	std::shared_ptr<ScriptCollection> collection = std::make_shared<ScriptCollection>();
-	collection->AddMember("test", std::make_shared<ScriptInt>(5));
-	_globalVariables.emplace(std::make_pair("testCollection", collection));
-	HandleCharacterStateVariables();
-	AddScript("Scripts/Base/example.vscript");
-}
+void ScriptManager::Update() {}
 
 Script* ScriptManager::GetScript(const FS::path & path)
 {
@@ -64,9 +55,9 @@ void ScriptManager::HandleScriptBindings(Script* script)
 		else if(directive == "Debug")
 		{
 			script->BindFunction("ve_log",
-				[](const Script* sc, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
+				[this](const Script* sc, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
 			{
-				return DebugLog::Push(sc, args);
+				return _debug->Log(sc, args);
 			});
 		}
 		else if(directive == "Time")
@@ -201,12 +192,18 @@ std::shared_ptr<BaseScriptVariable> ScriptManager::GetVariable(const std::string
 	return iter->second;
 }
 
-void ScriptManager::Update()
+ScriptManager::ScriptManager(ServiceManager* serviceManager) : BaseService(serviceManager)
 {
+	_debug = serviceManager->Debug();
 
+	std::shared_ptr<ScriptCollection> collection = std::make_shared<ScriptCollection>();
+	collection->AddMember("test", std::make_shared<ScriptInt>(5));
+	_globalVariables.emplace(std::make_pair("testCollection", collection));
+	HandleCharacterStateVariables();
+	AddScript("Scripts/Base/example.vscript");
 }
 
-void ScriptManager::Cleanup()
+ScriptManager::~ScriptManager()
 {
 	_scripts.clear();
 	_globalVariables.clear();

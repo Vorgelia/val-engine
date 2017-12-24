@@ -36,7 +36,7 @@ void Mesh::Update()
 	if(!_valid)
 		glGenVertexArrays(1, &vao);
 
-	GLState::BindVertexArray(vao);
+	GLState::BindMesh(vao);
 	if(!_valid)
 	{
 		glGenBuffers(1, &vbo);

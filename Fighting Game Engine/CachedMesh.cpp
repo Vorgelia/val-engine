@@ -50,12 +50,9 @@ CachedMesh::CachedMesh(const std::string& name, std::vector<float>& verts, std::
 CachedMesh::CachedMesh(const FS::path& path)
 {
 	this->name = path.string();
-	if (path.extension().string() == ".vm")
-		ResourceLoader::LoadMeshVM(path, verts, elements, vertexFormat);
-	else
+	if(path.extension().string() == ".vm")
 	{
-		VE_DEBUG_LOG("Unhandled mesh format: " + path.extension().string());
-		//TODO: Handle importing other meshes
+		ResourceLoader::LoadMeshVM(path, verts, elements, vertexFormat);
 	}
 }
 

@@ -1,4 +1,5 @@
 #pragma once
+#include "BaseService.h"
 #include <string>
 #include <unordered_map>
 #include <boost\filesystem.hpp>
@@ -12,9 +13,33 @@ class Shader;
 class PostEffect;
 class Font;
 
-namespace Resource
+class Debug;
+class GraphicsGL;
+
+class ResourceManager : public BaseService
 {
-	void Init();
+private:
+	Debug* _debug;
+	GraphicsGL* _graphics;
+
+private:
+	std::unordered_map<std::string, std::unique_ptr<CachedMesh>> cachedMeshes;
+	std::unordered_map<std::string, std::unique_ptr<Mesh>> meshes;
+	std::unordered_map<std::string, std::unique_ptr<Texture>> textures;
+	std::unordered_map<std::string, std::unique_ptr<Material>> materials;
+	std::unordered_map<std::string, std::unique_ptr<Shader>> shaders;
+	std::unordered_map<std::string, std::unique_ptr<Font>> fonts;
+	std::unordered_map<std::string, std::unique_ptr<PostEffect>> postEffects;
+
+	//Base
+	std::unordered_map<std::string, std::unique_ptr<Mesh>> baseMeshes;
+	std::unordered_map<std::string, std::unique_ptr<Texture>> baseTextures;
+	std::unordered_map<std::string, std::unique_ptr<Material>> baseMaterials;
+
+	void GenerateDefaultTextures();
+	void LoadDefaultResources();
+
+public:
 	Mesh* GetMesh(FS::path path, bool editable = false);
 	Texture* GetTexture(FS::path path);
 	Shader* GetShader(std::string name);
@@ -25,6 +50,8 @@ namespace Resource
 
 	void Update();
 	void Unload();
-	void Cleanup();
-}
+
+	ResourceManager(ServiceManager* serviceManager);
+	~ResourceManager();
+};
 

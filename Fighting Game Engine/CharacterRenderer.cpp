@@ -41,7 +41,7 @@ void CharacterRenderer::OnRenderObjects()
 	HandleRenderingMaterial(spriteData, frameTex, _character->_flipped);
 	HandleRenderingTransform(spriteData, frameTex);
 
-	Rendering::DrawMesh(_renderingTransform.get(), _mesh, _material);
+	RenderingGL::DrawMesh(_renderingTransform.get(), _mesh, _material);
 }
 
 void CharacterRenderer::HandleRenderingMaterial(const CharacterSprite* spriteData, Texture* texture, bool flipped)

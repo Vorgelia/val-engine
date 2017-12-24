@@ -130,7 +130,7 @@ void NetworkEntity::HandleExceptions()
 				ConnectionSocket::GetLastSocketError();
 			else
 			{
-				VE_DEBUG_LOG("Socket Exception:" + std::string(cErr, cErr + len), LogItem::Type::Error);
+				VE_LOG("Socket Exception:" + std::string(cErr, cErr + len), LogItem::Type::Error);
 				Disconnect(i--);
 			}
 		}

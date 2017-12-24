@@ -23,4 +23,6 @@ public:
 
 	static void Init();
 	static void Update();
+
+	PlayerManager() = delete;
 };

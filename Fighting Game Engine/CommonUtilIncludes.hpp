@@ -12,9 +12,6 @@
 #include <typeinfo>
 #include <thread>
 
-//OpenGL
-#include "GLIncludes.hpp"
-
 //boost
 #include <boost\filesystem.hpp>
 #include <boost\lexical_cast.hpp>
@@ -23,11 +20,5 @@
 #include <boost\algorithm\string.hpp>
 namespace FS = boost::filesystem;
 
-//Files
-#include <SOIL\src\SOIL.h>
-
 //Math
 #include "MathIncludes.hpp"
-
-//Profiler
-#include "Profiler.h"

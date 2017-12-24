@@ -6,19 +6,8 @@
 #include "ResourceLoader.h"
 #include "Screen.h"
 
-namespace InputManager
-{
-	DeviceEventHandler DeviceAdded;
-	DeviceEventHandler DeviceRemoved;
-
-	std::unordered_map<int, std::shared_ptr<InputDevice>> _inputDevices;
-	std::vector<std::unique_ptr<InputDevice>> _temporaryNetworkDevices;
-	std::thread _inputCollectionThread;
-	bool _stopInputs = false;
-}
-
 //Update list of valid input devices and have them poll for inputs
-void InputManager::Update()
+void InputManager::FrameUpdate()
 {
 	glfwPollEvents();
 	for(int i = GLFW_JOYSTICK_1; i < GLFW_JOYSTICK_LAST; ++i)
@@ -50,15 +39,8 @@ void InputManager::Update()
 	}
 }
 
-void InputManager::Init()
+void InputManager::Update()
 {
-	_inputDevices[(int)InputDeviceId::Keyboard] = std::make_shared<InputDevice>((int)InputDeviceId::Keyboard);
-}
-
-void InputManager::Cleanup()
-{
-	_inputDevices.clear();
-	_temporaryNetworkDevices.clear();
 }
 
 const std::unordered_map<int, std::shared_ptr<InputDevice>>& InputManager::inputDevices()
@@ -101,7 +83,13 @@ void InputManager::ReleaseTemporaryNetworkDevice(InputDevice* device)
 	}
 }
 
-void InputManager::KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+InputManager::InputManager(ServiceManager* serviceManager) : BaseService(serviceManager)
 {
-	//std::cout << "---Key:" << glfwGetTime()<<"/"<<Time::lastUpdateTime << " - " << (glfwGetKey(Screen::window, key) == GLFW_PRESS) << std::endl;
+	_inputDevices[(int)InputDeviceId::Keyboard] = std::make_shared<InputDevice>((int)InputDeviceId::Keyboard);
+}
+
+InputManager::~InputManager()
+{
+	_inputDevices.clear();
+	_temporaryNetworkDevices.clear();
 }

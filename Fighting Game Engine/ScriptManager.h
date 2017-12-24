@@ -1,4 +1,5 @@
 #pragma once
+#include "BaseService.h"
 #include <memory>
 #include <string>
 #include <unordered_map>
@@ -10,27 +11,32 @@ namespace FS = boost::filesystem;
 class Script;
 class BaseScriptVariable;
 class GameCharacter;
+class Debug;
 
-class ScriptManager
+class ScriptManager : public BaseService
 {
-	static std::unordered_map<std::string, std::shared_ptr<BaseScriptVariable>> _globalVariables;
-	static std::unordered_set<std::shared_ptr<Script>> _scripts;
+	Debug* _debug;
+
+private:
+	std::unordered_map<std::string, std::shared_ptr<BaseScriptVariable>> _globalVariables;
+	std::unordered_set<std::shared_ptr<Script>> _scripts;
 	
-	static void HandleScriptBindings(Script* script);
-	static void HandleCharacterStateVariables();
+	void HandleScriptBindings(Script* script);
+	void HandleCharacterStateVariables();
+
 public:
-	static void Init();
-	static void Update();
-	static void Cleanup();
+	void Update();
 
-	static Script* GetScript(const FS::path& path);
-	static Script* AddScript(const FS::path& path);
-	static void AddVariable(const std::string& name, const std::shared_ptr<BaseScriptVariable>& variable);
+	Script* GetScript(const FS::path& path);
+	Script* AddScript(const FS::path& path);
+	void AddVariable(const std::string& name, const std::shared_ptr<BaseScriptVariable>& variable);
 
-	static void HandleScriptCharacterBindings(GameCharacter& character, Script* script);
+	void HandleScriptCharacterBindings(GameCharacter& character, Script* script);
 
-	static void RemoveScript(Script* script);
+	void RemoveScript(Script* script);
 
-	static std::shared_ptr<BaseScriptVariable> GetVariable(const std::string& name);
+	std::shared_ptr<BaseScriptVariable> GetVariable(const std::string& name);
 
+	ScriptManager(ServiceManager* serviceManager);
+	~ScriptManager();
 };

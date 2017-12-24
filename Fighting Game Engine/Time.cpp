@@ -3,20 +3,6 @@
 #include "GLIncludes.hpp"
 #include "MathIncludes.hpp"
 
-//Time-keeping variables
-namespace Time
-{
-	double deltaTime;
-	double smoothDeltaTime;
-	double time;
-	double lastTime;
-	double lastUpdateTime;
-	double timeSinceLoad;
-	double updateRate;
-	unsigned long long frameCount;
-	unsigned long long frameCountSinceLoad;
-}
-
 void Time::Update()
 {
 	Time::lastTime = Time::time;
@@ -35,10 +21,15 @@ void Time::FrameUpdate()
 	Time::lastUpdateTime += VE_FRAME_TIME;
 }
 
-void Time::OnSceneLoaded()
+void Time::HandleSceneLoaded()
 {
 	Time::timeSinceLoad = 0;
 	Time::lastUpdateTime = Time::time - VE_FRAME_TIME;
 	Time::frameCountSinceLoad = 0;
 	Time::updateRate = 0;
+}
+
+Time::Time(ServiceManager* serviceManager) : BaseService(serviceManager, -100)
+{
+	_allowServiceUpdate = true;
 }

@@ -1,56 +1,21 @@
 #include "DebugLog.h"
 #include <windows.h>
 #include "Time.h"
-#include <thread>
 #include <sstream>
-#include <iostream>
-#include <fstream>
 #include <DbgHelp.h>
-#include <queue>
-#include <mutex>
 #include "LogItem.h"
 #include <stdexcept>
-#include <atomic>
 
 #include "BaseScriptVariable.h"
 #include "ScriptError.h"
 #include "Script.h"
 
-namespace DebugLog
-{
-	//The thread containing the write loop.
-	std::thread _writeThread;
-	//Ofstream to log_output.txt
-	std::ofstream _writeStream;
-	//Queue of log items to write.
-	std::queue<LogItem> _writeQueue;
-	//Mutex that controls access to _writeQueue. We don't want both the main thread and _writeThread modifying information in it at the same time.
-	std::mutex _queueMutex;
-	//The function called with _writeThread runs on an infinite loop. _endWrite is a flag that tells that loop to end.
-	std::atomic<bool> _endWrite = false;
+#include "ServiceManager.h"
 
-	void Push(const std::string& data, LogItem::Type type = LogItem::Type::Log);
-}
-
-//Initialize the write stream and thread. Erase everything in log_output.txt and write a header in it.
-void DebugLog::Init()
-{
-	_endWrite.store(false);
-	_writeStream = std::ofstream("log_output.txt", std::ios::trunc);
-	_writeStream << "--Val Engine Output Log--";
-	_writeThread = std::thread(WriteThread);
-}
-
-//Raise the end write flag and wait until the write thread ends. Safely close the log_output.
-void DebugLog::Cleanup()
-{
-	_endWrite.store(true);
-	_writeThread.join();
-	_writeStream.close();
-}
+void Debug::Update() {}
 
 //Infinite loop thread that goes through the write queue and prints its contents to a file, and the console.
-void DebugLog::WriteThread()
+void Debug::WriteThread()
 {
 	while(!_endWrite.load())
 	{
@@ -105,7 +70,7 @@ void DebugLog::WriteThread()
 
 //This will add data to the write queue. As before, the mutex here is to prevent the other thread from modifying the write queue as we're adding things to it.
 //TODO: Port to ZMQ
-void DebugLog::Push(const std::string& data, LogItem::Type type)
+void Debug::Log(const std::string& data, LogItem::Type type)
 {
 	_queueMutex.lock();
 	_writeQueue.push(LogItem(data, type));
@@ -120,20 +85,20 @@ void DebugLog::Push(const std::string& data, LogItem::Type type)
 #endif
 }
 
-void DebugLog::Push(const std::string & data, std::string fileName, int fileLine, LogItem::Type type)
+void Debug::Log(const std::string& data, std::string fileName, int fileLine, LogItem::Type type)
 {
 	size_t lastSlash = fileName.find_last_of('\\') + 1;
 	if(lastSlash == fileName.size())
 	{
-		Push(data, type);
+		Log(data, type);
 		return;
 	}
 
 	fileName = fileName.substr(lastSlash, fileName.length() - lastSlash);
-	Push("[" + fileName + ":" + std::to_string(fileLine) + "] " + data, type);
+	Log("[" + fileName + ":" + std::to_string(fileLine) + "] " + data, type);
 }
 
-void DebugLog::GetStackTrace(std::vector<std::string>* storage, unsigned int stackSize)
+void Debug::GetStackTrace(std::vector<std::string>* storage, unsigned int stackSize)
 {
 	//Copy-pasted from somewhere.
 	//Get the call stack, run it against the debug symbols and get a bunch of text out of it.
@@ -163,7 +128,7 @@ void DebugLog::GetStackTrace(std::vector<std::string>* storage, unsigned int sta
 
 #pragma region Scripting Bindings
 
-std::shared_ptr<BaseScriptVariable> DebugLog::Push(const Script* script, std::vector<std::shared_ptr<BaseScriptVariable>>& variables)
+std::shared_ptr<BaseScriptVariable> Debug::Log(const Script* script, std::vector<std::shared_ptr<BaseScriptVariable>>& variables)
 {
 	std::stringstream str;
 
@@ -177,8 +142,23 @@ std::shared_ptr<BaseScriptVariable> DebugLog::Push(const Script* script, std::ve
 		}
 	}
 
-	DebugLog::Push(str.str(), LogItem::Type::ScriptLog);
+	Log(str.str(), LogItem::Type::ScriptLog);
 	return std::make_shared<BaseScriptVariable>();
+}
+
+Debug::Debug(ServiceManager* serviceManager) : BaseService(serviceManager)
+{
+	_endWrite.store(false);
+	_writeStream = std::ofstream("log_output.txt", std::ios::trunc);
+	_writeStream << "--Val Engine Output Log--";
+	_writeThread = std::thread([this]() { WriteThread(); });
+}
+
+Debug::~Debug()
+{
+	_endWrite.store(true);
+	_writeThread.join();
+	_writeStream.close();
 }
 
 #pragma endregion

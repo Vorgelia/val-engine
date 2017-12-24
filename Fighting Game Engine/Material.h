@@ -9,7 +9,7 @@ namespace FS = boost::filesystem;
 
 class Texture;
 class Shader;
-class MaterialTexture
+struct MaterialTexture
 {
 public:
 	Texture* ref;
@@ -41,8 +41,7 @@ public:
 	std::unordered_map<std::string, MaterialTexture> uniformTextures;
 	std::unordered_map<std::string, glm::vec4> uniformVectors;
 
-	void ApplyProperties();
-	inline bool HasProperty(Properties pr);
+	bool HasProperty(Properties pr) const;
 
 	Material(const std::string& name, Shader* shader, unsigned char properties, const std::vector<uniformFloat>& floats, const std::vector<uniformVec>& vecs, const std::vector<uniformTex>& textures);
 	Material(const FS::path& path);

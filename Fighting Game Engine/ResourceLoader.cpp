@@ -1,4 +1,5 @@
 #include "JSON.h"
+#include <SOIL\src\SOIL.h>
 #include "ResourceLoader.h"
 #include "Resource.h"
 #include "CachedMesh.h"
@@ -156,12 +157,12 @@ json ResourceLoader::LoadJsonResource(FS::path path)
 	}
 	catch(std::invalid_argument err)
 	{
-		VE_DEBUG_LOG("Error when parsing JSON file " + path.string() + "\n\t" + err.what(), LogItem::Type::Error);
+		VE_LOG("Error when parsing JSON file " + path.string() + "\n\t" + err.what(), LogItem::Type::Error);
 		j.clear();
 	}
 	catch(...)
 	{
-		VE_DEBUG_LOG("Unhandled exception when loading JSON file " + path.string(), LogItem::Type::Error);
+		VE_LOG("Unhandled exception when loading JSON file " + path.string(), LogItem::Type::Error);
 		j.clear();
 	}
 
@@ -361,6 +362,30 @@ void ResourceLoader::LoadMaterial(const FS::path& path, Shader*& shader, unsigne
 			}
 		}
 	}
+}
+
+void ResourceLoader::LoadTexture(const FS::path & path, std::vector<unsigned char>& out_pixels, glm::ivec2& out_size)
+{
+	out_size.x = out_size.y = 0;
+	out_pixels.clear();
+
+	unsigned char* pixels = SOIL_load_image(path.string().c_str(), &out_size.x, &out_size.y, 0, SOIL_LOAD_AUTO);
+	if(pixels == nullptr)
+	{
+		_debug->VE_LOG("Unable to load texture at path " + path.string(), LogItem::Type::Warning);
+		return;
+	}
+
+	out_pixels.reserve(out_size.x * out_size.y * 4);
+	for(int j = out_size.y - 1; j >= 0; --j)
+	{
+		for(int i = 0; i < out_size.x * 4; ++i)
+		{
+			out_pixels.push_back(pixels[j * out_size.x * 4 + i]);
+		}
+	}
+
+	SOIL_free_image_data(pixels);
 }
 
 void ResourceLoader::LoadMeshVM(const FS::path& path, std::vector<float>& out_verts, std::vector<GLuint>& out_elements, std::vector<VertexAttribute>& out_vertexFormat)

@@ -37,7 +37,7 @@ Shader::Shader(const std::string& name, const std::vector<ShaderAttachment>& sha
 	else
 		_valid = true;
 
-	VE_DEBUG_LOG("Shader compilation [" + name + "]: " + (_valid ? "VALID" : "INVALID"));
+	VE_LOG("Shader compilation [" + name + "]: " + (_valid ? "VALID" : "INVALID"));
 }
 
 Shader::operator GLuint()
@@ -65,7 +65,7 @@ GLuint Shader::CreateShader(const std::string& code, GLenum type)
 
 	if(shaderStatus != GL_TRUE)
 	{
-		VE_DEBUG_LOG("Shader compilation failure:\n" + std::string(shaderLog), LogItem::Type::Warning);
+		VE_LOG("Shader compilation failure:\n" + std::string(shaderLog), LogItem::Type::Warning);
 		return -1;
 	}
 
@@ -101,6 +101,6 @@ GLuint Shader::CreateShaderProgram(const std::vector<GLuint>& shaders)
 Shader::~Shader()
 {
 	if(GLState::boundShader == id)
-		GLState::UseProgram(0);
+		GLState::BindShader(0);
 	glDeleteProgram(id);
 }

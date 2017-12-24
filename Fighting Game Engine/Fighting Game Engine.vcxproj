@@ -81,6 +81,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AttackData.cpp" />
+    <ClCompile Include="BaseService.cpp" />
     <ClCompile Include="Behaviour.cpp" />
     <ClCompile Include="BehaviourFactory.cpp" />
     <ClCompile Include="CachedMesh.cpp" />
@@ -150,6 +151,7 @@
     <ClCompile Include="ScriptToken.cpp" />
     <ClCompile Include="BaseScriptVariable.cpp" />
     <ClCompile Include="ScriptVariableUtils.cpp" />
+    <ClCompile Include="ServiceManager.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Time.cpp" />
@@ -157,6 +159,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AttackData.h" />
+    <ClInclude Include="BaseService.h" />
     <ClInclude Include="Behaviour.h" />
     <ClInclude Include="BehaviourFactory.h" />
     <ClInclude Include="CachedMesh.h" />
@@ -233,6 +236,7 @@
     <ClInclude Include="ScriptToken.h" />
     <ClInclude Include="BaseScriptVariable.h" />
     <ClInclude Include="ScriptVariableUtils.h" />
+    <ClInclude Include="ServiceManager.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Time.h" />

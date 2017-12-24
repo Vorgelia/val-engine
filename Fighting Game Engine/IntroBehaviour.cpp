@@ -17,21 +17,21 @@ VE_BEHAVIOUR_REGISTER_TYPE(IntroBehaviour);
 
 void IntroBehaviour::OnSceneInit()
 {
-	VE_DEBUG_LOG("Pause time: " + std::to_string(glfwGetTime()));
+	VE_LOG("Pause time: " + std::to_string(glfwGetTime()));
 }
 
 void IntroBehaviour::OnRenderUI()
 {
 	Resource::GetMaterial("Materials/Intro/Intro_Screen.vmat")->uniformVectors["ve_color"].a = glm::clamp<float>(glm::min<float>((float)Time::timeSinceLoad, _introDuration - (float)Time::timeSinceLoad), 0.0f, 1.0f);
-	Rendering::DrawScreenMesh(glm::vec4(0, 0, 1920, 1080), (Mesh*)nullptr, Resource::GetMaterial("Materials/Intro/Intro_Screen.vmat"));
+	RenderingGL::DrawScreenMesh(glm::vec4(0, 0, 1920, 1080), (Mesh*)nullptr, Resource::GetMaterial("Materials/Intro/Intro_Screen.vmat"));
 
-	Rendering::DrawScreenText(glm::vec4(0, 10, 100, 100), 24, std::to_string(glm::min<double>((int)std::round(1.0 / Time::smoothDeltaTime), 60)), nullptr);
-	Rendering::DrawScreenText(glm::vec4(0, 30, 100, 100), 24, std::to_string(glm::max<double>(((int)(Time::updateRate * 100))*0.01, 1.0)), nullptr);
+	RenderingGL::DrawScreenText(glm::vec4(0, 10, 100, 100), 24, std::to_string(glm::min<double>((int)std::round(1.0 / Time::smoothDeltaTime), 60)), nullptr);
+	RenderingGL::DrawScreenText(glm::vec4(0, 30, 100, 100), 24, std::to_string(glm::max<double>(((int)(Time::updateRate * 100))*0.01, 1.0)), nullptr);
 
 	int ind = 0;
 	for(auto& i : InputManager::inputDevices())
 	{
-		Rendering::DrawScreenText(glm::vec4(0, 60 + ind * 30, 100, 100), 24, std::to_string(i.first) + ":" + std::to_string(i.second->inputBuffer()->back().buttonStates()) + ":" + std::to_string(i.second->inputBuffer()->back().axisState()), nullptr);
+		RenderingGL::DrawScreenText(glm::vec4(0, 60 + ind * 30, 100, 100), 24, std::to_string(i.first) + ":" + std::to_string(i.second->inputBuffer()->back().buttonStates()) + ":" + std::to_string(i.second->inputBuffer()->back().axisState()), nullptr);
 		++ind;
 	}
 }

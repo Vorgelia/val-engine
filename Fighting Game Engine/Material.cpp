@@ -16,33 +16,11 @@ MaterialTexture::MaterialTexture(Texture* ref, glm::vec4 params)
 	this->params = params;
 }
 
-void Material::ApplyProperties()
+bool Material::HasProperty(Material::Properties pr) const
 {
-	if(HasProperty(Properties::Cull))
-		GLState::Set(GL_CULL_FACE, true);
-	else
-		GLState::Set(GL_CULL_FACE, false);
-
-	if(HasProperty(Properties::Blend))
-		GLState::Set(GL_BLEND, true);
-	else
-		GLState::Set(GL_BLEND, false);
-
-	if(HasProperty(Properties::ZWrite))
-		glDepthMask(GL_TRUE);
-	else
-		glDepthMask(GL_FALSE);
-
-	if(HasProperty(Properties::ZTest))
-		GLState::Set(GL_DEPTH_TEST, true);
-	else
-		GLState::Set(GL_DEPTH_TEST, false);
+	return (this->properties & (unsigned char)pr) != 0;
 }
 
-bool Material::HasProperty(Material::Properties pr)
-{
-	return ((this->properties)&((unsigned char)pr)) != 0;
-}
 Material::Material(const std::string& name, Shader* shader, unsigned char properties, const std::vector<uniformFloat>& floats, const std::vector<uniformVec>& vecs, const std::vector<uniformTex>& textures)
 {
 	this->name = name;
@@ -64,6 +42,7 @@ Material::Material(const std::string& name, Shader* shader, unsigned char proper
 		uniformTextures.insert(uniformTex(textures[i].first, textures[i].second));
 	}
 }
+
 Material::Material(const FS::path& path)
 {
 	name = path.string();

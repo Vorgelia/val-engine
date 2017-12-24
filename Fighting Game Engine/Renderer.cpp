@@ -11,7 +11,7 @@ void Renderer::OnRenderObjects()
 	{
 		return;
 	}
-	Rendering::DrawMesh(_owner->transform(), _mesh, _material);
+	RenderingGL::DrawMesh(_owner->transform(), _mesh, _material);
 }
 
 Renderer::Renderer(Object* owner, Mesh* mesh, Material* material) :Behaviour(owner)

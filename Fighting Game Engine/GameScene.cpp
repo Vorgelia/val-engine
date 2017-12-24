@@ -52,7 +52,7 @@ void GameScene::LoadResources()
 	}
 	catch(std::runtime_error err)
 	{
-		VE_DEBUG_LOG(err.what());
+		VE_LOG(err.what());
 	}
 	_loaded = true;
 }
@@ -145,7 +145,7 @@ void GameScene::ApplyPostEffects()
 {
 	for(auto& iter : _postEffectsOrder)
 	{
-		Rendering::DrawPostEffect(
+		RenderingGL::DrawPostEffect(
 			Resource::GetPostEffect(iter));
 	}
 }
