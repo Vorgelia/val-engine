@@ -3,15 +3,8 @@
 #include <GLM\glm.hpp>
 #include <unordered_map>
 #include <boost\filesystem.hpp>
-#include<ft2build.h>
-
-#include FT_FREETYPE_H
 
 namespace FS = boost::filesystem;
-
-#define TEXT_SIZE 64
-#define FONT_ATLAS_SIZE 1024
-#define FONT_ATLAS_PADDING 2
 
 class Texture;
 enum class TextAlignment
@@ -35,19 +28,27 @@ public:
 
 class Font
 {
-	std::unordered_map <GLubyte, FontCharacter*> characters;
+	friend class GraphicsGL;
+private:
+	GLuint _height;
+	GLuint _topBearing;
+
+	std::unordered_map <GLubyte, FontCharacter> _characters;
+	std::vector<std::unique_ptr<Texture>> _atlases;
+
 public:
-	std::string name;
-	FT_Face face;
+	const std::string name;
 
-	GLint topBearing;
-	GLuint height;
-	static FT_Library library;
-	static bool init;
+	const unsigned int textSize;
+	const unsigned int atlasSize;
+	const unsigned int atlasPadding;
 
-	std::vector<Texture*> atlases;
+	const GLuint height();
+	const GLuint topBearing();
 
-	FontCharacter* Character(GLubyte ch);
-	Font(const FS::path& p);
-	~Font();
+	Texture* GetAtlas(int index);
+	const FontCharacter* GetCharacter(GLubyte ch);
+
+	Font(const std::string& name, unsigned int textSize = 64, unsigned int atlasSize = 1024, unsigned int atlasPadding = 2);
+	~Font() = default;
 };

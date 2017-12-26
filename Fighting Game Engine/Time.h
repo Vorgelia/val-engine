@@ -16,7 +16,9 @@ public:
 	unsigned long long frameCount;
 	unsigned long long frameCountSinceLoad;
 
-	void Update();
+	void Init() override;
+	void Update() override;
+
 	void FrameUpdate();
 	void HandleSceneLoaded();
 

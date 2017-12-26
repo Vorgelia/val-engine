@@ -15,12 +15,14 @@ class Font;
 
 class Debug;
 class GraphicsGL;
+class FilesystemManager;
 
 class ResourceManager : public BaseService
 {
 private:
 	Debug* _debug;
 	GraphicsGL* _graphics;
+	FilesystemManager * _filesystem;
 
 private:
 	std::unordered_map<std::string, std::unique_ptr<CachedMesh>> cachedMeshes;
@@ -40,7 +42,7 @@ private:
 	void LoadDefaultResources();
 
 public:
-	Mesh* GetMesh(FS::path path, bool editable = false);
+	Mesh* GetMesh(FS::path path);
 	Texture* GetTexture(FS::path path);
 	Shader* GetShader(std::string name);
 	Material* GetMaterial(FS::path name);
@@ -48,10 +50,11 @@ public:
 	PostEffect* GetPostEffect(FS::path path);
 	Font* GetFont(FS::path path);
 
-	void Update();
+	void Init() override;
+	void Update() override;
+	
 	void Unload();
 
 	ResourceManager(ServiceManager* serviceManager);
 	~ResourceManager();
 };
-

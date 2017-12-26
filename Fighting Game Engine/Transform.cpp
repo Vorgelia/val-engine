@@ -23,7 +23,7 @@ void Transform::SnapTo(const Transform& tr)
 	scale = tr.scale;
 }
 
-Transform::Transform(Object* owner, glm::ivec2 position, glm::vec3 eulerRotation, glm::vec2 scale) : Behaviour(owner)
+Transform::Transform(Object* owner, ServiceManager* serviceManager, glm::ivec2 position, glm::vec3 eulerRotation, glm::vec2 scale) : Behaviour(owner, serviceManager)
 {
 	this->position = position;
 	this->scale = scale;
@@ -31,7 +31,7 @@ Transform::Transform(Object* owner, glm::ivec2 position, glm::vec3 eulerRotation
 	this->depth = 0;
 }
 
-Transform::Transform(Object* owner, glm::ivec2 position, glm::quat rotation, glm::vec2 scale) : Behaviour(owner)
+Transform::Transform(Object* owner, ServiceManager* serviceManager, glm::ivec2 position, glm::quat rotation, glm::vec2 scale) : Behaviour(owner, serviceManager)
 {
 	this->position = position;
 	this->scale = scale;
@@ -39,7 +39,7 @@ Transform::Transform(Object* owner, glm::ivec2 position, glm::quat rotation, glm
 	this->depth = 0;
 }
 
-Transform::Transform(Object* owner, const json & j) : Behaviour(owner, j)
+Transform::Transform(Object* owner, ServiceManager* serviceManager, const json & j) : Behaviour(owner, serviceManager, j)
 {
 	position = JSON::Get<glm::ivec2>(j["position"]);
 	rotation = JSON::Get<glm::quat>(j["rotation"]);
@@ -47,7 +47,7 @@ Transform::Transform(Object* owner, const json & j) : Behaviour(owner, j)
 	depth = j["depth"].get<float>();
 }
 
-Transform::Transform(Object* owner) : Behaviour(owner)
+Transform::Transform(Object* owner, ServiceManager* serviceManager) : Behaviour(owner, serviceManager)
 {
 	this->position = glm::ivec2(0, 0);
 	this->scale = glm::vec2(1, 1);

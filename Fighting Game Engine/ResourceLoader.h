@@ -1,7 +1,9 @@
 #pragma once
+#include "BaseService.h"
 #include "JSON.h"
 #include <boost\filesystem.hpp>
 #include <string>
+#include <unordered_map>
 #include <vector>
 #include <memory>
 #include <functional>
@@ -9,19 +11,29 @@
 
 namespace FS = boost::filesystem;
 
+class Debug;
+class ResourceManager;
+
 class VertexAttribute;
 class Shader;
 class Texture;
-class MaterialTexture;
+class TextureData;
+struct MaterialTexture;
 class PostEffect;
 class Material;
-enum class InputButton;
-enum class InputDirection;
+class CachedMesh;
 class InputEvent;
 class Object;
+enum class InputButton;
+enum class InputDirection;
 
-namespace ResourceLoader
+class FilesystemManager : public BaseService
 {
+private:
+	Debug* _debug;
+	ResourceManager* _resource;
+
+public:
 	std::string LoadTextResource(int id, const std::string& type = "TEXT");
 	std::vector<unsigned char> LoadBinaryResource(int id, const std::string& type);
 
@@ -30,14 +42,22 @@ namespace ResourceLoader
 
 	void ApplyFunctionToFiles(const FS::path& dir, std::function<void(const FS::path&)> func);
 
-	bool SaveFile(const FS::path& dir, std::string& content, int flags = std::ios::out | std::ios::trunc);
+	json LoadJsonResource(FS::path path);
 
-	void LoadTexture(const FS::path& path, std::vector<unsigned char>& out_pixels, glm::ivec2& out_size);
-	void LoadMeshVM(const FS::path& path, std::vector<float>& out_verts, std::vector<GLuint>& out_elements, std::vector<VertexAttribute>& out_vertexFormat);
-	void LoadMaterial(const FS::path& path, Shader*& shader, unsigned char& properties, std::unordered_map<std::string, GLfloat>& uniformFloats, std::unordered_map<std::string, MaterialTexture>& uniformTextures, std::unordered_map<std::string, glm::vec4>& uniformVectors);
-	void LoadPostEffect(const FS::path& path, std::vector<std::pair<int, Material*>>& elements, bool& cbBefore, bool& cbAfter, int& order);
+	std::unique_ptr<Object> LoadObject(const FS::path& path);
+	std::unique_ptr<CachedMesh> LoadMeshVM(const FS::path& path);
+	std::unique_ptr<Material> LoadMaterial(const FS::path& path);
+	std::unique_ptr<PostEffect> LoadPostEffect(const FS::path& path);
+
+	void LoadTextureData(const FS::path & path, std::vector<unsigned char>& out_pixels, glm::ivec2& out_size);
 	void LoadControlSettings(const FS::path& path, std::unordered_map<InputDirection, InputEvent>& dir, std::unordered_map<InputButton, InputEvent>& bt);
 	void LoadObjects(const FS::path& path, std::vector<std::unique_ptr<Object>>& objects);
-	json LoadJsonResource(FS::path path);
-	std::unique_ptr<Object> LoadObject(const FS::path& path);
-}
+
+	bool SaveFile(const FS::path& dir, std::string& content, int flags = std::ios::out | std::ios::trunc);
+
+	void Init() override;
+	void Update() override;
+
+	FilesystemManager(ServiceManager* serviceManager);
+	~FilesystemManager() = default;
+};

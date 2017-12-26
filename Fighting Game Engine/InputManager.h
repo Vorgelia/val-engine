@@ -1,10 +1,11 @@
 #pragma once
+#include "GLIncludes.hpp"
 #include <unordered_map>
 #include <unordered_set>
 #include <memory>
+#include <thread>
 #include <functional>
 #include "BaseService.h"
-#include "GLIncludes.hpp"
 #include "Delegate.h"
 
 class InputDevice;
@@ -22,8 +23,9 @@ public:
 	DeviceEventHandler DeviceAdded;
 	DeviceEventHandler DeviceRemoved;
 
+	void Init() override;
+	void Update() override;
 	void FrameUpdate();
-	void Update();
 
 	//TODO: Create temporary network device
 	const std::unordered_map<int, std::shared_ptr<InputDevice>>& inputDevices();

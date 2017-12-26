@@ -1,5 +1,5 @@
 #include "BaseService.h"
-#include "DebugLog.h"
+#include <cassert>
 
 bool BaseService::allowServiceUpdate() const
 {
@@ -14,6 +14,7 @@ int BaseService::serviceUpdateSortingOrder() const
 BaseService::BaseService(ServiceManager* serviceManager, int sortingOrder) :
 	_serviceUpdateSortingOrder(sortingOrder)
 {
+	assert(serviceManager != nullptr);
 	_serviceManager = serviceManager;
 	_allowServiceUpdate = false;
 }

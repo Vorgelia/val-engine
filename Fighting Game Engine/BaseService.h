@@ -13,6 +13,7 @@ public:
 	bool allowServiceUpdate() const;
 	int serviceUpdateSortingOrder() const;
 
+	virtual void Init() = 0;
 	virtual void Update() = 0;
 
 	BaseService& operator=(BaseService&) = delete;

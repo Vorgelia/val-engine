@@ -43,8 +43,7 @@ Material::Material(const std::string& name, Shader* shader, unsigned char proper
 	}
 }
 
-Material::Material(const FS::path& path)
+Material::Material(const std::string& name)
 {
-	name = path.string();
-	ResourceLoader::LoadMaterial(path, shader, properties, uniformFloats, uniformTextures, uniformVectors);
+	this->name = name;
 }

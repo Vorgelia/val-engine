@@ -9,8 +9,3 @@ PostEffect::PostEffect(const std::vector<PostEffectElement>& elements, bool cbBe
 	clearBuffersBefore = cbBefore;
 	this->order = order;
 }
-
-PostEffect::PostEffect(const FS::path& path)
-{
-	ResourceLoader::LoadPostEffect(path, elementChain, clearBuffersBefore, clearBuffersAfter, order);
-}

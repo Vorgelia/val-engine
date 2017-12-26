@@ -5,7 +5,6 @@
 #include "GLIncludes.hpp"
 
 namespace FS = boost::filesystem;
-class GraphicsGL;
 
 class Texture
 {

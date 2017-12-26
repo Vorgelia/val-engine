@@ -5,7 +5,7 @@
 
 class GamePlayer;
 enum class GamePlayerType;
-
+//TODO: Make non-static
 class PlayerManager
 {
 	static std::unordered_map<int, std::unique_ptr<GamePlayer>> _players;

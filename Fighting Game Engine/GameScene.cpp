@@ -1,5 +1,7 @@
 #include "GameScene.h"
 #include "Object.h"
+#include "GameSceneManager.h"
+#include "ServiceManager.h"
 #include "ResourceLoader.h"
 #include "Rendering.h"
 #include "Resource.h"
@@ -24,35 +26,35 @@ void GameScene::LoadResources()
 	std::vector<std::string> rfl;
 	try
 	{
-		rfl = ResourceLoader::ReturnFileLines(_dataPath.string() + "/MaterialResources.txt", true);
+		rfl = _filesystem->ReturnFileLines(_dataPath.string() + "/MaterialResources.txt", true);
 		for(unsigned int i = 0; i < rfl.size(); ++i)
 			if(rfl[i].substr(0, 2) != "//" && rfl[i] != "")
-				Resource::GetMaterial(rfl[i]);//Materials also load their associated textures with them.
+				_resource->GetMaterial(rfl[i]);//Materials also load their associated textures with them.
 
-		rfl = ResourceLoader::ReturnFileLines(_dataPath.string() + "/MeshResources.txt", true);
+		rfl = _filesystem->ReturnFileLines(_dataPath.string() + "/MeshResources.txt", true);
 		for(unsigned int i = 0; i < rfl.size(); ++i)
 			if(rfl[i].substr(0, 2) != "//" && rfl[i] != "")
-				Resource::GetMesh(rfl[i]);
+				_resource->GetMesh(rfl[i]);
 
-		rfl = ResourceLoader::ReturnFileLines(_dataPath.string() + "/TextureResources.txt", true);
+		rfl = _filesystem->ReturnFileLines(_dataPath.string() + "/TextureResources.txt", true);
 		for(unsigned int i = 0; i < rfl.size(); ++i)
 			if(rfl[i].substr(0, 2) != "//" && rfl[i] != "")
-				Resource::GetTexture(rfl[i]);
+				_resource->GetTexture(rfl[i]);
 
-		ResourceLoader::LoadObjects(_dataPath.string() + "/SceneObjects.txt", _objects);
+		_filesystem->LoadObjects(_dataPath.string() + "/SceneObjects.txt", _objects);
 		for(auto& iter : _objects)
 		{
 			RegisterObject(iter.get());
 		}
 
-		_postEffectsOrder = ResourceLoader::ReturnFileLines(_dataPath.string() + "/PostEffectsOrder.txt", true);
+		_postEffectsOrder = _filesystem->ReturnFileLines(_dataPath.string() + "/PostEffectsOrder.txt", true);
 		for(unsigned int i = 0; i < _postEffectsOrder.size(); ++i)
 			if(_postEffectsOrder[i].substr(0, 2) != "//" && _postEffectsOrder[i] != "")
-				Resource::GetPostEffect(_postEffectsOrder[i]);
+				_resource->GetPostEffect(_postEffectsOrder[i]);
 	}
 	catch(std::runtime_error err)
 	{
-		VE_LOG(err.what());
+		_debug->VE_LOG(err.what());
 	}
 	_loaded = true;
 }
@@ -145,8 +147,8 @@ void GameScene::ApplyPostEffects()
 {
 	for(auto& iter : _postEffectsOrder)
 	{
-		RenderingGL::DrawPostEffect(
-			Resource::GetPostEffect(iter));
+		_rendering->DrawPostEffect(
+			_resource->GetPostEffect(iter));
 	}
 }
 
@@ -162,9 +164,9 @@ void GameScene::Cleanup()
 	_initialized = false;
 }
 
-Object * GameScene::AddObject(const std::string & prefabPath)
+Object* GameScene::AddObject(const std::string & prefabPath)
 {
-	_objects.emplace_back(ResourceLoader::LoadObject(prefabPath));
+	_objects.emplace_back(_filesystem->LoadObject(prefabPath));
 	Object* result = _objects.back().get();
 
 	RegisterObject(result);
@@ -183,8 +185,14 @@ Object* GameScene::FindObject(const std::string& name)
 	return nullptr;
 }
 
-GameScene::GameScene(const FS::path& path)
+GameScene::GameScene(const FS::path& path, ServiceManager* serviceManager)
 {
+	_serviceManager = serviceManager;
+	_debug = _serviceManager->Debug();
+	_resource = _serviceManager->ResourceManager();
+	_rendering = _serviceManager->Rendering();
+	_filesystem = _serviceManager->Filesystem();
+
 	_initialized = false;
 	_loaded = false;
 	this->_dataPath = path;

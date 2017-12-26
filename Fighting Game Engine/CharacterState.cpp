@@ -28,14 +28,14 @@ const InputMotion& CharacterState::associatedMotion() const
 	return _associatedMotion;
 }
 
-CharacterState::CharacterState(const json& j):
-	_associatedMotion(j["motion"])
+CharacterState::CharacterState(const json& j, Script* script):
+	_associatedMotion(j["motion"]),
+	_script(script)
 {
-	_name = JSON::Get<std::string>(j["name"]);
-	_priority = JSON::Get<int>(j["priority"]);
-	_script = ScriptManager::GetScript(JSON::Get<std::string>(j["script"]));
-	_stateTypeFlags.reserve(j["flags"].size());
+	JSON::TryGetMember<std::string>(j, "name", _name);
+	JSON::TryGetMember<int>(j, "priority", _priority);
 
+	_stateTypeFlags.reserve(j["flags"].size());
 	for(auto& iter : j["flags"])
 	{
 		_stateTypeFlags.emplace(JSON::Get<std::string>(iter));

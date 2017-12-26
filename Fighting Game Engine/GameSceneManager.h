@@ -12,6 +12,7 @@ class Debug;
 class RenderingGL;
 class ResourceManager;
 class Time;
+class InputManager;
 
 class GameSceneManager : public BaseService
 {
@@ -20,6 +21,7 @@ private:
 	RenderingGL* _rendering;
 	ResourceManager* _resourceManager;
 	Time* _time;
+	InputManager* _input;
 
 private:
 	std::unordered_map<std::string, std::unique_ptr<GameScene> const> _scenes;
@@ -41,6 +43,7 @@ public:
 	bool isLoading();
 
 	void Update() override;
+	void Init() override;
 
 	void LoadScene(const std::string& name);
 	void ReloadScene();

@@ -6,6 +6,10 @@ class ScriptBehaviour :
 {
 	friend class ScriptManager;
 
+private:
+	ScriptManager* _scriptManager;
+
+private:
 	Script* _script;
 
 	void RunScriptFunction(std::string name);
@@ -21,7 +25,7 @@ public:
 	VE_BEHAVIOUR_REGISTER_FUNCTION(OnRenderUI);
 	VE_BEHAVIOUR_REGISTER_FUNCTION(Cleanup);
 
-	ScriptBehaviour(Object* owner, const json& j);
+	ScriptBehaviour(Object* owner, ServiceManager* serviceManager, const json& j);
 	~ScriptBehaviour();
 };
 

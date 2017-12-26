@@ -1,5 +1,7 @@
 #include "Renderer.h"
 #include "Rendering.h"
+#include "Resource.h"
+#include "ServiceManager.h"
 #include <string>
 #include "BehaviourFactory.h"
 
@@ -11,21 +13,33 @@ void Renderer::OnRenderObjects()
 	{
 		return;
 	}
-	RenderingGL::DrawMesh(_owner->transform(), _mesh, _material);
+	_rendering->DrawMesh(_owner->transform(), _mesh, _material);
 }
 
-Renderer::Renderer(Object* owner, Mesh* mesh, Material* material) :Behaviour(owner)
+Renderer::Renderer(Object* owner, ServiceManager* serviceManager, Mesh* mesh, Material* material) :Behaviour(owner, serviceManager)
 {
 	_mesh = mesh;
+	if(_mesh == nullptr)
+	{
+		_mesh = _resource->GetMesh("Materials/Base/quad.vm");
+	}
+
 	_material = material;
+	if(_material == nullptr)
+	{
+		_material = _resource->GetMaterial("Materials/Base/Object2D.vmat");
+	}
 }
 
-Renderer::Renderer(Object* owner, const json& j) : Behaviour(owner, j)
+Renderer::Renderer(Object* owner, ServiceManager* serviceManager, const json& j) : Behaviour(owner, serviceManager, j)
 {
+	_resource = serviceManager->ResourceManager();
+	_rendering = serviceManager->Rendering();
+
 	auto& iter = j.find("mesh");
 	if(iter != j.end())
 	{
-		_mesh = Resource::GetMesh(iter->get<std::string>());
+		_mesh = _resource->GetMesh(iter->get<std::string>());
 	}
 	else
 	{
@@ -35,7 +49,7 @@ Renderer::Renderer(Object* owner, const json& j) : Behaviour(owner, j)
 	iter = j.find("material");
 	if(iter != j.end())
 	{
-		_material = Resource::GetMaterial(iter->get<std::string>());
+		_material = _resource->GetMaterial(iter->get<std::string>());
 	}
 	else
 	{

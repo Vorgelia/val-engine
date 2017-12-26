@@ -32,49 +32,49 @@ void RenderingGL::BeginFrame()
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glDepthMask(GL_TRUE);
 	//Viewport controls the rendering size in pixels based on the actual window size.
-	//We set it to the full window size here to perform no added transformation to the ones we do when rendering. Try changing Screen::size.y to Screen::size.y*0.5.
+	//We set it to the full window size here to perform no added transformation to the ones we do when rendering. Try changing _screen->size.y to _screen->size.y*0.5.
 	//This will be used later to force the aspect ratio to 16/9
-	glViewport(0, 0, Screen::size.x, Screen::size.y);
+	glViewport(0, 0, _screen->size.x, _screen->size.y);
 
 	tintColor = glm::vec4(1, 1, 1, 1);
 
 	//Bind and clear all framebuffers.
-	for(unsigned int i = 0; i < auxBuffers.size(); ++i)
+	for(unsigned int i = 0; i < _auxBuffers.size(); ++i)
 	{
-		auxBuffers[i]->Clear();
+		_graphics->ClearFrameBuffer(*_auxBuffers[i]);
 	}
 
-	mainBuffer->Clear();//Also binds the main buffer
+	_graphics->ClearFrameBuffer(*_mainBuffer);
 }
 
 void RenderingGL::EndFrame()
 {
 	//Render the main buffer to the default buffer.
 	//Set the viewport to what was calculated for a forced 16:9 aspect ratio
-	glViewport(Screen::viewportSize.x, Screen::viewportSize.y, Screen::viewportSize.z, Screen::viewportSize.w);
+	glViewport(_screen->viewportSize.x, _screen->viewportSize.y, _screen->viewportSize.z, _screen->viewportSize.w);
 	//Bind the default framebuffer, clear it and draw the main buffer directly.
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-	DrawScreenMesh(glm::vec4(0, 0, 1920, 1080), _resourceManager->GetMesh("Meshes/Base/screenQuad.vm"), mainBuffer, _resourceManager->GetMaterial("Materials/Base/Screen_FB.vmat"));
+	DrawScreenMesh(glm::vec4(0, 0, 1920, 1080), _resourceManager->GetMesh("Meshes/Base/screenQuad.vm"), _mainBuffer.get(), _resourceManager->GetMaterial("Materials/Base/Screen_FB.vmat"));
 
 #ifdef VE_USE_SINGLE_BUFFER
 	glFlush();
 #else
-	glfwSwapBuffers(Screen::window);
+	glfwSwapBuffers(_screen->window);
 #endif
 }
 
 //Screen resize callback. Resize all framebuffers to match the screen size.
 void RenderingGL::OnScreenResize()
 {
-	mainBuffer->resolution = Screen::size;
-	mainBuffer->Update();
+	_mainBuffer->resolution = _screen->size;
+	_graphics->UpdateFrameBuffer(*_mainBuffer);
 
 	for(unsigned int i = 0; i < VE_AUX_BUFFER_AMOUNT; ++i)
 	{
-		auxBuffers[i]->resolution = Screen::size;
-		auxBuffers[i]->Update();
+		_auxBuffers[i]->resolution = _screen->size;
+		_graphics->UpdateFrameBuffer(*_auxBuffers[i]);
 	}
 }
 
@@ -138,23 +138,23 @@ void RenderingGL::BindShaderTextures(Shader* shader, const std::vector<MaterialT
 void RenderingGL::BindBufferUniforms(Shader* shad, int& index)
 {
 	//Bind the textures of every framebuffer to the shader.
-	for(unsigned int i = 0; i < mainBuffer->textures.size(); ++i)
+	for(unsigned int i = 0; i < _mainBuffer->textures.size(); ++i)
 	{
 		if(shad->UniformLocation("mainBuf_tex" + std::to_string(i)) > -1)
 		{
-			_graphics->BindTexture(*(mainBuffer->textures[i]), index);
+			_graphics->BindTexture(*(_mainBuffer->textures[i]), index);
 			glUniform1i(shad->UniformLocation("mainBuf_tex" + std::to_string(i)), index);
 			index += 1;
 		}
 	}
 
-	for(unsigned int buf = 0; buf < auxBuffers.size(); ++buf)
+	for(unsigned int buf = 0; buf < _auxBuffers.size(); ++buf)
 	{
-		for(unsigned int i = 0; i < auxBuffers[buf]->textures.size(); ++i)
+		for(unsigned int i = 0; i < _auxBuffers[buf]->textures.size(); ++i)
 		{
 			if(shad->UniformLocation("auxBuf" + std::to_string(buf) + "_tex" + std::to_string(i)) > -1)
 			{
-				_graphics->BindTexture(*(auxBuffers[buf]->textures[i]), index);
+				_graphics->BindTexture(*(_auxBuffers[buf]->textures[i]), index);
 				glUniform1i(shad->UniformLocation("auxBuf" + std::to_string(buf) + "_tex" + std::to_string(i)), index);
 				index += 1;
 			}
@@ -165,8 +165,8 @@ void RenderingGL::BindBufferUniforms(Shader* shad, int& index)
 //Default engine uniforms for passing time and screen parameters.
 void RenderingGL::BindEngineUniforms(Shader* shader)
 {
-	glUniform4f(shader->UniformLocation("ve_time"), (GLfloat)Time::time, (GLfloat)Time::deltaTime, (GLfloat)1.0 / (GLfloat)Time::deltaTime, (GLfloat)Time::frameCount);
-	glUniform4f(shader->UniformLocation("ve_screen"), (GLfloat)Screen::size.x, (GLfloat)Screen::size.y, Screen::invSize.x, Screen::invSize.y);
+	glUniform4f(shader->UniformLocation("ve_time"), (GLfloat)_time->time, (GLfloat)_time->deltaTime, (GLfloat)1.0 / (GLfloat)_time->deltaTime, (GLfloat)_time->frameCount);
+	glUniform4f(shader->UniformLocation("ve_screen"), (GLfloat)_screen->size.x, (GLfloat)_screen->size.y, _screen->invSize.x, _screen->invSize.y);
 }
 
 //Post effects are a good enough place to explain the entire rendering process. It doesn't change much for the rest of the functions.
@@ -195,16 +195,16 @@ void RenderingGL::DrawPostEffect(PostEffect* pf)
 		//If there is no material for this step, render the aux buffer specified to the main buffer.
 		if(cMat == nullptr)
 		{
-			_graphics->BindFrameBuffer(*mainBuffer);
-			DrawScreenMesh(glm::vec4(0, 0, 1920, 1080), nullptr, auxBuffers[pf->elementChain[pi].first], _resourceManager->GetMaterial("Materials/Base/Screen_FB.vmat"));
+			_graphics->BindFrameBuffer(*_mainBuffer);
+			DrawScreenMesh(glm::vec4(0, 0, 1920, 1080), nullptr, _auxBuffers[pf->elementChain[pi].first].get(), _resourceManager->GetMaterial("Materials/Base/Screen_FB.vmat"));
 			continue;
 		}
 
 		//Index of -1 means render directly to the main buffer. Otherwise render to the indexed aux buffer.
 		if(pf->elementChain[pi].first == -1)
-			_graphics->BindFrameBuffer(*mainBuffer);
+			_graphics->BindFrameBuffer(*_mainBuffer);
 		else
-			_graphics->BindFrameBuffer(*(auxBuffers[pf->elementChain[pi].first]));
+			_graphics->BindFrameBuffer(*(_auxBuffers[pf->elementChain[pi].first]));
 
 		//Bind the shader in the specified material
 		_graphics->BindShader(*(cMat->shader));
@@ -221,10 +221,10 @@ void RenderingGL::DrawPostEffect(PostEffect* pf)
 		//Render the quad upside down because OpenGL is weird. We do this for all screen meshes.
 		modelMat = glm::scale(modelMat, glm::vec3(1920, -1080, 1));
 
-		glm::mat4 mvpmat = screenMat * modelMat;
+		glm::mat4 mvpmat = _screenMat * modelMat;
 
 		glUniformMatrix4fv(cMat->shader->UniformLocation("ve_matrix_model"), 1, false, glm::value_ptr(modelMat));
-		glUniformMatrix4fv(cMat->shader->UniformLocation("ve_matrix_projection"), 1, false, glm::value_ptr(screenMat));
+		glUniformMatrix4fv(cMat->shader->UniformLocation("ve_matrix_projection"), 1, false, glm::value_ptr(_screenMat));
 		//No view matrix since this is screen-aligned and not affected by camera transformations
 		//We still write the final result to mvp anyway.
 		glUniformMatrix4fv(cMat->shader->UniformLocation("ve_matrix_mvp"), 1, false, glm::value_ptr(mvpmat));
@@ -234,7 +234,7 @@ void RenderingGL::DrawPostEffect(PostEffect* pf)
 			_graphics->ApplyMaterial(*cMat);
 
 		//Finally, draw our mesh.
-		glDrawElements(GL_TRIANGLES, cMesh->elementAmount, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, cMesh->elementAmount(), GL_UNSIGNED_INT, 0);
 	}
 }
 
@@ -244,7 +244,7 @@ void RenderingGL::DrawScreenMesh(glm::vec4 rect, Mesh* mesh, FrameBuffer* fb, Ma
 	std::vector<MaterialTexture> textures;
 	for(unsigned int i = 0; i < fb->textures.size(); ++i)
 	{
-		textures.push_back(MaterialTexture(fb->textures[i], params));
+		textures.push_back(MaterialTexture(fb->textures[i].get(), params));
 	}
 
 	DrawScreenMesh(rect, mesh, textures, mat);
@@ -277,17 +277,17 @@ void RenderingGL::DrawScreenMesh(glm::vec4 rect, Mesh* mesh, const std::vector<M
 
 	glm::mat4 modelMat = glm::translate(glm::mat4(), glm::vec3(rect.x, rect.y + rect.w, 0));
 	modelMat = glm::scale(modelMat, glm::vec3(rect.z, -rect.w, 1));
-	glm::mat4 mvpmat = screenMat*modelMat;
+	glm::mat4 mvpmat = _screenMat*modelMat;
 
 	glUniformMatrix4fv(mat->shader->UniformLocation("ve_matrix_model"), 1, false, glm::value_ptr(modelMat));
-	glUniformMatrix4fv(mat->shader->UniformLocation("ve_matrix_projection"), 1, false, glm::value_ptr(screenMat));
+	glUniformMatrix4fv(mat->shader->UniformLocation("ve_matrix_projection"), 1, false, glm::value_ptr(_screenMat));
 	glUniformMatrix4fv(mat->shader->UniformLocation("ve_matrix_mvp"), 1, false, glm::value_ptr(mvpmat));
 
 	BindEngineUniforms(mat->shader);
 
 	glUniform4f(mat->shader->UniformLocation("ve_tintColor"), tintColor.x, tintColor.y, tintColor.z, tintColor.w);
 
-	glDrawElements(GL_TRIANGLES, mesh->elementAmount, GL_UNSIGNED_INT, 0);
+	glDrawElements(GL_TRIANGLES, mesh->elementAmount(), GL_UNSIGNED_INT, 0);
 }
 
 void RenderingGL::DrawMesh(Transform* transform, Mesh* mesh, Material* mat, Camera* camera)
@@ -297,13 +297,8 @@ void RenderingGL::DrawMesh(Transform* transform, Mesh* mesh, Material* mat, Came
 		_debug->VE_LOG("Attempting to draw null mesh.", LogItem::Type::Warning);
 		return;
 	}
-	else if(!mesh->valid())
-	{
-		_debug->VE_LOG("Attempting to draw invalid mesh: " + mesh->name, LogItem::Type::Warning);
-		return;
-	}
 
-	Camera* cCam = (camera == nullptr ? &cameras[0] : camera);
+	Camera* cCam = (camera == nullptr ? &(cameras[0]) : camera);
 
 	_graphics->BindMesh(*mesh);
 	_graphics->ApplyMaterial(*mat);
@@ -319,7 +314,7 @@ void RenderingGL::DrawMesh(Transform* transform, Mesh* mesh, Material* mat, Came
 
 	glUniform1f(mat->shader->UniformLocation("ve_depth"), transform->depth);
 
-	glDrawElements(GL_TRIANGLES, mesh->elementAmount, GL_UNSIGNED_INT, 0);
+	glDrawElements(GL_TRIANGLES, mesh->elementAmount(), GL_UNSIGNED_INT, 0);
 }
 
 //TODO: Refactor, use instancing
@@ -328,7 +323,12 @@ void RenderingGL::DrawScreenText(glm::vec4 rect, GLuint size, std::string text, 
 	if(text.size() == 0)
 		return;
 
-	float scale = (float)size / (float)TEXT_SIZE;
+	if(font == nullptr)
+	{
+		font = _resourceManager->GetFont(VE_FONT_DEFAULT);
+	}
+
+	float scale = (float)size / (float)font->textSize;
 
 	//Get the specified font. If it's null, try to get the default font.
 	Font* currentFont = (font == nullptr ? _resourceManager->GetFont(VE_FONT_DEFAULT) : font);
@@ -360,7 +360,7 @@ void RenderingGL::DrawScreenText(glm::vec4 rect, GLuint size, std::string text, 
 			}
 
 			//Otherwise, get the font character.
-			FontCharacter* fc = currentFont->Character(*ch);
+			const FontCharacter* fc = currentFont->GetCharacter(*ch);
 			if(*ch != '\n'&&fc == nullptr)
 			{
 				++ch;
@@ -372,10 +372,10 @@ void RenderingGL::DrawScreenText(glm::vec4 rect, GLuint size, std::string text, 
 				//And then store how big the line is vs how big the rect is as how much to indent the line. If the text is center-aligned, only indent by half.
 				++currentLine;
 				lineIndents.push_back(((rect.x + rect.z) - (cursor.x + fc->size.x *scale))*((alignment == TextAlignment::Center) ? 0.5f : 1.0f));
-				if(cursor.y + glm::round(currentFont->height*2.4) > rect.y + rect.w)
+				if(cursor.y + glm::round(currentFont->height()*2.4) > rect.y + rect.w)
 					break;
 				//Move the cursor vertically and reset it horizontally.
-				cursor.y += (int)glm::round(currentFont->height*1.4);
+				cursor.y += (int)glm::round(currentFont->height()*1.4);
 				cursor.x = (int)glm::round(rect.x);
 			}
 			else
@@ -404,7 +404,7 @@ void RenderingGL::DrawScreenText(glm::vec4 rect, GLuint size, std::string text, 
 			++ch;
 			continue;
 		}
-		FontCharacter* fc = currentFont->Character(*ch);
+		const FontCharacter* fc = currentFont->GetCharacter(*ch);
 		if(*ch != '\n'&&fc == nullptr)
 		{
 			++ch;
@@ -415,9 +415,9 @@ void RenderingGL::DrawScreenText(glm::vec4 rect, GLuint size, std::string text, 
 		{
 			++currentLine;
 			//Except now we just return if the text would go below the rect bottom.
-			if(cursor.y + glm::round(currentFont->height*2.4) > rect.y + rect.w)
+			if(cursor.y + glm::round(currentFont->height()*2.4) > rect.y + rect.w)
 				return;
-			cursor.y += (int)glm::round(currentFont->height*1.4);
+			cursor.y += (int)glm::round(currentFont->height()*1.4);
 			cursor.x = (int)glm::round(rect.x);
 
 			if(alignment != TextAlignment::Left)
@@ -425,13 +425,46 @@ void RenderingGL::DrawScreenText(glm::vec4 rect, GLuint size, std::string text, 
 		}
 		else
 		{
-			glm::vec4 cr = glm::vec4(cursor.x + fc->bearing.x*scale, cursor.y + (currentFont->topBearing - fc->bearing.y)*scale, fc->size.x*scale, fc->size.y*scale);
-			DrawTextCharacter(cr, fc->textureParams, currentFont->atlases.at(fc->atlasIndex));
+			glm::vec4 cr = glm::vec4(cursor.x + fc->bearing.x*scale, cursor.y + (currentFont->topBearing() - fc->bearing.y)*scale, fc->size.x*scale, fc->size.y*scale);
+			DrawTextCharacter(cr, fc->textureParams, currentFont->GetAtlas(fc->atlasIndex));
 			cursor.x += (int)glm::round((fc->advance)*scale);
 			++ch;
 		}
 	}
 }
+
+void RenderingGL::Init()
+{
+	_graphics = _serviceManager->Graphics();
+	_debug = _serviceManager->Debug();
+	_resourceManager = _serviceManager->ResourceManager();
+	_screen = _serviceManager->Screen();
+	_time = _serviceManager->Time();
+
+	//Generate the main buffer and the auxiliary buffers.
+	_mainBuffer = _graphics->CreateFrameBuffer(_screen->size, 3, true, GL_RGBA, glm::vec4(0, 0, 0, 1));
+	_auxBuffers.reserve(VE_AUX_BUFFER_AMOUNT);
+	for(unsigned int i = 0; i < VE_AUX_BUFFER_AMOUNT; ++i)
+	{
+		_auxBuffers.push_back(_graphics->CreateFrameBuffer(_screen->size, 3, false, GL_RGBA16F));
+	}
+
+	glDepthFunc(GL_LEQUAL);
+
+	//The ortho mat and the screen mat might be confusing. It's less that they set a rendering resolution and more that they map the -1 to 1 coordinates to what is specified.
+	//Why do we need two different ones? Screen mat maps the screen pixels from the top-left corner(0,0) to the bottom-right(1920,1080) and it's used with UI elements.
+	//The ortho mat is used for rendering objects into the world and essentially controlling what the camera is seeing. Which is why it's modifiable with the world scale, and also has its center at (0,0).
+	_orthoMat = glm::ortho(-960.0*VE_WORLD_SCALE, 960.0*VE_WORLD_SCALE, 0.0, 1080.0*VE_WORLD_SCALE, 0.0, 1.0);
+	_screenMat = glm::ortho(0.0, 1920.0, 1080.0, 0.0, 0.0, 1.0);
+	cameras.push_back(Camera(glm::vec2(0, 0), &_orthoMat));
+	cameras.back().zoomLevel = 1.25;
+
+	//Register a callback for the screen resizing
+	_screen->ScreenUpdated += Screen::ScreenUpdateEventHandler::func_t([this]() { OnScreenResize(); });
+}
+
+void RenderingGL::Update() {}
+
 void RenderingGL::InitTextDrawing()
 {
 	//Initialize states for text drawing to minimize unnecessary state changes.
@@ -441,7 +474,7 @@ void RenderingGL::InitTextDrawing()
 	_graphics->BindMesh(*cMesh);
 	_graphics->BindShader(*cShad);
 
-	glUniformMatrix4fv(cShad->UniformLocation("ve_matrix_projection"), 1, false, glm::value_ptr(screenMat));
+	glUniformMatrix4fv(cShad->UniformLocation("ve_matrix_projection"), 1, false, glm::value_ptr(_screenMat));
 
 	_graphics->ApplyMaterial(*_resourceManager->GetMaterial("Materials/Base/Screen.vmat"));
 }
@@ -460,47 +493,24 @@ void RenderingGL::DrawTextCharacter(glm::vec4 rect, glm::vec4 params, Texture* t
 	glm::mat4 modelMat = glm::translate(glm::mat4(), glm::vec3(rect.x, rect.y + rect.w, 0));
 	modelMat = glm::scale(modelMat, glm::vec3(rect.z, -rect.w, 1));
 
-	glm::mat4 mvpmat = screenMat*modelMat;
+	glm::mat4 mvpmat = _screenMat*modelMat;
 
 	glUniformMatrix4fv(cShad->UniformLocation("ve_matrix_model"), 1, false, glm::value_ptr(modelMat));
 	glUniformMatrix4fv(cShad->UniformLocation("ve_matrix_mvp"), 1, false, glm::value_ptr(mvpmat));
-	glDrawElements(GL_TRIANGLES, cMesh->elementAmount, GL_UNSIGNED_INT, 0);
+	glDrawElements(GL_TRIANGLES, cMesh->elementAmount(), GL_UNSIGNED_INT, 0);
 }
 
 RenderingGL::RenderingGL(ServiceManager* serviceManager) : BaseService(serviceManager)
 {
-	_graphics = serviceManager->Graphics();
-	_debug = serviceManager->Debug();
-	_resourceManager = serviceManager->ResourceManager();
 
-	//Generate the main buffer and the auxiliary buffers.
-	mainBuffer = new FrameBuffer(Screen::size, 3, true, GL_RGBA, glm::vec4(0, 0, 0, 1));
-	auxBuffers.reserve(VE_AUX_BUFFER_AMOUNT);
-	for(unsigned int i = 0; i < VE_AUX_BUFFER_AMOUNT; ++i)
-	{
-		auxBuffers.push_back(new FrameBuffer(Screen::size, 3, false, GL_RGBA16F));
-	}
-
-	glDepthFunc(GL_LEQUAL);
-
-	//The ortho mat and the screen mat might be confusing. It's less that they set a rendering resolution and more that they map the -1 to 1 coordinates to what is specified.
-	//Why do we need two different ones? Screen mat maps the screen pixels from the top-left corner(0,0) to the bottom-right(1920,1080) and it's used with UI elements.
-	//The ortho mat is used for rendering objects into the world and essentially controlling what the camera is seeing. Which is why it's modifiable with the world scale, and also has its center be (0,0).
-	orthoMat = glm::ortho(-960.0*VE_WORLD_SCALE, 960.0*VE_WORLD_SCALE, 0.0, 1080.0*VE_WORLD_SCALE, 0.0, 1.0);
-	screenMat = glm::ortho(0.0, 1920.0, 1080.0, 0.0, 0.0, 1.0);
-	cameras.push_back(Camera(glm::vec2(0, 0), &orthoMat));
-	cameras.back().zoomLevel = 1.25;
-
-	//Register a callback for the screen resizing
-	Screen::screenUpdateCallbacks.push_back(&OnScreenResize);
 }
 
 RenderingGL::~RenderingGL()
 {
-	delete mainBuffer;
+	_graphics->DestroyFrameBuffer(*_mainBuffer);
 
 	for(unsigned int i = 0; i < VE_AUX_BUFFER_AMOUNT; ++i)
 	{
-		delete auxBuffers[i];
+		_graphics->DestroyFrameBuffer(*_auxBuffers[i]);
 	}
 }

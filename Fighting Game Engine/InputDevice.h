@@ -10,8 +10,12 @@
 #include "GLIncludes.hpp"
 #include "Delegate.h"
 
+class FilesystemManager;
+class ServiceManager;
 class InputMotion;
 class InputMotionComponent;
+class Time;
+class Screen;
 typedef CircularBuffer<InputFrame> InputBuffer;
 
 enum class InputDeviceId
@@ -27,6 +31,12 @@ class InputDevice
 {
 	friend class GamePlayer;
 
+private:
+	Time* _time;
+	Screen* _screen;
+	FilesystemManager* _filesystem;
+
+private:
 	int _deviceID;
 	std::string _deviceName;
 	std::string _deviceFilename;
@@ -40,7 +50,7 @@ class InputDevice
 
 	std::shared_ptr<InputBuffer> _inputBuffer;
 
-	int InputMotionDistance(int currentIndex, InputMotionComponent motionComp, int maxBuffer = 1199, bool firstInput = false);
+	int InputMotionDistance(int currentIndex, InputMotionComponent motionComp, int maxBuffer, bool firstInput = false);
 
 public:
 	const int deviceID() const;
@@ -57,6 +67,6 @@ public:
 	bool EvaluateMotion(const InputMotion& motion);
 	bool InputMotionFrameCheck(const InputMotionComponent& motionComp, int index);
 
-	InputDevice(int deviceID);
+	InputDevice(int deviceID, ServiceManager* serviceManager);
 	~InputDevice();
 };

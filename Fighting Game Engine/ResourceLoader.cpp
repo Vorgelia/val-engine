@@ -1,5 +1,14 @@
 #include "JSON.h"
+
+#include <windows.h>
 #include <SOIL\src\SOIL.h>
+#include <boost\filesystem.hpp>
+#include <boost\lexical_cast.hpp>
+#include <boost\algorithm\algorithm.hpp>
+#include <boost\assign\list_of.hpp>
+#include <boost\algorithm\string.hpp>
+
+#include "ServiceManager.h"
 #include "ResourceLoader.h"
 #include "Resource.h"
 #include "CachedMesh.h"
@@ -9,7 +18,7 @@
 #include "PostEffect.h"
 #include "Object.h"
 #include "Transform.h"
-#include "CommonUtilIncludes.hpp"
+#include "GLIncludes.hpp"
 #include "InputManager.h"
 #include "InputDevice.h"
 #include "InputEvent.h"
@@ -18,7 +27,7 @@
 
 //Probably my least favourite part of making this engine is importing files.
 //The code always looks like a mess but at least i don't have to touch it after making it.
-std::string ResourceLoader::LoadTextResource(int id, const std::string& type)
+std::string FilesystemManager::LoadTextResource(int id, const std::string& type)
 {
 	//Copypasta text resource loading. Could probably be optimized.
 	HRSRC hResource = FindResource(NULL, MAKEINTRESOURCE(id), (LPCSTR)type.c_str());
@@ -41,7 +50,7 @@ std::string ResourceLoader::LoadTextResource(int id, const std::string& type)
 	return std::string(sText).substr(0, size);
 }
 
-std::vector<unsigned char> ResourceLoader::LoadBinaryResource(int id, const std::string& type)
+std::vector<unsigned char> FilesystemManager::LoadBinaryResource(int id, const std::string& type)
 {
 	//Doesn't work, completely unused.
 	HRSRC hResource = FindResource(NULL, MAKEINTRESOURCE(id), (LPCSTR)type.c_str());
@@ -63,7 +72,7 @@ std::vector<unsigned char> ResourceLoader::LoadBinaryResource(int id, const std:
 	return std::vector<unsigned char>((unsigned char*)sData, (unsigned char*)sData[size]);
 }
 
-std::string ResourceLoader::ReturnFile(const FS::path& dir)
+std::string FilesystemManager::ReturnFile(const FS::path& dir)
 {
 	//Abstraction for turning a file into a string.
 	if(!FS::exists(dir))
@@ -80,8 +89,8 @@ std::string ResourceLoader::ReturnFile(const FS::path& dir)
 
 	return content;
 }
-//Bit of a weird function to put in ResourceLoader, buuuut considering this is where a ton of file management happens, it felt the most natural.
-bool ResourceLoader::SaveFile(const FS::path& dir, std::string& content, int flags)
+//Bit of a weird function to put in FilesystemManager, buuuut considering this is where a ton of file management happens, it felt the most natural.
+bool FilesystemManager::SaveFile(const FS::path& dir, std::string& content, int flags)
 {
 	boost::algorithm::erase_all(content, "\r");
 
@@ -96,8 +105,18 @@ bool ResourceLoader::SaveFile(const FS::path& dir, std::string& content, int fla
 	return true;
 }
 
+void FilesystemManager::Init()
+{
+	_debug = _serviceManager->Debug();
+	_resource = _serviceManager->ResourceManager();
+}
+
+void FilesystemManager::Update()
+{
+}
+
 //Abstraction for turning a file into an array of its lines. Heavily used in parsing.
-std::vector<std::string> ResourceLoader::ReturnFileLines(const FS::path& dir, bool removeWhitespace = false)
+std::vector<std::string> FilesystemManager::ReturnFileLines(const FS::path& dir, bool removeWhitespace = false)
 {
 	if(!FS::exists(dir))
 		throw std::runtime_error("Unable to find resource at " + dir.string());
@@ -129,7 +148,7 @@ std::vector<std::string> ResourceLoader::ReturnFileLines(const FS::path& dir, bo
 	return lines;
 }
 
-void ResourceLoader::ApplyFunctionToFiles(const FS::path& dir, std::function<void(const FS::path&)> func)
+void FilesystemManager::ApplyFunctionToFiles(const FS::path& dir, std::function<void(const FS::path&)> func)
 {
 	if(!FS::is_directory(dir))
 	{
@@ -146,7 +165,7 @@ void ResourceLoader::ApplyFunctionToFiles(const FS::path& dir, std::function<voi
 	}
 }
 
-json ResourceLoader::LoadJsonResource(FS::path path)
+json FilesystemManager::LoadJsonResource(FS::path path)
 {
 	std::string& file = ReturnFile(path);
 
@@ -157,12 +176,12 @@ json ResourceLoader::LoadJsonResource(FS::path path)
 	}
 	catch(std::invalid_argument err)
 	{
-		VE_LOG("Error when parsing JSON file " + path.string() + "\n\t" + err.what(), LogItem::Type::Error);
+		_debug->VE_LOG("Error when parsing JSON file " + path.string() + "\n\t" + err.what(), LogItem::Type::Error);
 		j.clear();
 	}
 	catch(...)
 	{
-		VE_LOG("Unhandled exception when loading JSON file " + path.string(), LogItem::Type::Error);
+		_debug->VE_LOG("Unhandled exception when loading JSON file " + path.string(), LogItem::Type::Error);
 		j.clear();
 	}
 
@@ -173,7 +192,7 @@ json ResourceLoader::LoadJsonResource(FS::path path)
 //For some reason i'm using pointers to components instead of pointers to objects. Don't ask me why, but i stuck with it.
 //Most of these parsers work in similar ways.
 //Lines beginning with // are comments, #DIRECTIVES change where the data goes, the data itself is split on = and ,
-void ResourceLoader::LoadControlSettings(const FS::path& path, std::unordered_map<InputDirection, InputEvent>& dir, std::unordered_map<InputButton, InputEvent>& bt)
+void FilesystemManager::LoadControlSettings(const FS::path& path, std::unordered_map<InputDirection, InputEvent>& dir, std::unordered_map<InputButton, InputEvent>& bt)
 {
 	std::vector<std::string> lines;
 
@@ -222,27 +241,28 @@ void ResourceLoader::LoadControlSettings(const FS::path& path, std::unordered_ma
 	}
 }
 
-void ResourceLoader::LoadObjects(const FS::path& path, std::vector<std::unique_ptr<Object>>& objects)
+void FilesystemManager::LoadObjects(const FS::path& path, std::vector<std::unique_ptr<Object>>& objects)
 {
 	json& j = LoadJsonResource(path);
 
 	for(auto& iter : j)
 	{
-		objects.emplace_back(std::make_unique<Object>(iter));
+		objects.emplace_back(std::make_unique<Object>(iter, _serviceManager));
 	}
 }
 
-std::unique_ptr<Object> ResourceLoader::LoadObject(const FS::path& path)
+std::unique_ptr<Object> FilesystemManager::LoadObject(const FS::path& path)
 {
 	json& j = LoadJsonResource(path);
-	return std::make_unique<Object>(j);
+	return std::make_unique<Object>(j, _serviceManager);
 }
 
-void ResourceLoader::LoadPostEffect(const FS::path& path, std::vector<std::pair<int, Material*>>& elements, bool& cbBefore, bool& cbAfter, int& order)
+std::unique_ptr<PostEffect> FilesystemManager::LoadPostEffect(const FS::path& path)
 {
 	std::vector<std::string> lines = ReturnFileLines(path, true);
 
-	elements.clear();
+	std::unique_ptr<PostEffect> postEffect = std::make_unique<PostEffect>();
+
 	int readState = 0;//0 Properties, 1 Rendering Stages
 	for(unsigned int i = 0; i < lines.size(); ++i)
 	{
@@ -265,34 +285,35 @@ void ResourceLoader::LoadPostEffect(const FS::path& path, std::vector<std::pair<
 				if(spl.size() < 2)
 					continue;
 				if(spl[0] == "cleanBufferBefore")
-					cbBefore = (spl[1] == "true");
+					postEffect->clearBuffersBefore = (spl[1] == "true");
 				else if(spl[0] == "cleanBufferAfter")
-					cbAfter = (spl[1] == "true");
+					postEffect->clearBuffersAfter = (spl[1] == "true");
 				else if(spl[0] == "order")
-					cbAfter = (spl[1] == "true");
+					postEffect->order = boost::lexical_cast<int>(spl[1]);
 				break;
 			case 1:
 				boost::split(spl, lines[i], boost::is_any_of(":"), boost::token_compress_on);
 				if(spl.size() < 2)
 					continue;
 				if(spl[1] == "null")
-					elements.push_back(std::pair<int, Material*>(boost::lexical_cast<int>(spl[0]), nullptr));
+					postEffect->elementChain.push_back(std::pair<int, Material*>(boost::lexical_cast<int>(spl[0]), nullptr));
 				else
-					elements.push_back(std::pair<int, Material*>(boost::lexical_cast<int>(spl[0]), Resource::GetMaterial(spl[1])));
+					postEffect->elementChain.push_back(std::pair<int, Material*>(boost::lexical_cast<int>(spl[0]), _resource->GetMaterial(spl[1])));
 				break;
 			}
 		}
 	}
+
+	return postEffect;
 }
 
-void ResourceLoader::LoadMaterial(const FS::path& path, Shader*& shader, unsigned char& properties, std::unordered_map<std::string, GLfloat>& uniformFloats, std::unordered_map<std::string, MaterialTexture>& uniformTextures, std::unordered_map<std::string, glm::vec4>& uniformVectors)
+std::unique_ptr<Material> FilesystemManager::LoadMaterial(const FS::path& path)
 {
 	std::vector<std::string> lines = ReturnFileLines(path, true);
 
+	std::unique_ptr<Material> mat = std::make_unique<Material>(path.string());
+
 	int readState = 0;//0 Properties, 1 Uniform Floats, 2 Uniform Vectors, 3 Uniform Textures
-	uniformFloats.clear();
-	uniformTextures.clear();
-	uniformVectors.clear();
 
 	std::string lastTexture;
 
@@ -322,16 +343,16 @@ void ResourceLoader::LoadMaterial(const FS::path& path, Shader*& shader, unsigne
 			{
 			case 0:
 				if(spl[0] == "properties")
-					properties = boost::lexical_cast<GLuint>(spl[1]);
+					mat->properties = boost::lexical_cast<GLuint>(spl[1]);
 				else if(spl[0] == "shader")
-					shader = Resource::GetShader(spl[1]);
+					mat->shader = _resource->GetShader(spl[1]);
 				break;
 			case 1:
-				uniformFloats.insert(std::pair<std::string, GLfloat>(spl[0], boost::lexical_cast<GLfloat>(spl[1])));
+				mat->uniformFloats.insert(std::pair<std::string, GLfloat>(spl[0], boost::lexical_cast<GLfloat>(spl[1])));
 				break;
 			case 2:
 				boost::split(spl2, spl[1], boost::is_any_of(","), boost::token_compress_on);
-				uniformVectors.insert(std::pair<std::string, glm::vec4>(spl[0],
+				mat->uniformVectors.insert(std::pair<std::string, glm::vec4>(spl[0],
 					glm::vec4(
 						boost::lexical_cast<GLfloat>(spl2[0]),
 						boost::lexical_cast<GLfloat>(spl2[1]),
@@ -346,7 +367,7 @@ void ResourceLoader::LoadMaterial(const FS::path& path, Shader*& shader, unsigne
 					boost::split(spl2, spl[1], boost::is_any_of(","), boost::token_compress_on);
 					if(spl2.size() < 4)
 						continue;
-					uniformTextures.at(lastTexture).params = glm::vec4(
+					mat->uniformTextures.at(lastTexture).params = glm::vec4(
 						boost::lexical_cast<float>(spl2[0]),
 						boost::lexical_cast<float>(spl2[1]),
 						boost::lexical_cast<float>(spl2[2]),
@@ -355,21 +376,23 @@ void ResourceLoader::LoadMaterial(const FS::path& path, Shader*& shader, unsigne
 				}
 				else
 				{
-					uniformTextures.insert(std::pair<std::string, MaterialTexture>(spl[0], MaterialTexture(Resource::GetTexture(spl[1]))));
+					mat->uniformTextures.insert(std::pair<std::string, MaterialTexture>(spl[0], MaterialTexture(_resource->GetTexture(spl[1]))));
 					lastTexture = spl[0];
 				}
 				break;
 			}
 		}
 	}
+
+	return mat;
 }
 
-void ResourceLoader::LoadTexture(const FS::path & path, std::vector<unsigned char>& out_pixels, glm::ivec2& out_size)
+void FilesystemManager::LoadTextureData(const FS::path& path, std::vector<unsigned char>& out_pixels, glm::ivec2& out_size)
 {
 	out_size.x = out_size.y = 0;
 	out_pixels.clear();
 
-	unsigned char* pixels = SOIL_load_image(path.string().c_str(), &out_size.x, &out_size.y, 0, SOIL_LOAD_AUTO);
+	unsigned char* pixels = SOIL_load_image(path.string().c_str(), &out_size.x, &out_size.y, 0, SOIL_LOAD_RGBA);
 	if(pixels == nullptr)
 	{
 		_debug->VE_LOG("Unable to load texture at path " + path.string(), LogItem::Type::Warning);
@@ -388,13 +411,13 @@ void ResourceLoader::LoadTexture(const FS::path & path, std::vector<unsigned cha
 	SOIL_free_image_data(pixels);
 }
 
-void ResourceLoader::LoadMeshVM(const FS::path& path, std::vector<float>& out_verts, std::vector<GLuint>& out_elements, std::vector<VertexAttribute>& out_vertexFormat)
+std::unique_ptr<CachedMesh> FilesystemManager::LoadMeshVM(const FS::path& path)
 {
 	std::vector<std::string> lines = ReturnFileLines(path, true);
 
+	std::unique_ptr<CachedMesh> mesh = std::make_unique<CachedMesh>(path.string());
+
 	int readState = 0; //0 Attribs, 1 Vertices, 2 Elements
-	out_verts.clear();
-	out_elements.clear();
 
 	//And here is my very loose implementation of a very loosely defined format. I present to you, ValMesh!
 	//Look at Meshes/quad.vm as an example of how it works. It's really simple.
@@ -424,17 +447,23 @@ void ResourceLoader::LoadMeshVM(const FS::path& path, std::vector<float>& out_ve
 				//Indiscriminately add stuff to the arrays based on readState
 			case 0:
 				for(unsigned int j = 0; j < split.size(); ++j)//Cheating yet again. Not splitting VertexAttributes by - and just taking the first and third characters.
-					out_vertexFormat.push_back(VertexAttribute((VertexAttributeLocation)(boost::lexical_cast<int>(split[j][0])), boost::lexical_cast<int>(split[j][2])));
+					mesh->vertexFormat.push_back(VertexAttribute((VertexAttributeLocation)(boost::lexical_cast<int>(split[j][0])), boost::lexical_cast<int>(split[j][2])));
 				break;//I bet your favourite format doesn't omit error checking
 			case 1:
 				for(unsigned int j = 0; j < split.size(); ++j)
-					out_verts.push_back(boost::lexical_cast<float>(split[j]));
+					mesh->verts.push_back(boost::lexical_cast<float>(split[j]));
 				break;
 			case 2:
 				for(unsigned int j = 0; j < split.size(); ++j)
-					out_elements.push_back(boost::lexical_cast<GLuint>(split[j]));
+					mesh->elements.push_back(boost::lexical_cast<GLuint>(split[j]));
 				break;
 			}
 		}
 	}
+
+	return mesh;
+}
+
+FilesystemManager::FilesystemManager(ServiceManager* serviceManager) : BaseService(serviceManager)
+{
 }

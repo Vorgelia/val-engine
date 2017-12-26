@@ -12,10 +12,14 @@ class Script;
 class BaseScriptVariable;
 class GameCharacter;
 class Debug;
+class Time;
+class FilesystemManager;
 
 class ScriptManager : public BaseService
 {
 	Debug* _debug;
+	Time* _time;
+	FilesystemManager* _filesystem;
 
 private:
 	std::unordered_map<std::string, std::shared_ptr<BaseScriptVariable>> _globalVariables;
@@ -25,7 +29,8 @@ private:
 	void HandleCharacterStateVariables();
 
 public:
-	void Update();
+	void Init() override;
+	void Update() override;
 
 	Script* GetScript(const FS::path& path);
 	Script* AddScript(const FS::path& path);

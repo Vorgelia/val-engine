@@ -20,10 +20,6 @@ std::vector<VertexAttribute> VertexAttribute::defaultMesh()
 bool CachedMesh::RegisterOwner(Mesh* owner)
 {
 	auto& result = owners.insert(owner);
-	if(result.second)
-	{
-		owner->SetMeshData(this);
-	}
 	return result.second;
 }
 
@@ -32,7 +28,6 @@ bool CachedMesh::UnregisterOwner(Mesh* owner)
 	auto& iter = owners.find(owner);
 	if(iter != owners.end())
 	{
-		owner->SetMeshData(nullptr);
 		owners.erase(iter);
 		return true;
 	}
@@ -47,20 +42,9 @@ CachedMesh::CachedMesh(const std::string& name, std::vector<float>& verts, std::
 	this->vertexFormat = vertexFormat;
 }
 
-CachedMesh::CachedMesh(const FS::path& path)
-{
-	this->name = path.string();
-	if(path.extension().string() == ".vm")
-	{
-		ResourceLoader::LoadMeshVM(path, verts, elements, vertexFormat);
-	}
-}
+CachedMesh::CachedMesh(const std::string & name) : name(name) {}
 
 CachedMesh::~CachedMesh()
 {
-	for(auto& i : owners)
-	{
-		owners.erase(i);
-		i->SetMeshData(nullptr);
-	}
+
 }

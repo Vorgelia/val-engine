@@ -11,9 +11,22 @@ namespace FS = boost::filesystem;
 
 class Object;
 class Behaviour;
+class ServiceManager;
+class FilesystemManager;
+class RenderingGL;
+class ResourceManager;
+class Debug;
 
 class GameScene
 {
+protected:
+	ServiceManager* _serviceManager;
+	
+	Debug* _debug;
+	RenderingGL* _rendering;
+	ResourceManager* _resource;
+	FilesystemManager* _filesystem;
+
 protected:
 	std::string _name;
 
@@ -56,6 +69,6 @@ public:
 	virtual Object* AddObject(const std::string& prefabPath);
 	virtual Object* FindObject(const std::string& name);
 
-	GameScene(const FS::path& path);
+	GameScene(const FS::path& path, ServiceManager* serviceManager);
 	virtual ~GameScene();
 };

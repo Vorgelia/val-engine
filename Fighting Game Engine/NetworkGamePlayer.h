@@ -9,6 +9,6 @@ class NetworkGamePlayer :
 
 public:
 
-	NetworkGamePlayer(GamePlayerType type);
+	NetworkGamePlayer(GamePlayerType type, ServiceManager* serviceManager);
 	virtual ~NetworkGamePlayer();
 };

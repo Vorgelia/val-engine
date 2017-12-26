@@ -28,10 +28,10 @@ void ResourceManager::GenerateDefaultTextures()
 	baseTextures.emplace(std::make_pair("base_texture", _graphics->CreateTexture("base_texture", pixels, glm::ivec2(2, 2), GL_RGBA, GL_NEAREST, GL_REPEAT)));
 
 	pixels = std::vector<unsigned char>{ 0, 0, 0, 255 };
-	baseTextures.emplace(std::make_pair("black", std::make_unique<Texture>("black", pixels, glm::ivec2(1, 1), GL_RGBA, GL_NEAREST, GL_REPEAT)));
+	baseTextures.emplace(std::make_pair("black", _graphics->CreateTexture("black", pixels, glm::ivec2(1, 1), GL_RGBA, GL_NEAREST, GL_REPEAT)));
 
 	pixels = std::vector<unsigned char>{ 255, 255, 255, 255 };
-	baseTextures.emplace(std::make_pair("white", std::make_unique<Texture>("white", pixels, glm::ivec2(1, 1), GL_RGBA, GL_NEAREST, GL_REPEAT)));
+	baseTextures.emplace(std::make_pair("white", _graphics->CreateTexture("white", pixels, glm::ivec2(1, 1), GL_RGBA, GL_NEAREST, GL_REPEAT)));
 }
 
 void ResourceManager::LoadDefaultResources()
@@ -40,15 +40,13 @@ void ResourceManager::LoadDefaultResources()
 	GetShader("Shaders/Base/2D");
 	GetShader("Shaders/Base/Screen");
 	//Base meshes
-	GetMesh("Meshes/Base/quad.vm", true);
-	GetMesh("Meshes/Base/screenQuad.vm", true);
+	GetMesh("Meshes/Base/quad.vm");
+	GetMesh("Meshes/Base/screenQuad.vm");
 	//Base materials
 	GetMaterial("Materials/Base/Screen.vmat");
 	//Fonts
 	GetFont("Fonts/Amble.ttf");
 }
-
-void ResourceManager::Update() {}
 
 Font* ResourceManager::GetFont(FS::path path)
 {
@@ -68,7 +66,7 @@ Font* ResourceManager::GetFont(FS::path path)
 	}
 
 	return fonts.emplace(
-		std::make_pair(pathString, std::make_unique<Font>(path))
+		std::make_pair(pathString, _graphics->CreateFont(path.string()))
 	).first->second.get();
 }
 
@@ -107,7 +105,7 @@ Texture* ResourceManager::GetTexture(FS::path path)
 
 	std::vector<unsigned char> pixels;
 	glm::ivec2 size;
-	ResourceLoader::LoadTexture(path, pixels, size);
+	_filesystem->LoadTextureData(path, pixels, size);
 
 	return container->emplace(
 		std::make_pair(
@@ -134,7 +132,7 @@ PostEffect* ResourceManager::GetPostEffect(FS::path path)
 	}
 
 	return postEffects.emplace(std::make_pair(
-		pathString, std::make_unique<PostEffect>(pathString)
+		pathString, _filesystem->LoadPostEffect(pathString)
 	)).first->second.get();
 }
 
@@ -155,9 +153,9 @@ Shader* ResourceManager::GetShader(std::string name)
 
 	return shaders.emplace(std::pair<std::string, std::unique_ptr<Shader>>(
 		name,
-		std::make_unique<Shader>(name, std::vector<ShaderAttachment>{
-		ShaderAttachment(ResourceLoader::ReturnFile(name + ".vert"), GL_VERTEX_SHADER),
-			ShaderAttachment(ResourceLoader::ReturnFile(name + ".frag"), GL_FRAGMENT_SHADER)
+		_graphics->CreateShader(name, std::vector<ShaderAttachment>{
+		ShaderAttachment(_filesystem->ReturnFile(name + ".vert"), GL_VERTEX_SHADER),
+			ShaderAttachment(_filesystem->ReturnFile(name + ".frag"), GL_FRAGMENT_SHADER)
 	}))).first->second.get();
 }
 
@@ -193,7 +191,7 @@ Material* ResourceManager::GetMaterial(FS::path path)
 
 	return container->emplace(std::pair<std::string, std::unique_ptr<Material>>(
 		pathString,
-		std::make_unique<Material>(pathString))
+		_filesystem->LoadMaterial(pathString))
 	).first->second.get();
 }
 
@@ -217,7 +215,7 @@ Material* ResourceManager::CopyMaterial(Material* mat)
 	return iter->second.get();
 }
 
-Mesh* ResourceManager::GetMesh(FS::path path, bool editable)
+Mesh* ResourceManager::GetMesh(FS::path path)
 {
 	std::string pathString = path.string();
 
@@ -246,41 +244,23 @@ Mesh* ResourceManager::GetMesh(FS::path path, bool editable)
 	{
 		cachedMeshIter = cachedMeshes.emplace(
 			std::pair<std::string, std::unique_ptr<CachedMesh>>
-			(pathString, std::make_unique<CachedMesh>(path)))
+			(pathString, _filesystem->LoadMeshVM(path)))
 			.first;
 	}
 
 	iter = meshes.emplace(
 		std::pair<std::string, std::unique_ptr<Mesh>>
-		(pathString, std::make_unique<Mesh>(pathString, cachedMeshIter->second.get(), editable)))
+		(pathString, _graphics->CreateMesh(pathString, cachedMeshIter->second.get())))
 		.first;
-
-	if(!iter->second->valid())
-	{
-		_debug->VE_LOG("Imported invalid Mesh: " + pathString);
-	}
 
 	return iter->second.get();
 }
 
-void ResourceManager::Unload()
+void ResourceManager::Init()
 {
-	meshes.clear();
-	cachedMeshes.clear();
-
-	for(auto& tex : textures)
-	{
-		_graphics->DestroyTexture(*(tex.second.get()));
-	}
-	textures.clear();
-
-	materials.clear();
-}
-
-ResourceManager::ResourceManager(ServiceManager* serviceManager) : BaseService(serviceManager)
-{
-	_debug = serviceManager->Debug();
+	_debug = _serviceManager->Debug();
 	_graphics = _serviceManager->Graphics();
+	_filesystem = _serviceManager->Filesystem();
 
 #ifdef VE_CREATE_DEFAULT_RESOURCES
 	if(!FS::exists("Meshes/") || !FS::exists("Shaders/") || !FS::exists("Settings/") || !FS::exists("States/"))
@@ -294,13 +274,48 @@ ResourceManager::ResourceManager(ServiceManager* serviceManager) : BaseService(s
 	LoadDefaultResources();
 }
 
+void ResourceManager::Update() {}
+
+void ResourceManager::Unload()
+{
+	for(auto& iter : meshes)
+	{
+		_graphics->DestroyMesh(*(iter.second.get()));
+	}
+	meshes.clear();
+
+	cachedMeshes.clear();
+
+	for(auto& iter : textures)
+	{
+		_graphics->DestroyTexture(*(iter.second.get()));
+	}
+	textures.clear();
+
+	materials.clear();
+}
+
+ResourceManager::ResourceManager(ServiceManager* serviceManager) : BaseService(serviceManager)
+{
+
+}
+
 ResourceManager::~ResourceManager()
 {
+	for(auto& iter : baseMeshes)
+	{
+		_graphics->DestroyMesh(*(iter.second.get()));
+	}
 	baseMeshes.clear();
 
 	Unload();
 
 	baseMaterials.clear();
+
+	for(auto& iter : shaders)
+	{
+		_graphics->DestroyShader(*(iter.second.get()));
+	}
 	shaders.clear();
 
 	for(auto& tex : baseTextures)
@@ -309,6 +324,10 @@ ResourceManager::~ResourceManager()
 	}
 	baseTextures.clear();
 
+	for(auto& iter : fonts)
+	{
+		_graphics->DestroyFont(*(iter.second.get()));
+	}
 	fonts.clear();
 	postEffects.clear();
 }

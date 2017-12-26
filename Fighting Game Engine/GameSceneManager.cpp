@@ -1,8 +1,10 @@
 #include "GameSceneManager.h"
-#include "FGIncludes.hpp"
 #include "Resource.h"
+#include "InputManager.h"
+#include "GLStateTrack.h"
 #include "Rendering.h"
 #include "GameScene.h"
+#include "DebugLog.h"
 #include "ServiceManager.h"
 #include "Time.h"
 
@@ -69,7 +71,7 @@ bool GameSceneManager::HandleSceneUpdate()
 			gameUpdated = true;
 
 			_time->FrameUpdate();
-			InputManager::FrameUpdate();
+			_input->FrameUpdate();
 
 			VE_SCENE_FUNCTION_CALL(GameUpdate);
 			VE_SCENE_FUNCTION_CALL(LateGameUpdate);
@@ -120,6 +122,15 @@ void GameSceneManager::Update()
 	}
 }
 
+void GameSceneManager::Init()
+{
+	_debug = _serviceManager->Debug();
+	_rendering = _serviceManager->Rendering();
+	_resourceManager = _serviceManager->ResourceManager();
+	_time = _serviceManager->Time();
+	_input = _serviceManager->Input();
+}
+
 void GameSceneManager::ApplyFunctionToCurrentScene(std::function<void(GameScene*)> func, bool requiredInitializedState)
 {
 	if(_isLoading || _currentScene == nullptr || (requiredInitializedState != _currentScene->initialized()))
@@ -131,11 +142,6 @@ void GameSceneManager::ApplyFunctionToCurrentScene(std::function<void(GameScene*
 GameSceneManager::GameSceneManager(ServiceManager* serviceManager) : 
 	BaseService(serviceManager, 100)
 {
-	_debug = serviceManager->Debug();
-	_rendering = serviceManager->Rendering();
-	_resourceManager = serviceManager->ResourceManager();
-	_time = serviceManager->Time();
-
 	_allowServiceUpdate = true;
 
 	//Instantiate all the game scenes
@@ -152,7 +158,7 @@ GameSceneManager::GameSceneManager(ServiceManager* serviceManager) :
 		_scenes.emplace(
 			std::make_pair(
 				dir->path().leaf().string(),
-				std::make_unique<GameScene>(dir->path().string())));
+				std::make_unique<GameScene>(dir->path().string(), _serviceManager)));
 		++dir;
 	}
 

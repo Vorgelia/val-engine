@@ -1,6 +1,8 @@
 #include "NetworkEntity.h"
 #include "DebugLog.h"
 #include "Time.h"
+#include <chrono>
+
 bool NetworkEntity::ConnectTo(std::string ip, int port)
 {
 	in_addr addr;
@@ -94,7 +96,8 @@ bool NetworkEntity::SendDataTo(unsigned int index, NetworkMessage msg)
 		if(msg.type() == NetworkMessageType::PingOut)
 		{
 			_lastPing = ping();
-			_pingOutTime = Time::time;
+			//TODO: Convert to std chrono
+			//_pingOutTime = Time::time;
 		}
 		return rb;
 	}
@@ -130,7 +133,7 @@ void NetworkEntity::HandleExceptions()
 				ConnectionSocket::GetLastSocketError();
 			else
 			{
-				VE_LOG("Socket Exception:" + std::string(cErr, cErr + len), LogItem::Type::Error);
+				//VE_LOG("Socket Exception:" + std::string(cErr, cErr + len), LogItem::Type::Error);
 				Disconnect(i--);
 			}
 		}
@@ -163,7 +166,8 @@ bool NetworkEntity::ProcessQueuedMessageFrom(unsigned int index, NetworkMessage&
 			//This results in a one-way ping with two messages quite nicely, but a two way ping needs four. It's easy to do two-way with three, so that's on my to-do list for the future.
 			return false;
 		case NetworkMessageType::PingIn:
-			_pingInTime = Time::time;
+			//TODO Convert to std::chrono
+			//_pingInTime = Time::time;
 			return false;
 		case NetworkMessageType::PropertySet:
 			return false;

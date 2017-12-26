@@ -2,14 +2,22 @@
 #include "BaseService.h"
 #include "GLIncludes.hpp"
 #include <vector>
+#include <string>
 #include <unordered_map>
+#include <memory>
 #include <GLM\glm.hpp>
+
+#include<ft2build.h>
+#include FT_FREETYPE_H
 
 class Shader;
 class Mesh;
+class CachedMesh;
 class Texture;
 class FrameBuffer;
+class ShaderAttachment;
 class Material;
+class Font;
 
 class Screen;
 class Debug;
@@ -18,28 +26,30 @@ class GraphicsGL : public BaseService
 {
 private:
 	Debug* _debug;
-	Screen* _screen;
 
 private:
 	GLint _maxTextureUnits;
 
-	GLuint activeTexture;
-	GLuint boundShader;
-	GLuint boundVAO;
-	GLuint boundFramebuffer;
+	GLuint _activeTexture;
+	GLuint _boundShader;
+	GLuint _boundVAO;
+	GLuint _boundFramebuffer;
 
-	std::vector<GLuint> boundTextures;
+	std::vector<GLuint> _boundTextures;
 
-	std::unordered_map<GLenum, bool> glFeatures;
+	std::unordered_map<GLenum, bool> _glFeatures;
+
+	FT_Library _freetypeLibrary;
 
 	bool ToggleFeature(GLenum feature, bool enable);
 	bool BindFrameBufferId(GLuint id);
 
-	void InitializeGL();
-	void CleanupGL();
+	GLuint CreateShaderAttachment(const ShaderAttachment& shaderAttachment);
+	GLuint CreateShaderProgram(const std::vector<GLuint> shaders);
 
 public:
-	void Update();
+	void Init() override;
+	void Update() override;
 
 	std::unique_ptr<Texture> CreateTexture(const std::string& name, const std::vector<unsigned char>& pixels, glm::ivec2 dimensions, int format, GLuint filt, GLuint edgeBehaviour);
 	void UpdateTexture(Texture& texture, const std::vector<unsigned char>& pixels);
@@ -49,6 +59,15 @@ public:
 	void UpdateFrameBuffer(FrameBuffer& frameBuffer);
 	void ClearFrameBuffer(FrameBuffer& frameBuffer);
 	void DestroyFrameBuffer(FrameBuffer& frameBuffer);
+
+	std::unique_ptr<Font> CreateFont(std::string name);
+	void DestroyFont(Font& font);
+
+	std::unique_ptr<Shader> CreateShader(const std::string& name, const std::vector<ShaderAttachment>& attachments);
+	void DestroyShader(Shader& shader);
+
+	std::unique_ptr<Mesh> CreateMesh(const std::string& name, CachedMesh* meshData);
+	void DestroyMesh(Mesh& mesh);
 
 	bool BindTextureUnit(GLuint pos);
 	bool BindShader(const Shader& id);
@@ -62,5 +81,5 @@ public:
 	void ApplyMaterialProperties(const Material& material);
 
 	GraphicsGL(ServiceManager* serviceManager);
-	~GraphicsGL() = default;
+	~GraphicsGL();
 };

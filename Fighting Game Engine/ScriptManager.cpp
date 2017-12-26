@@ -13,6 +13,19 @@
 #include "DebugLog.h"
 #include "Time.h"
 
+void ScriptManager::Init()
+{
+	_debug = _serviceManager->Debug();
+	_time = _serviceManager->Time();
+	_filesystem = _serviceManager->Filesystem();
+
+	std::shared_ptr<ScriptCollection> collection = std::make_shared<ScriptCollection>();
+	collection->AddMember("test", std::make_shared<ScriptInt>(5));
+	_globalVariables.emplace(std::make_pair("testCollection", collection));
+	HandleCharacterStateVariables();
+	AddScript("Scripts/Base/example.vscript");
+}
+
 void ScriptManager::Update() {}
 
 Script* ScriptManager::GetScript(const FS::path & path)
@@ -27,11 +40,11 @@ Script* ScriptManager::GetScript(const FS::path & path)
 
 Script* ScriptManager::AddScript(const FS::path& path)
 {
-	std::vector<std::string> lines = ResourceLoader::ReturnFileLines(path, false);
+	std::vector<std::string> lines = _filesystem->ReturnFileLines(path, false);
 	if(lines.size() > 0)
 	{
 		const std::string& scriptName = path.string();
-		Script* script = _scripts.emplace(std::make_unique<Script>(scriptName, lines)).first->get();
+		Script* script = _scripts.emplace(std::make_unique<Script>(scriptName, lines, _serviceManager)).first->get();
 
 		HandleScriptBindings(script);
 		script->Init();
@@ -63,15 +76,15 @@ void ScriptManager::HandleScriptBindings(Script* script)
 		else if(directive == "Time")
 		{
 			script->BindFunction("time_frameCount",
-				[](const Script*, ScriptArgumentCollection&)->std::shared_ptr<BaseScriptVariable>
+				[this](const Script*, ScriptArgumentCollection&)->std::shared_ptr<BaseScriptVariable>
 			{
-				return std::make_shared<ScriptInt>((long)Time::frameCount);
+				return std::make_shared<ScriptInt>((long)_time->frameCount);
 			});
 
 			script->BindFunction("time_frameCountSinceLoad",
-				[](const Script*, ScriptArgumentCollection&)->std::shared_ptr<BaseScriptVariable>
+				[this](const Script*, ScriptArgumentCollection&)->std::shared_ptr<BaseScriptVariable>
 			{
-				return std::make_shared<ScriptInt>((long)Time::frameCountSinceLoad);
+				return std::make_shared<ScriptInt>((long)_time->frameCountSinceLoad);
 			});
 		}
 	}
@@ -194,13 +207,7 @@ std::shared_ptr<BaseScriptVariable> ScriptManager::GetVariable(const std::string
 
 ScriptManager::ScriptManager(ServiceManager* serviceManager) : BaseService(serviceManager)
 {
-	_debug = serviceManager->Debug();
 
-	std::shared_ptr<ScriptCollection> collection = std::make_shared<ScriptCollection>();
-	collection->AddMember("test", std::make_shared<ScriptInt>(5));
-	_globalVariables.emplace(std::make_pair("testCollection", collection));
-	HandleCharacterStateVariables();
-	AddScript("Scripts/Base/example.vscript");
 }
 
 ScriptManager::~ScriptManager()

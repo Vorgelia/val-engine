@@ -5,8 +5,14 @@
 #include <GLM\glm.hpp>
 #include "Delegate.h"
 
+//Controls whether a single render buffer should be used
+#define VE_USE_SINGLE_BUFFER
+
 class Screen : public BaseService
 {
+private:
+	glm::ivec2 _nativeFramebufferSize;
+
 public:
 	typedef Delegate<> ScreenUpdateEventHandler;
 	ScreenUpdateEventHandler ScreenUpdated;
@@ -24,9 +30,12 @@ public:
 	const double targetAspect;
 	const double targetAspectInv;
 
-	void Update();
+	void Init() override;
+	void Update() override;
 	void HandleResized(GLFWwindow* wnd, int width, int height);
 
+	void SetActiveWindow(GLFWwindow* window);
+
 	Screen(ServiceManager* serviceManager);
-	~Screen() = default;
+	~Screen();
 };

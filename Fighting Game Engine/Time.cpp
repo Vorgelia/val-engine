@@ -3,6 +3,11 @@
 #include "GLIncludes.hpp"
 #include "MathIncludes.hpp"
 
+void Time::Init()
+{
+
+}
+
 void Time::Update()
 {
 	Time::lastTime = Time::time;

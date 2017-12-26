@@ -28,6 +28,6 @@ public:
 	const std::unordered_set<std::string>& stateTypeFlags() const;
 	const InputMotion& associatedMotion() const;
 
-	CharacterState(const json& j);
+	CharacterState(const json& j, Script* script);
 	~CharacterState();
 };

@@ -37,6 +37,7 @@ private:
 
 public:
 	void Update() override;
+	void Init() override;
 
 	void Log(const std::string& data, std::string fileName, int fileLine, LogItem::Type type = LogItem::Type::Log);
 	void WriteThread();

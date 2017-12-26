@@ -13,6 +13,10 @@ class CharacterFrame;
 class CharacterStateManager;
 class GamePlayer;
 
+class ScriptManager;
+class FilesystemManager;
+class ResourceManager;
+
 class GameCharacter :
 	public Behaviour
 {
@@ -20,6 +24,12 @@ class GameCharacter :
 	friend class CharacterRenderer;
 	friend class CharacterStateManager;
 
+private:
+	ScriptManager* _scriptManager;
+	FilesystemManager* _filesystem;
+	ResourceManager* _resource;
+
+private:
 	std::string _dataPath;
 	bool _initialized;
 
@@ -45,6 +55,6 @@ public:
 
 	CharacterStateManager* stateManager();
 
-	GameCharacter(Object* owner, const json& j);
+	GameCharacter(Object* owner, ServiceManager* serviceManager, const json& j);
 	~GameCharacter();
 };

@@ -14,17 +14,12 @@ public:
 
 class Shader
 {
-public:
-	static GLuint CreateShader(const std::string& code, GLenum type);
-	static GLuint CreateShaderProgram(const std::vector<GLuint>& shaders);
-
 private:
 	bool _valid;
 
+	std::unordered_map<std::string, GLint> _uniformLocations;
 public:
 	std::string name;
-	std::vector<GLuint> shaders;
-	std::unordered_map<std::string, GLint> uniformLocations;
 
 	GLuint id;
 
@@ -32,8 +27,7 @@ public:
 
 	GLint UniformLocation(const std::string& str);
 	
-	operator GLuint();
-	Shader(const std::string& name, const std::vector<ShaderAttachment>& code);
+	Shader(const std::string& name, GLuint id);
 	~Shader();
 
 };

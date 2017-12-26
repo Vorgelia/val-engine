@@ -44,5 +44,5 @@ public:
 	bool HasProperty(Properties pr) const;
 
 	Material(const std::string& name, Shader* shader, unsigned char properties, const std::vector<uniformFloat>& floats, const std::vector<uniformVec>& vecs, const std::vector<uniformTex>& textures);
-	Material(const FS::path& path);
+	Material(const std::string& name);
 };

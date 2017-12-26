@@ -1,6 +1,8 @@
 #include "GamePlayer.h"
 #include "InputManager.h"
 #include "InputDevice.h"
+#include "ServiceManager.h"
+#include "Delegate.h"
 
 void GamePlayer::Update()
 {
@@ -15,11 +17,13 @@ void GamePlayer::HandleDeviceRemoved(InputDevice* device)
 	}
 }
 
-GamePlayer::GamePlayer(GamePlayerType type, int deviceId)
+GamePlayer::GamePlayer(GamePlayerType type, ServiceManager* serviceManager, int deviceId)
 {
+	_input = serviceManager->Input();
 	_type = type;
-	_inputDevice = InputManager::GetInputDevice(deviceId);
-	InputManager::DeviceRemoved += InputManager::DeviceEventHandler::func_t([this](InputDevice* device) { HandleDeviceRemoved(device); });
+	//TODO
+	_inputDevice = _input->GetInputDevice(deviceId);
+	_input->DeviceRemoved += InputManager::DeviceEventHandler::func_t([this](InputDevice* device) { HandleDeviceRemoved(device); });
 }
 
 GamePlayer::~GamePlayer()

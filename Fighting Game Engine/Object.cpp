@@ -44,31 +44,23 @@ void Object::RunFunctionOnBehaviours(std::function<void(Behaviour*)> func)
 	}
 }
 
-Object::Object(const std::string& name, int id)
+Object::Object(const std::string& name, ServiceManager* serviceManager, int id)
 {
 	this->_name = name;
 	this->_id = id;
 }
 
-Object::Object(const json & j)
+Object::Object(const json & j, ServiceManager* serviceManager)
 {
+	_serviceManager = serviceManager;
+
 	enabled = j["enabled"].get<bool>();
 	_name = j["name"].get<std::string>();
 	_id = j["id"].get<int>();
 
 	for(auto& iter : j["behaviours"])
 	{
-		//TODO: Find a better way to do this.
 		std::string& behaviourName = iter["name"].get<std::string>();
 		Behaviour* addedBehaviour = AddBehaviour(behaviourName, iter);
-
-		if(behaviourName == "Transform")
-		{
-			_transform = static_cast<Transform*>(addedBehaviour);
-		}
-		else if(behaviourName == "Renderer")
-		{
-			_renderer = static_cast<Renderer*>(addedBehaviour);
-		}
 	}
 }

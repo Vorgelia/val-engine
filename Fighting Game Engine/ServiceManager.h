@@ -20,6 +20,7 @@ class ScriptManager;
 class Time;
 class Screen;
 class InputManager;
+class FilesystemManager;
 
 class ServiceManager
 {
@@ -32,6 +33,7 @@ private:
 	ve_service(Screen);
 
 	ve_named_service(Input, InputManager);
+	ve_named_service(Filesystem, FilesystemManager);
 	ve_named_service(Graphics, GraphicsGL);
 	ve_named_service(Rendering, RenderingGL);
 

@@ -1,4 +1,5 @@
 #include "InputDevice.h"
+#include "ServiceManager.h"
 #include "ResourceLoader.h"
 #include "Time.h"
 #include "Screen.h"
@@ -6,7 +7,6 @@
 #include "InputEvent.h"
 #include "InputMotion.h"
 #include "InputMotionComponent.h"
-#include <iostream>
 #include <GLM\glm.hpp>
 
 //Default input leniency. We want the first input of every move to only count if it's the latest one by default.
@@ -30,9 +30,13 @@ const int InputDevice::deviceID() const
 	return _deviceID;
 }
 
-InputDevice::InputDevice(int deviceID)
+InputDevice::InputDevice(int deviceID, ServiceManager* serviceManager)
 {
-	this->_deviceID = deviceID;
+	_time = serviceManager->Time();
+	_screen = serviceManager->Screen();
+	_filesystem = serviceManager->Filesystem();
+
+	_deviceID = deviceID;
 	if(deviceID == (int)InputDeviceId::Network)
 	{
 		this->_deviceName = std::string("Network");
@@ -60,7 +64,7 @@ InputDevice::InputDevice(int deviceID)
 				c = '_';
 		}
 
-		ResourceLoader::LoadControlSettings("Settings/Input/" + this->_deviceFilename + ".vi", _directionMap, _buttonMap);
+		_filesystem->LoadControlSettings("Settings/Input/" + this->_deviceFilename + ".vi", _directionMap, _buttonMap);
 	}
 
 	_inputBuffer = std::make_shared<InputBuffer>(VE_INPUT_BUFFER_SIZE);
@@ -80,7 +84,7 @@ bool InputDevice::EvaluateInput(const InputEvent& ie)
 	case (int)InputDeviceId::Invalid:
 		return false;
 	case(int)InputDeviceId::Keyboard:
-		return glfwGetKey(Screen::window, ie._inputID) == GLFW_PRESS;
+		return glfwGetKey(_screen->window, ie._inputID) == GLFW_PRESS;
 	default:
 		if(!ie._isAxis)
 		{
@@ -226,7 +230,7 @@ void InputDevice::UpdateJoyInputs()
 
 void InputDevice::PollInput()
 {
-	if(_cachedInputFrames.size() == 0 || Time::lastUpdateTime + VE_FRAME_TIME * _cachedInputFrames.size() < glfwGetTime())
+	if(_cachedInputFrames.size() == 0 || _time->lastUpdateTime + VE_FRAME_TIME * _cachedInputFrames.size() < glfwGetTime())
 	{
 		_cachedInputFrames.push_back(InputFrame(0, 0));
 	}

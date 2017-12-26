@@ -18,14 +18,15 @@
 	[](Behaviour* behaviour)\
 		{ if(behaviour->using##name()) behaviour->name(); }
 
+class ServiceManager;
+
 class Behaviour
 {
 protected:
-
 	Object* _owner;
+	ServiceManager* _serviceManager;
 
 public:
-
 	bool enabled;
 
 	virtual const std::string name() const = 0;
@@ -41,7 +42,7 @@ public:
 	VE_BEHAVIOUR_FUNCTION(OnRenderUI);
 	VE_BEHAVIOUR_FUNCTION(Cleanup);
 
-	Behaviour(Object* owner);
-	Behaviour(Object* owner, const json& j);
+	Behaviour(Object* owner, ServiceManager* serviceManager);
+	Behaviour(Object* owner, ServiceManager* serviceManager, const json& j);
 	virtual ~Behaviour();
 };

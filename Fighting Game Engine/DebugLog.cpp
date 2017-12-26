@@ -14,6 +14,10 @@
 
 void Debug::Update() {}
 
+void Debug::Init()
+{
+}
+
 //Infinite loop thread that goes through the write queue and prints its contents to a file, and the console.
 void Debug::WriteThread()
 {

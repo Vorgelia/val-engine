@@ -3,11 +3,12 @@
 #include "GameSceneManager.h"
 #include "GLStateTrack.h"
 #include "Resource.h"
-#include "Rendering.h";
+#include "Rendering.h"
 #include "ScriptManager.h"
 #include "Time.h"
 #include "Screen.h"
 #include "InputManager.h"
+#include "ResourceLoader.h"
 
 #define ve_named_service_getter(name, type)\
 	::##type* ServiceManager::name()\
@@ -31,6 +32,7 @@ ve_service_getter(Time);
 ve_service_getter(Screen);
 
 ve_named_service_getter(Input, InputManager);
+ve_named_service_getter(Filesystem, FilesystemManager);
 ve_named_service_getter(Graphics, GraphicsGL);
 ve_named_service_getter(Rendering, RenderingGL);
 
@@ -41,14 +43,28 @@ void ServiceManager::InitializeServices()
 		CleanupServices();
 	}
 
+	//Utilities
 	Time();
 	Debug();
-	Graphics();
-	Rendering();
 	Input();
+
+	//Rendering API
+	Screen();
+	Rendering();
+	Graphics();
+
+	//File Management
+	Filesystem();
 	ResourceManager();
 	ScriptManager();
+
+	//Game Management
 	GameSceneManager();
+
+	for(auto& iter : _activeServices)
+	{
+		(*iter)->Init();
+	}
 }
 
 void ServiceManager::CleanupServices()
@@ -64,9 +80,9 @@ void ServiceManager::UpdateServices()
 {
 	if(_servicesUpdated)
 	{
-		std::sort(_activeServices.begin(), _activeServices.end(), [](const BaseService* a, const BaseService* b) -> bool
+		std::sort(_activeServices.begin(), _activeServices.end(), [](std::unique_ptr<BaseService>* a, std::unique_ptr<BaseService>* b) -> bool
 		{
-			return a->serviceUpdateSortingOrder() > b->serviceUpdateSortingOrder();
+			return (*a)->serviceUpdateSortingOrder() > (*b)->serviceUpdateSortingOrder();
 		});
 		_servicesUpdated = false;
 	}

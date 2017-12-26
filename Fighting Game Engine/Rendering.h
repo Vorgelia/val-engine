@@ -18,26 +18,24 @@ struct MaterialTexture;
 class Debug;
 class GraphicsGL;
 class ResourceManager;
-
-//Controls whether a single render buffer should be used
-#define VE_USE_SINGLE_BUFFER
+class Screen;
+class Time;
 
 class RenderingGL : public BaseService
 {
+	friend class GameSceneManager;
 private:
 	Debug* _debug;
 	GraphicsGL* _graphics;
-	ResourceManager*_resourceManager;
+	ResourceManager* _resourceManager;
+	Screen* _screen;
+	Time* _time;
 
 private:
-	FrameBuffer* mainBuffer;
-	std::vector<FrameBuffer*> auxBuffers;
-	std::vector<Camera> cameras;
-	glm::mat4 orthoMat;
-	glm::mat4 screenMat;
-	glm::vec4 tintColor;
-
-
+	std::unique_ptr<FrameBuffer> _mainBuffer;
+	std::vector<std::unique_ptr<FrameBuffer>> _auxBuffers;
+	glm::mat4 _orthoMat;
+	glm::mat4 _screenMat;
 
 	void InitTextDrawing();
 	void DrawTextCharacter(glm::vec4 rect, glm::vec4 params, Texture* tex);
@@ -48,10 +46,13 @@ private:
 	void BindEngineUniforms(Shader* shader);
 
 	void OnScreenResize();
-
-public:
+	
 	void BeginFrame();
 	void EndFrame();
+
+public:
+	std::vector<Camera> cameras;
+	glm::vec4 tintColor;
 
 	void DrawMesh(Transform* transform, Mesh* mesh, Material* mat, Camera* camera = nullptr);
 
@@ -62,6 +63,8 @@ public:
 	void DrawPostEffect(PostEffect* pf);
 	void DrawScreenText(glm::vec4 rect, GLuint size, std::string text, Font* font, TextAlignment alignment = TextAlignment::Left);
 
+	void Init() override;
+	void Update() override;
 
 	RenderingGL(ServiceManager* serviceManager);
 	~RenderingGL();

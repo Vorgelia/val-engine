@@ -6,27 +6,23 @@ class CachedMesh;
 
 class Mesh
 {
+	friend class GraphicsGL;
+
 private:
-	bool _valid;
+	CachedMesh* _meshData;
+
+	GLuint _vao;
+	GLuint _vbo;
+	GLuint _ebo;
+
+	GLuint _elementAmount;
 
 public:
-	std::string name;
-	CachedMesh* meshData;
+	const std::string name;
 
-	GLuint vao;
-	GLuint vbo;
-	GLuint ebo;
+	GLuint elementAmount();
 
-	GLuint elementAmount;
-
-	bool editable;//If set to true, prevent the vertices from being deleted while this mesh exists
-	bool valid();
-	
-	void Update();
-
-	void SetMeshData(CachedMesh* meshData);
-
-	Mesh(const std::string& name, CachedMesh* meshData, bool editable);
+	Mesh(const std::string& name, CachedMesh* meshData);
 	~Mesh();
 };
 

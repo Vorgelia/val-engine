@@ -2,7 +2,6 @@
 #include <unordered_set>
 #include "InputDevice.h"
 #include "InputFrame.h"
-#include "CommonUtilIncludes.hpp"
 #include "ResourceLoader.h"
 #include "Screen.h"
 
@@ -14,7 +13,7 @@ void InputManager::FrameUpdate()
 	{
 		if(glfwJoystickPresent(i) == GLFW_TRUE && (_inputDevices.count(i) == 0))
 		{
-			InputDevice* addedDevice = _inputDevices.insert(std::pair<int, std::shared_ptr<InputDevice>>(i, std::make_shared<InputDevice>(i))).first->second.get();
+			InputDevice* addedDevice = _inputDevices.insert(std::pair<int, std::shared_ptr<InputDevice>>(i, std::make_shared<InputDevice>(i, _serviceManager))).first->second.get();
 			DeviceAdded(addedDevice);
 		}
 		else if(glfwJoystickPresent(i) == GLFW_FALSE)
@@ -37,6 +36,11 @@ void InputManager::FrameUpdate()
 			i.second->PushInputsToBuffer();
 		}
 	}
+}
+
+void InputManager::Init()
+{
+	_inputDevices[(int)InputDeviceId::Keyboard] = std::make_shared<InputDevice>((int)InputDeviceId::Keyboard, _serviceManager);
 }
 
 void InputManager::Update()
@@ -68,7 +72,7 @@ InputDevice* InputManager::GetInputDevice(int id)
 
 InputDevice* InputManager::GetTemporaryNetworkDevice()
 {
-	_temporaryNetworkDevices.emplace_back(std::make_unique<InputDevice>((int)InputDeviceId::Network));
+	_temporaryNetworkDevices.emplace_back(std::make_unique<InputDevice>((int)InputDeviceId::Network, _serviceManager));
 	return _temporaryNetworkDevices.back().get();
 }
 
@@ -85,7 +89,6 @@ void InputManager::ReleaseTemporaryNetworkDevice(InputDevice* device)
 
 InputManager::InputManager(ServiceManager* serviceManager) : BaseService(serviceManager)
 {
-	_inputDevices[(int)InputDeviceId::Keyboard] = std::make_shared<InputDevice>((int)InputDeviceId::Keyboard);
 }
 
 InputManager::~InputManager()

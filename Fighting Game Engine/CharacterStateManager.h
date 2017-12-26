@@ -7,6 +7,9 @@
 
 class CharacterState;
 class CharacterFrame;
+class ServiceManager;
+class InputManager;
+class FilesystemManager;
 
 enum class CharacterStateFlagType
 {
@@ -21,7 +24,13 @@ class CharacterStateManager
 	friend class GameCharacter;
 	friend class ScriptManager;
 	friend class CharacterRenderer;
+private:
 
+	InputManager* _input;
+	ScriptManager* _scriptManager;
+	FilesystemManager* _filesystem;
+
+private:
 	GameCharacter* _owner;
 
 	std::string _currentStateId;
@@ -54,7 +63,7 @@ class CharacterStateManager
 	const std::unordered_set<std::string>& GetFlags(CharacterStateFlagType type);
 
 public:
-	CharacterStateManager(GameCharacter* owner, const json& states, const json& frames);
+	CharacterStateManager(GameCharacter* owner, ServiceManager* serviceManager, const json& states, const json& frames);
 	~CharacterStateManager();
 };
 

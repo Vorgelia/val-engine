@@ -2,7 +2,8 @@
 #include "Rendering.h"
 #include "Resource.h"
 #include "Texture.h"
-#include "CommonUtilIncludes.hpp"
+#include "Material.h"
+#include "ServiceManager.h"
 #include "Screen.h"
 #include "Time.h"
 #include "Transform.h"
@@ -19,34 +20,41 @@ VE_BEHAVIOUR_REGISTER_TYPE(MenuBehaviour);
 
 void MenuBehaviour::OnRenderUI()
 {
-	RenderingGL::DrawScreenText(glm::vec4(0, 10, 100, 100), 24, std::to_string(glm::min<double>((int)std::round(1.0 / Time::smoothDeltaTime), 60)), nullptr);
-	RenderingGL::DrawScreenText(glm::vec4(0, 30, 100, 100), 24, std::to_string(glm::max<double>(((int)(Time::updateRate * 100))*0.01, 1.0)), nullptr);
+	_rendering->DrawScreenText(glm::vec4(0, 10, 100, 100), 24, std::to_string(glm::min<double>((int)std::round(1.0 / _time->smoothDeltaTime), 60)), nullptr);
+	_rendering->DrawScreenText(glm::vec4(0, 30, 100, 100), 24, std::to_string(glm::max<double>(((int)(_time->updateRate * 100))*0.01, 1.0)), nullptr);
 
-	if((int)(Time::time * 4) % 2 == 1)
-		RenderingGL::DrawScreenText(glm::vec4(0, 1080 - 200, 1920, 60), 140, "VIDEOGAME", nullptr, TextAlignment::Center);
+	if((int)(_time->time * 4) % 2 == 1)
+		_rendering->DrawScreenText(glm::vec4(0, 1080 - 200, 1920, 60), 140, "VIDEOGAME", nullptr, TextAlignment::Center);
 
-	if(Time::timeSinceLoad < 1)
+	if(_time->timeSinceLoad < 1)
 	{
-		RenderingGL::tintColor.a = (float)(1.0 - (Time::timeSinceLoad));
-		RenderingGL::DrawScreenMesh(glm::vec4(0, 0, 1920, 1080), (Mesh*)nullptr, { Resource::GetTexture("black") }, (Material*)nullptr);
+		_rendering->tintColor.a = (float)(1.0 - (_time->timeSinceLoad));
+		_rendering->DrawScreenMesh(glm::vec4(0, 0, 1920, 1080), (Mesh*)nullptr, { *_fadingOverlay }, (Material*)nullptr);
 	}
 }
 
 void MenuBehaviour::Update()
 {
-	if(glfwGetKey(Screen::window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+	if(glfwGetKey(_screen->window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 	{
-		glfwSetWindowShouldClose(Screen::window, GLFW_TRUE);
+		glfwSetWindowShouldClose(_screen->window, GLFW_TRUE);
 	}
 }
 
 void MenuBehaviour::GameUpdate()
 {
-	RenderingGL::cameras.at(0).position += InputManager::GetInputDevice(-1)->inputBuffer()->back().ToVector() * 500.0f * (float)VE_FRAME_TIME;
+	_rendering->cameras.at(0).position += _input->GetInputDevice(-1)->inputBuffer()->back().ToVector() * 500.0f * (float)VE_FRAME_TIME;
 }
 
-MenuBehaviour::MenuBehaviour(Object* owner, const json& j) : Behaviour(owner, j)
+MenuBehaviour::MenuBehaviour(Object* owner, ServiceManager* serviceManager, const json& j) : Behaviour(owner, serviceManager, j)
 {
+	_rendering = serviceManager->Rendering();
+	_screen = serviceManager->Screen();
+	_input = serviceManager->Input();
+	_time = serviceManager->Time();
+	_resource = serviceManager->ResourceManager();
+
+	_fadingOverlay = std::make_unique<MaterialTexture>(_resource->GetTexture("black"));
 }
 
 MenuBehaviour::~MenuBehaviour()
