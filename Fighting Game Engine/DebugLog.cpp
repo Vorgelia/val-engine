@@ -147,7 +147,7 @@ std::shared_ptr<BaseScriptVariable> Debug::Log(const Script* script, std::vector
 	}
 
 	Log(str.str(), LogItem::Type::ScriptLog);
-	return std::make_shared<BaseScriptVariable>();
+	return nullptr;
 }
 
 Debug::Debug(ServiceManager* serviceManager) : BaseService(serviceManager)

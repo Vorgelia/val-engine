@@ -9,8 +9,8 @@
 #include "Material.h"
 #include "Texture.h"
 #include "Transform.h"
-#include "Rendering.h"
-#include "Resource.h"
+#include "RenderingGL.h"
+#include "ResourceManager.h"
 
 VE_BEHAVIOUR_REGISTER_TYPE(CharacterRenderer);
 

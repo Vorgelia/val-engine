@@ -9,8 +9,8 @@
 #include <boost\algorithm\string.hpp>
 
 #include "ServiceManager.h"
-#include "ResourceLoader.h"
-#include "Resource.h"
+#include "FilesystemManager.h"
+#include "ResourceManager.h"
 #include "CachedMesh.h"
 #include "Material.h"
 #include "Shader.h"

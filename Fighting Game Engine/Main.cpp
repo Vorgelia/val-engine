@@ -17,11 +17,6 @@ Nlohmann JSON https://github.com/nlohmann/json
 Libraries planned to be used:
 IrrKlang
 
-Structured to depend on global variables and functions in namespaces.
-Having global access to things like Input, Time, OpenGL states, etc was the most intuitive decision.
-Somewhat error-prone for group projects, but more than manageable and convenient for a one-person project.
-Also included are unnecessary attempts at memory management as personal exercises.
-
 ----Arbitrary to-do list----
 -Engine Features
 TODO: Find a way to multithread input so inputs are received and timed properly on sub-60FPS.
@@ -36,7 +31,7 @@ InputDevice.cpp:        VE_INPUT_BUFFER_INIT
 Rendering.cpp:          VE_AUX_BUFFER_AMOUNT
 -                       VE_WORLD_SCALE
 -                       VE_FONT_DEFAULT
-Rendering.h:            VE_USE_SINGLE_BUFFER
+Screen.h:               VE_USE_SINGLE_BUFFER
 Time.h:                 VE_FRAME_TIME
 -                       VE_FRAME_RATE
 Debug.h:		        VE_DEBUG_ERRORTHROW

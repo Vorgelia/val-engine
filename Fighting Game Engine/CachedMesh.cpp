@@ -1,6 +1,6 @@
 #include "CachedMesh.h"
 #include "Mesh.h"
-#include "ResourceLoader.h"
+#include "FilesystemManager.h"
 #include "DebugLog.h"
 
 //Cached meshes are just raw vertex data that is stored in memory before being turned into meshes.

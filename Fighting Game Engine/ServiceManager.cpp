@@ -1,14 +1,14 @@
 #include "ServiceManager.h"
 #include "DebugLog.h"
 #include "GameSceneManager.h"
-#include "GLStateTrack.h"
-#include "Resource.h"
-#include "Rendering.h"
+#include "GraphicsGL.h"
+#include "ResourceManager.h"
+#include "RenderingGL.h"
 #include "ScriptManager.h"
 #include "Time.h"
 #include "Screen.h"
 #include "InputManager.h"
-#include "ResourceLoader.h"
+#include "FilesystemManager.h"
 
 #define ve_named_service_getter(name, type)\
 	::##type* ServiceManager::name()\

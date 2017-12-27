@@ -241,11 +241,6 @@ std::shared_ptr<BaseScriptVariable> ScriptExpression::Evaluate()
 				}
 			}
 
-			if(evaluatedVar == nullptr)
-			{
-				throw ScriptError("Invalid value evaluation on token " + token.token);
-			}
-
 			if(previousState == ScriptExpression::State::UnaryOperator)
 			{
 				evaluatedVar = ScriptVariableUtils::Operate(evaluatedVar, operatorStack.top()->type());

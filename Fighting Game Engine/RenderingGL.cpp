@@ -1,4 +1,4 @@
-#include "Rendering.h"
+#include "RenderingGL.h"
 #include "ServiceManager.h"
 #include "Screen.h"
 #include "FrameBuffer.h"
@@ -10,8 +10,8 @@
 #include "FrameBuffer.h"
 #include "Time.h"
 #include "Material.h"
-#include "Resource.h"
-#include "GLStateTrack.h"
+#include "ResourceManager.h"
+#include "GraphicsGL.h"
 #include "PostEffect.h"
 #include "DebugLog.h"
 

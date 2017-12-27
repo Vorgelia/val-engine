@@ -1,8 +1,9 @@
 #pragma once
 #include "BaseService.h"
 
-#define VE_FRAME_TIME 0.0166666666
 #define VE_FRAME_RATE 60
+#define VE_FRAME_TIME (1.0/VE_FRAME_RATE)
+
 class Time : public BaseService
 {
 public:

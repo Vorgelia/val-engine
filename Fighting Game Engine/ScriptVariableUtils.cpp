@@ -66,6 +66,11 @@ namespace ScriptVariableUtils
 
 std::shared_ptr<BaseScriptVariable> ScriptVariableUtils::Operate(std::shared_ptr<BaseScriptVariable>& lhs, std::shared_ptr<BaseScriptVariable>& rhs, ScriptOperatorType operation)
 {
+	if(lhs == nullptr || rhs == nullptr)
+	{
+		throw ScriptError("Attempting to operate on null variables");
+	}
+
 	if(lhs->type() != rhs->type())
 	{
 		throw ScriptError(fmt::format("Attempting to operate on variables with different types. {} {} {}", (int)lhs->type(), (int)operation, (int)rhs->type()));
@@ -96,6 +101,11 @@ std::shared_ptr<BaseScriptVariable> ScriptVariableUtils::Operate(std::shared_ptr
 
 std::shared_ptr<BaseScriptVariable> ScriptVariableUtils::Operate(std::shared_ptr<BaseScriptVariable>& rhs, ScriptOperatorType operation)
 {
+	if(rhs == nullptr)
+	{
+		throw ScriptError("Attempting to operate on null variables");
+	}
+
 	if(!rhs->isInitialized())
 	{
 		throw ScriptError("Attempting to operate on an uninitialized variable");

@@ -1,4 +1,4 @@
-#include "GLStateTrack.h"
+#include "GraphicsGL.h"
 #include "ServiceManager.h"
 #include "Profiler.h"
 #include "Shader.h"
@@ -278,7 +278,7 @@ std::unique_ptr<Font> GraphicsGL::CreateFont(std::string name)
 		}
 
 		//Invert the pixels vertically.
-		for(int j = 0; j < face->glyph->bitmap.rows; ++j)
+		for(unsigned int j = 0; j < face->glyph->bitmap.rows; ++j)
 		{
 			for(unsigned int i = 0; i < face->glyph->bitmap.width; ++i)
 			{

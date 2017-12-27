@@ -1,7 +1,8 @@
 #include "CommonUtilIncludes.hpp"
-#include "ResourceLoader.h"
-#include "resource1.h"
+#include "FilesystemManager.h"
+#include "resource.h"
 #include "ResourceInitializer.h"
+
 void ResourceInitializer::Init()
 {
 	//TODO: Update as necessary

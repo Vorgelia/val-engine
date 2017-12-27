@@ -10,8 +10,8 @@
 #include "InputManager.h"
 #include "InputDevice.h"
 #include "InputMotion.h"
-#include "ResourceLoader.h"
-#include "Resource.h"
+#include "FilesystemManager.h"
+#include "ResourceManager.h"
 
 void CharacterStateManager::StateUpdate()
 {

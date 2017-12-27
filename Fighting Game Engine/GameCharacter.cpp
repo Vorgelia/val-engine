@@ -1,7 +1,7 @@
 #include "GameCharacter.h"
 #include "Script.h"
 #include "ScriptManager.h"
-#include "ResourceLoader.h"
+#include "FilesystemManager.h"
 #include "CharacterStateManager.h"
 #include "GamePlayer.h"
 #include "Delegate.h"

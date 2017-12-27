@@ -2,7 +2,7 @@
 #include <unordered_set>
 #include "InputDevice.h"
 #include "InputFrame.h"
-#include "ResourceLoader.h"
+#include "FilesystemManager.h"
 #include "Screen.h"
 
 //Update list of valid input devices and have them poll for inputs

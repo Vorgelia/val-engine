@@ -1,8 +1,8 @@
 #include "Material.h"
 #include "Texture.h"
 #include "Shader.h"
-#include "ResourceLoader.h"
-#include "GLStateTrack.h"
+#include "FilesystemManager.h"
+#include "GraphicsGL.h"
 
 MaterialTexture::MaterialTexture(Texture* ref)
 {

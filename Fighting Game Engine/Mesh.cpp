@@ -1,6 +1,6 @@
 #include "Mesh.h"
 #include "CachedMesh.h"
-#include "GLStateTrack.h"
+#include "GraphicsGL.h"
 #include "DebugLog.h"
 
 Mesh::Mesh(const std::string& name, CachedMesh* meshData) :	name(name)

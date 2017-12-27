@@ -1,5 +1,5 @@
 #include "Texture.h"
-#include "GLStateTrack.h"
+#include "GraphicsGL.h"
 #include "DebugLog.h"
 #include <SOIL\src\SOIL.h>
 

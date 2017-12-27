@@ -4,7 +4,7 @@
 #include "BaseScriptVariable.h"
 #include "ScriptVariable.h"
 #include "ScriptCollection.h"
-#include "ResourceLoader.h"
+#include "FilesystemManager.h"
 #include <unordered_map>
 #include <memory>
 #include "ScriptBehaviour.h"
@@ -109,22 +109,22 @@ void ScriptManager::HandleScriptCharacterBindings(GameCharacter& character, Scri
 		[&character](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
 	{
 		if(args.size() >= 1 && args[0]->type() == ScriptVariableType::String)
-			return std::make_shared<ScriptBool>(
-				character.stateManager()->StartState(std::static_pointer_cast<ScriptString>(args[0])->value()));
-		return std::make_shared<ScriptBool>(false);
+			character.stateManager()->StartState(std::static_pointer_cast<ScriptString>(args[0])->value());
+		return nullptr;
 	});
 
 	script->BindFunction("character_restartState",
 		[&character](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
 	{
-		return std::make_shared<ScriptBool>(character.stateManager()->RestartState());
+		character.stateManager()->RestartState();
+		return nullptr;
 	});
 
 	script->BindFunction("character_markStateEnded",
 		[&character](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
 	{
 		character.stateManager()->MarkStateEnded();
-		return std::make_shared<ScriptBool>(true);
+		return nullptr;
 	});
 
 	script->BindFunction("character_setFrame",
@@ -133,7 +133,7 @@ void ScriptManager::HandleScriptCharacterBindings(GameCharacter& character, Scri
 		if(args.size() >= 1 && args[0]->type() == ScriptVariableType::String)
 			return std::make_shared<ScriptBool>(
 				character.stateManager()->SetFrame(std::static_pointer_cast<ScriptString>(args[0])->value()));
-		return std::make_shared<ScriptBool>(false);
+		return nullptr;
 	});
 
 	script->BindFunction("character_allowStateSelfChaining",
@@ -141,45 +141,43 @@ void ScriptManager::HandleScriptCharacterBindings(GameCharacter& character, Scri
 	{
 		if(args.size() >= 1 && args[0]->type() == ScriptVariableType::Bool)
 			character.stateManager()->_allowStateSelfCancelling = std::static_pointer_cast<ScriptBool>(args[0])->value();
-		return std::make_shared<ScriptBool>(true);
+		return nullptr;
 	});
 
 	script->BindFunction("character_modifyStateFrame",
 		[&character](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
 	{
 		if(args.size() >= 1 && args[0]->type() == ScriptVariableType::Int)
-			return std::make_shared<ScriptBool>(
-				character.stateManager()->ModifyCurrentStateFrame(std::static_pointer_cast<ScriptInt>(args[0])->value()));
-		return std::make_shared<ScriptBool>(false);
+			character.stateManager()->ModifyCurrentStateFrame(std::static_pointer_cast<ScriptInt>(args[0])->value());
+		return nullptr;
 	});
 
 	script->BindFunction("character_addFlag",
 		[&character](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
 	{
 		if(args.size() == 2 && args[0]->type() == ScriptVariableType::Int && args[1]->type() == ScriptVariableType::String)
-			return std::make_shared<ScriptBool>(
-				character.stateManager()->AddFlag(
+			character.stateManager()->AddFlag(
 				(CharacterStateFlagType)std::static_pointer_cast<ScriptInt>(args[0])->value(),
-					std::static_pointer_cast<ScriptString>(args[1])->value()));
-		return std::make_shared<ScriptBool>(false);
+					std::static_pointer_cast<ScriptString>(args[1])->value());
+		return nullptr;
 	});
 
 	script->BindFunction("character_removeFlag",
 		[&character](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
 	{
 		if(args.size() == 2 && args[0]->type() == ScriptVariableType::Int && args[1]->type() == ScriptVariableType::String)
-			return std::make_shared<ScriptBool>(
-				character.stateManager()->AddFlag(
+			character.stateManager()->RemoveFlag(
 				(CharacterStateFlagType)std::static_pointer_cast<ScriptInt>(args[0])->value(),
-					std::static_pointer_cast<ScriptString>(args[0])->value()));
-		return std::make_shared<ScriptBool>(false);
+					std::static_pointer_cast<ScriptString>(args[1])->value());
+
+		return nullptr;
 	});
 
 	script->BindFunction("character_clearFlags",
 		[&character](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
 	{
 		character.stateManager()->ClearFlags();
-		return std::make_shared<ScriptBool>(true);
+		return nullptr;
 	});
 }
 

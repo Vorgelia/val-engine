@@ -1,6 +1,6 @@
 #include "Renderer.h"
-#include "Rendering.h"
-#include "Resource.h"
+#include "RenderingGL.h"
+#include "ResourceManager.h"
 #include "ServiceManager.h"
 #include <string>
 #include "BehaviourFactory.h"

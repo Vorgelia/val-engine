@@ -1,6 +1,6 @@
 #include "FrameBuffer.h"
 #include "DebugLog.h"
-#include "GLStateTrack.h"
+#include "GraphicsGL.h"
 #include "Texture.h"
 
 FrameBuffer::FrameBuffer(glm::ivec2 res, int texAmount, bool depthStencil, GLint format, glm::vec4 clearColor, GLint filtering, GLuint clearFlags)

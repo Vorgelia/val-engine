@@ -102,7 +102,7 @@
     <ClCompile Include="GamePlayer.cpp" />
     <ClCompile Include="GameScene.cpp" />
     <ClCompile Include="GameSceneManager.cpp" />
-    <ClCompile Include="GLStateTrack.cpp" />
+    <ClCompile Include="GraphicsGL.cpp" />
     <ClCompile Include="CollisionBox.cpp" />
     <ClCompile Include="InputDevice.cpp" />
     <ClCompile Include="InputEvent.cpp" />
@@ -131,10 +131,10 @@
     <ClCompile Include="ScriptOperator.cpp" />
     <ClCompile Include="PostEffect.cpp" />
     <ClCompile Include="Profiler.cpp" />
-    <ClCompile Include="Rendering.cpp" />
-    <ClCompile Include="Resource.cpp" />
+    <ClCompile Include="RenderingGL.cpp" />
+    <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="ResourceInitializer.cpp" />
-    <ClCompile Include="ResourceLoader.cpp" />
+    <ClCompile Include="FilesystemManager.cpp" />
     <ClCompile Include="Screen.cpp" />
     <ClCompile Include="Script.cpp" />
     <ClCompile Include="ScriptBlock.cpp" />
@@ -185,7 +185,7 @@
     <ClInclude Include="GameSceneManager.h" />
     <ClInclude Include="GLIncludes.hpp" />
     <ClInclude Include="GLMExtensions.h" />
-    <ClInclude Include="GLStateTrack.h" />
+    <ClInclude Include="GraphicsGL.h" />
     <ClInclude Include="CollisionBox.h" />
     <ClInclude Include="InputDevice.h" />
     <ClInclude Include="InputEvent.h" />
@@ -209,11 +209,11 @@
     <ClInclude Include="PostEffect.h" />
     <ClInclude Include="Profiler.h" />
     <ClInclude Include="Renderer.h" />
-    <ClInclude Include="Rendering.h" />
-    <ClInclude Include="Resource.h" />
-    <ClInclude Include="resource1.h" />
+    <ClInclude Include="RenderingGL.h" />
+    <ClInclude Include="ResourceManager.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="ResourceInitializer.h" />
-    <ClInclude Include="ResourceLoader.h" />
+    <ClInclude Include="FilesystemManager.h" />
     <ClInclude Include="Screen.h" />
     <ClInclude Include="Script.h" />
     <ClInclude Include="ScriptBehaviour.h" />

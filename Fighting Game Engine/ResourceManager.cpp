@@ -1,16 +1,16 @@
-#include "Resource.h"
+#include "ResourceManager.h"
 #include "ServiceManager.h"
 #include "CachedMesh.h"
 #include "Mesh.h"
 #include "Shader.h"
-#include "ResourceLoader.h"
+#include "FilesystemManager.h"
 #include "Material.h"
 #include "Texture.h"
 #include "PostEffect.h"
 #include "Font.h"
 #include "ResourceInitializer.h"
 #include "DebugLog.h"
-#include "GLStateTrack.h"
+#include "GraphicsGL.h"
 #include <memory>
 
 //If the following define exists, the engine will create some default resource files if the folder structure is missing.

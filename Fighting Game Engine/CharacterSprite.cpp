@@ -1,5 +1,5 @@
 #include "CharacterSprite.h"
-#include "Resource.h"
+#include "ResourceManager.h"
 
 std::string CharacterSprite::sprite() const
 {

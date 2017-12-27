@@ -1,5 +1,5 @@
 #include "Shader.h"
-#include "GLStateTrack.h"
+#include "GraphicsGL.h"
 #include "DebugLog.h"
 
 ShaderAttachment::ShaderAttachment(const std::string& code, GLenum type)

@@ -3,8 +3,8 @@
 #include "Mesh.h"
 #include "Material.h"
 #include "IntroBehaviour.h"
-#include "Resource.h"
-#include "Rendering.h"
+#include "ResourceManager.h"
+#include "RenderingGL.h"
 #include "Behaviour.h"
 #include "Renderer.h"
 
