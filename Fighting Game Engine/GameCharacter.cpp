@@ -1,8 +1,11 @@
 #include "GameCharacter.h"
 #include "Script.h"
 #include "ScriptManager.h"
-#include "ResourceLoader.h"
+#include "FilesystemManager.h"
 #include "CharacterStateManager.h"
+#include "GamePlayer.h"
+#include "Delegate.h"
+#include "ServiceManager.h"
 
 VE_BEHAVIOUR_REGISTER_TYPE(GameCharacter);
 
@@ -14,12 +17,12 @@ CharacterStateManager* GameCharacter::stateManager()
 //TODO: I'm not particularly happy about resource management here. Figure out something better.
 void GameCharacter::HandleCharacterData(const json& j)
 {
-	_stateManager = std::make_unique<CharacterStateManager>(this, j["states"], j["frames"]);
+	_stateManager = std::make_unique<CharacterStateManager>(this, _serviceManager, j["states"], j["frames"]);
 
 	_sizeMultiplier = JSON::Get<glm::vec2>(j["sizeMultiplier"]);
 
-	_characterScript = ScriptManager::GetScript(JSON::Get<std::string>(j["characterScript"]));
-	ScriptManager::HandleScriptCharacterBindings(*this, _characterScript);
+	_characterScript = _scriptManager->GetScript(JSON::Get<std::string>(j["characterScript"]));
+	_scriptManager->HandleScriptCharacterBindings(*this, _characterScript);
 }
 
 void GameCharacter::CharacterInit()
@@ -53,12 +56,17 @@ void GameCharacter::GameUpdate()
 	_stateManager->StateUpdate();
 }
 
-GameCharacter::GameCharacter(Object* owner, const json& j) : Behaviour(owner, j)
+GameCharacter::GameCharacter(Object* owner, ServiceManager* serviceManager, const json& j) : Behaviour(owner, serviceManager, j)
 {
+	_filesystem = serviceManager->Filesystem();
+	_scriptManager = serviceManager->ScriptManager();
+	_resource = serviceManager->ResourceManager();
+
 	_initialized = false;
 	_dataPath = JSON::Get<std::string>(j["dataPath"]);
-	HandleCharacterData(
-		ResourceLoader::LoadJsonResource(_dataPath));
+	HandleCharacterData(_filesystem->LoadJsonResource(_dataPath));
+
+	//TODO: player owner
 }
 
 GameCharacter::~GameCharacter()

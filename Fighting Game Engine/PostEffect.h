@@ -17,6 +17,6 @@ public:
 	int order;
 
 	PostEffect(const std::vector<PostEffectElement>& elements, bool cbBefore = true, bool cbAfter = false, int order = 100);
-	PostEffect(const FS::path& path);
+	PostEffect() = default;
 };
 

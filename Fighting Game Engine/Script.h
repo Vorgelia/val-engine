@@ -12,6 +12,9 @@ struct ScriptLine;
 class ScriptBlock;
 class ScriptParentBlock;
 class BaseScriptVariable;
+class ServiceManager;
+class Debug;
+class ScriptManager;
 
 typedef std::vector<std::shared_ptr<BaseScriptVariable>> ScriptArgumentCollection;
 
@@ -21,6 +24,13 @@ class Script
 	friend class ScriptBlock;
 	friend class ScriptParentBlock;
 
+private:
+	ServiceManager* _serviceManager;
+
+	Debug* _debug;
+	ScriptManager* _scriptManager;
+
+private:
 	std::string _name;
 	bool _valid;
 
@@ -64,6 +74,6 @@ public:
 	void Execute();
 	void ExecuteFunction(std::string name, std::vector<std::shared_ptr<BaseScriptVariable>> &variables = std::vector<std::shared_ptr<BaseScriptVariable>>());
 
-	Script(std::string name, std::vector<std::string> lines);
+	Script(std::string name, std::vector<std::string> lines, ServiceManager* serviceManager);
 	~Script();
 };

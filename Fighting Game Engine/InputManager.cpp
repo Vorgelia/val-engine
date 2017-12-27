@@ -2,34 +2,32 @@
 #include <unordered_set>
 #include "InputDevice.h"
 #include "InputFrame.h"
-#include "CommonUtilIncludes.hpp"
-#include "ResourceLoader.h"
+#include "FilesystemManager.h"
 #include "Screen.h"
 
-namespace InputManager
-{
-	std::unordered_map<int, std::shared_ptr<InputDevice>> _inputDevices;
-	std::thread _inputCollectionThread;
-	bool _stopInputs = false;
-}
-
 //Update list of valid input devices and have them poll for inputs
-void InputManager::Update()
+void InputManager::FrameUpdate()
 {
 	glfwPollEvents();
 	for(int i = GLFW_JOYSTICK_1; i < GLFW_JOYSTICK_LAST; ++i)
 	{
 		if(glfwJoystickPresent(i) == GLFW_TRUE && (_inputDevices.count(i) == 0))
 		{
-			_inputDevices.insert(std::pair<int, std::shared_ptr<InputDevice>>(i, std::make_shared<InputDevice>(i)));
+			InputDevice* addedDevice = _inputDevices.insert(std::pair<int, std::shared_ptr<InputDevice>>(i, std::make_shared<InputDevice>(i, _serviceManager))).first->second.get();
+			DeviceAdded(addedDevice);
 		}
-		else if(glfwJoystickPresent(i) == GLFW_FALSE && (_inputDevices.count(i) > 0))
+		else if(glfwJoystickPresent(i) == GLFW_FALSE)
 		{
-			_inputDevices.erase(i);
+			auto& iter = _inputDevices.find(i);
+			if(iter != _inputDevices.end())
+			{
+				DeviceRemoved(iter->second.get());
+				_inputDevices.erase(iter);
+			}
 		}
 	}
 
-	for(auto i : _inputDevices)
+	for(auto& i : _inputDevices)
 	{
 		if(i.second != nullptr)
 		{
@@ -42,12 +40,11 @@ void InputManager::Update()
 
 void InputManager::Init()
 {
-	_inputDevices[(int)InputDeviceId::Keyboard] = std::make_shared<InputDevice>((int)InputDeviceId::Keyboard);
+	_inputDevices[(int)InputDeviceId::Keyboard] = std::make_shared<InputDevice>((int)InputDeviceId::Keyboard, _serviceManager);
 }
 
-void InputManager::Cleanup()
+void InputManager::Update()
 {
-	_inputDevices.clear();
 }
 
 const std::unordered_map<int, std::shared_ptr<InputDevice>>& InputManager::inputDevices()
@@ -57,16 +54,45 @@ const std::unordered_map<int, std::shared_ptr<InputDevice>>& InputManager::input
 
 InputDevice* InputManager::GetInputDevice(int id)
 {
-	auto& iter = _inputDevices.find(id);
-	if(iter == _inputDevices.end())
+	switch(id)
 	{
+	case (int)InputDeviceId::Invalid:
+	case (int)InputDeviceId::Network:
 		return nullptr;
-	}
+	default:
+		auto& iter = _inputDevices.find(id);
+		if(iter == _inputDevices.end())
+		{
+			return nullptr;
+		}
 
-	return iter->second.get();
+		return iter->second.get();
+	}
 }
 
-void InputManager::KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+InputDevice* InputManager::GetTemporaryNetworkDevice()
 {
-	//std::cout << "---Key:" << glfwGetTime()<<"/"<<Time::lastUpdateTime << " - " << (glfwGetKey(Screen::window, key) == GLFW_PRESS) << std::endl;
+	_temporaryNetworkDevices.emplace_back(std::make_unique<InputDevice>((int)InputDeviceId::Network, _serviceManager));
+	return _temporaryNetworkDevices.back().get();
+}
+
+void InputManager::ReleaseTemporaryNetworkDevice(InputDevice* device)
+{
+	for(auto iter = _temporaryNetworkDevices.begin(); iter != _temporaryNetworkDevices.end(); ++iter)
+	{
+		if(iter->get() == device)
+		{
+			_temporaryNetworkDevices.erase(iter);
+		}
+	}
+}
+
+InputManager::InputManager(ServiceManager* serviceManager) : BaseService(serviceManager)
+{
+}
+
+InputManager::~InputManager()
+{
+	_inputDevices.clear();
+	_temporaryNetworkDevices.clear();
 }

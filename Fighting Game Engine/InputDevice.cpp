@@ -1,12 +1,12 @@
 #include "InputDevice.h"
-#include "ResourceLoader.h"
+#include "ServiceManager.h"
+#include "FilesystemManager.h"
 #include "Time.h"
 #include "Screen.h"
 #include "InputFrame.h"
 #include "InputEvent.h"
 #include "InputMotion.h"
 #include "InputMotionComponent.h"
-#include <iostream>
 #include <GLM\glm.hpp>
 
 //Default input leniency. We want the first input of every move to only count if it's the latest one by default.
@@ -25,14 +25,18 @@ const InputBuffer* InputDevice::inputBuffer() const
 	return _inputBuffer.get();
 }
 
-const int& InputDevice::deviceID() const
+const int InputDevice::deviceID() const
 {
 	return _deviceID;
 }
 
-InputDevice::InputDevice(int deviceID)
+InputDevice::InputDevice(int deviceID, ServiceManager* serviceManager)
 {
-	this->_deviceID = deviceID;
+	_time = serviceManager->Time();
+	_screen = serviceManager->Screen();
+	_filesystem = serviceManager->Filesystem();
+
+	_deviceID = deviceID;
 	if(deviceID == (int)InputDeviceId::Network)
 	{
 		this->_deviceName = std::string("Network");
@@ -60,7 +64,7 @@ InputDevice::InputDevice(int deviceID)
 				c = '_';
 		}
 
-		ResourceLoader::LoadControlSettings("Settings/Input/" + this->_deviceFilename + ".vi", _directionMap, _buttonMap);
+		_filesystem->LoadControlSettings("Settings/Input/" + this->_deviceFilename + ".vi", _directionMap, _buttonMap);
 	}
 
 	_inputBuffer = std::make_shared<InputBuffer>(VE_INPUT_BUFFER_SIZE);
@@ -74,16 +78,14 @@ InputDevice::~InputDevice()
 //Needed to abstract checking for buttons and axes to a single function with boolean output.
 bool InputDevice::EvaluateInput(const InputEvent& ie)
 {
-	if(this->_deviceID == (int)InputDeviceId::Invalid)
+	switch(_deviceID)
 	{
+	case (int)InputDeviceId::Network:
+	case (int)InputDeviceId::Invalid:
 		return false;
-	}
-	else if(this->_deviceID == (int)InputDeviceId::Keyboard)
-	{
-		return glfwGetKey(Screen::window, ie._inputID) == GLFW_PRESS;
-	}
-	else
-	{
+	case(int)InputDeviceId::Keyboard:
+		return glfwGetKey(_screen->window, ie._inputID) == GLFW_PRESS;
+	default:
 		if(!ie._isAxis)
 		{
 			return _cachedJoyButtons[ie._inputID] > 0;
@@ -195,19 +197,19 @@ bool InputDevice::InputMotionFrameCheck(const InputMotionComponent& motionComp, 
 
 	for(auto& i : motionComp.buttons)
 	{
-		if((int)i.second | (int)InputTypeMask::Pressed)
+		if((int)i.second & (int)InputTypeMask::Pressed)
 		{
 			if(((inputFrame._buttonStates & i.first) != 0)
 				&& ((inputFramePrevious._buttonStates & i.first) == 0))
 				continue;
 		}
-		if((int)i.second | (int)InputTypeMask::Released)
+		if((int)i.second & (int)InputTypeMask::Released)
 		{
 			if(((inputFramePrevious._buttonStates & i.first) != 0)
 				&& ((inputFrame._buttonStates & i.first) == 0))
 				continue;
 		}
-		if((int)i.second | (int)InputTypeMask::Held)
+		if((int)i.second & (int)InputTypeMask::Held)
 		{
 			if((inputFrame._buttonStates & i.first))
 				continue;
@@ -228,7 +230,7 @@ void InputDevice::UpdateJoyInputs()
 
 void InputDevice::PollInput()
 {
-	if(_cachedInputFrames.size() == 0 || Time::lastUpdateTime + VE_FRAME_TIME * _cachedInputFrames.size() < glfwGetTime())
+	if(_cachedInputFrames.size() == 0 || _time->lastUpdateTime + VE_FRAME_TIME * _cachedInputFrames.size() < glfwGetTime())
 	{
 		_cachedInputFrames.push_back(InputFrame(0, 0));
 	}

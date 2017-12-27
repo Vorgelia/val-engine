@@ -7,9 +7,17 @@ class Transform;
 class Texture;
 class CharacterSprite;
 
+class ResourceManager;
+class RenderingGL;
+
 class CharacterRenderer :
 	public Renderer
 {
+private:
+	ResourceManager* _resource;
+	RenderingGL* _rendering;
+
+private:
 	const GameCharacter* _character;
 	std::unique_ptr<Transform> _renderingTransform;
 
@@ -23,6 +31,6 @@ public:
 
 	VE_BEHAVIOUR_REGISTER_FUNCTION(OnRenderObjects);
 
-	CharacterRenderer(Object* owner, const json& j);
+	CharacterRenderer(Object* owner, ServiceManager* serviceManager, const json& j);
 	virtual ~CharacterRenderer();
 };

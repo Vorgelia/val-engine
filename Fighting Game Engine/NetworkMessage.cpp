@@ -67,7 +67,7 @@ void NetworkMessage::Append_Raw(std::string str)
 						return;//These aren't meant to have any data associated with them, so after the identifiers are complete, discard the rest and stop.
 					break;
 				default:
-					VE_DEBUG_LOG("ERROR: Invalid NetworkMessage type");
+					//VE_LOG("ERROR: Invalid NetworkMessage type");
 					break;
 			}
 		}
@@ -81,7 +81,7 @@ bool NetworkMessage::Append(std::string str)
 {
 	if((_type == NetworkMessageType::Unidentified) || _dataIdentifiers.length() != g_identifierSizes[static_cast<int>(_type)])
 	{
-		VE_DEBUG_LOG("ERROR: Incomplete identifiers");
+		//VE_LOG("ERROR: Incomplete identifiers");
 		return false;
 	}
 	data.append(str);
@@ -138,7 +138,7 @@ NetworkMessage::NetworkMessage(NetworkMessageType type, std::string data)
 			_dataIdentifiers.append(data);
 			return;
 		default:
-			VE_DEBUG_LOG("ERROR: Invalid NetworkMessage type");
+			//VE_LOG("ERROR: Invalid NetworkMessage type");
 			break;
 	}
 }

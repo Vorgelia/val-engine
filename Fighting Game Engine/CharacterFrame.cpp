@@ -4,7 +4,7 @@
 #include "CollisionBox.h"
 #include "CharacterSprite.h"
 
-const CharacterSprite * CharacterFrame::spriteData() const
+const CharacterSprite* CharacterFrame::spriteData() const
 {
 	return _spriteData.get();
 }

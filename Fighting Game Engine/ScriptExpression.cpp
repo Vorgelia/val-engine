@@ -59,7 +59,7 @@ std::shared_ptr<BaseScriptVariable> ScriptExpression::Evaluate()
 
 			break;
 		case ScriptTokenType::Keyword:
-			if(BaseScriptVariable::GetVariableType(token.token) != ScriptVariableType::Null)
+			if(BaseScriptVariable::GetVariableType(token.token) != ScriptVariableType::Invalid)
 			{
 				state = ScriptExpression::State::VariableDeclaration;
 				break;
@@ -213,24 +213,23 @@ std::shared_ptr<BaseScriptVariable> ScriptExpression::Evaluate()
 				}
 				else if(i < _tokens.size() - 1 && _tokens[i + 1].type == ScriptTokenType::ParenthesisGroup)
 				{
-
 					std::vector<ScriptToken> parenthesisTokens;
 					ScriptParsingUtils::ParseLineTokens(_tokens[i + 1].token, parenthesisTokens);
 					std::vector<std::shared_ptr<BaseScriptVariable>> variables;
 
-					for(size_t i = 0; i < parenthesisTokens.size(); ++i)
+					for(size_t parenToken = 0; parenToken < parenthesisTokens.size(); ++parenToken)
 					{
-						int nextToken = ScriptParsingUtils::GetNextTokenOfType(ScriptTokenType::Separator, parenthesisTokens, i);
+						int nextToken = ScriptParsingUtils::GetNextTokenOfType(ScriptTokenType::Separator, parenthesisTokens, parenToken);
 						if(nextToken < 0)
 						{
 							nextToken = parenthesisTokens.size();
 						}
 
 						variables.push_back(
-							std::make_unique<ScriptExpression>(_parent, std::vector<ScriptToken>(parenthesisTokens.begin() + i, parenthesisTokens.begin() + nextToken))->Evaluate()
+							std::make_unique<ScriptExpression>(_parent, std::vector<ScriptToken>(parenthesisTokens.begin() + parenToken, parenthesisTokens.begin() + nextToken))->Evaluate()
 						);
 
-						i = nextToken;
+						parenToken = nextToken;
 					}
 
 					evaluatedVar = _parent->RunFunction(token.token, variables);
@@ -240,11 +239,6 @@ std::shared_ptr<BaseScriptVariable> ScriptExpression::Evaluate()
 				{
 					evaluatedVar = _parent->GetVariable(token.token);
 				}
-			}
-
-			if(evaluatedVar == nullptr)
-			{
-				throw ScriptError("Invalid value evaluation on token " + token.token);
 			}
 
 			if(previousState == ScriptExpression::State::UnaryOperator)

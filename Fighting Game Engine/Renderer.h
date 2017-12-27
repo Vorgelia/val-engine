@@ -1,11 +1,17 @@
 #pragma once
 #include "Behaviour.h"
-#include "Resource.h"
 #include <string>
+
+class ResourceManager;
+class RenderingGL;
 
 class Renderer :
 	public Behaviour
 {
+protected:
+	ResourceManager* _resource;
+	RenderingGL* _rendering;
+
 protected:
 	Mesh* _mesh;
 	Material* _material;
@@ -16,8 +22,8 @@ public:
 
 	VE_BEHAVIOUR_REGISTER_FUNCTION(OnRenderObjects);
 
-	Renderer(Object* owner, Mesh* mesh = Resource::GetMesh("Materials/Base/quad.vm"), Material* material = Resource::GetMaterial("Materials/Base/Object2D.vmat"));
-	Renderer(Object* owner, const json& j);
+	Renderer(Object* owner, ServiceManager* serviceManager, Mesh* mesh = nullptr, Material* material = nullptr);
+	Renderer(Object* owner, ServiceManager* serviceManager, const json& j);
 	~Renderer();
 };
 

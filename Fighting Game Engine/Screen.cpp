@@ -1,67 +1,88 @@
 #include "Screen.h"
+#include "Delegate.h"
 
-namespace Screen
-{
-	GLFWmonitor* primaryMonitor;
-	const GLFWvidmode* mode;
-	GLFWwindow* window;
-	glm::vec2 mousePos;
-	glm::ivec2 size;
-	glm::vec2 invSize;
-	glm::ivec4 viewportSize;
-	double windowAspect;
-	double windowAspectInv;
-	std::vector<void(*)()> screenUpdateCallbacks;
-
-	const double targetAspect = 16.0 / 9.0;
-	const double targetAspectInv = 9.0 / 16.0;
-}
-
-//Management of window related stuff. Probably not going to change at all from here.
 void Screen::Init()
 {
-	Screen::size = glm::ivec2(1280, 720);
-	Screen::invSize = glm::vec2(1.0 / 1280.0, 1.0 / 720.0);
-
-	windowAspect = Screen::size.x / Screen::size.y;
-	windowAspectInv = 1.0 / windowAspect;
-
-	Screen::primaryMonitor = glfwGetPrimaryMonitor();
-	Screen::mode = glfwGetVideoMode(Screen::primaryMonitor);
-
-	if(Screen::targetAspect > Screen::windowAspect)
-	{
-		viewportSize = glm::ivec4(0.0, (Screen::size.y - Screen::size.x*Screen::targetAspectInv)*0.5, Screen::size.x, Screen::size.x*Screen::targetAspectInv);
-	}
-	else if(Screen::targetAspect < Screen::windowAspect)
-	{
-		viewportSize = glm::ivec4((Screen::size.x - Screen::size.y*Screen::targetAspect)*0.5, 0, Screen::size.y*Screen::targetAspect, Screen::size.y);
-	}
 }
+
 void Screen::Update()
 {
 	double mousex, mousey;
-	glfwGetCursorPos(Screen::window, &mousex, &mousey);
-	Screen::mousePos = glm::vec2(mousex, mousey);
+	glfwGetCursorPos(window, &mousex, &mousey);
+	mousePos = glm::vec2(mousex, mousey);
+
+	glm::ivec2 framebufferSize;
+	glfwGetFramebufferSize(window, &framebufferSize.x, &framebufferSize.y);
+
+	if(_nativeFramebufferSize != framebufferSize)
+	{
+		_nativeFramebufferSize = framebufferSize;
+		HandleResized(window, framebufferSize.x, framebufferSize.y);
+	}
 }
 
-void Screen::OnResize(GLFWwindow* wnd, int sizeX, int sizeY)
+void Screen::HandleResized(GLFWwindow* wnd, int sizeX, int sizeY)
 {
 	size = glm::ivec2(sizeX, sizeY);
 	invSize = glm::vec2(1.0 / (float)sizeX, 1.0 / (float)sizeY);
 
-	windowAspect = Screen::size.x / Screen::size.y;
+	windowAspect = size.x / size.y;
 	windowAspectInv = 1.0 / windowAspect;
 
-	if(Screen::targetAspect > Screen::windowAspect)
+	if(targetAspect > windowAspect)
 	{
-		viewportSize = glm::ivec4(0.0, (Screen::size.y - Screen::size.x*Screen::targetAspectInv)*0.5, Screen::size.x, Screen::size.x*Screen::targetAspectInv);
+		viewportSize = glm::ivec4(0.0, (size.y - size.x*targetAspectInv) / 2, size.x, size.x * targetAspectInv);
 	}
-	else if(Screen::targetAspect < Screen::windowAspect)
+	else if(targetAspect < windowAspect)
 	{
-		viewportSize = glm::ivec4((Screen::size.x - Screen::size.y*Screen::targetAspect)*0.5, 0, Screen::size.y*Screen::targetAspect, Screen::size.y);
+		viewportSize = glm::ivec4((size.x - size.y*targetAspect) / 2, 0, size.y * targetAspect, size.y);
 	}
 
-	for(auto i : screenUpdateCallbacks)
-		(*i)();
+	ScreenUpdated();
+}
+
+void Screen::SetActiveWindow(GLFWwindow* window)
+{
+	this->window = window;
+	glfwGetWindowSize(window, &_nativeFramebufferSize.x, &_nativeFramebufferSize.y);
+
+	HandleResized(window, _nativeFramebufferSize.x, _nativeFramebufferSize.y);
+
+	primaryMonitor = glfwGetPrimaryMonitor();
+	mode = glfwGetVideoMode(primaryMonitor);
+
+	glfwMakeContextCurrent(window);
+	glfwSetWindowPos(window, (int)(mode->width*0.5 - size.x*0.5), (int)(mode->height*0.5 - size.y*0.5));
+	glfwSwapInterval(0);
+}
+
+Screen::Screen(ServiceManager* serviceManager) :
+	BaseService(serviceManager, -50),
+	targetAspect(16.0 / 9.0),
+	targetAspectInv(9.0 / 16.0)
+{
+	glfwInit();
+	_allowServiceUpdate = true;
+
+	//Window settings
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+	//glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+	//glfwWindowHint(GLFW_DECORATED, GL_FALSE);
+#ifdef VE_USE_SINGLE_BUFFER
+	glfwWindowHint(GLFW_DOUBLEBUFFER, GL_FALSE);
+#endif
+
+	//Initialize and store window
+	SetActiveWindow(glfwCreateWindow(1280, 720, "Videogame", nullptr, nullptr));
+
+	glewExperimental = true;
+	glewInit();
+}
+
+Screen::~Screen()
+{
+	glfwTerminate();
 }

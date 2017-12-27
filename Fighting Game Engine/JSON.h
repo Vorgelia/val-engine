@@ -13,6 +13,9 @@ namespace JSON
 	template<typename T>
 	T Get(const json_t& j);
 
+	template<typename T>
+	bool TryGetMember(const json_t& j, std::string name, T& out_result);
+
 	template<>
 	glm::quat Get(const json_t& j);
 	template<>
@@ -35,4 +38,17 @@ template<typename T>
 T JSON::Get(const json & j)
 {
 	return j.get<T>();
+}
+
+template<typename T>
+bool JSON::TryGetMember(const json_t & j, std::string name, T& out_result)
+{
+	auto& iter = j.find(name);
+	if(iter == j.end())
+	{
+		return false;
+	}
+
+	out_result = iter->get<T>();
+	return true;
 }

@@ -1,21 +1,28 @@
 #pragma once
+#include "BaseService.h"
 
-#define VE_FRAME_TIME 0.0166666666
 #define VE_FRAME_RATE 60
-namespace Time
+#define VE_FRAME_TIME (1.0/VE_FRAME_RATE)
+
+class Time : public BaseService
 {
-	extern double deltaTime;
-	extern double smoothDeltaTime;
-	extern double time;
-	extern double lastTime;
-	extern double lastUpdateTime;
-	extern double timeSinceLoad;
-	extern double updateRate;
-	extern unsigned long long frameCount;
-	extern unsigned long long frameCountSinceLoad;
+public:
+	double deltaTime;
+	double smoothDeltaTime;
+	double time;
+	double lastTime;
+	double lastUpdateTime;
+	double timeSinceLoad;
+	double updateRate;
+	unsigned long long frameCount;
+	unsigned long long frameCountSinceLoad;
 
-	void Update();
+	void Init() override;
+	void Update() override;
+
 	void FrameUpdate();
-	void OnSceneLoaded();
-}
+	void HandleSceneLoaded();
 
+	Time(ServiceManager* serviceManager);
+	~Time() = default;
+};

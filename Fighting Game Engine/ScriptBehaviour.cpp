@@ -1,7 +1,10 @@
 #include "ScriptBehaviour.h"
 #include "BehaviourFactory.h"
 #include "ScriptManager.h"
+#include "ServiceManager.h"
 #include "Script.h"
+
+
 VE_BEHAVIOUR_REGISTER_TYPE(ScriptBehaviour);
 
 inline void ScriptBehaviour::RunScriptFunction(std::string name)
@@ -53,14 +56,18 @@ void ScriptBehaviour::Cleanup()
 
 	if(_script != nullptr)
 	{
-		ScriptManager::RemoveScript(_script);
+		_scriptManager->RemoveScript(_script);
 	}
 }
 
-ScriptBehaviour::ScriptBehaviour(Object* owner, const json& j) : Behaviour(owner, j)
+ScriptBehaviour::ScriptBehaviour(Object* owner, ServiceManager* serviceManager, const json& j) : Behaviour(owner, serviceManager, j)
 {
-	std::string path = JSON::Get<std::string>(j["script"]);
-	_script = ScriptManager::AddScript(path);
+	_scriptManager = serviceManager->ScriptManager();
+	std::string path;
+	if(JSON::TryGetMember<std::string>(j, "script", path))
+	{
+		_script = _scriptManager->AddScript(path);
+	}
 }
 
 

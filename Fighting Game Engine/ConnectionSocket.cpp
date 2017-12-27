@@ -9,7 +9,7 @@ int ConnectionSocket::GetLastSocketError()
 	//Naturally, we don't want that to be treated as an actual error reported to the user.
 	if(err > 0 && err != WSAEWOULDBLOCK)
 	{
-		VE_DEBUG_LOG("Socket Error: " + std::to_string(err));
+		//VE_LOG("Socket Error: " + std::to_string(err));
 		return err;
 	}
 	return 0;
@@ -57,8 +57,8 @@ bool ConnectionSocket::SendData(NetworkMessage data)
 		if(data.type() != NetworkMessageType::PingOut&&data.type() != NetworkMessageType::PingIn)
 		{
 			sendQueue.push(data);
-			if(sendQueue.size() > 64)
-				VE_DEBUG_LOG("Send queue size warning. SocketID:" + id + " SendQueue size:" + std::to_string(sendQueue.size()));
+			//if(sendQueue.size() > 64)
+			//	VE_LOG("Send queue size warning. SocketID:" + id + " SendQueue size:" + std::to_string(sendQueue.size()));
 		}
 		return false;
 	}
@@ -104,7 +104,7 @@ void ConnectionSocket::DecodeStream(std::string stream)
 {
 	if(stream.length() == 0)
 	{
-		VE_DEBUG_LOG("Attempting to decode null stream.");
+		//VE_LOG("Attempting to decode null stream.");
 		return;
 	}
 	unsigned int currentIndex = 0;
@@ -122,21 +122,21 @@ void ConnectionSocket::DecodeStream(std::string stream)
 			//If the stream doesn't have that many characters left, or has more data than the identifiers, the previous block will catch it next time we iterate. \o/
 			switch(static_cast<NetworkMessageType>(stream[currentIndex]))
 			{
-				case NetworkMessageType::PingOut:
-				case NetworkMessageType::PingIn:
-					receiveQueue.push(NetworkMessage(static_cast<NetworkMessageType>(stream[currentIndex])));
-					nextIndex = currentIndex + 1;
-					break;
-				case NetworkMessageType::TextMessage:
-				case NetworkMessageType::NameSet:
-				case NetworkMessageType::PropertySet:
-				case NetworkMessageType::InputFrame:
-					nextIndex = min(stream.length(), currentIndex + NetworkMessage::g_identifierSizes[(int)stream[currentIndex]]);
-					receiveQueue.push(NetworkMessage(stream.substr(currentIndex, nextIndex - currentIndex)));
-					break;
-				default:
-					VE_DEBUG_LOG("Invalid message type on decoding. Something went very wrong.");
-					return;
+			case NetworkMessageType::PingOut:
+			case NetworkMessageType::PingIn:
+				receiveQueue.push(NetworkMessage(static_cast<NetworkMessageType>(stream[currentIndex])));
+				nextIndex = currentIndex + 1;
+				break;
+			case NetworkMessageType::TextMessage:
+			case NetworkMessageType::NameSet:
+			case NetworkMessageType::PropertySet:
+			case NetworkMessageType::InputFrame:
+				nextIndex = min(stream.length(), currentIndex + NetworkMessage::g_identifierSizes[(int)stream[currentIndex]]);
+				receiveQueue.push(NetworkMessage(stream.substr(currentIndex, nextIndex - currentIndex)));
+				break;
+			default:
+				//VE_LOG("Invalid message type on decoding. Something went very wrong.");
+				return;
 			}
 		}
 		currentIndex = nextIndex;//Advance currentIndex by however many characters we used in this iteration step.

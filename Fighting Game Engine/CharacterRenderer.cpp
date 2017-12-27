@@ -1,13 +1,16 @@
 #include "CharacterRenderer.h"
+#include <GLM\glm.hpp>
 #include "GameCharacter.h"
 #include "CharacterFrame.h"
 #include "CharacterSprite.h"
 #include "CharacterStateManager.h"
+#include "ServiceManager.h"
 #include "Object.h"
 #include "Material.h"
 #include "Texture.h"
 #include "Transform.h"
-#include "Rendering.h"
+#include "RenderingGL.h"
+#include "ResourceManager.h"
 
 VE_BEHAVIOUR_REGISTER_TYPE(CharacterRenderer);
 
@@ -36,12 +39,12 @@ void CharacterRenderer::OnRenderObjects()
 	}
 
 	const CharacterSprite* spriteData = _character->_stateManager->_currentFrame->spriteData();
-	Texture* frameTex = Resource::GetTexture(spriteData->sprite());
+	Texture* frameTex = _resource->GetTexture(spriteData->sprite());
 
 	HandleRenderingMaterial(spriteData, frameTex, _character->_flipped);
 	HandleRenderingTransform(spriteData, frameTex);
 
-	Rendering::DrawMesh(_renderingTransform.get(), _mesh, _material);
+	_rendering->DrawMesh(_renderingTransform.get(), _mesh, _material);
 }
 
 void CharacterRenderer::HandleRenderingMaterial(const CharacterSprite* spriteData, Texture* texture, bool flipped)
@@ -52,12 +55,13 @@ void CharacterRenderer::HandleRenderingMaterial(const CharacterSprite* spriteDat
 	}
 
 	glm::ivec4 pixelRect = spriteData->pixelRect();
+	glm::vec4 textureSize = texture->size();
 
 	glm::vec4 params(
-		pixelRect.x * texture->size.z + (flipped ? pixelRect.z * texture->size.z : 0),
-		pixelRect.y * texture->size.w,
-		pixelRect.z * texture->size.z * (flipped ? -1 : 1),
-		pixelRect.w * texture->size.w
+		pixelRect.x * textureSize.z + (flipped ? pixelRect.z * textureSize.z : 0),
+		pixelRect.y * textureSize.w,
+		pixelRect.z * textureSize.z * (flipped ? -1 : 1),
+		pixelRect.w * textureSize.w
 	);
 
 	_material->uniformTextures.insert_or_assign("tex0", MaterialTexture(texture, params));
@@ -81,7 +85,7 @@ void CharacterRenderer::HandleRenderingTransform(const CharacterSprite* spriteDa
 		pixelRect.w * sizeMultiplier.y);
 }
 
-CharacterRenderer::CharacterRenderer(Object* owner, const json& j) : Renderer(owner, j)
+CharacterRenderer::CharacterRenderer(Object* owner, ServiceManager* serviceManager, const json& j) : Renderer(owner, serviceManager, j)
 {
 	if(_material == nullptr)
 	{
@@ -89,8 +93,11 @@ CharacterRenderer::CharacterRenderer(Object* owner, const json& j) : Renderer(ow
 		return;
 	}
 
-	_material = Resource::CopyMaterial(_material);
-	_renderingTransform = std::make_unique<Transform>(_owner);
+	_resource = _serviceManager->ResourceManager();
+	_rendering = _serviceManager->Rendering();
+
+	_material = _resource->CopyMaterial(_material);
+	_renderingTransform = std::make_unique<Transform>(_owner, serviceManager);
 }
 
 CharacterRenderer::~CharacterRenderer()

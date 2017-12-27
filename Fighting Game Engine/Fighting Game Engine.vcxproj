@@ -43,7 +43,10 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <OutDir>..\Build\</OutDir>
-    <CodeAnalysisRuleSet>NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>AnalysisRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>..\Build\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -66,15 +69,19 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>Dbghelp.lib;ws2_32.lib;freetype27d.lib;legacy_stdio_definitions.lib;SOIL.lib;glfw3.lib;glew32s.lib;opengl32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies);</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AttackData.cpp" />
+    <ClCompile Include="BaseService.cpp" />
     <ClCompile Include="Behaviour.cpp" />
     <ClCompile Include="BehaviourFactory.cpp" />
     <ClCompile Include="CachedMesh.cpp" />
@@ -88,13 +95,14 @@
     <ClCompile Include="ConnectionSocket.cpp" />
     <ClCompile Include="DebugLog.cpp" />
     <ClCompile Include="DefenceData.cpp" />
+    <ClCompile Include="Delegate.cpp" />
     <ClCompile Include="Font.cpp" />
     <ClCompile Include="FrameBuffer.cpp" />
     <ClCompile Include="GameCharacter.cpp" />
     <ClCompile Include="GamePlayer.cpp" />
     <ClCompile Include="GameScene.cpp" />
     <ClCompile Include="GameSceneManager.cpp" />
-    <ClCompile Include="GLStateTrack.cpp" />
+    <ClCompile Include="GraphicsGL.cpp" />
     <ClCompile Include="CollisionBox.cpp" />
     <ClCompile Include="InputDevice.cpp" />
     <ClCompile Include="InputEvent.cpp" />
@@ -110,6 +118,7 @@
     <ClCompile Include="MenuBehaviour.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="NetworkEntity.cpp" />
+    <ClCompile Include="NetworkGamePlayer.cpp" />
     <ClCompile Include="NetworkMessage.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="PlayerManager.cpp" />
@@ -122,10 +131,10 @@
     <ClCompile Include="ScriptOperator.cpp" />
     <ClCompile Include="PostEffect.cpp" />
     <ClCompile Include="Profiler.cpp" />
-    <ClCompile Include="Rendering.cpp" />
-    <ClCompile Include="Resource.cpp" />
+    <ClCompile Include="RenderingGL.cpp" />
+    <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="ResourceInitializer.cpp" />
-    <ClCompile Include="ResourceLoader.cpp" />
+    <ClCompile Include="FilesystemManager.cpp" />
     <ClCompile Include="Screen.cpp" />
     <ClCompile Include="Script.cpp" />
     <ClCompile Include="ScriptBlock.cpp" />
@@ -142,6 +151,7 @@
     <ClCompile Include="ScriptToken.cpp" />
     <ClCompile Include="BaseScriptVariable.cpp" />
     <ClCompile Include="ScriptVariableUtils.cpp" />
+    <ClCompile Include="ServiceManager.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Time.cpp" />
@@ -149,6 +159,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AttackData.h" />
+    <ClInclude Include="BaseService.h" />
     <ClInclude Include="Behaviour.h" />
     <ClInclude Include="BehaviourFactory.h" />
     <ClInclude Include="CachedMesh.h" />
@@ -164,6 +175,7 @@
     <ClInclude Include="ConnectionSocket.h" />
     <ClInclude Include="DebugLog.h" />
     <ClInclude Include="DefenceData.h" />
+    <ClInclude Include="Delegate.h" />
     <ClInclude Include="FGIncludes.hpp" />
     <ClInclude Include="Font.h" />
     <ClInclude Include="FrameBuffer.h" />
@@ -173,7 +185,7 @@
     <ClInclude Include="GameSceneManager.h" />
     <ClInclude Include="GLIncludes.hpp" />
     <ClInclude Include="GLMExtensions.h" />
-    <ClInclude Include="GLStateTrack.h" />
+    <ClInclude Include="GraphicsGL.h" />
     <ClInclude Include="CollisionBox.h" />
     <ClInclude Include="InputDevice.h" />
     <ClInclude Include="InputEvent.h" />
@@ -190,17 +202,18 @@
     <ClInclude Include="MenuBehaviour.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="NetworkEntity.h" />
+    <ClInclude Include="NetworkGamePlayer.h" />
     <ClInclude Include="NetworkMessage.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="PlayerManager.h" />
     <ClInclude Include="PostEffect.h" />
     <ClInclude Include="Profiler.h" />
     <ClInclude Include="Renderer.h" />
-    <ClInclude Include="Rendering.h" />
-    <ClInclude Include="Resource.h" />
-    <ClInclude Include="resource1.h" />
+    <ClInclude Include="RenderingGL.h" />
+    <ClInclude Include="ResourceManager.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="ResourceInitializer.h" />
-    <ClInclude Include="ResourceLoader.h" />
+    <ClInclude Include="FilesystemManager.h" />
     <ClInclude Include="Screen.h" />
     <ClInclude Include="Script.h" />
     <ClInclude Include="ScriptBehaviour.h" />
@@ -223,6 +236,7 @@
     <ClInclude Include="ScriptToken.h" />
     <ClInclude Include="BaseScriptVariable.h" />
     <ClInclude Include="ScriptVariableUtils.h" />
+    <ClInclude Include="ServiceManager.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Time.h" />

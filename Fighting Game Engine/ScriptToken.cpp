@@ -25,3 +25,4 @@ const std::string ScriptToken::type_int = "int";
 const std::string ScriptToken::type_bool = "bool";
 const std::string ScriptToken::type_string = "string";
 const std::string ScriptToken::type_collection = "collection";
+const std::string ScriptToken::type_void = "void";

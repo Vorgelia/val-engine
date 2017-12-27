@@ -1,14 +1,16 @@
-#include "Resource.h"
+#include "ResourceManager.h"
+#include "ServiceManager.h"
 #include "CachedMesh.h"
 #include "Mesh.h"
 #include "Shader.h"
-#include "ResourceLoader.h"
+#include "FilesystemManager.h"
 #include "Material.h"
 #include "Texture.h"
 #include "PostEffect.h"
 #include "Font.h"
 #include "ResourceInitializer.h"
 #include "DebugLog.h"
+#include "GraphicsGL.h"
 #include <memory>
 
 //If the following define exists, the engine will create some default resource files if the folder structure is missing.
@@ -16,64 +18,37 @@
 //They are also easier to just modify instead of writing new ones from scratch
 //#define VE_CREATE_DEFAULT_RESOURCES
 
-namespace Resource
+void ResourceManager::GenerateDefaultTextures()
 {
-	std::unordered_map<std::string, std::unique_ptr<CachedMesh>> cachedMeshes;
-	std::unordered_map<std::string, std::unique_ptr<Mesh>> meshes;
-	std::unordered_map<std::string, std::unique_ptr<Texture>> textures;
-	std::unordered_map<std::string, std::unique_ptr<Material>> materials;
-	std::unordered_map<std::string, std::unique_ptr<Shader>> shaders;
-	std::unordered_map<std::string, std::unique_ptr<Font>> fonts;
-	std::unordered_map<std::string, std::unique_ptr<PostEffect>> postEffects;
-
-	//Base
-	std::unordered_map<std::string, std::unique_ptr<Mesh>> baseMeshes;
-	std::unordered_map<std::string, std::unique_ptr<Texture>> baseTextures;
-	std::unordered_map<std::string, std::unique_ptr<Material>> baseMaterials;
-}
-
-void Resource::Init()
-{
-#ifdef VE_CREATE_DEFAULT_RESOURCES
-	if(!FS::exists("Meshes/") || !FS::exists("Shaders/") || !FS::exists("Settings/") || !FS::exists("States/"))
+	std::vector<unsigned char>& pixels = std::vector<unsigned char>
 	{
-		VE_DEBUG_LOG("-----\n\n\nFile structure invalid. Creating default resources.\n\n\n-----");
-		ResourceInitializer::Init();
-	}
-#endif
-
-	//Initialization of base resources. These will not be unloaded throughout the program, but they can be overriden per GameState.
-	std::vector<float>& pixels = std::vector<float>
-	{
-		1, 0, 1, 1,	 0, 0, 0, 1,
-		0, 0, 0, 1,	 1, 0, 1, 1
+		255, 0, 255, 255,	 0, 0, 0, 255,
+		0, 0, 0, 255,	 255, 0, 255, 255
 	};
-	baseTextures.emplace(std::make_pair("base_texture", std::make_unique<Texture>("base_texture", pixels, glm::ivec2(2, 2), GL_RGBA, GL_NEAREST, GL_REPEAT)));
+	baseTextures.emplace(std::make_pair("base_texture", _graphics->CreateTexture("base_texture", pixels, glm::ivec2(2, 2), GL_RGBA, GL_NEAREST, GL_REPEAT)));
 
-	pixels = std::vector<float>{ 0, 0, 0, 1 };
-	baseTextures.emplace(std::make_pair("black", std::make_unique<Texture>("black", pixels, glm::ivec2(1, 1), GL_RGBA, GL_NEAREST, GL_REPEAT)));
+	pixels = std::vector<unsigned char>{ 0, 0, 0, 255 };
+	baseTextures.emplace(std::make_pair("black", _graphics->CreateTexture("black", pixels, glm::ivec2(1, 1), GL_RGBA, GL_NEAREST, GL_REPEAT)));
 
-	pixels = std::vector<float>{ 1, 1, 1, 1 };
-	baseTextures.emplace(std::make_pair("white", std::make_unique<Texture>("white", pixels, glm::ivec2(1, 1), GL_RGBA, GL_NEAREST, GL_REPEAT)));
-
-	//Base shaders
-	Resource::GetShader("Shaders/Base/2D");
-	Resource::GetShader("Shaders/Base/Screen");
-	//Base meshes
-	Resource::GetMesh("Meshes/Base/quad.vm", true);
-	Resource::GetMesh("Meshes/Base/screenQuad.vm", true);
-	//Base materials
-	Resource::GetMaterial("Materials/Base/Screen.vmat");
-	//Fonts
-	Resource::GetFont("Fonts/Amble.ttf");
+	pixels = std::vector<unsigned char>{ 255, 255, 255, 255 };
+	baseTextures.emplace(std::make_pair("white", _graphics->CreateTexture("white", pixels, glm::ivec2(1, 1), GL_RGBA, GL_NEAREST, GL_REPEAT)));
 }
 
-void Resource::Update()
+void ResourceManager::LoadDefaultResources()
 {
-	//?
+	//Base shaders
+	GetShader("Shaders/Base/2D");
+	GetShader("Shaders/Base/Screen");
+	//Base meshes
+	GetMesh("Meshes/Base/quad.vm");
+	GetMesh("Meshes/Base/screenQuad.vm");
+	//Base materials
+	GetMaterial("Materials/Base/Screen.vmat");
+	//Fonts
+	GetFont("Fonts/Amble.ttf");
 }
 
-Font* Resource::GetFont(FS::path path)
+Font* ResourceManager::GetFont(FS::path path)
 {
 	std::string pathString = path.string();
 	auto& iter = fonts.find(pathString);
@@ -86,19 +61,19 @@ Font* Resource::GetFont(FS::path path)
 	if(!FS::exists(path))
 	{
 		fonts.emplace(std::make_pair(pathString, nullptr));
-		VE_DEBUG_LOG("Failed to load Font " + pathString);
+		_debug->VE_LOG("Failed to load Font " + pathString);
 		return nullptr;
 	}
 
 	return fonts.emplace(
-		std::make_pair(pathString, std::make_unique<Font>(path))
+		std::make_pair(pathString, _graphics->CreateFont(path.string()))
 	).first->second.get();
 }
 
 //The way these functions work is similar. If the resource exists in the per GameState resources, retrieve a pointer to it.
 //Else, if the resource exists in the base resources, do the same.
 //Else, attempt to load the resource, caching it as nullptr if it doesn't exist, so no further loading attempts are made.
-Texture* Resource::GetTexture(FS::path path)
+Texture* ResourceManager::GetTexture(FS::path path)
 {
 	std::string pathString = path.string();
 
@@ -116,7 +91,7 @@ Texture* Resource::GetTexture(FS::path path)
 
 	if(!FS::exists(path))
 	{
-		VE_DEBUG_LOG("Unable to find texture at " + pathString);
+		_debug->VE_LOG("Unable to find texture at " + pathString);
 		textures.emplace(std::make_pair(pathString, nullptr));
 		return nullptr;
 	}
@@ -128,14 +103,18 @@ Texture* Resource::GetTexture(FS::path path)
 		container = &baseTextures;
 	}
 
+	std::vector<unsigned char> pixels;
+	glm::ivec2 size;
+	_filesystem->LoadTextureData(path, pixels, size);
+
 	return container->emplace(
 		std::make_pair(
 			pathString,
-			std::make_unique<Texture>(pathString, path, GL_RGBA, SOIL_LOAD_RGBA, GL_NEAREST, GL_REPEAT))
+			_graphics->CreateTexture(pathString, pixels, size, GL_RGBA, GL_NEAREST, GL_REPEAT))
 	).first->second.get();
 }
 
-PostEffect* Resource::GetPostEffect(FS::path path)
+PostEffect* ResourceManager::GetPostEffect(FS::path path)
 {
 	std::string pathString = path.string();
 	auto& iter = postEffects.find(pathString);
@@ -147,17 +126,17 @@ PostEffect* Resource::GetPostEffect(FS::path path)
 
 	if(!FS::exists(path))
 	{
-		VE_DEBUG_LOG("Failed to load Texture " + pathString);
+		_debug->VE_LOG("Failed to load Texture " + pathString);
 		postEffects.emplace(std::make_pair(pathString, nullptr));
 		return nullptr;
 	}
 
 	return postEffects.emplace(std::make_pair(
-		pathString, std::make_unique<PostEffect>(pathString)
+		pathString, _filesystem->LoadPostEffect(pathString)
 	)).first->second.get();
 }
 
-Shader* Resource::GetShader(std::string name)
+Shader* ResourceManager::GetShader(std::string name)
 {
 	auto& iter = shaders.find(name);
 	if(iter != shaders.end())
@@ -168,17 +147,19 @@ Shader* Resource::GetShader(std::string name)
 	if(!FS::exists(name + ".vert") || !FS::exists(name + ".frag"))
 	{
 		shaders.emplace(std::pair<std::string, std::unique_ptr<Shader>>(name, nullptr));
-		VE_DEBUG_LOG("Failed to load Shader " + name);
+		_debug->VE_LOG("Failed to load Shader " + name);
 		return nullptr;
 	}
 
 	return shaders.emplace(std::pair<std::string, std::unique_ptr<Shader>>(
 		name,
-		std::make_unique<Shader>(name, std::vector<ShaderAttachment>{ ShaderAttachment(ResourceLoader::ReturnFile(name + ".vert"), GL_VERTEX_SHADER), ShaderAttachment(ResourceLoader::ReturnFile(name + ".frag"), GL_FRAGMENT_SHADER) })
-		)).first->second.get();
+		_graphics->CreateShader(name, std::vector<ShaderAttachment>{
+		ShaderAttachment(_filesystem->ReturnFile(name + ".vert"), GL_VERTEX_SHADER),
+			ShaderAttachment(_filesystem->ReturnFile(name + ".frag"), GL_FRAGMENT_SHADER)
+	}))).first->second.get();
 }
 
-Material* Resource::GetMaterial(FS::path path)
+Material* ResourceManager::GetMaterial(FS::path path)
 {
 	std::string pathString = path.string();
 
@@ -197,7 +178,7 @@ Material* Resource::GetMaterial(FS::path path)
 	if(!FS::exists(path))
 	{
 		materials.emplace(std::pair<std::string, std::unique_ptr<Material>>(pathString, nullptr));
-		VE_DEBUG_LOG("Failed to load material " + pathString);
+		_debug->VE_LOG("Failed to load material " + pathString);
 		return nullptr;
 	}
 
@@ -210,11 +191,11 @@ Material* Resource::GetMaterial(FS::path path)
 
 	return container->emplace(std::pair<std::string, std::unique_ptr<Material>>(
 		pathString,
-		std::make_unique<Material>(pathString))
+		_filesystem->LoadMaterial(pathString))
 	).first->second.get();
 }
 
-Material* Resource::CopyMaterial(Material* mat)
+Material* ResourceManager::CopyMaterial(Material* mat)
 {
 	if(mat == nullptr)
 		return nullptr;
@@ -234,7 +215,7 @@ Material* Resource::CopyMaterial(Material* mat)
 	return iter->second.get();
 }
 
-Mesh* Resource::GetMesh(FS::path path, bool editable)
+Mesh* ResourceManager::GetMesh(FS::path path)
 {
 	std::string pathString = path.string();
 
@@ -252,7 +233,7 @@ Mesh* Resource::GetMesh(FS::path path, bool editable)
 
 	if(!FS::exists(path))
 	{
-		VE_DEBUG_LOG("Failed to load Mesh: " + pathString);
+		_debug->VE_LOG("Failed to load Mesh: " + pathString);
 		postEffects.emplace(std::pair<std::string, std::unique_ptr<PostEffect>>(pathString, nullptr));
 		return nullptr;
 	}
@@ -263,40 +244,90 @@ Mesh* Resource::GetMesh(FS::path path, bool editable)
 	{
 		cachedMeshIter = cachedMeshes.emplace(
 			std::pair<std::string, std::unique_ptr<CachedMesh>>
-			(pathString, std::make_unique<CachedMesh>(path)))
+			(pathString, _filesystem->LoadMeshVM(path)))
 			.first;
 	}
 
 	iter = meshes.emplace(
 		std::pair<std::string, std::unique_ptr<Mesh>>
-		(pathString, std::make_unique<Mesh>(pathString, cachedMeshIter->second.get(), editable)))
+		(pathString, _graphics->CreateMesh(pathString, cachedMeshIter->second.get())))
 		.first;
-
-	if(!iter->second->valid())
-	{
-		VE_DEBUG_LOG("Imported invalid Mesh: " + pathString);
-	}
 
 	return iter->second.get();
 }
 
-void Resource::Unload()
+void ResourceManager::Init()
 {
+	_debug = _serviceManager->Debug();
+	_graphics = _serviceManager->Graphics();
+	_filesystem = _serviceManager->Filesystem();
+
+#ifdef VE_CREATE_DEFAULT_RESOURCES
+	if(!FS::exists("Meshes/") || !FS::exists("Shaders/") || !FS::exists("Settings/") || !FS::exists("States/"))
+	{
+		_debug->VE_LOG("-----\n\n\nFile structure invalid. Creating default resources.\n\n\n-----");
+		ResourceInitializer::Init();
+	}
+#endif
+
+	GenerateDefaultTextures();
+	LoadDefaultResources();
+}
+
+void ResourceManager::Update() {}
+
+void ResourceManager::Unload()
+{
+	for(auto& iter : meshes)
+	{
+		_graphics->DestroyMesh(*(iter.second.get()));
+	}
 	meshes.clear();
+
 	cachedMeshes.clear();
+
+	for(auto& iter : textures)
+	{
+		_graphics->DestroyTexture(*(iter.second.get()));
+	}
 	textures.clear();
+
 	materials.clear();
 }
 
-void Resource::Cleanup()
+ResourceManager::ResourceManager(ServiceManager* serviceManager) : BaseService(serviceManager)
 {
+
+}
+
+ResourceManager::~ResourceManager()
+{
+	for(auto& iter : baseMeshes)
+	{
+		_graphics->DestroyMesh(*(iter.second.get()));
+	}
 	baseMeshes.clear();
 
 	Unload();
 
 	baseMaterials.clear();
+
+	for(auto& iter : shaders)
+	{
+		_graphics->DestroyShader(*(iter.second.get()));
+	}
 	shaders.clear();
+
+	for(auto& tex : baseTextures)
+	{
+		_graphics->DestroyTexture(*(tex.second.get()));
+	}
 	baseTextures.clear();
+
+	for(auto& iter : fonts)
+	{
+		_graphics->DestroyFont(*(iter.second.get()));
+	}
 	fonts.clear();
 	postEffects.clear();
 }

@@ -50,18 +50,21 @@ void Behaviour::Cleanup()
 
 }
 
-Behaviour::Behaviour(Object* owner)
+Behaviour::Behaviour(Object* owner, ServiceManager* serviceManager)
 {
 	assert(owner != nullptr);
 	_owner = owner;
 	enabled = false;
 }
 
-Behaviour::Behaviour(Object* owner, const json& j)
+Behaviour::Behaviour(Object* owner, ServiceManager* serviceManager, const json& j)
 {
 	assert(owner != nullptr);
 	_owner = owner;
-	enabled = j["enabled"].get<bool>();
+
+	_serviceManager = serviceManager;
+	
+	JSON::TryGetMember<bool>(j, "enabled", enabled);
 
 	VE_BEHAVIOUR_FUNCTION_CALLER(Init)(this);
 }

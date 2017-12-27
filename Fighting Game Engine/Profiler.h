@@ -10,6 +10,7 @@ namespace Profiler
 
 	void Begin(const std::string& str);
 	void End(const std::string& str);
+	//TODO: Rename to Update, derive from BaseService
 	void Clear();
 
 	std::string String(const std::string& str);

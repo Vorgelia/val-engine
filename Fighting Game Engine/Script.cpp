@@ -8,6 +8,7 @@
 #include "DebugLog.h"
 #include "ScriptLine.h"
 #include "ScriptToken.h"
+#include "ServiceManager.h"
 
 std::string Script::name() const
 {
@@ -62,7 +63,7 @@ std::shared_ptr<BaseScriptVariable> Script::GetVariable(const std::string& name)
 	}
 	catch(ScriptError error)
 	{
-		VE_DEBUG_LOG("Could not find variable " + name + " in script " + _name + ".", LogItem::Type::Warning);
+		_debug->VE_LOG("Could not find variable " + name + " in script " + _name + ".", LogItem::Type::Warning);
 		return nullptr;
 	}
 }
@@ -114,7 +115,7 @@ void Script::PopBlock()
 
 std::shared_ptr<BaseScriptVariable> Script::GetGlobalVariable(const std::string & name) const
 {
-	std::shared_ptr<BaseScriptVariable> var = ScriptManager::GetVariable(name);
+	std::shared_ptr<BaseScriptVariable> var = _scriptManager->GetVariable(name);
 	if(var == nullptr)
 	{
 		throw ScriptError("Attempting to index invalid variable " + name);
@@ -140,7 +141,7 @@ void Script::Init()
 	}
 	catch(ScriptError error)
 	{
-		VE_DEBUG_LOG("(Preprocessing " + _name + " : line " + std::to_string(_lines[_parentBlock->cursor()].index) + ") " + std::string(error.what()), LogItem::Type::Warning);
+		_debug->VE_LOG("(Preprocessing " + _name + ") " + std::string(error.what()), LogItem::Type::Warning);
 		_valid = false;
 	}
 }
@@ -162,18 +163,18 @@ void Script::ExecuteFunction(std::string name, std::vector<std::shared_ptr<BaseS
 	{
 		int blockCursor = _blockStack.empty() ? _parentBlock->cursor() : _blockStack.top()->cursor();
 
-		VE_DEBUG_LOG("(" + _name + " : line " + std::to_string(_lines[blockCursor].index) + ") " + std::string(error.what()), LogItem::Type::Warning);
+		_debug->VE_LOG("(" + _name + " : line " + std::to_string(_lines[blockCursor].index) + ") " + std::string(error.what()), LogItem::Type::Warning);
 		_valid = false;
 	}
 	catch(std::exception error)
 	{
-		VE_DEBUG_LOG("Unhandled exception on script[" + _name + "]:\n" + std::string(error.what()), LogItem::Type::Error);
+		_debug->VE_LOG("Unhandled exception on script[" + _name + "]:\n" + std::string(error.what()), LogItem::Type::Error);
 		_valid = false;
 	}
 
 	if(blockStackSize != _blockStack.size())
 	{
-		VE_DEBUG_LOG("Function " + name + " execution did not properly clear the block stack.", LogItem::Type::Error);
+		_debug->VE_LOG("Function " + name + " execution did not properly clear the block stack.", LogItem::Type::Error);
 		while(blockStackSize < _blockStack.size())
 		{
 			_blockStack.pop();
@@ -181,8 +182,12 @@ void Script::ExecuteFunction(std::string name, std::vector<std::shared_ptr<BaseS
 	}
 }
 
-Script::Script(std::string name, std::vector<std::string> lines)
+Script::Script(std::string name, std::vector<std::string> lines, ServiceManager* serviceManager)
 {
+	_serviceManager = serviceManager;
+	_debug = serviceManager->Debug();
+	_scriptManager = serviceManager->ScriptManager();
+
 	_name = name;
 	_rawLines = lines;
 	_valid = true;

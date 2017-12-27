@@ -1,25 +1,15 @@
 #include "GameSceneManager.h"
-#include "FGIncludes.hpp"
-#include "Resource.h"
-#include "Rendering.h"
-#include <unordered_map>
+#include "ResourceManager.h"
+#include "InputManager.h"
+#include "GraphicsGL.h"
+#include "RenderingGL.h"
+#include "GameScene.h"
+#include "DebugLog.h"
+#include "ServiceManager.h"
+#include "Time.h"
 
 #define VE_SCENE_FUNCTION_CALL(fnName, ...)\
 	ApplyFunctionToCurrentScene([](GameScene* scene) { scene->fnName(); }, ##__VA_ARGS__);
-
-namespace GameSceneManager
-{
-	std::string _sceneToLoad = "";
-	bool _isLoading = false;
-	std::unordered_map<std::string, std::unique_ptr<GameScene> const> scenes;
-	GameScene* _currentScene = nullptr;
-	std::string _currentSceneName = "";
-
-	void HandleSceneInit();
-	bool HandleSceneUpdate();
-	void HandleSceneLoad();
-	void ApplyFunctionToCurrentScene(std::function<void(GameScene*)> func, bool requiredInitializedState = true);
-}
 
 GameScene* GameSceneManager::currentScene()
 {
@@ -46,7 +36,7 @@ void GameSceneManager::ReloadScene()
 
 void GameSceneManager::RenderScene()
 {
-	Rendering::BeginFrame();
+	_rendering->BeginFrame();
 
 	VE_SCENE_FUNCTION_CALL(RenderObjects);
 
@@ -54,7 +44,7 @@ void GameSceneManager::RenderScene()
 
 	VE_SCENE_FUNCTION_CALL(RenderUI);
 
-	Rendering::EndFrame();
+	_rendering->EndFrame();
 }
 
 void GameSceneManager::HandleSceneInit()
@@ -62,7 +52,7 @@ void GameSceneManager::HandleSceneInit()
 	if(_isLoading && _currentScene != nullptr && _currentScene->loaded())
 	{
 		_isLoading = false;
-		Time::OnSceneLoaded();
+		_time->HandleSceneLoaded();
 		VE_SCENE_FUNCTION_CALL(Init, false);
 	}
 }
@@ -76,13 +66,12 @@ bool GameSceneManager::HandleSceneUpdate()
 
 		int updateCount = 20;
 		//Run game updates until running one would put us ahead of our current time
-		while((Time::lastUpdateTime + VE_FRAME_TIME <= Time::time) && ((--updateCount) >= 0))
+		while((_time->lastUpdateTime + VE_FRAME_TIME <= _time->time) && ((--updateCount) >= 0))
 		{
 			gameUpdated = true;
 
-			Time::FrameUpdate();
-			InputManager::Update();
-			ScriptManager::Update();
+			_time->FrameUpdate();
+			_input->FrameUpdate();
 
 			VE_SCENE_FUNCTION_CALL(GameUpdate);
 			VE_SCENE_FUNCTION_CALL(LateGameUpdate);
@@ -98,19 +87,19 @@ void GameSceneManager::HandleSceneLoad()
 {
 	if(!_sceneToLoad.empty())
 	{
-		VE_DEBUG_LOG("----\n\n\n Loading Scene: " + _sceneToLoad + "\n\n\n----", LogItem::Type::Message);
+		_debug->VE_LOG("----\n\n\n Loading Scene: " + _sceneToLoad + "\n\n\n----", LogItem::Type::Message);
 
-		auto& iter = scenes.find(_sceneToLoad);
-		if(iter == scenes.end())
+		auto& iter = _scenes.find(_sceneToLoad);
+		if(iter == _scenes.end())
 		{
-			VE_DEBUG_LOG("GameSceneManager - Attempting to load invalid scene " + _sceneToLoad);
+			_debug->VE_LOG("GameSceneManager - Attempting to load invalid scene " + _sceneToLoad);
 			_sceneToLoad.clear();
 		}
 
 		if(_currentScene != nullptr)
 		{
 			_currentScene->Cleanup();
-			Resource::Unload();
+			_resourceManager->Unload();
 		}
 
 		_currentScene = iter->second.get();
@@ -135,6 +124,26 @@ void GameSceneManager::Update()
 
 void GameSceneManager::Init()
 {
+	_debug = _serviceManager->Debug();
+	_rendering = _serviceManager->Rendering();
+	_resourceManager = _serviceManager->ResourceManager();
+	_time = _serviceManager->Time();
+	_input = _serviceManager->Input();
+}
+
+void GameSceneManager::ApplyFunctionToCurrentScene(std::function<void(GameScene*)> func, bool requiredInitializedState)
+{
+	if(_isLoading || _currentScene == nullptr || (requiredInitializedState != _currentScene->initialized()))
+		return;
+
+	func(_currentScene);
+}
+
+GameSceneManager::GameSceneManager(ServiceManager* serviceManager) : 
+	BaseService(serviceManager, 100)
+{
+	_allowServiceUpdate = true;
+
 	//Instantiate all the game scenes
 	FS::directory_iterator dir(FS::path("Scenes/"));
 	FS::directory_iterator end;
@@ -146,10 +155,10 @@ void GameSceneManager::Init()
 			continue;
 		}
 
-		scenes.emplace(
+		_scenes.emplace(
 			std::make_pair(
 				dir->path().leaf().string(),
-				std::make_unique<GameScene>(dir->path().string())));
+				std::make_unique<GameScene>(dir->path().string(), _serviceManager)));
 		++dir;
 	}
 
@@ -158,15 +167,7 @@ void GameSceneManager::Init()
 	_isLoading = true;
 }
 
-void GameSceneManager::Cleanup()
+GameSceneManager::~GameSceneManager()
 {
-	Resource::Unload();
-}
-
-void GameSceneManager::ApplyFunctionToCurrentScene(std::function<void(GameScene*)> func, bool requiredInitializedState)
-{
-	if(_isLoading || _currentScene == nullptr || (requiredInitializedState != _currentScene->initialized()))
-		return;
-
-	func(_currentScene);
+	_resourceManager->Unload();
 }
