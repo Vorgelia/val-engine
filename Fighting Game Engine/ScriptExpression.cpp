@@ -59,7 +59,7 @@ std::shared_ptr<BaseScriptVariable> ScriptExpression::Evaluate()
 
 			break;
 		case ScriptTokenType::Keyword:
-			if(BaseScriptVariable::GetVariableType(token.token) != ScriptVariableType::Null)
+			if(BaseScriptVariable::GetVariableType(token.token) != ScriptVariableType::Invalid)
 			{
 				state = ScriptExpression::State::VariableDeclaration;
 				break;

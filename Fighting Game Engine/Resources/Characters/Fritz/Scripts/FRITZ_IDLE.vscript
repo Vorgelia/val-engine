@@ -6,7 +6,7 @@ function StateInit() : int
 end
 
 //This function runs every frame
-function StateUpdate(int frame) : int
+function StateUpdate(int frame) : void
 	switch(frame)
 		case 0->4
 		  character_setFrame("fritz_idle_01")
@@ -23,5 +23,4 @@ function StateUpdate(int frame) : int
 		  character_setFrame("fritz_idle_04")
 		  break
 	end
-	return 0
 end

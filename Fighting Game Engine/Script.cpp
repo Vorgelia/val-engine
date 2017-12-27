@@ -141,7 +141,7 @@ void Script::Init()
 	}
 	catch(ScriptError error)
 	{
-		_debug->VE_LOG("(Preprocessing " + _name + " : line " + std::to_string(_lines[_parentBlock->cursor()].index) + ") " + std::string(error.what()), LogItem::Type::Warning);
+		_debug->VE_LOG("(Preprocessing " + _name + ") " + std::string(error.what()), LogItem::Type::Warning);
 		_valid = false;
 	}
 }
