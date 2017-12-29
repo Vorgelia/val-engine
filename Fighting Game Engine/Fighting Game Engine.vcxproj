@@ -96,6 +96,7 @@
     <ClCompile Include="DebugLog.cpp" />
     <ClCompile Include="DefenceData.cpp" />
     <ClCompile Include="Delegate.cpp" />
+    <ClCompile Include="FightingGameManager.cpp" />
     <ClCompile Include="Font.cpp" />
     <ClCompile Include="FrameBuffer.cpp" />
     <ClCompile Include="GameCharacter.cpp" />
@@ -177,6 +178,8 @@
     <ClInclude Include="DefenceData.h" />
     <ClInclude Include="Delegate.h" />
     <ClInclude Include="FGIncludes.hpp" />
+    <ClInclude Include="FightingGameManager.h" />
+    <ClInclude Include="FightingGameState.h" />
     <ClInclude Include="Font.h" />
     <ClInclude Include="FrameBuffer.h" />
     <ClInclude Include="GameCharacter.h" />
@@ -188,6 +191,7 @@
     <ClInclude Include="GraphicsGL.h" />
     <ClInclude Include="CollisionBox.h" />
     <ClInclude Include="InputDevice.h" />
+    <ClInclude Include="InputDeviceId.h" />
     <ClInclude Include="InputEvent.h" />
     <ClInclude Include="InputFrame.h" />
     <ClInclude Include="InputIdentifiers.h" />

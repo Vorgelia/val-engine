@@ -21,6 +21,8 @@ class Time;
 class Screen;
 class InputManager;
 class FilesystemManager;
+class PlayerManager;
+class FightingGameManager;
 
 class ServiceManager
 {
@@ -31,6 +33,8 @@ private:
 	ve_service(ScriptManager);
 	ve_service(Time);
 	ve_service(Screen);
+	ve_service(PlayerManager);
+	ve_service(FightingGameManager);
 
 	ve_named_service(Input, InputManager);
 	ve_named_service(Filesystem, FilesystemManager);

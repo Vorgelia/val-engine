@@ -49,6 +49,6 @@ bool JSON::TryGetMember(const json_t & j, std::string name, T& out_result)
 		return false;
 	}
 
-	out_result = iter->get<T>();
+	out_result = JSON::Get<T>(iter.value());
 	return true;
 }

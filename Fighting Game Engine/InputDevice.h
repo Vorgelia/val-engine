@@ -3,6 +3,7 @@
 #include <string>
 #include <unordered_map>
 #include <memory>
+#include "InputDeviceId.h"
 #include "InputFrame.h"
 #include "InputEvent.h"
 #include "CircularBuffer.h"
@@ -17,15 +18,6 @@ class InputMotionComponent;
 class Time;
 class Screen;
 typedef CircularBuffer<InputFrame> InputBuffer;
-
-enum class InputDeviceId
-{
-	Network = -3,
-	Invalid = -2,
-	Keyboard = -1,
-	JoystickFirst = GLFW_JOYSTICK_1,
-	JoystickLast = GLFW_JOYSTICK_LAST
-};
 
 class InputDevice
 {

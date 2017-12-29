@@ -23,7 +23,10 @@ bool GameSceneManager::isLoading()
 
 void GameSceneManager::LoadScene(const std::string& name)
 {
-	_sceneToLoad = name;
+	if(!_isLoading)
+	{
+		_sceneToLoad = name;
+	}
 }
 
 void GameSceneManager::ReloadScene()
@@ -107,6 +110,8 @@ void GameSceneManager::HandleSceneLoad()
 		_currentSceneName = _sceneToLoad;
 		_sceneToLoad.clear();
 		_currentScene->LoadResources();
+
+		SceneLoaded(_currentScene);
 	}
 }
 
@@ -139,7 +144,7 @@ void GameSceneManager::ApplyFunctionToCurrentScene(std::function<void(GameScene*
 	func(_currentScene);
 }
 
-GameSceneManager::GameSceneManager(ServiceManager* serviceManager) : 
+GameSceneManager::GameSceneManager(ServiceManager* serviceManager) :
 	BaseService(serviceManager, 100)
 {
 	_allowServiceUpdate = true;

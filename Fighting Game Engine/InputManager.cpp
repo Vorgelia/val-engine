@@ -57,8 +57,9 @@ InputDevice* InputManager::GetInputDevice(int id)
 	switch(id)
 	{
 	case (int)InputDeviceId::Invalid:
-	case (int)InputDeviceId::Network:
 		return nullptr;
+	case (int)InputDeviceId::Network:
+		return GetTemporaryNetworkDevice();
 	default:
 		auto& iter = _inputDevices.find(id);
 		if(iter == _inputDevices.end())
