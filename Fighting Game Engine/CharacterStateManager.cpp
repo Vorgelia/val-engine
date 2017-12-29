@@ -12,6 +12,7 @@
 #include "InputMotion.h"
 #include "FilesystemManager.h"
 #include "ResourceManager.h"
+#include "GamePlayer.h"
 
 void CharacterStateManager::StateUpdate()
 {
@@ -32,6 +33,11 @@ void CharacterStateManager::StateUpdate()
 
 void CharacterStateManager::EvaluateNextState()
 {
+	if(_owner->_playerOwner == nullptr || _owner->_playerOwner->inputDevice() == nullptr)
+	{
+		return;
+	}
+
 	const CharacterState* nextState = nullptr;
 
 	for(auto& i : _stateLookup)
@@ -42,7 +48,7 @@ void CharacterStateManager::EvaluateNextState()
 		}
 
 		//TODO: Evaluate motion on input device of owner
-		if(_input->GetInputDevice(-1)->EvaluateMotion(i.second->associatedMotion()))
+		if(_owner->_playerOwner->inputDevice()->EvaluateMotion(i.second->associatedMotion()))
 		{
 			if(nextState == nullptr || nextState->priority() < i.second->priority())
 			{

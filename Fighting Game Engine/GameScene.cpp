@@ -164,7 +164,7 @@ void GameScene::Cleanup()
 	_initialized = false;
 }
 
-Object* GameScene::AddObject(const std::string & prefabPath)
+Object* GameScene::AddObject(const std::string& prefabPath)
 {
 	_objects.emplace_back(_filesystem->LoadObject(prefabPath));
 	Object* result = _objects.back().get();

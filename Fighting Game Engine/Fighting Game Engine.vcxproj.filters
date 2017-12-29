@@ -238,6 +238,15 @@
     <Filter Include="Source Files\Engine\Objects\Input">
       <UniqueIdentifier>{3b7a80d5-899f-431b-a900-3443fdbc1f03}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Game\Services">
+      <UniqueIdentifier>{6490bb19-f282-4a97-9f02-c55c6f72f33d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Game\Data">
+      <UniqueIdentifier>{39769fba-2aff-4488-9c3d-c855a283bde9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Game\Data\Game">
+      <UniqueIdentifier>{f9a8a99f-e95f-41c2-8460-80b42addd5e9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -468,6 +477,9 @@
     <ClCompile Include="InputDevice.cpp">
       <Filter>Source Files\Engine\Objects\Input</Filter>
     </ClCompile>
+    <ClCompile Include="FightingGameManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FGIncludes.hpp">
@@ -635,9 +647,6 @@
     <ClInclude Include="BehaviourFactory.h">
       <Filter>Header Files\Engine\Services\Global</Filter>
     </ClInclude>
-    <ClInclude Include="PlayerManager.h">
-      <Filter>Header Files\Engine\Services\Global</Filter>
-    </ClInclude>
     <ClInclude Include="Profiler.h">
       <Filter>Header Files\Engine\Services\Global</Filter>
     </ClInclude>
@@ -721,6 +730,18 @@
     </ClInclude>
     <ClInclude Include="Camera.h">
       <Filter>Header Files\Engine\Data\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="InputDeviceId.h">
+      <Filter>Header Files\Engine\Data\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerManager.h">
+      <Filter>Header Files\Engine\Services\GameManagement</Filter>
+    </ClInclude>
+    <ClInclude Include="FightingGameManager.h">
+      <Filter>Header Files\Game\Services</Filter>
+    </ClInclude>
+    <ClInclude Include="FightingGameState.h">
+      <Filter>Header Files\Game\Data\Game</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

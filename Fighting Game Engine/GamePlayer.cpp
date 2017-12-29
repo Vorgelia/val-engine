@@ -17,12 +17,23 @@ void GamePlayer::HandleDeviceRemoved(InputDevice* device)
 	}
 }
 
-GamePlayer::GamePlayer(GamePlayerType type, ServiceManager* serviceManager, int deviceId)
+InputDevice * GamePlayer::inputDevice()
+{
+	return _inputDevice;
+}
+
+void GamePlayer::SetDevice(int deviceId)
+{
+	_inputDevice = _input->GetInputDevice(deviceId);
+}
+
+GamePlayer::GamePlayer(int id, int deviceId, ServiceManager* serviceManager)
 {
 	_input = serviceManager->Input();
-	_type = type;
-	//TODO
-	_inputDevice = _input->GetInputDevice(deviceId);
+
+	_id = id;
+	SetDevice(deviceId);
+
 	_input->DeviceRemoved += InputManager::DeviceEventHandler::func_t([this](InputDevice* device) { HandleDeviceRemoved(device); });
 }
 

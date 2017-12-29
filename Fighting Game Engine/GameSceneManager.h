@@ -1,5 +1,6 @@
 #pragma once
 #include "BaseService.h"
+#include "Delegate.h"
 #include <memory>
 #include <vector>
 #include <functional>
@@ -24,6 +25,7 @@ private:
 	InputManager* _input;
 
 private:
+
 	std::unordered_map<std::string, std::unique_ptr<GameScene> const> _scenes;
 
 	GameScene* _currentScene = nullptr;
@@ -39,6 +41,9 @@ private:
 	void ApplyFunctionToCurrentScene(std::function<void(GameScene*)> func, bool requiredInitializedState = true);
 
 public:
+	typedef Delegate<const GameScene*> GameSceneEventHandler;
+	GameSceneEventHandler SceneLoaded;
+
 	GameScene* currentScene();
 	bool isLoading();
 

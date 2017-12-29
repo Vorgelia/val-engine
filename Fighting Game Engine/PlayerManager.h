@@ -1,28 +1,32 @@
 #pragma once
+#include "BaseService.h"
+#include "Delegate.h"
+#include "InputDeviceId.h"
 #include <unordered_map>
 #include <memory>
-#include "Delegate.h"
 
 class GamePlayer;
 enum class GamePlayerType;
-//TODO: Make non-static
-class PlayerManager
+
+class PlayerManager : public BaseService
 {
-	static std::unordered_map<int, std::unique_ptr<GamePlayer>> _players;
-	static std::unordered_map<int, std::unique_ptr<GamePlayer>> _spectators;
+private:
+	std::vector<std::unique_ptr<GamePlayer>> _players;
 
 public:
 	typedef Delegate<GamePlayer*> PlayerEventHandler;
-	static PlayerEventHandler PlayerAdded;
-	static PlayerEventHandler PlayerRemoved;
+	PlayerEventHandler PlayerAdded;
+	PlayerEventHandler PlayerRemoved;
 
-	static GamePlayer* AddPlayer(GamePlayerType type, int id);
-	static GamePlayer* RemovePlayer(int id);
-	static GamePlayer* GetPlayer(int id);
+	GamePlayer* AddPlayer(int id, int inputDeviceId);
+	GamePlayer* AddNetworkPlayer(int id);
+	GamePlayer* GetPlayer(int id);
+	void RemovePlayer(int id);
+	void ClearPlayers();
 
+	void Init();
+	void Update();
 
-	static void Init();
-	static void Update();
-
-	PlayerManager() = delete;
+	PlayerManager(ServiceManager* serviceManager);
+	~PlayerManager();
 };

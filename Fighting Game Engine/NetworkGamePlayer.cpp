@@ -7,11 +7,11 @@ void NetworkGamePlayer::Update()
 	//TODO: Update input device on network input
 }
 
-NetworkGamePlayer::NetworkGamePlayer(GamePlayerType type, ServiceManager* serviceManager) : GamePlayer(type, serviceManager, (int)InputDeviceId::Network)
+NetworkGamePlayer::NetworkGamePlayer(int id, ServiceManager* serviceManager) : GamePlayer(id, (int)InputDeviceId::Network, serviceManager)
 {
-	_inputDevice = _input->GetTemporaryNetworkDevice();
 }
 
 NetworkGamePlayer::~NetworkGamePlayer()
 {
+	_input->ReleaseTemporaryNetworkDevice(_inputDevice);
 }

@@ -1,33 +1,70 @@
 #include "PlayerManager.h"
 #include "GamePlayer.h"
+#include "NetworkGamePlayer.h"
 
-#define VE_MAX_PLAYERS 2
-#define VE_MAX_SPECTATORS 14
+#define VE_MAX_PLAYERS 16
 
-std::unordered_map<int, std::unique_ptr<GamePlayer>> PlayerManager::_players;
-PlayerManager::PlayerEventHandler PlayerManager::PlayerAdded;
-PlayerManager::PlayerEventHandler PlayerManager::PlayerRemoved;
-
-GamePlayer* PlayerManager::GetPlayer(int playerId)
+GamePlayer* PlayerManager::AddPlayer(int id, int inputDeviceId)
 {
-	auto& iter = _players.find(playerId);
-	if(iter == _players.end())
-	{
-		return nullptr;
-	}
+	_players[id] = std::move(std::make_unique<GamePlayer>(id, inputDeviceId, _serviceManager));
+	PlayerAdded(_players[id].get());
+	return _players[id].get();
+}
 
-	return iter->second.get();
+GamePlayer* PlayerManager::AddNetworkPlayer(int id)
+{
+	_players[id] = std::move(std::make_unique<NetworkGamePlayer>(id, _serviceManager));
+	PlayerAdded(_players[id].get());
+	return _players[id].get();
+}
+
+GamePlayer* PlayerManager::GetPlayer(int id)
+{
+	return _players[id].get();
+}
+
+void PlayerManager::RemovePlayer(int id)
+{
+	PlayerRemoved(_players[id].get());
+	_players[id] = nullptr;
+}
+
+void PlayerManager::ClearPlayers()
+{
+	for(size_t i = 0; i < _players.size(); ++i)
+	{
+		RemovePlayer(i);
+	}
 }
 
 void PlayerManager::Init()
 {
-	_players.reserve(VE_MAX_PLAYERS + VE_MAX_SPECTATORS);
 }
 
 void PlayerManager::Update()
 {
 	for(auto& iter : _players)
 	{
-		iter.second->Update();
+		if(iter != nullptr)
+		{
+			iter->Update();
+		}
+	}
+}
+
+PlayerManager::PlayerManager(ServiceManager* serviceManager) : BaseService(serviceManager)
+{
+	_allowServiceUpdate = true;
+	_players.resize(VE_MAX_PLAYERS);
+}
+
+PlayerManager::~PlayerManager()
+{
+	for(auto& iter : _players)
+	{
+		if(iter != nullptr)
+		{
+			RemovePlayer(iter->_id);
+		}
 	}
 }

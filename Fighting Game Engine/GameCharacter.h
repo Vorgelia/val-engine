@@ -55,6 +55,8 @@ public:
 
 	CharacterStateManager* stateManager();
 
+	void SetOwner(GamePlayer* owner);
+
 	GameCharacter(Object* owner, ServiceManager* serviceManager, const json& j);
 	~GameCharacter();
 };

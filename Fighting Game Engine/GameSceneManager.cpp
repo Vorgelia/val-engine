@@ -107,6 +107,8 @@ void GameSceneManager::HandleSceneLoad()
 		_currentSceneName = _sceneToLoad;
 		_sceneToLoad.clear();
 		_currentScene->LoadResources();
+
+		SceneLoaded(_currentScene);
 	}
 }
 

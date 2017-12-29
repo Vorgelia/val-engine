@@ -14,12 +14,17 @@ CharacterStateManager* GameCharacter::stateManager()
 	return _stateManager.get();
 }
 
+void GameCharacter::SetOwner(GamePlayer* owner)
+{
+	_playerOwner = owner;
+}
+
 //TODO: I'm not particularly happy about resource management here. Figure out something better.
 void GameCharacter::HandleCharacterData(const json& j)
 {
 	_stateManager = std::make_unique<CharacterStateManager>(this, _serviceManager, j["states"], j["frames"]);
 
-	_sizeMultiplier = JSON::Get<glm::vec2>(j["sizeMultiplier"]);
+	JSON::TryGetMember<glm::vec2>(j, "sizeMultiplier", _sizeMultiplier);
 
 	_characterScript = _scriptManager->GetScript(JSON::Get<std::string>(j["characterScript"]));
 	_scriptManager->HandleScriptCharacterBindings(*this, _characterScript);
@@ -65,8 +70,6 @@ GameCharacter::GameCharacter(Object* owner, ServiceManager* serviceManager, cons
 	_initialized = false;
 	_dataPath = JSON::Get<std::string>(j["dataPath"]);
 	HandleCharacterData(_filesystem->LoadJsonResource(_dataPath));
-
-	//TODO: player owner
 }
 
 GameCharacter::~GameCharacter()

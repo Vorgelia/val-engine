@@ -1,6 +1,7 @@
 #include "ServiceManager.h"
 #include "DebugLog.h"
 #include "GameSceneManager.h"
+#include "PlayerManager.h"
 #include "GraphicsGL.h"
 #include "ResourceManager.h"
 #include "RenderingGL.h"
@@ -8,6 +9,7 @@
 #include "Time.h"
 #include "Screen.h"
 #include "InputManager.h"
+#include "FightingGameManager.h"
 #include "FilesystemManager.h"
 
 #define ve_named_service_getter(name, type)\
@@ -30,6 +32,8 @@ ve_service_getter(ResourceManager);
 ve_service_getter(ScriptManager);
 ve_service_getter(Time);
 ve_service_getter(Screen);
+ve_service_getter(PlayerManager);
+ve_service_getter(FightingGameManager);
 
 ve_named_service_getter(Input, InputManager);
 ve_named_service_getter(Filesystem, FilesystemManager);
@@ -60,6 +64,8 @@ void ServiceManager::InitializeServices()
 
 	//Game Management
 	GameSceneManager();
+	PlayerManager();
+	FightingGameManager();
 
 	for(auto& iter : _activeServices)
 	{
