@@ -21,12 +21,42 @@ bool ScriptRangedSwitchBlock::HandleControlFlag()
 	return false;
 }
 
+void ScriptRangedSwitchBlock::Run()
+{
+	for(_cursor = 0; _cursor < _lines.size(); ++_cursor)
+	{
+		if(_handledCaseLabel)
+		{
+			if(_lines[_cursor].depth < 0)
+			{
+				continue;
+			}
+			else if(_lines[_cursor].depth != _depth)
+			{
+				throw ScriptError("Parser error: Line of invalid depth within block.");
+			}
+		}
+
+		ParseLine(_lines[_cursor]);
+
+		if(HandleControlFlag())
+		{
+			break;
+		}
+	}
+}
+
 void ScriptRangedSwitchBlock::ParseLine(ScriptLine & line)
 {
 	if(line.tokens.size() > 1)
 	{
 		if(line.tokens[0].token == ScriptToken::switch_case)
 		{
+			if(line.depth != _depth)
+			{
+				throw ScriptError("Parser error: Line of invalid depth within block.");
+			}
+
 			if(_handledCaseLabel
 				|| (_handledCaseLabel = (line.tokens[1].token == ScriptToken::switch_default && line.tokens.size() == 2)))
 			{

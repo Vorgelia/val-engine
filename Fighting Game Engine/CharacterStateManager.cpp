@@ -16,6 +16,12 @@
 
 void CharacterStateManager::StateUpdate()
 {
+	if(_freezeFrameCount > 0)
+	{
+		_freezeFrameCount -= 1;
+		return;
+	}
+
 	if(_currentState != nullptr)
 	{
 		_currentStateFrame += 1;
@@ -140,6 +146,16 @@ bool CharacterStateManager::RestartState()
 void CharacterStateManager::MarkStateEnded()
 {
 	_stateEnded = true;
+}
+
+void CharacterStateManager::Freeze(int duration)
+{
+	_freezeFrameCount = duration;
+}
+
+void CharacterStateManager::Unfreeze()
+{
+	_freezeFrameCount = 0;
 }
 
 bool CharacterStateManager::AddFlag(CharacterStateFlagType type, std::string flag)

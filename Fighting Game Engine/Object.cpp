@@ -54,9 +54,9 @@ Object::Object(const json & j, ServiceManager* serviceManager)
 {
 	_serviceManager = serviceManager;
 
-	enabled = j["enabled"].get<bool>();
-	_name = j["name"].get<std::string>();
-	_id = j["id"].get<int>();
+	JSON::TryGetMember<bool>(j, "enabled", enabled);
+	JSON::TryGetMember(j, "name", _name);
+	JSON::TryGetMember<unsigned int>(j, "id", _id);
 
 	for(auto& iter : j["behaviours"])
 	{

@@ -38,6 +38,8 @@ private:
 	CharacterFrame* _currentFrame;
 	int _currentStateFrame;
 
+	int _freezeFrameCount;
+
 	bool _allowStateSelfCancelling;
 	bool _stateEnded;
 
@@ -56,6 +58,9 @@ private:
 	bool ModifyCurrentStateFrame(int newFrame);
 	bool RestartState();
 	void MarkStateEnded();
+
+	void Freeze(int duration);
+	void Unfreeze();
 
 	bool AddFlag(CharacterStateFlagType type, std::string flag);
 	bool RemoveFlag(CharacterStateFlagType type, std::string flag);

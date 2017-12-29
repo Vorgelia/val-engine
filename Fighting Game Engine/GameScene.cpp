@@ -169,8 +169,16 @@ Object* GameScene::AddObject(const std::string& prefabPath)
 	_objects.emplace_back(_filesystem->LoadObject(prefabPath));
 	Object* result = _objects.back().get();
 
+	int nearestAvailableId = _objects.back()->_id + 1;
+	while(_objectLookup.count(nearestAvailableId) > 0)
+	{
+		nearestAvailableId += 1;
+	}
+
+	result->_id = nearestAvailableId;
+
 	RegisterObject(result);
-	
+
 	return result;
 }
 

@@ -152,6 +152,21 @@ void ScriptManager::HandleScriptCharacterBindings(GameCharacter& character, Scri
 		return nullptr;
 	});
 
+	script->BindFunction("character_freeze",
+		[&character](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
+	{
+		if(args.size() >= 1 && args[0]->type() == ScriptVariableType::Int)
+			character.stateManager()->Freeze(std::static_pointer_cast<ScriptInt>(args[0])->value());
+		return nullptr;
+	});
+
+	script->BindFunction("character_unfreeze",
+		[&character](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
+	{
+		character.stateManager()->Unfreeze();
+		return nullptr;
+	});
+
 	script->BindFunction("character_addFlag",
 		[&character](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
 	{

@@ -15,6 +15,8 @@ class Behaviour;
 
 class Object
 {
+	friend class GameScene;
+private:
 	std::string _name;
 	unsigned int _id;
 

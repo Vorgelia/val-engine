@@ -8,7 +8,9 @@ class ScriptRangedSwitchBlock : public ScriptConditionalBlock
 	std::shared_ptr<ScriptInt> _conditionResult;
 public:
 
+	void Run() override;
 	bool HandleControlFlag() override;
+
 
 	void ParseLine(ScriptLine &line) override;
 
