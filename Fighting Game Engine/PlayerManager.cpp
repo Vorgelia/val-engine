@@ -43,11 +43,11 @@ void PlayerManager::Init()
 
 void PlayerManager::Update()
 {
-	for(auto& iter : _players)
+	for(size_t i = 0; i < _players.size(); ++i)
 	{
-		if(iter != nullptr)
+		if(_players[i] != nullptr)
 		{
-			iter->Update();
+			_players[i]->Update();
 		}
 	}
 }
@@ -60,11 +60,5 @@ PlayerManager::PlayerManager(ServiceManager* serviceManager) : BaseService(servi
 
 PlayerManager::~PlayerManager()
 {
-	for(auto& iter : _players)
-	{
-		if(iter != nullptr)
-		{
-			RemovePlayer(iter->_id);
-		}
-	}
+	ClearPlayers();
 }

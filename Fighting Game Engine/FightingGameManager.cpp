@@ -37,6 +37,7 @@ void FightingGameManager::ChangeState(FightingGameState state)
 	switch(state)
 	{
 	case FightingGameState::None:
+		_playerManager->ClearPlayers();
 		break;
 	case FightingGameState::InputDeviceSelection:
 		break;
