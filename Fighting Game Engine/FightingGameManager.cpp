@@ -6,6 +6,10 @@
 #include "GameScene.h"
 #include "GamePlayer.h"
 #include "GameCharacter.h"
+#include "ServiceManager.h"
+#include "Screen.h"
+
+#include "GLIncludes.hpp"
 
 
 void FightingGameManager::HandleSceneLoaded(const GameScene* scene)
@@ -69,14 +73,20 @@ void FightingGameManager::Init()
 
 void FightingGameManager::Update()
 {
-
+	//PLACEHOLDER
+	if(_currentState == FightingGameState::InGame && glfwGetKey(_serviceManager->Screen()->window, GLFW_KEY_B) == GLFW_PRESS)
+	{
+		ChangeState(FightingGameState::None);
+		_gameSceneManager->LoadScene("Intro");
+	}
 }
 
 FightingGameManager::FightingGameManager(ServiceManager* serviceManager) : BaseService(serviceManager)
 {
+	_allowServiceUpdate = true;
 }
-
 
 FightingGameManager::~FightingGameManager()
 {
+	ChangeState(FightingGameState::None);
 }
