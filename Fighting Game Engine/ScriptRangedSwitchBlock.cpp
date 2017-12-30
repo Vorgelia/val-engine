@@ -52,11 +52,6 @@ void ScriptRangedSwitchBlock::ParseLine(ScriptLine & line)
 	{
 		if(line.tokens[0].token == ScriptToken::switch_case)
 		{
-			if(line.depth != _depth)
-			{
-				throw ScriptError("Parser error: Line of invalid depth within block.");
-			}
-
 			if(_handledCaseLabel
 				|| (_handledCaseLabel = (line.tokens[1].token == ScriptToken::switch_default && line.tokens.size() == 2)))
 			{
