@@ -1,4 +1,4 @@
-#version 330
+#version 420
 
 in vec2 vertex;
 in vec2 uv;

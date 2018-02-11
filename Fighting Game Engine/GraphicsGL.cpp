@@ -261,17 +261,14 @@ void GraphicsGL::UpdateGraphicsBuffer(const GraphicsBuffer& buffer)
 
 	const std::vector<float>& bufferData = buffer.data();
 
-	BindGraphicsBuffer(buffer, bindingTarget);
 	if(buffer._dataSize != bufferData.size())
 	{
-		glBufferData(bindingTarget, sizeof(float) * bufferData.size(), &bufferData[0], GL_DYNAMIC_DRAW);
+		glNamedBufferData(buffer._id, sizeof(float) * bufferData.size(), &bufferData[0], GL_DYNAMIC_DRAW);
 		buffer._dataSize = bufferData.size();
 	}
 	else
 	{
-		GLvoid* p = glMapBuffer(bindingTarget, GL_WRITE_ONLY);
-		std::memcpy(p, &bufferData[0], buffer._dataSize * sizeof(float) / sizeof(unsigned char));
-		glUnmapBuffer(bindingTarget);
+		glNamedBufferSubData(buffer._id, 0, sizeof(float) * bufferData.size(), &bufferData[0]);
 	}
 }
 

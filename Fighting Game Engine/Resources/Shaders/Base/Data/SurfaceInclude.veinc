@@ -1,0 +1,17 @@
+layout (std140, binding = 0) uniform TimeDataBuffer
+{
+	//time, deltaTime, 1/time, 1/deltaTime
+	vec4 ve_worldTime;
+	//frameCount, 1/frameCount
+	vec4 ve_frameTime;
+};
+
+layout (std140, binding = 1) uniform RenderingDataBuffer
+{
+	vec4 ve_screen;
+};
+
+vec2 TransformUV(vec2 uv, vec4 params)
+{
+	return vec2(uv.x*params.z,1-(1-uv.y)*params.w)+vec2(params.x,-params.y);
+}

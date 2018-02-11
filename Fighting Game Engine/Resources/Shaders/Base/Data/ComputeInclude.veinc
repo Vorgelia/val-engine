@@ -1,0 +1,11 @@
+layout(rgba16, binding = 0) restrict uniform image2D mainBuf_tex0;
+layout(rgba16, binding = 1) restrict uniform image2D mainBuf_tex1;
+layout(rgba16, binding = 2) restrict uniform image2D mainBuf_tex2;
+layout(rgba16, binding = 3) restrict uniform image2D auxBuf2_tex0;
+layout(rgba16, binding = 4) restrict uniform image2D auxBuf2_tex1;
+layout(rgba16, binding = 5) restrict uniform image2D auxBuf2_tex2;
+
+layout(std140, binding = 0) uniform CommonVec4Buffer
+{
+	vec4 commonVec4Data[1024];
+};
