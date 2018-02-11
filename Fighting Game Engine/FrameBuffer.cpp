@@ -10,7 +10,7 @@ FrameBuffer::FrameBuffer(glm::ivec2 res, int texAmount, bool depthStencil, GLint
 
 	this->hasDepthStencil = depthStencil;
 	this->format = format;
-	this->clearColor = clearColor;
+	this->_clearColor = clearColor;
 	this->filtering = filtering;
 	this->clearFlags = clearFlags;
 

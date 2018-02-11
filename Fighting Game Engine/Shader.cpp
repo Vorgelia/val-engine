@@ -8,7 +8,7 @@ ShaderAttachment::ShaderAttachment(const std::string& code, GLenum type)
 	this->type = type;
 }
 
-GLint Shader::UniformLocation(const std::string& str)
+GLint Shader::UniformLocation(const std::string& str) const
 {
 	auto& iter = _uniformLocations.find(str);
 	if(iter != _uniformLocations.end())
@@ -18,19 +18,24 @@ GLint Shader::UniformLocation(const std::string& str)
 
 	return _uniformLocations.insert(
 		std::make_pair(str
-			, glGetUniformLocation(id, str.c_str())
+			, glGetUniformLocation(_id, str.c_str())
 		)).first->second;
 }
 
+const std::string& Shader::name() const
+{
+	return _name;
+}
 
-bool Shader::valid()
+bool Shader::valid() const
 {
 	return _valid;
 }
 
-Shader::Shader(const std::string & name, GLuint id)
+Shader::Shader(const std::string & name, GLuint id, ShaderProgramType type)
 {
-	this->id = id;
+	_id = id;
+	_type = type;
 	_valid = id > 0;
 }
 

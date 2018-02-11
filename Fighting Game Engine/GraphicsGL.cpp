@@ -4,6 +4,7 @@
 #include "Shader.h"
 #include "Texture.h"
 #include "FrameBuffer.h"
+#include "GraphicsBuffer.h"
 #include "Font.h"
 #include "Mesh.h"
 #include "CachedMesh.h"
@@ -35,6 +36,8 @@ std::unique_ptr<Texture> GraphicsGL::CreateTexture(const std::string& name, cons
 	{
 	case GL_RGBA16F:
 	case GL_RGBA32F:
+	case GL_RGBA16:
+	case GL_RGBA8:
 		dataType = GL_RGBA;
 		break;
 	}
@@ -122,7 +125,7 @@ GLuint GraphicsGL::CreateShaderAttachment(const ShaderAttachment & shaderAttachm
 	}
 }
 
-GLuint GraphicsGL::CreateShaderProgram(const std::vector<GLuint> shaders)
+GLuint GraphicsGL::CreateShaderProgram(const std::vector<GLuint>& shaders, ShaderProgramType type)
 {
 	GLuint shaderProgram = glCreateProgram();
 	//Attach all the shaders into a shader program.
@@ -130,19 +133,23 @@ GLuint GraphicsGL::CreateShaderProgram(const std::vector<GLuint> shaders)
 	{
 		glAttachShader(shaderProgram, shaders[i]);
 	}
-	//The OUTn variables are pre-bound to point to specific targets in frameuffers.
-	glBindFragDataLocation(shaderProgram, 0, "OUT0");
-	glBindFragDataLocation(shaderProgram, 1, "OUT1");
-	glBindFragDataLocation(shaderProgram, 2, "OUT2");
-	glBindFragDataLocation(shaderProgram, 3, "OUT3");
-	glBindFragDataLocation(shaderProgram, 4, "OUT4");
-	glBindFragDataLocation(shaderProgram, 5, "OUT5");
-	glBindFragDataLocation(shaderProgram, 6, "OUT6");
-	//These make sure the locations for vertex, uv and normal are always stable.
-	//These are in turn used in mesh files to specify sizes for every attribute.
-	glBindAttribLocation(shaderProgram, 0, "vertex");
-	glBindAttribLocation(shaderProgram, 1, "uv");
-	glBindAttribLocation(shaderProgram, 2, "normal");
+
+	if(type == ShaderProgramType::Surface)
+	{
+		//The OUTn variables are pre-bound to point to specific targets in frameuffers.
+		glBindFragDataLocation(shaderProgram, 0, "OUT0");
+		glBindFragDataLocation(shaderProgram, 1, "OUT1");
+		glBindFragDataLocation(shaderProgram, 2, "OUT2");
+		glBindFragDataLocation(shaderProgram, 3, "OUT3");
+		glBindFragDataLocation(shaderProgram, 4, "OUT4");
+		glBindFragDataLocation(shaderProgram, 5, "OUT5");
+		glBindFragDataLocation(shaderProgram, 6, "OUT6");
+		//These make sure the locations for vertex, uv and normal are always stable.
+		//These are in turn used in mesh files to specify sizes for every attribute.
+		glBindAttribLocation(shaderProgram, 0, "vertex");
+		glBindAttribLocation(shaderProgram, 1, "uv");
+		glBindAttribLocation(shaderProgram, 2, "normal");
+	}
 
 	glLinkProgram(shaderProgram);
 
@@ -201,7 +208,7 @@ void GraphicsGL::UpdateFrameBuffer(FrameBuffer& frameBuffer)
 	if(!frameBuffer._valid)
 		glDrawBuffers(attachments.size(), &attachments[0]);
 
-	glClearColor(frameBuffer.clearColor.x, frameBuffer.clearColor.y, frameBuffer.clearColor.z, frameBuffer.clearColor.w);
+	glClearColor(frameBuffer._clearColor.x, frameBuffer._clearColor.y, frameBuffer._clearColor.z, frameBuffer._clearColor.w);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 	if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
@@ -219,7 +226,7 @@ void GraphicsGL::UpdateFrameBuffer(FrameBuffer& frameBuffer)
 void GraphicsGL::ClearFrameBuffer(FrameBuffer& frameBuffer)
 {
 	BindFrameBuffer(frameBuffer);
-	glClearColor(frameBuffer.clearColor.x, frameBuffer.clearColor.y, frameBuffer.clearColor.z, frameBuffer.clearColor.w);
+	glClearColor(frameBuffer._clearColor.x, frameBuffer._clearColor.y, frameBuffer._clearColor.z, frameBuffer._clearColor.w);
 	glClear(frameBuffer.clearFlags);
 }
 
@@ -237,6 +244,35 @@ void GraphicsGL::DestroyFrameBuffer(FrameBuffer& frameBuffer)
 		glDeleteFramebuffers(1, &frameBuffer.id);
 
 	frameBuffer._valid = false;
+}
+
+void GraphicsGL::UpdateGraphicsBuffer(const GraphicsBuffer& buffer)
+{
+	GLenum bindingTarget = GL_UNIFORM_BUFFER;
+	switch(buffer._type)
+	{
+	case GraphicsBufferType::ShaderStorage:
+		bindingTarget = GL_SHADER_STORAGE_BUFFER;
+		break;
+	case GraphicsBufferType::Uniform:
+		bindingTarget = GL_UNIFORM_BUFFER;
+		break;
+	}
+
+	const std::vector<float>& bufferData = buffer.data();
+
+	BindGraphicsBuffer(buffer, bindingTarget);
+	if(buffer._dataSize != bufferData.size())
+	{
+		glBufferData(bindingTarget, sizeof(float) * bufferData.size(), &bufferData[0], GL_DYNAMIC_DRAW);
+		buffer._dataSize = bufferData.size();
+	}
+	else
+	{
+		GLvoid* p = glMapBuffer(bindingTarget, GL_WRITE_ONLY);
+		std::memcpy(p, &bufferData[0], buffer._dataSize * sizeof(float) / sizeof(unsigned char));
+		glUnmapBuffer(bindingTarget);
+	}
 }
 
 std::unique_ptr<Font> GraphicsGL::CreateFont(std::string name)
@@ -317,27 +353,32 @@ std::unique_ptr<Shader> GraphicsGL::CreateShader(const std::string& name, const 
 	std::vector<GLuint> shaderAttachments;
 	shaderAttachments.reserve(attachments.size());
 
+	ShaderProgramType type = ShaderProgramType::Surface;
 	for(auto& attachment : attachments)
 	{
 		GLuint attachmentId = CreateShaderAttachment(attachment);
 		if(attachmentId != 0)
 		{
 			shaderAttachments.push_back(attachmentId);
+			if(attachment.type == GL_COMPUTE_SHADER)
+			{
+				ShaderProgramType type = ShaderProgramType::Compute;
+			}
 		}
 	}
 
-	GLuint shaderProgram = CreateShaderProgram(shaderAttachments);
+	GLuint shaderProgram = CreateShaderProgram(shaderAttachments, type);
 
-	return std::make_unique<Shader>(name, shaderProgram);
+	return std::make_unique<Shader>(name, shaderProgram, type);
 }
 
 void GraphicsGL::DestroyShader(Shader& shader)
 {
-	if(_boundShader == shader.id)
+	if(_boundShader == shader._id)
 	{
 		glUseProgram(0);
 	}
-	glDeleteProgram(shader.id);
+	glDeleteProgram(shader._id);
 }
 
 std::unique_ptr<Mesh> GraphicsGL::CreateMesh(const std::string& name, CachedMesh* meshData)
@@ -379,7 +420,7 @@ void GraphicsGL::DestroyMesh(Mesh & mesh)
 {
 	glDeleteBuffers(1, &mesh._vbo);
 	glDeleteBuffers(1, &mesh._ebo);
-	glDeleteBuffers(1, &mesh._vao);
+	glDeleteVertexArrays(1, &mesh._vao);
 }
 
 bool GraphicsGL::BindTextureUnit(GLuint pos)
@@ -401,10 +442,10 @@ bool GraphicsGL::BindTextureUnit(GLuint pos)
 
 bool GraphicsGL::BindShader(const Shader& shader)
 {
-	if(_boundShader != shader.id)
+	if(_boundShader != shader._id)
 	{
-		_boundShader = shader.id;
-		glUseProgram(shader.id);
+		_boundShader = shader._id;
+		glUseProgram(shader._id);
 		return true;
 	}
 
@@ -433,9 +474,40 @@ bool GraphicsGL::BindFrameBuffer(const FrameBuffer& frameBuffer)
 	return false;
 }
 
+bool GraphicsGL::BindGraphicsBuffer(const GraphicsBuffer& buffer, GLenum target)
+{
+	auto& iter = _boundBuffers.find(target);
+	if(iter != _boundBuffers.end() && iter->second == buffer._id)
+	{
+		return false;
+	}
+
+	_boundBuffers.emplace(target, buffer._id);
+	glBindBuffer(target, buffer._id);
+	return true;
+}
+
 bool GraphicsGL::BindDefaultFrameBuffer()
 {
 	return BindFrameBufferId(0);
+}
+
+void GraphicsGL::BindTextureToImageUnit(GLuint unit, const Texture& tex, GLenum accessType)
+{
+	glBindImageTexture(unit, tex._id, 0, GL_FALSE, 0, accessType, GL_RGBA16);
+}
+
+void GraphicsGL::BindBufferToBindingPoint(GLuint unit, const GraphicsBuffer& buffer)
+{
+	switch(buffer._type)
+	{
+	case GraphicsBufferType::ShaderStorage:
+		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, unit, buffer._id);
+		break;
+	case GraphicsBufferType::Uniform:
+		glBindBufferBase(GL_UNIFORM_BUFFER, unit, buffer._id);
+		break;
+	}
 }
 
 void GraphicsGL::ApplyMaterial(const Material& material)
@@ -465,6 +537,12 @@ void GraphicsGL::ApplyMaterialProperties(const Material & material)
 	else
 		ToggleFeature(GL_DEPTH_TEST, false);
 
+}
+
+void GraphicsGL::DispatchCompute(const Shader & shader, unsigned int workGroupSizeX, unsigned int workGroupSizeY, unsigned int workGroupSizeZ)
+{
+	BindShader(shader);
+	glDispatchCompute(workGroupSizeX, workGroupSizeY, workGroupSizeZ);
 }
 
 bool GraphicsGL::BindTexture(const Texture& texture)

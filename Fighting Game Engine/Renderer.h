@@ -17,7 +17,6 @@ protected:
 	Material* _material;
 
 public:
-
 	VE_BEHAVIOUR_NAME(Renderer);
 
 	VE_BEHAVIOUR_REGISTER_FUNCTION(OnRenderObjects);

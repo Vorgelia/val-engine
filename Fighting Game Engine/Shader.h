@@ -4,6 +4,13 @@
 #include <unordered_map>
 #include "GLIncludes.hpp"
 
+enum class ShaderProgramType
+{
+	None = 0,
+	Surface = 1,
+	Compute = 2
+};
+
 class ShaderAttachment
 {
 public:
@@ -14,22 +21,22 @@ public:
 
 class Shader
 {
+	friend class GraphicsGL;
+
 private:
+	std::string _name;
+	GLuint _id;
+	ShaderProgramType _type;
 	bool _valid;
 
-	std::unordered_map<std::string, GLint> _uniformLocations;
+	mutable std::unordered_map<std::string, GLint> _uniformLocations;
+
 public:
-	std::string name;
+	const std::string& name() const;
+	bool valid() const;
 
-	GLuint id;
-
-	bool valid();
-
-	GLint UniformLocation(const std::string& str);
+	GLint UniformLocation(const std::string& str) const;
 	
-	Shader(const std::string& name, GLuint id);
+	Shader(const std::string& name, GLuint id, ShaderProgramType type);
 	~Shader();
-
 };
-
-

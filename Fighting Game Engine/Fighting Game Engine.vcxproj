@@ -92,6 +92,7 @@
     <ClCompile Include="CharacterSprite.cpp" />
     <ClCompile Include="CharacterState.cpp" />
     <ClCompile Include="CharacterStateManager.cpp" />
+    <ClCompile Include="ComputeShaderEffect.cpp" />
     <ClCompile Include="ConnectionSocket.cpp" />
     <ClCompile Include="DebugLog.cpp" />
     <ClCompile Include="DefenceData.cpp" />
@@ -103,6 +104,7 @@
     <ClCompile Include="GamePlayer.cpp" />
     <ClCompile Include="GameScene.cpp" />
     <ClCompile Include="GameSceneManager.cpp" />
+    <ClCompile Include="GraphicsBuffer.cpp" />
     <ClCompile Include="GraphicsGL.cpp" />
     <ClCompile Include="CollisionBox.cpp" />
     <ClCompile Include="InputDevice.cpp" />
@@ -124,6 +126,7 @@
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="PlayerManager.cpp" />
     <ClCompile Include="Renderer.cpp" />
+    <ClCompile Include="RenderingDataBuffer.cpp" />
     <ClCompile Include="ScriptBehaviour.cpp" />
     <ClCompile Include="ScriptCollection.cpp" />
     <ClCompile Include="ScriptExpression.cpp" />
@@ -156,7 +159,9 @@
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Time.cpp" />
+    <ClCompile Include="TimeDataBuffer.cpp" />
     <ClCompile Include="Transform.cpp" />
+    <ClCompile Include="Vec4Buffer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AttackData.h" />
@@ -173,6 +178,7 @@
     <ClInclude Include="CharacterStateManager.h" />
     <ClInclude Include="CircularBuffer.h" />
     <ClInclude Include="CommonUtilIncludes.hpp" />
+    <ClInclude Include="ComputeShaderEffect.h" />
     <ClInclude Include="ConnectionSocket.h" />
     <ClInclude Include="DebugLog.h" />
     <ClInclude Include="DefenceData.h" />
@@ -188,6 +194,8 @@
     <ClInclude Include="GameSceneManager.h" />
     <ClInclude Include="GLIncludes.hpp" />
     <ClInclude Include="GLMExtensions.h" />
+    <ClInclude Include="GraphicsBindingData.h" />
+    <ClInclude Include="GraphicsBuffer.h" />
     <ClInclude Include="GraphicsGL.h" />
     <ClInclude Include="CollisionBox.h" />
     <ClInclude Include="InputDevice.h" />
@@ -213,6 +221,7 @@
     <ClInclude Include="PostEffect.h" />
     <ClInclude Include="Profiler.h" />
     <ClInclude Include="Renderer.h" />
+    <ClInclude Include="RenderingDataBuffer.h" />
     <ClInclude Include="RenderingGL.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="resource.h" />
@@ -245,7 +254,9 @@
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Time.h" />
     <ClInclude Include="SystemIncludes.hpp" />
+    <ClInclude Include="TimeDataBuffer.h" />
     <ClInclude Include="Transform.h" />
+    <ClInclude Include="Vec4Buffer.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Fighting Game Engine.rc" />

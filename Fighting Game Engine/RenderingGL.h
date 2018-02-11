@@ -10,6 +10,7 @@ class Material;
 class Texture;
 class Transform;
 class FrameBuffer;
+class GraphicsBuffer;
 class Shader;
 class PostEffect;
 
@@ -20,6 +21,10 @@ class GraphicsGL;
 class ResourceManager;
 class Screen;
 class Time;
+
+class TimeDataBuffer;
+class RenderingDataBuffer;
+class Vec4Buffer;
 
 class RenderingGL : public BaseService
 {
@@ -37,13 +42,18 @@ private:
 	glm::mat4 _orthoMat;
 	glm::mat4 _screenMat;
 
+	std::unique_ptr<TimeDataBuffer> _timeDataBuffer;
+	std::unique_ptr<RenderingDataBuffer> _renderingDataBuffer;
+	std::unique_ptr<Vec4Buffer> _commonComputeVec4Buffer;
+
 	void InitTextDrawing();
 	void DrawTextCharacter(glm::vec4 rect, glm::vec4 params, Texture* tex);
 
 	void BindMaterialUniforms(const Material& material, int& out_texturesBound);
 	void BindShaderTextures(Shader* shader, const std::vector<MaterialTexture>& textures, int& out_textureUnitOffset);
 	void BindBufferUniforms(Shader* shad, int& index);
-	void BindEngineUniforms(Shader* shader);
+
+	void BindFrameBufferImages(const FrameBuffer* buffer, GLuint bindingPoint);
 
 	void OnScreenResize();
 	
@@ -62,6 +72,8 @@ public:
 
 	void DrawPostEffect(PostEffect* pf);
 	void DrawScreenText(glm::vec4 rect, GLuint size, std::string text, Font* font, TextAlignment alignment = TextAlignment::Left);
+
+	const FrameBuffer* GetFramebuffer(int index = -1);
 
 	void Init() override;
 	void Update() override;

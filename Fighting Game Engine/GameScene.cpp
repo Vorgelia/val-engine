@@ -150,6 +150,8 @@ void GameScene::ApplyPostEffects()
 		_rendering->DrawPostEffect(
 			_resource->GetPostEffect(iter));
 	}
+
+	RunFunctionOnObjectBehaviours(VE_BEHAVIOUR_FUNCTION_CALLER(OnApplyPostEffects));
 }
 
 void GameScene::Cleanup()
