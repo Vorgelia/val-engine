@@ -8,9 +8,7 @@ void main()
 	ivec2 uv = ivec2(gl_GlobalInvocationID.xy);
 	vec4 tex = imageLoad(mainBuf_tex0, uv);
 	vec4 depthTex = imageLoad(mainBuf_tex1, uv);
-	
-	memoryBarrierImage();
-	
+
 	vec4 finalColor = mix(tex, tex*sin(uv.x*0.05), depthTex.r);
 	imageStore(mainBuf_tex0, uv, finalColor);
 }

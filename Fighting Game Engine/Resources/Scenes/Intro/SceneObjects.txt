@@ -14,7 +14,12 @@
 				"name":"ScriptBehaviour",
 				"enabled":true,
 				"script":"Scripts/Base/example.vscript"
-			}
+			},
+			{
+                "name":"ComputeShaderEffect",
+                "enabled":true,
+				"shaderPath":"Shaders/Base/Test_FB"
+            }
         ]
     }
 ]

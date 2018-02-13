@@ -51,7 +51,7 @@ void RenderingGL::BeginFrame()
 
 	_graphics->ClearFrameBuffer(*_mainBuffer);
 
-	_timeDataBuffer->SetupData(_time->time, _time->deltaTime, _time->frameCountSinceLoad);
+	_timeDataBuffer->SetupData((float)_time->time, (float)_time->deltaTime, (float)_time->frameCountSinceLoad);
 	_renderingDataBuffer->SetupData(_screen->size, _screen->invSize);
 
 	_graphics->UpdateGraphicsBuffer(*_timeDataBuffer);
@@ -180,7 +180,7 @@ void RenderingGL::BindFrameBufferImages(const FrameBuffer* buffer, GLuint bindin
 		return;
 	}
 
-	for(int i = 0; i < buffer->textures.size(); ++i)
+	for(size_t i = 0; i < buffer->textures.size(); ++i)
 	{
 		_graphics->BindTextureToImageUnit(bindingPoint + i, *(buffer->textures[i]));
 	}

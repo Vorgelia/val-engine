@@ -101,6 +101,19 @@ bool GraphicsGL::BindFrameBufferId(GLuint id)
 	return false;
 }
 
+bool GraphicsGL::BindGraphicsBufferId(GLuint id, GLenum target)
+{
+	auto& iter = _boundBuffers.find(target);
+	if(iter != _boundBuffers.end() && iter->second == id)
+	{
+		return false;
+	}
+
+	_boundBuffers.emplace(target, id);
+	glBindBuffer(target, id);
+	return true;
+}
+
 GLuint GraphicsGL::CreateShaderAttachment(const ShaderAttachment & shaderAttachment)
 {
 	GLuint shader = glCreateShader(shaderAttachment.type);
@@ -473,15 +486,12 @@ bool GraphicsGL::BindFrameBuffer(const FrameBuffer& frameBuffer)
 
 bool GraphicsGL::BindGraphicsBuffer(const GraphicsBuffer& buffer, GLenum target)
 {
-	auto& iter = _boundBuffers.find(target);
-	if(iter != _boundBuffers.end() && iter->second == buffer._id)
-	{
-		return false;
-	}
+	return BindGraphicsBufferId(buffer._id, target);
+}
 
-	_boundBuffers.emplace(target, buffer._id);
-	glBindBuffer(target, buffer._id);
-	return true;
+bool GraphicsGL::UnbindGraphicsBuffer(GLenum target)
+{
+	return BindGraphicsBufferId(0, target);
 }
 
 bool GraphicsGL::BindDefaultFrameBuffer()

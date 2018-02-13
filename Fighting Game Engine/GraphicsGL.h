@@ -48,6 +48,7 @@ private:
 
 	bool ToggleFeature(GLenum feature, bool enable);
 	bool BindFrameBufferId(GLuint id);
+	bool BindGraphicsBufferId(GLuint id, GLenum target);
 
 	GLuint CreateShaderAttachment(const ShaderAttachment& shaderAttachment);
 	GLuint CreateShaderProgram(const std::vector<GLuint>& shaders, ShaderProgramType type);
@@ -85,6 +86,7 @@ public:
 	bool BindTexture(const Texture& texture, GLuint pos);
 	bool BindFrameBuffer(const FrameBuffer& frameBuffer);
 	bool BindGraphicsBuffer(const GraphicsBuffer& buffer, GLenum target);
+	bool UnbindGraphicsBuffer(GLenum target);
 	bool BindDefaultFrameBuffer();
 
 	void BindTextureToImageUnit(GLuint unit, const Texture& tex, GLenum accessType = GL_READ_WRITE);
