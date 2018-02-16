@@ -9,7 +9,8 @@ class CachedMesh;
 class Mesh;
 class Texture;
 class Material;
-class Shader;
+class SurfaceShader;
+class ComputeShader;
 class PostEffect;
 class Font;
 
@@ -29,8 +30,8 @@ private:
 	std::unordered_map<std::string, std::unique_ptr<Mesh>> meshes;
 	std::unordered_map<std::string, std::unique_ptr<Texture>> textures;
 	std::unordered_map<std::string, std::unique_ptr<Material>> materials;
-	std::unordered_map<std::string, std::unique_ptr<Shader>> shaders;
-	std::unordered_map<std::string, std::unique_ptr<Shader>> computeShaders;
+	std::unordered_map<std::string, std::unique_ptr<SurfaceShader>> shaders;
+	std::unordered_map<std::string, std::unique_ptr<ComputeShader>> computeShaders;
 	std::unordered_map<std::string, std::unique_ptr<Font>> fonts;
 	std::unordered_map<std::string, std::unique_ptr<PostEffect>> postEffects;
 
@@ -49,8 +50,8 @@ private:
 public:
 	Mesh* GetMesh(FS::path path);
 	Texture* GetTexture(FS::path path);
-	Shader* GetShader(std::string name);
-	Shader* GetComputeShader(std::string name);
+	SurfaceShader* GetShader(std::string name);
+	ComputeShader* GetComputeShader(std::string name);
 	Material* GetMaterial(FS::path name);
 	Material* CopyMaterial(Material* mat);
 	PostEffect* GetPostEffect(FS::path path);

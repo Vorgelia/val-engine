@@ -82,6 +82,7 @@
   <ItemGroup>
     <ClCompile Include="AttackData.cpp" />
     <ClCompile Include="BaseService.cpp" />
+    <ClCompile Include="BaseShader.cpp" />
     <ClCompile Include="Behaviour.cpp" />
     <ClCompile Include="BehaviourFactory.cpp" />
     <ClCompile Include="CachedMesh.cpp" />
@@ -92,6 +93,7 @@
     <ClCompile Include="CharacterSprite.cpp" />
     <ClCompile Include="CharacterState.cpp" />
     <ClCompile Include="CharacterStateManager.cpp" />
+    <ClCompile Include="ComputeShader.cpp" />
     <ClCompile Include="ComputeShaderEffect.cpp" />
     <ClCompile Include="ConnectionSocket.cpp" />
     <ClCompile Include="DebugLog.cpp" />
@@ -156,7 +158,7 @@
     <ClCompile Include="BaseScriptVariable.cpp" />
     <ClCompile Include="ScriptVariableUtils.cpp" />
     <ClCompile Include="ServiceManager.cpp" />
-    <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="SurfaceShader.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Time.cpp" />
     <ClCompile Include="TimeDataBuffer.cpp" />
@@ -166,6 +168,7 @@
   <ItemGroup>
     <ClInclude Include="AttackData.h" />
     <ClInclude Include="BaseService.h" />
+    <ClInclude Include="BaseShader.h" />
     <ClInclude Include="Behaviour.h" />
     <ClInclude Include="BehaviourFactory.h" />
     <ClInclude Include="CachedMesh.h" />
@@ -178,6 +181,7 @@
     <ClInclude Include="CharacterStateManager.h" />
     <ClInclude Include="CircularBuffer.h" />
     <ClInclude Include="CommonUtilIncludes.hpp" />
+    <ClInclude Include="ComputeShader.h" />
     <ClInclude Include="ComputeShaderEffect.h" />
     <ClInclude Include="ConnectionSocket.h" />
     <ClInclude Include="DebugLog.h" />
@@ -250,7 +254,7 @@
     <ClInclude Include="BaseScriptVariable.h" />
     <ClInclude Include="ScriptVariableUtils.h" />
     <ClInclude Include="ServiceManager.h" />
-    <ClInclude Include="Shader.h" />
+    <ClInclude Include="SurfaceShader.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Time.h" />
     <ClInclude Include="SystemIncludes.hpp" />

@@ -4,7 +4,7 @@
 class GraphicsGL;
 class RenderingGL;
 class ResourceManager;
-class Shader;
+class ComputeShader;
 
 class ComputeShaderEffect :
 	public Behaviour
@@ -15,7 +15,7 @@ private:
 	ResourceManager* _resource;
 
 private:
-	Shader* _computeShader;
+	ComputeShader* _computeShader;
 
 public:
 	VE_BEHAVIOUR_NAME(ComputeShaderEffect);

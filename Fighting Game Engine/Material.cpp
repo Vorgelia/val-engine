@@ -1,6 +1,6 @@
 #include "Material.h"
 #include "Texture.h"
-#include "Shader.h"
+#include "SurfaceShader.h"
 #include "FilesystemManager.h"
 #include "GraphicsGL.h"
 
@@ -21,7 +21,7 @@ bool Material::HasProperty(Material::Properties pr) const
 	return (this->properties & (unsigned char)pr) != 0;
 }
 
-Material::Material(const std::string& name, Shader* shader, unsigned char properties, const std::vector<uniformFloat>& floats, const std::vector<uniformVec>& vecs, const std::vector<uniformTex>& textures)
+Material::Material(const std::string& name, SurfaceShader* shader, unsigned char properties, const std::vector<uniformFloat>& floats, const std::vector<uniformVec>& vecs, const std::vector<uniformTex>& textures)
 {
 	this->name = name;
 	this->shader = shader;

@@ -1,7 +1,9 @@
 #include "GraphicsGL.h"
 #include "ServiceManager.h"
 #include "Profiler.h"
-#include "Shader.h"
+#include "BaseShader.h"
+#include "ComputeShader.h"
+#include "SurfaceShader.h"
 #include "Texture.h"
 #include "FrameBuffer.h"
 #include "GraphicsBuffer.h"
@@ -74,6 +76,23 @@ void GraphicsGL::DestroyTexture(Texture& texture)
 	texture._valid = false;
 }
 
+GLuint GraphicsGL::CombineShaderAttachments(const std::vector<ShaderAttachment>& attachments, ShaderProgramType type)
+{
+	std::vector<GLuint> shaderAttachments;
+	shaderAttachments.reserve(attachments.size());
+
+	for(auto& attachment : attachments)
+	{
+		GLuint attachmentId = CreateShaderAttachment(attachment);
+		if(attachmentId != 0)
+		{
+			shaderAttachments.push_back(attachmentId);
+		}
+	}
+
+	return CreateShaderProgram(shaderAttachments, type);
+}
+
 bool GraphicsGL::ToggleFeature(GLenum feature, bool enable)
 {
 	if(_glFeatures.find(feature) == _glFeatures.end() || _glFeatures[feature] != enable)
@@ -114,7 +133,7 @@ bool GraphicsGL::BindGraphicsBufferId(GLuint id, GLenum target)
 	return true;
 }
 
-GLuint GraphicsGL::CreateShaderAttachment(const ShaderAttachment & shaderAttachment)
+GLuint GraphicsGL::CreateShaderAttachment(const ShaderAttachment& shaderAttachment)
 {
 	GLuint shader = glCreateShader(shaderAttachment.type);
 	const char* codeStr = shaderAttachment.code.c_str();
@@ -147,9 +166,11 @@ GLuint GraphicsGL::CreateShaderProgram(const std::vector<GLuint>& shaders, Shade
 		glAttachShader(shaderProgram, shaders[i]);
 	}
 
-	if(type == ShaderProgramType::Surface)
+	switch(type)
 	{
-		//The OUTn variables are pre-bound to point to specific targets in frameuffers.
+	case ShaderProgramType::Surface:
+	{
+		//The OUTn variables are pre-bound to point to specific targets in framebuffers.
 		glBindFragDataLocation(shaderProgram, 0, "OUT0");
 		glBindFragDataLocation(shaderProgram, 1, "OUT1");
 		glBindFragDataLocation(shaderProgram, 2, "OUT2");
@@ -162,6 +183,22 @@ GLuint GraphicsGL::CreateShaderProgram(const std::vector<GLuint>& shaders, Shade
 		glBindAttribLocation(shaderProgram, 0, "vertex");
 		glBindAttribLocation(shaderProgram, 1, "uv");
 		glBindAttribLocation(shaderProgram, 2, "normal");
+
+		//Do the same for uniform blocks
+		GLuint ubIndex = glGetUniformBlockIndex(shaderProgram, "TimeDataBuffer");
+		if(ubIndex != GL_INVALID_INDEX)
+			glUniformBlockBinding(shaderProgram, ubIndex, 0);
+
+		ubIndex = glGetUniformBlockIndex(shaderProgram, "RenderingDataBuffer");
+		if(ubIndex != GL_INVALID_INDEX)
+			glUniformBlockBinding(shaderProgram, ubIndex, 1);
+		break;
+	}
+	case ShaderProgramType::Compute:
+	{
+		glUniformBlockBinding(shaderProgram, glGetUniformBlockIndex(shaderProgram, "CommonVec4Buffer"), 0);
+		break;
+	}
 	}
 
 	glLinkProgram(shaderProgram);
@@ -358,31 +395,7 @@ void GraphicsGL::DestroyFont(Font& font)
 	}
 }
 
-std::unique_ptr<Shader> GraphicsGL::CreateShader(const std::string& name, const std::vector<ShaderAttachment>& attachments)
-{
-	std::vector<GLuint> shaderAttachments;
-	shaderAttachments.reserve(attachments.size());
-
-	ShaderProgramType type = ShaderProgramType::Surface;
-	for(auto& attachment : attachments)
-	{
-		GLuint attachmentId = CreateShaderAttachment(attachment);
-		if(attachmentId != 0)
-		{
-			shaderAttachments.push_back(attachmentId);
-			if(attachment.type == GL_COMPUTE_SHADER)
-			{
-				ShaderProgramType type = ShaderProgramType::Compute;
-			}
-		}
-	}
-
-	GLuint shaderProgram = CreateShaderProgram(shaderAttachments, type);
-
-	return std::make_unique<Shader>(name, shaderProgram, type);
-}
-
-void GraphicsGL::DestroyShader(Shader& shader)
+void GraphicsGL::DestroyShader(BaseShader& shader)
 {
 	if(_boundShader == shader._id)
 	{
@@ -450,7 +463,7 @@ bool GraphicsGL::BindTextureUnit(GLuint pos)
 	return false;
 }
 
-bool GraphicsGL::BindShader(const Shader& shader)
+bool GraphicsGL::BindShader(const BaseShader& shader)
 {
 	if(_boundShader != shader._id)
 	{
@@ -546,7 +559,7 @@ void GraphicsGL::ApplyMaterialProperties(const Material & material)
 
 }
 
-void GraphicsGL::DispatchCompute(const Shader & shader, unsigned int workGroupSizeX, unsigned int workGroupSizeY, unsigned int workGroupSizeZ)
+void GraphicsGL::DispatchCompute(const ComputeShader& shader, unsigned int workGroupSizeX, unsigned int workGroupSizeY, unsigned int workGroupSizeZ)
 {
 	BindShader(shader);
 	glDispatchCompute(workGroupSizeX, workGroupSizeY, workGroupSizeZ);

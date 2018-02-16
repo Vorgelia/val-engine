@@ -156,6 +156,9 @@
     <Filter Include="Val Engine\Engine\Data\Rendering\Native\Buffers">
       <UniqueIdentifier>{595f0899-2404-45ad-b533-bd4011700717}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Val Engine\Engine\Data\Rendering\Native\Shaders">
+      <UniqueIdentifier>{beb03040-8953-40ae-9594-74d3a69b23f9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameScene.cpp">
@@ -377,9 +380,6 @@
     <ClCompile Include="LogItem.cpp">
       <Filter>Val Engine\Engine\Data\Debug</Filter>
     </ClCompile>
-    <ClCompile Include="Shader.cpp">
-      <Filter>Val Engine\Engine\Data\Rendering\Native</Filter>
-    </ClCompile>
     <ClCompile Include="Texture.cpp">
       <Filter>Val Engine\Engine\Data\Rendering\Native</Filter>
     </ClCompile>
@@ -403,6 +403,15 @@
     </ClCompile>
     <ClCompile Include="Vec4Buffer.cpp">
       <Filter>Val Engine\Engine\Data\Rendering\Native\Buffers</Filter>
+    </ClCompile>
+    <ClCompile Include="SurfaceShader.cpp">
+      <Filter>Val Engine\Engine\Data\Rendering\Native\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseShader.cpp">
+      <Filter>Val Engine\Engine\Data\Rendering\Native\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="ComputeShader.cpp">
+      <Filter>Val Engine\Engine\Data\Rendering\Native\Shaders</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -655,9 +664,6 @@
     <ClInclude Include="FightingGameState.h">
       <Filter>Val Engine\Game\Data\Game</Filter>
     </ClInclude>
-    <ClInclude Include="Shader.h">
-      <Filter>Val Engine\Engine\Data\Rendering\Native</Filter>
-    </ClInclude>
     <ClInclude Include="Texture.h">
       <Filter>Val Engine\Engine\Data\Rendering\Native</Filter>
     </ClInclude>
@@ -673,9 +679,6 @@
     <ClInclude Include="GraphicsBuffer.h">
       <Filter>Val Engine\Engine\Data\Rendering\Native</Filter>
     </ClInclude>
-    <ClInclude Include="GraphicsBindingData.h">
-      <Filter>Val Engine</Filter>
-    </ClInclude>
     <ClInclude Include="Vec4Buffer.h">
       <Filter>Val Engine\Engine\Data\Rendering\Native\Buffers</Filter>
     </ClInclude>
@@ -684,6 +687,18 @@
     </ClInclude>
     <ClInclude Include="RenderingDataBuffer.h">
       <Filter>Val Engine\Engine\Data\Rendering\Native\Buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="SurfaceShader.h">
+      <Filter>Val Engine\Engine\Data\Rendering\Native\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseShader.h">
+      <Filter>Val Engine\Engine\Data\Rendering\Native\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="ComputeShader.h">
+      <Filter>Val Engine\Engine\Data\Rendering\Native\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsBindingData.h">
+      <Filter>Val Engine\Engine\Data\Rendering</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

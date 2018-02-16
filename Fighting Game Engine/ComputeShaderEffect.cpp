@@ -5,6 +5,7 @@
 #include "Screen.h"
 #include "FrameBuffer.h"
 #include "Texture.h"
+#include "ComputeShader.h"
 #include "ResourceManager.h"
 
 VE_BEHAVIOUR_REGISTER_TYPE(ComputeShaderEffect);

@@ -2,7 +2,8 @@
 #include "ServiceManager.h"
 #include "CachedMesh.h"
 #include "Mesh.h"
-#include "Shader.h"
+#include "SurfaceShader.h"
+#include "ComputeShader.h"
 #include "FilesystemManager.h"
 #include "Material.h"
 #include "Texture.h"
@@ -187,7 +188,7 @@ PostEffect* ResourceManager::GetPostEffect(FS::path path)
 	)).first->second.get();
 }
 
-Shader* ResourceManager::GetShader(std::string name)
+SurfaceShader* ResourceManager::GetShader(std::string name)
 {
 	auto& iter = shaders.find(name);
 	if(iter != shaders.end())
@@ -197,7 +198,7 @@ Shader* ResourceManager::GetShader(std::string name)
 
 	if(!FS::exists(name + ".vert") || !FS::exists(name + ".frag"))
 	{
-		shaders.emplace(std::pair<std::string, std::unique_ptr<Shader>>(name, nullptr));
+		shaders.emplace(std::pair<std::string, std::unique_ptr<SurfaceShader>>(name, nullptr));
 		_debug->VE_LOG("Failed to load Shader " + name);
 		return nullptr;
 	}
@@ -207,15 +208,15 @@ Shader* ResourceManager::GetShader(std::string name)
 	std::string fragSource = _filesystem->ReturnFile(name + ".frag");
 	PreprocessShaderSource(fragSource);
 
-	return shaders.emplace(std::pair<std::string, std::unique_ptr<Shader>>(
+	return shaders.emplace(std::pair<std::string, std::unique_ptr<SurfaceShader>>(
 		name,
-		_graphics->CreateShader(name, std::vector<ShaderAttachment>{
+		_graphics->CreateShader<SurfaceShader>(name, std::vector<ShaderAttachment>{
 		ShaderAttachment(vertSource, GL_VERTEX_SHADER),
 			ShaderAttachment(fragSource, GL_FRAGMENT_SHADER)
 	}))).first->second.get();
 }
 
-Shader* ResourceManager::GetComputeShader(std::string name)
+ComputeShader* ResourceManager::GetComputeShader(std::string name)
 {
 	auto& iter = computeShaders.find(name);
 	if(iter != computeShaders.end())
@@ -225,7 +226,7 @@ Shader* ResourceManager::GetComputeShader(std::string name)
 
 	if(!FS::exists(name + ".comp"))
 	{
-		shaders.emplace(std::pair<std::string, std::unique_ptr<Shader>>(name, nullptr));
+		computeShaders.emplace(std::pair<std::string, std::unique_ptr<ComputeShader>>(name, nullptr));
 		_debug->VE_LOG("Failed to load Compute Shader " + name);
 		return nullptr;
 	}
@@ -233,9 +234,9 @@ Shader* ResourceManager::GetComputeShader(std::string name)
 	std::string shaderSource = _filesystem->ReturnFile(name + ".comp");
 	PreprocessShaderSource(shaderSource);
 
-	return shaders.emplace(std::pair<std::string, std::unique_ptr<Shader>>(
+	return computeShaders.emplace(std::pair<std::string, std::unique_ptr<ComputeShader>>(
 		name,
-		_graphics->CreateShader(name, std::vector<ShaderAttachment>{
+		_graphics->CreateShader<ComputeShader>(name, std::vector<ShaderAttachment>{
 		ShaderAttachment(shaderSource, GL_COMPUTE_SHADER)
 	}))).first->second.get();
 }

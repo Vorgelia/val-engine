@@ -1,6 +1,8 @@
 #pragma once
 #include "BaseService.h"
 #include "GLIncludes.hpp"
+#include "SurfaceShader.h"
+#include "ComputeShader.h"
 #include <vector>
 #include <string>
 #include <unordered_map>
@@ -10,7 +12,6 @@
 #include<ft2build.h>
 #include FT_FREETYPE_H
 
-class Shader;
 class Mesh;
 class CachedMesh;
 class Texture;
@@ -19,8 +20,10 @@ class GraphicsBuffer;
 class ShaderAttachment;
 class Material;
 class Font;
-
+class BaseShader;
 class Screen;
+class SurfaceShader;
+class ComputeShader;
 class Debug;
 
 enum class ShaderProgramType;
@@ -45,6 +48,8 @@ private:
 	std::unordered_map<GLenum, bool> _glFeatures;
 
 	FT_Library _freetypeLibrary;
+
+	GLuint CombineShaderAttachments(const std::vector<ShaderAttachment>& attachments, ShaderProgramType type);
 
 	bool ToggleFeature(GLenum feature, bool enable);
 	bool BindFrameBufferId(GLuint id);
@@ -73,14 +78,15 @@ public:
 	std::unique_ptr<Font> CreateFont(std::string name);
 	void DestroyFont(Font& font);
 
-	std::unique_ptr<Shader> CreateShader(const std::string& name, const std::vector<ShaderAttachment>& attachments);
-	void DestroyShader(Shader& shader);
+	template<typename ShaderT>
+	std::unique_ptr<ShaderT> CreateShader(const std::string& name, const std::vector<ShaderAttachment>& attachments);
+	void DestroyShader(BaseShader& shader);
 
 	std::unique_ptr<Mesh> CreateMesh(const std::string& name, CachedMesh* meshData);
 	void DestroyMesh(Mesh& mesh);
 
 	bool BindTextureUnit(GLuint pos);
-	bool BindShader(const Shader& id);
+	bool BindShader(const BaseShader& id);
 	bool BindMesh(const Mesh& mesh);
 	bool BindTexture(const Texture& texture);
 	bool BindTexture(const Texture& texture, GLuint pos);
@@ -95,7 +101,7 @@ public:
 	void ApplyMaterial(const Material& material);
 	void ApplyMaterialProperties(const Material& material);
 
-	void DispatchCompute(const Shader& shader, unsigned int workGroupSizeX = 1, unsigned int workGroupSizeY = 1, unsigned int workGroupSizeZ = 1);
+	void DispatchCompute(const ComputeShader& shader, unsigned int workGroupSizeX = 1, unsigned int workGroupSizeY = 1, unsigned int workGroupSizeZ = 1);
 
 	GraphicsGL(ServiceManager* serviceManager);
 	~GraphicsGL();
@@ -126,4 +132,25 @@ inline std::unique_ptr<BufferT> GraphicsGL::CreateGraphicsBuffer(GLuint defaultS
 	}
 
 	return buffer;
+}
+
+template<>
+inline std::unique_ptr<SurfaceShader> GraphicsGL::CreateShader(const std::string & name, const std::vector<ShaderAttachment>& attachments)
+{
+	std::unique_ptr<SurfaceShader> shader = std::make_unique<SurfaceShader>(name, 0);
+	shader->_id = CombineShaderAttachments(attachments, shader->_type);
+	return shader;
+}
+
+template<>
+inline std::unique_ptr<ComputeShader> GraphicsGL::CreateShader(const std::string & name, const std::vector<ShaderAttachment>& attachments)
+{
+	std::unique_ptr<ComputeShader> shader = std::make_unique<ComputeShader>(name, 0);
+	shader->_id = CombineShaderAttachments(attachments, shader->_type);
+
+	int workSize[3];
+	glGetProgramiv(shader->_id, GL_COMPUTE_WORK_GROUP_SIZE, workSize);
+	shader->_computeGroupSize = glm::ivec3(workSize[0], workSize[1], workSize[2]);
+
+	return shader;
 }

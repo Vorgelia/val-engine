@@ -3,7 +3,8 @@
 #include "Screen.h"
 #include "FrameBuffer.h"
 #include "Mesh.h"
-#include "Shader.h"
+#include "SurfaceShader.h"
+#include "ComputeShader.h"
 #include "Texture.h"
 #include "Camera.h"
 #include "Transform.h"
@@ -124,7 +125,7 @@ void RenderingGL::BindMaterialUniforms(const Material& material, int& out_textur
 	}
 }
 
-void RenderingGL::BindShaderTextures(Shader* shader, const std::vector<MaterialTexture>& textures, int& out_textureUnitOffset)
+void RenderingGL::BindShaderTextures(SurfaceShader* shader, const std::vector<MaterialTexture>& textures, int& out_textureUnitOffset)
 {
 	int uniformIndex = 0;
 	for(auto& iter = textures.begin(); iter != textures.end(); ++iter)
@@ -146,7 +147,7 @@ void RenderingGL::BindShaderTextures(Shader* shader, const std::vector<MaterialT
 	}
 }
 
-void RenderingGL::BindBufferUniforms(Shader* shad, int& index)
+void RenderingGL::BindBufferUniforms(SurfaceShader* shad, int& index)
 {
 	//Bind the textures of every framebuffer to the shader.
 	for(unsigned int i = 0; i < _mainBuffer->textures.size(); ++i)
@@ -500,7 +501,7 @@ void RenderingGL::Update() {}
 void RenderingGL::InitTextDrawing()
 {
 	//Initialize states for text drawing to minimize unnecessary state changes.
-	Shader* cShad = _resourceManager->GetShader("Shaders/Base/Screen_Text");
+	SurfaceShader* cShad = _resourceManager->GetShader("Shaders/Base/Screen_Text");
 	Mesh* cMesh = _resourceManager->GetMesh("Meshes/Base/screenQuad.vm");
 
 	_graphics->BindMesh(*cMesh);
@@ -515,7 +516,7 @@ void RenderingGL::DrawTextCharacter(glm::vec4 rect, glm::vec4 params, Texture* t
 {
 	//Draw individual text characters while assuming things set by InitTextDrawing are still bound.
 	//So much more optimization could be put into this.
-	Shader* cShad = _resourceManager->GetShader("Shaders/Base/Screen_Text");
+	SurfaceShader* cShad = _resourceManager->GetShader("Shaders/Base/Screen_Text");
 	Mesh* cMesh = _resourceManager->GetMesh("Meshes/Base/screenQuad.vm");
 
 	_graphics->BindTexture(*tex, 0);

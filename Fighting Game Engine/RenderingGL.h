@@ -11,8 +11,11 @@ class Texture;
 class Transform;
 class FrameBuffer;
 class GraphicsBuffer;
-class Shader;
 class PostEffect;
+
+class BaseShader;
+class ComputeShader;
+class SurfaceShader;
 
 struct MaterialTexture;
 
@@ -50,8 +53,8 @@ private:
 	void DrawTextCharacter(glm::vec4 rect, glm::vec4 params, Texture* tex);
 
 	void BindMaterialUniforms(const Material& material, int& out_texturesBound);
-	void BindShaderTextures(Shader* shader, const std::vector<MaterialTexture>& textures, int& out_textureUnitOffset);
-	void BindBufferUniforms(Shader* shad, int& index);
+	void BindShaderTextures(SurfaceShader* shader, const std::vector<MaterialTexture>& textures, int& out_textureUnitOffset);
+	void BindBufferUniforms(SurfaceShader* shad, int& index);
 
 	void BindFrameBufferImages(const FrameBuffer* buffer, GLuint bindingPoint);
 
