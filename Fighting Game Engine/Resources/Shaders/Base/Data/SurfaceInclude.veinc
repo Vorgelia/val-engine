@@ -1,4 +1,4 @@
-layout (std140, binding = 0) uniform TimeDataBuffer
+layout (std140) uniform TimeDataBuffer
 {
 	//time, deltaTime, 1/time, 1/deltaTime
 	vec4 ve_worldTime;
@@ -6,7 +6,7 @@ layout (std140, binding = 0) uniform TimeDataBuffer
 	vec4 ve_frameTime;
 };
 
-layout (std140, binding = 1) uniform RenderingDataBuffer
+layout (std140) uniform RenderingDataBuffer
 {
 	vec4 ve_screen;
 };

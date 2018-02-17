@@ -10,7 +10,8 @@ uniform vec4 ve_tintColor=vec4(1,1,1,1);
 
 out vec4 OUT0;
 
-void main(){
+void main()
+{
 	OUT0=ve_tintColor*ve_color;
 	OUT0.a=texture(tex0,TransformUV(out_uv,tex0_params)).r;
 }

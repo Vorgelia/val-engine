@@ -1,14 +1,46 @@
 #version 430
 #pragma include Shaders/Base/Data/ComputeInclude.veinc
+#pragma include Shaders/Base/Data/SurfaceInclude.veinc
+#pragma include Shaders/Base/Data/UtilityInclude.veinc
 
-layout (local_size_x = 1, local_size_y = 1) in;
+layout (local_size_x = 1024) in;
+
+void debugCube(uint index)
+{
+	if(index >0)
+		return;
+		
+	for(int i=500; i<530; ++i)
+	for(int j=200; j<230; ++j)
+		imageStore(mainBuf_tex0, ivec2(i,j), vec4(0,0,1,1));
+}
 
 void main() 
 {
-	ivec2 uv = ivec2(gl_GlobalInvocationID.xy);
-	vec4 tex = imageLoad(mainBuf_tex0, uv);
-	vec4 depthTex = imageLoad(mainBuf_tex1, uv);
-
-	vec4 finalColor = mix(tex, tex*sin(uv.x*0.05), depthTex.r);
-	imageStore(mainBuf_tex0, uv, finalColor);
+	uint index = gl_GlobalInvocationID.x;
+	ve_commonVec4Data[0] = vec4(5.5f,6,2,0);
+	return;
+	/*
+	
+	vec4 data = ve_commonVec4Data[index];
+	data += vec4(
+			 ve_rand(vec2(index, 0))
+			,ve_rand(vec2(index*2, 0))
+			,0
+			,0) 
+		*500;
+	
+	ve_commonVec4Data[index] = data;
+	
+	ivec2 pos = ivec2(200,200) + ivec2(data.xy);
+	if(pos.x<0 || pos.x > ve_screen.x || pos.y < 0 || pos.y > ve_screen.y)
+	{
+		return;
+	}
+	
+	//debugCube(index);
+	
+	vec4 tex = vec4(1, 1, 1, 1);
+	imageStore(mainBuf_tex0, pos, tex);
+	*/
 }

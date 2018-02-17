@@ -7,5 +7,5 @@ layout(rgba16, binding = 5) restrict uniform image2D auxBuf2_tex2;
 
 layout(std140, binding = 0) buffer CommonVec4Buffer
 {
-	vec4 commonVec4Data[1024];
+	vec4 ve_commonVec4Data[1024];
 };
