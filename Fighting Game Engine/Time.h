@@ -13,7 +13,7 @@ public:
 	double lastTime;
 	double lastUpdateTime;
 	double timeSinceLoad;
-	double updateRate;
+	double smoothUpdateRate;
 	unsigned long long frameCount;
 	unsigned long long frameCountSinceLoad;
 

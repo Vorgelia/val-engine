@@ -192,15 +192,15 @@ GLuint GraphicsGL::CreateShaderProgram(const std::vector<GLuint>& shaders, Shade
 	//Do the same for uniform blocks
 	GLuint blockIndex = glGetUniformBlockIndex(shaderProgram, "TimeDataBuffer");
 	if(blockIndex != GL_INVALID_INDEX)
-		glUniformBlockBinding(shaderProgram, blockIndex, (GLuint)UniformBufferBindingPoints::TimeDataBuffer);
+		glUniformBlockBinding(shaderProgram, blockIndex, (GLuint)UniformBlockBindingPoints::TimeDataBuffer);
 
 	blockIndex = glGetUniformBlockIndex(shaderProgram, "RenderingDataBuffer");
 	if(blockIndex != GL_INVALID_INDEX)
-		glUniformBlockBinding(shaderProgram, blockIndex, (GLuint)UniformBufferBindingPoints::RenderingDataBuffer);
+		glUniformBlockBinding(shaderProgram, blockIndex, (GLuint)UniformBlockBindingPoints::RenderingDataBuffer);
 	
 	blockIndex = glGetProgramResourceIndex(shaderProgram, GL_SHADER_STORAGE_BLOCK, "CommonVec4Buffer");
 	if(blockIndex != GL_INVALID_INDEX)
-		glShaderStorageBlockBinding(shaderProgram, blockIndex, (GLuint)ShaderStorageBufferBindingPoints::CommonVec4Buffer1024);
+		glShaderStorageBlockBinding(shaderProgram, blockIndex, (GLuint)ShaderStorageBlockBindingPoints::CommonVec4Buffer);
 
 	return shaderProgram;
 }

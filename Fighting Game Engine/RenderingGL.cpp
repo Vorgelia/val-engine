@@ -482,15 +482,15 @@ void RenderingGL::Init()
 
 	//Create graphics buffers
 	_timeDataBuffer = _graphics->CreateGraphicsBuffer<TimeDataBuffer>(8, GraphicsBufferType::Uniform);
-	_graphics->BindBufferToBindingPoint((GLuint)UniformBufferBindingPoints::TimeDataBuffer, *_timeDataBuffer);
+	_graphics->BindBufferToBindingPoint((GLuint)UniformBlockBindingPoints::TimeDataBuffer, *_timeDataBuffer);
 
 	_renderingDataBuffer = _graphics->CreateGraphicsBuffer<RenderingDataBuffer>(4, GraphicsBufferType::Uniform);
-	_graphics->BindBufferToBindingPoint((GLuint)UniformBufferBindingPoints::RenderingDataBuffer, *_renderingDataBuffer);
+	_graphics->BindBufferToBindingPoint((GLuint)UniformBlockBindingPoints::RenderingDataBuffer, *_renderingDataBuffer);
 
 	_commonComputeVec4Buffer = _graphics->CreateGraphicsBuffer<Vec4Buffer>(1024 * 4, GraphicsBufferType::ShaderStorage);
-	_commonComputeVec4Buffer->SetupData(4096, 3.5f);
+	_commonComputeVec4Buffer->SetupData(4096);
 	_graphics->UpdateGraphicsBuffer(*_commonComputeVec4Buffer);
-	_graphics->BindBufferToBindingPoint((GLuint)ShaderStorageBufferBindingPoints::CommonVec4Buffer1024, *_renderingDataBuffer);
+	_graphics->BindBufferToBindingPoint((GLuint)ShaderStorageBlockBindingPoints::CommonVec4Buffer, *_commonComputeVec4Buffer);
 
 	//Register a callback for the screen resizing
 	_screen->ScreenUpdated += Screen::ScreenUpdateEventHandler::func_t([this]() { OnScreenResize(); });

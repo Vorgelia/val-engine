@@ -7,15 +7,15 @@ enum class ImageBindingPoints
 	FirstUnreservedImagePoint = 6
 };
 
-enum class UniformBufferBindingPoints
+enum class UniformBlockBindingPoints
 {
 	TimeDataBuffer = 0,
 	RenderingDataBuffer = 1,
-	FirstUnreservedBufferPoint = 2,
+	FirstUnreservedBlockPoint = 2,
 };
 
-enum class ShaderStorageBufferBindingPoints
+enum class ShaderStorageBlockBindingPoints
 {
-	CommonVec4Buffer1024 = 0,
-	FirstUnreservedBufferPoint = 1,
+	CommonVec4Buffer = 0,
+	FirstUnreservedBlockPoint = 1,
 };

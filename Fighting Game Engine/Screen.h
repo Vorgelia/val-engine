@@ -6,7 +6,7 @@
 #include "Delegate.h"
 
 //Controls whether a single render buffer should be used
-//#define VE_USE_SINGLE_BUFFER
+#define VE_USE_SINGLE_BUFFER
 
 class Screen : public BaseService
 {
