@@ -52,7 +52,7 @@ void RenderingGL::BeginFrame()
 
 	_graphics->ClearFrameBuffer(*_mainBuffer);
 
-	_timeDataBuffer->SetupData((float)_time->time, (float)_time->deltaTime, (float)_time->frameCountSinceLoad);
+	_timeDataBuffer->SetupData((float)_time->time, (float)_time->updateRate * VE_FRAME_TIME, (float)_time->frameCountSinceLoad);
 	_renderingDataBuffer->SetupData(_screen->size, _screen->invSize);
 
 	_graphics->UpdateGraphicsBuffer(*_timeDataBuffer);

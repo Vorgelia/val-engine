@@ -16,11 +16,13 @@ void Time::Update()
 	Time::smoothDeltaTime = glm::max<double>(glm::lerp<double>(Time::smoothDeltaTime, Time::deltaTime, Time::deltaTime * 3), Time::deltaTime);
 	Time::smoothUpdateRate = glm::max<double>(glm::lerp<double>(Time::smoothUpdateRate, Time::deltaTime * VE_FRAME_RATE, Time::deltaTime * 3), Time::deltaTime * VE_FRAME_RATE);
 	Time::timeSinceLoad += deltaTime;
+	Time::updateRate = 0;
 }
 
 //Advance game update related variables by one frame
 void Time::FrameUpdate()
 {
+	Time::updateRate += 1;
 	Time::frameCount += 1;
 	Time::frameCountSinceLoad += 1;
 	Time::lastUpdateTime += VE_FRAME_TIME;
