@@ -17,7 +17,7 @@ void ComputeShaderEffect::OnApplyPostEffects()
 		return;
 	}
 
-	_graphics->DispatchCompute(*_computeShader, _serviceManager->Screen()->size.x, _serviceManager->Screen()->size.y);
+	_graphics->DispatchCompute(*_computeShader, 1, 1);
 }
 
 ComputeShaderEffect::ComputeShaderEffect(Object* owner, ServiceManager* serviceManager, const json& j)

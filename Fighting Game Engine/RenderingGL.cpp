@@ -482,14 +482,14 @@ void RenderingGL::Init()
 
 	//Create graphics buffers
 	_timeDataBuffer = _graphics->CreateGraphicsBuffer<TimeDataBuffer>(8, GraphicsBufferType::Uniform);
-	_renderingDataBuffer = _graphics->CreateGraphicsBuffer<RenderingDataBuffer>(4, GraphicsBufferType::Uniform);
-	_commonComputeVec4Buffer = _graphics->CreateGraphicsBuffer<Vec4Buffer>(1024*4, GraphicsBufferType::ShaderStorage);
-
-	_commonComputeVec4Buffer->SetupData(4096);
-
 	_graphics->BindBufferToBindingPoint((GLuint)UniformBufferBindingPoints::TimeDataBuffer, *_timeDataBuffer);
+
+	_renderingDataBuffer = _graphics->CreateGraphicsBuffer<RenderingDataBuffer>(4, GraphicsBufferType::Uniform);
 	_graphics->BindBufferToBindingPoint((GLuint)UniformBufferBindingPoints::RenderingDataBuffer, *_renderingDataBuffer);
 
+	_commonComputeVec4Buffer = _graphics->CreateGraphicsBuffer<Vec4Buffer>(1024 * 4, GraphicsBufferType::ShaderStorage);
+	_commonComputeVec4Buffer->SetupData(4096, 3.5f);
+	_graphics->UpdateGraphicsBuffer(*_commonComputeVec4Buffer);
 	_graphics->BindBufferToBindingPoint((GLuint)ShaderStorageBufferBindingPoints::CommonVec4Buffer1024, *_renderingDataBuffer);
 
 	//Register a callback for the screen resizing

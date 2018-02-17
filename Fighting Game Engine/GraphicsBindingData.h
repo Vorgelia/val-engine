@@ -16,6 +16,6 @@ enum class UniformBufferBindingPoints
 
 enum class ShaderStorageBufferBindingPoints
 {
-	CommonVec4Buffer1024 = 1,
-	FirstUnreservedBufferPoint = 2,
+	CommonVec4Buffer1024 = 0,
+	FirstUnreservedBufferPoint = 1,
 };

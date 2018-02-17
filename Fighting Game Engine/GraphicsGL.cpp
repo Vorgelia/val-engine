@@ -7,6 +7,7 @@
 #include "Texture.h"
 #include "FrameBuffer.h"
 #include "GraphicsBuffer.h"
+#include "GraphicsBindingData.h"
 #include "Font.h"
 #include "Mesh.h"
 #include "CachedMesh.h"
@@ -169,7 +170,6 @@ GLuint GraphicsGL::CreateShaderProgram(const std::vector<GLuint>& shaders, Shade
 	switch(type)
 	{
 	case ShaderProgramType::Surface:
-	{
 		//The OUTn variables are pre-bound to point to specific targets in framebuffers.
 		glBindFragDataLocation(shaderProgram, 0, "OUT0");
 		glBindFragDataLocation(shaderProgram, 1, "OUT1");
@@ -184,24 +184,23 @@ GLuint GraphicsGL::CreateShaderProgram(const std::vector<GLuint>& shaders, Shade
 		glBindAttribLocation(shaderProgram, 1, "uv");
 		glBindAttribLocation(shaderProgram, 2, "normal");
 
-		//Do the same for uniform blocks
-		GLuint ubIndex = glGetUniformBlockIndex(shaderProgram, "TimeDataBuffer");
-		if(ubIndex != GL_INVALID_INDEX)
-			glUniformBlockBinding(shaderProgram, ubIndex, 0);
-
-		ubIndex = glGetUniformBlockIndex(shaderProgram, "RenderingDataBuffer");
-		if(ubIndex != GL_INVALID_INDEX)
-			glUniformBlockBinding(shaderProgram, ubIndex, 1);
 		break;
-	}
-	case ShaderProgramType::Compute:
-	{
-		glUniformBlockBinding(shaderProgram, glGetUniformBlockIndex(shaderProgram, "CommonVec4Buffer"), 0);
-		break;
-	}
 	}
 
 	glLinkProgram(shaderProgram);
+
+	//Do the same for uniform blocks
+	GLuint blockIndex = glGetUniformBlockIndex(shaderProgram, "TimeDataBuffer");
+	if(blockIndex != GL_INVALID_INDEX)
+		glUniformBlockBinding(shaderProgram, blockIndex, (GLuint)UniformBufferBindingPoints::TimeDataBuffer);
+
+	blockIndex = glGetUniformBlockIndex(shaderProgram, "RenderingDataBuffer");
+	if(blockIndex != GL_INVALID_INDEX)
+		glUniformBlockBinding(shaderProgram, blockIndex, (GLuint)UniformBufferBindingPoints::RenderingDataBuffer);
+	
+	blockIndex = glGetProgramResourceIndex(shaderProgram, GL_SHADER_STORAGE_BLOCK, "CommonVec4Buffer");
+	if(blockIndex != GL_INVALID_INDEX)
+		glShaderStorageBlockBinding(shaderProgram, blockIndex, (GLuint)ShaderStorageBufferBindingPoints::CommonVec4Buffer1024);
 
 	return shaderProgram;
 }
