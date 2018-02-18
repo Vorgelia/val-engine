@@ -9,3 +9,13 @@ layout(std140) buffer CommonVec4Buffer
 {
 	vec4 ve_commonVec4Data[1024];
 };
+
+void drawDebugSquare(uint index = 0)
+{
+	if(index != 0)
+		return;
+		
+	for(uint i = 500 ; i < 600; ++i)
+		for(uint j = 300 ; j < 400; ++j)
+			imageStore(mainBuf_tex0, ivec2(i,j), vec4(1,1,1,1));
+}

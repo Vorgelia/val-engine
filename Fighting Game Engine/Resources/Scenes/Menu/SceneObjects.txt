@@ -7,6 +7,11 @@
             {
                 "name":"MenuBehaviour",
                 "enabled":true
+            },
+            {
+				"name":"ComputeShaderEffect",
+				"enabled":true,
+				"shaderPath":"Shaders/Base/Test_FB"
             }
         ]
     },
