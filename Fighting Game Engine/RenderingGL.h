@@ -80,6 +80,7 @@ public:
 
 	void Init() override;
 	void Update() override;
+	void Cleanup() override;
 
 	RenderingGL(ServiceManager* serviceManager);
 	~RenderingGL();

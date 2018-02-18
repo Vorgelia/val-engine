@@ -52,6 +52,11 @@ void PlayerManager::Update()
 	}
 }
 
+void PlayerManager::Cleanup()
+{
+	ClearPlayers();
+}
+
 PlayerManager::PlayerManager(ServiceManager* serviceManager) : BaseService(serviceManager)
 {
 	_allowServiceUpdate = true;
@@ -60,5 +65,4 @@ PlayerManager::PlayerManager(ServiceManager* serviceManager) : BaseService(servi
 
 PlayerManager::~PlayerManager()
 {
-	ClearPlayers();
 }

@@ -47,6 +47,12 @@ void InputManager::Update()
 {
 }
 
+void InputManager::Cleanup()
+{
+	_inputDevices.clear();
+	_temporaryNetworkDevices.clear();
+}
+
 const std::unordered_map<int, std::shared_ptr<InputDevice>>& InputManager::inputDevices()
 {
 	return _inputDevices;
@@ -94,6 +100,4 @@ InputManager::InputManager(ServiceManager* serviceManager) : BaseService(service
 
 InputManager::~InputManager()
 {
-	_inputDevices.clear();
-	_temporaryNetworkDevices.clear();
 }

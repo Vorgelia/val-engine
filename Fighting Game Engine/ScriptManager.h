@@ -31,6 +31,7 @@ private:
 public:
 	void Init() override;
 	void Update() override;
+	void Cleanup() override;
 
 	Script* GetScript(const FS::path& path);
 	Script* AddScript(const FS::path& path);

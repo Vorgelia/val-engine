@@ -75,6 +75,11 @@ void ServiceManager::InitializeServices()
 
 void ServiceManager::CleanupServices()
 {
+	for(auto& iter : _activeServices)
+	{
+		(*iter)->Cleanup();
+	}
+
 	for(std::unique_ptr<BaseService>* service : _activeServices)
 	{
 		BaseService* ptr = service->release();

@@ -48,6 +48,7 @@ public:
 
 	void Update() override;
 	void Init() override;
+	void Cleanup() override;
 
 	void LoadScene(const std::string& name);
 	void ReloadScene();

@@ -25,6 +25,10 @@ void GraphicsGL::Init()
 
 void GraphicsGL::Update() {}
 
+void GraphicsGL::Cleanup()
+{
+}
+
 std::unique_ptr<Texture> GraphicsGL::CreateTexture(const std::string& name, const std::vector<unsigned char>& pixels, glm::ivec2 dimensions, int format, GLuint filt, GLuint edgeBehaviour)
 {
 	GLuint textureId;

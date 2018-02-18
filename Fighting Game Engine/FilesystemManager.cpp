@@ -115,6 +115,10 @@ void FilesystemManager::Update()
 {
 }
 
+void FilesystemManager::Cleanup()
+{
+}
+
 //Abstraction for turning a file into an array of its lines. Heavily used in parsing.
 std::vector<std::string> FilesystemManager::ReturnFileLines(const FS::path& dir, bool removeWhitespace = false)
 {

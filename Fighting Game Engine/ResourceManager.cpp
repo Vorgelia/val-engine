@@ -358,31 +358,7 @@ void ResourceManager::Init()
 
 void ResourceManager::Update() {}
 
-void ResourceManager::Unload()
-{
-	for(auto& iter : meshes)
-	{
-		_graphics->DestroyMesh(*(iter.second.get()));
-	}
-	meshes.clear();
-
-	cachedMeshes.clear();
-
-	for(auto& iter : textures)
-	{
-		_graphics->DestroyTexture(*(iter.second.get()));
-	}
-	textures.clear();
-
-	materials.clear();
-}
-
-ResourceManager::ResourceManager(ServiceManager* serviceManager) : BaseService(serviceManager)
-{
-
-}
-
-ResourceManager::~ResourceManager()
+void ResourceManager::Cleanup()
 {
 	for(auto& iter : baseMeshes)
 	{
@@ -418,4 +394,33 @@ ResourceManager::~ResourceManager()
 	}
 	fonts.clear();
 	postEffects.clear();
+}
+
+void ResourceManager::Unload()
+{
+	for(auto& iter : meshes)
+	{
+		_graphics->DestroyMesh(*(iter.second.get()));
+	}
+	meshes.clear();
+
+	cachedMeshes.clear();
+
+	for(auto& iter : textures)
+	{
+		_graphics->DestroyTexture(*(iter.second.get()));
+	}
+	textures.clear();
+
+	materials.clear();
+}
+
+ResourceManager::ResourceManager(ServiceManager* serviceManager) : BaseService(serviceManager)
+{
+
+}
+
+ResourceManager::~ResourceManager()
+{
+
 }

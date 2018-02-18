@@ -136,6 +136,11 @@ void GameSceneManager::Init()
 	_input = _serviceManager->Input();
 }
 
+void GameSceneManager::Cleanup()
+{
+	_resourceManager->Unload();
+}
+
 void GameSceneManager::ApplyFunctionToCurrentScene(std::function<void(GameScene*)> func, bool requiredInitializedState)
 {
 	if(_isLoading || _currentScene == nullptr || (requiredInitializedState != _currentScene->initialized()))
@@ -174,5 +179,4 @@ GameSceneManager::GameSceneManager(ServiceManager* serviceManager) :
 
 GameSceneManager::~GameSceneManager()
 {
-	_resourceManager->Unload();
 }

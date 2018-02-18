@@ -498,6 +498,16 @@ void RenderingGL::Init()
 
 void RenderingGL::Update() {}
 
+void RenderingGL::Cleanup()
+{
+	_graphics->DestroyFrameBuffer(*_mainBuffer);
+
+	for(unsigned int i = 0; i < VE_AUX_BUFFER_AMOUNT; ++i)
+	{
+		_graphics->DestroyFrameBuffer(*_auxBuffers[i]);
+	}
+}
+
 void RenderingGL::InitTextDrawing()
 {
 	//Initialize states for text drawing to minimize unnecessary state changes.
@@ -540,10 +550,5 @@ RenderingGL::RenderingGL(ServiceManager* serviceManager) : BaseService(serviceMa
 
 RenderingGL::~RenderingGL()
 {
-	_graphics->DestroyFrameBuffer(*_mainBuffer);
 
-	for(unsigned int i = 0; i < VE_AUX_BUFFER_AMOUNT; ++i)
-	{
-		_graphics->DestroyFrameBuffer(*_auxBuffers[i]);
-	}
 }

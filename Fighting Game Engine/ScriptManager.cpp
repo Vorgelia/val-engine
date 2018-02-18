@@ -28,6 +28,12 @@ void ScriptManager::Init()
 
 void ScriptManager::Update() {}
 
+void ScriptManager::Cleanup()
+{
+	_scripts.clear();
+	_globalVariables.clear();
+}
+
 Script* ScriptManager::GetScript(const FS::path & path)
 {
 	if(path.empty())
@@ -225,6 +231,5 @@ ScriptManager::ScriptManager(ServiceManager* serviceManager) : BaseService(servi
 
 ScriptManager::~ScriptManager()
 {
-	_scripts.clear();
-	_globalVariables.clear();
+
 }
