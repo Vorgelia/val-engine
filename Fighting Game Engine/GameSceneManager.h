@@ -25,7 +25,6 @@ private:
 	InputManager* _input;
 
 private:
-
 	std::unordered_map<std::string, std::unique_ptr<GameScene> const> _scenes;
 
 	GameScene* _currentScene = nullptr;

@@ -9,14 +9,12 @@ class Texture;
 class FrameBuffer
 {
 	friend class GraphicsGL;
+	friend class RenderingGL;
 
 private:
 	bool _valid;
 
-public:
-	std::vector<std::unique_ptr<Texture>> textures;
-
-	glm::vec4 clearColor;
+	glm::vec4 _clearColor;
 	GLuint format;
 	GLuint filtering;
 
@@ -29,6 +27,10 @@ public:
 	bool hasDepthStencil;
 
 	GLuint clearFlags;
+
+	std::vector<std::unique_ptr<Texture>> textures;
+
+public:
 
 	FrameBuffer(glm::ivec2 size, int texAmount, bool depthStencil, GLint format, glm::vec4 clearColor, GLint filtering, GLuint clearFlags);
 	~FrameBuffer() = default;

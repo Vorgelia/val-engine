@@ -21,7 +21,7 @@ VE_BEHAVIOUR_REGISTER_TYPE(MenuBehaviour);
 void MenuBehaviour::OnRenderUI()
 {
 	_rendering->DrawScreenText(glm::vec4(0, 10, 100, 100), 24, std::to_string(glm::min<double>((int)std::round(1.0 / _time->smoothDeltaTime), 60)), nullptr);
-	_rendering->DrawScreenText(glm::vec4(0, 30, 100, 100), 24, std::to_string(glm::max<double>(((int)(_time->updateRate * 100))*0.01, 1.0)), nullptr);
+	_rendering->DrawScreenText(glm::vec4(0, 30, 100, 100), 24, std::to_string(glm::max<double>(((int)(_time->smoothUpdateRate * 100))*0.01, 1.0)), nullptr);
 
 	if((int)(_time->time * 4) % 2 == 1)
 		_rendering->DrawScreenText(glm::vec4(0, 1080 - 200, 1920, 60), 140, "VIDEOGAME", nullptr, TextAlignment::Center);

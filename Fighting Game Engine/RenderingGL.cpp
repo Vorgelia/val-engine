@@ -3,7 +3,8 @@
 #include "Screen.h"
 #include "FrameBuffer.h"
 #include "Mesh.h"
-#include "Shader.h"
+#include "SurfaceShader.h"
+#include "ComputeShader.h"
 #include "Texture.h"
 #include "Camera.h"
 #include "Transform.h"
@@ -12,8 +13,13 @@
 #include "Material.h"
 #include "ResourceManager.h"
 #include "GraphicsGL.h"
+#include "GraphicsBuffer.h"
 #include "PostEffect.h"
 #include "DebugLog.h"
+#include "GraphicsBindingData.h"
+#include "RenderingDataBuffer.h"
+#include "TimeDataBuffer.h"
+#include "Vec4Buffer.h"
 
 #include <GLM\gtc\matrix_transform.hpp>
 #include <GLM\gtc\type_ptr.hpp>
@@ -45,6 +51,12 @@ void RenderingGL::BeginFrame()
 	}
 
 	_graphics->ClearFrameBuffer(*_mainBuffer);
+
+	_timeDataBuffer->SetupData((float)_time->time, (float)_time->updateRate * VE_FRAME_TIME, (float)_time->frameCountSinceLoad);
+	_renderingDataBuffer->SetupData(_screen->size, _screen->invSize);
+
+	_graphics->UpdateGraphicsBuffer(*_timeDataBuffer);
+	_graphics->UpdateGraphicsBuffer(*_renderingDataBuffer);
 }
 
 void RenderingGL::EndFrame()
@@ -113,7 +125,7 @@ void RenderingGL::BindMaterialUniforms(const Material& material, int& out_textur
 	}
 }
 
-void RenderingGL::BindShaderTextures(Shader* shader, const std::vector<MaterialTexture>& textures, int& out_textureUnitOffset)
+void RenderingGL::BindShaderTextures(SurfaceShader* shader, const std::vector<MaterialTexture>& textures, int& out_textureUnitOffset)
 {
 	int uniformIndex = 0;
 	for(auto& iter = textures.begin(); iter != textures.end(); ++iter)
@@ -135,7 +147,7 @@ void RenderingGL::BindShaderTextures(Shader* shader, const std::vector<MaterialT
 	}
 }
 
-void RenderingGL::BindBufferUniforms(Shader* shad, int& index)
+void RenderingGL::BindBufferUniforms(SurfaceShader* shad, int& index)
 {
 	//Bind the textures of every framebuffer to the shader.
 	for(unsigned int i = 0; i < _mainBuffer->textures.size(); ++i)
@@ -162,11 +174,17 @@ void RenderingGL::BindBufferUniforms(Shader* shad, int& index)
 	}
 }
 
-//Default engine uniforms for passing time and screen parameters.
-void RenderingGL::BindEngineUniforms(Shader* shader)
+void RenderingGL::BindFrameBufferImages(const FrameBuffer* buffer, GLuint bindingPoint)
 {
-	glUniform4f(shader->UniformLocation("ve_time"), (GLfloat)_time->time, (GLfloat)_time->deltaTime, (GLfloat)1.0 / (GLfloat)_time->deltaTime, (GLfloat)_time->frameCount);
-	glUniform4f(shader->UniformLocation("ve_screen"), (GLfloat)_screen->size.x, (GLfloat)_screen->size.y, _screen->invSize.x, _screen->invSize.y);
+	if(buffer == nullptr)
+	{
+		return;
+	}
+
+	for(size_t i = 0; i < buffer->textures.size(); ++i)
+	{
+		_graphics->BindTextureToImageUnit(bindingPoint + i, *(buffer->textures[i]));
+	}
 }
 
 //Post effects are a good enough place to explain the entire rendering process. It doesn't change much for the rest of the functions.
@@ -212,9 +230,6 @@ void RenderingGL::DrawPostEffect(PostEffect* pf)
 		//Bind the texture components of every buffer, so they can be accessible from the shader.
 		int textureIndex;
 		BindBufferUniforms(cMat->shader, textureIndex);
-
-			//Then bind uniforms like time, screen size, etc.
-		BindEngineUniforms(cMat->shader);
 
 		//Generate an MVP matrix for fullscreen projection. Since our screen mat transforms clip space to 1920x1080, these values will produce a fullscreen quad.
 		glm::mat4 modelMat = glm::translate(glm::mat4(), glm::vec3(0, 1080, 0));
@@ -283,8 +298,6 @@ void RenderingGL::DrawScreenMesh(glm::vec4 rect, Mesh* mesh, const std::vector<M
 	glUniformMatrix4fv(mat->shader->UniformLocation("ve_matrix_projection"), 1, false, glm::value_ptr(_screenMat));
 	glUniformMatrix4fv(mat->shader->UniformLocation("ve_matrix_mvp"), 1, false, glm::value_ptr(mvpmat));
 
-	BindEngineUniforms(mat->shader);
-
 	glUniform4f(mat->shader->UniformLocation("ve_tintColor"), tintColor.x, tintColor.y, tintColor.z, tintColor.w);
 
 	glDrawElements(GL_TRIANGLES, mesh->elementAmount(), GL_UNSIGNED_INT, 0);
@@ -305,7 +318,6 @@ void RenderingGL::DrawMesh(Transform* transform, Mesh* mesh, Material* mat, Came
 
 	int textureAmount = 0;
 	BindMaterialUniforms(*mat, textureAmount);
-	BindEngineUniforms(mat->shader);
 
 	glUniformMatrix4fv(mat->shader->UniformLocation("ve_matrix_model"), 1, false, glm::value_ptr(transform->ModelMatrix()));
 	glUniformMatrix4fv(mat->shader->UniformLocation("ve_matrix_view"), 1, false, glm::value_ptr(cCam->ViewMatrix(transform->depth)));
@@ -433,6 +445,11 @@ void RenderingGL::DrawScreenText(glm::vec4 rect, GLuint size, std::string text, 
 	}
 }
 
+const FrameBuffer* RenderingGL::GetFramebuffer(int index)
+{
+	return index < 0 ? _mainBuffer.get() : _auxBuffers[index].get();
+}
+
 void RenderingGL::Init()
 {
 	_graphics = _serviceManager->Graphics();
@@ -442,12 +459,16 @@ void RenderingGL::Init()
 	_time = _serviceManager->Time();
 
 	//Generate the main buffer and the auxiliary buffers.
-	_mainBuffer = _graphics->CreateFrameBuffer(_screen->size, 3, true, GL_RGBA, glm::vec4(0, 0, 0, 1));
+	_mainBuffer = _graphics->CreateFrameBuffer(_screen->size, 3, true, GL_RGBA16, glm::vec4(0, 0, 0, 1));
+
 	_auxBuffers.reserve(VE_AUX_BUFFER_AMOUNT);
 	for(unsigned int i = 0; i < VE_AUX_BUFFER_AMOUNT; ++i)
 	{
 		_auxBuffers.push_back(_graphics->CreateFrameBuffer(_screen->size, 3, false, GL_RGBA16F));
 	}
+
+	BindFrameBufferImages(_mainBuffer.get(), (GLuint)ImageBindingPoints::MainBufferAttachment0);
+	BindFrameBufferImages(_mainBuffer.get(), (GLuint)ImageBindingPoints::AuxBuffer2Attachment0);
 
 	glDepthFunc(GL_LEQUAL);
 
@@ -459,6 +480,18 @@ void RenderingGL::Init()
 	cameras.push_back(Camera(glm::vec2(0, 0), &_orthoMat));
 	cameras.back().zoomLevel = 1.25;
 
+	//Create graphics buffers
+	_timeDataBuffer = _graphics->CreateGraphicsBuffer<TimeDataBuffer>(8, GraphicsBufferType::Uniform);
+	_graphics->BindBufferToBindingPoint((GLuint)UniformBlockBindingPoints::TimeDataBuffer, *_timeDataBuffer);
+
+	_renderingDataBuffer = _graphics->CreateGraphicsBuffer<RenderingDataBuffer>(4, GraphicsBufferType::Uniform);
+	_graphics->BindBufferToBindingPoint((GLuint)UniformBlockBindingPoints::RenderingDataBuffer, *_renderingDataBuffer);
+
+	_commonComputeVec4Buffer = _graphics->CreateGraphicsBuffer<Vec4Buffer>(1024 * 4, GraphicsBufferType::ShaderStorage);
+	_commonComputeVec4Buffer->SetupData(4096);
+	_graphics->UpdateGraphicsBuffer(*_commonComputeVec4Buffer);
+	_graphics->BindBufferToBindingPoint((GLuint)ShaderStorageBlockBindingPoints::CommonVec4Buffer, *_commonComputeVec4Buffer);
+
 	//Register a callback for the screen resizing
 	_screen->ScreenUpdated += Screen::ScreenUpdateEventHandler::func_t([this]() { OnScreenResize(); });
 }
@@ -468,7 +501,7 @@ void RenderingGL::Update() {}
 void RenderingGL::InitTextDrawing()
 {
 	//Initialize states for text drawing to minimize unnecessary state changes.
-	Shader* cShad = _resourceManager->GetShader("Shaders/Base/Screen_Text");
+	SurfaceShader* cShad = _resourceManager->GetShader("Shaders/Base/Screen_Text");
 	Mesh* cMesh = _resourceManager->GetMesh("Meshes/Base/screenQuad.vm");
 
 	_graphics->BindMesh(*cMesh);
@@ -483,7 +516,7 @@ void RenderingGL::DrawTextCharacter(glm::vec4 rect, glm::vec4 params, Texture* t
 {
 	//Draw individual text characters while assuming things set by InitTextDrawing are still bound.
 	//So much more optimization could be put into this.
-	Shader* cShad = _resourceManager->GetShader("Shaders/Base/Screen_Text");
+	SurfaceShader* cShad = _resourceManager->GetShader("Shaders/Base/Screen_Text");
 	Mesh* cMesh = _resourceManager->GetMesh("Meshes/Base/screenQuad.vm");
 
 	_graphics->BindTexture(*tex, 0);

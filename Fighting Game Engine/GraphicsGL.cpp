@@ -1,9 +1,13 @@
 #include "GraphicsGL.h"
 #include "ServiceManager.h"
 #include "Profiler.h"
-#include "Shader.h"
+#include "BaseShader.h"
+#include "ComputeShader.h"
+#include "SurfaceShader.h"
 #include "Texture.h"
 #include "FrameBuffer.h"
+#include "GraphicsBuffer.h"
+#include "GraphicsBindingData.h"
 #include "Font.h"
 #include "Mesh.h"
 #include "CachedMesh.h"
@@ -35,6 +39,8 @@ std::unique_ptr<Texture> GraphicsGL::CreateTexture(const std::string& name, cons
 	{
 	case GL_RGBA16F:
 	case GL_RGBA32F:
+	case GL_RGBA16:
+	case GL_RGBA8:
 		dataType = GL_RGBA;
 		break;
 	}
@@ -71,6 +77,23 @@ void GraphicsGL::DestroyTexture(Texture& texture)
 	texture._valid = false;
 }
 
+GLuint GraphicsGL::CombineShaderAttachments(const std::vector<ShaderAttachment>& attachments, ShaderProgramType type)
+{
+	std::vector<GLuint> shaderAttachments;
+	shaderAttachments.reserve(attachments.size());
+
+	for(auto& attachment : attachments)
+	{
+		GLuint attachmentId = CreateShaderAttachment(attachment);
+		if(attachmentId != 0)
+		{
+			shaderAttachments.push_back(attachmentId);
+		}
+	}
+
+	return CreateShaderProgram(shaderAttachments, type);
+}
+
 bool GraphicsGL::ToggleFeature(GLenum feature, bool enable)
 {
 	if(_glFeatures.find(feature) == _glFeatures.end() || _glFeatures[feature] != enable)
@@ -98,7 +121,20 @@ bool GraphicsGL::BindFrameBufferId(GLuint id)
 	return false;
 }
 
-GLuint GraphicsGL::CreateShaderAttachment(const ShaderAttachment & shaderAttachment)
+bool GraphicsGL::BindGraphicsBufferId(GLuint id, GLenum target)
+{
+	auto& iter = _boundBuffers.find(target);
+	if(iter != _boundBuffers.end() && iter->second == id)
+	{
+		return false;
+	}
+
+	_boundBuffers.emplace(target, id);
+	glBindBuffer(target, id);
+	return true;
+}
+
+GLuint GraphicsGL::CreateShaderAttachment(const ShaderAttachment& shaderAttachment)
 {
 	GLuint shader = glCreateShader(shaderAttachment.type);
 	const char* codeStr = shaderAttachment.code.c_str();
@@ -122,7 +158,7 @@ GLuint GraphicsGL::CreateShaderAttachment(const ShaderAttachment & shaderAttachm
 	}
 }
 
-GLuint GraphicsGL::CreateShaderProgram(const std::vector<GLuint> shaders)
+GLuint GraphicsGL::CreateShaderProgram(const std::vector<GLuint>& shaders, ShaderProgramType type)
 {
 	GLuint shaderProgram = glCreateProgram();
 	//Attach all the shaders into a shader program.
@@ -130,21 +166,41 @@ GLuint GraphicsGL::CreateShaderProgram(const std::vector<GLuint> shaders)
 	{
 		glAttachShader(shaderProgram, shaders[i]);
 	}
-	//The OUTn variables are pre-bound to point to specific targets in frameuffers.
-	glBindFragDataLocation(shaderProgram, 0, "OUT0");
-	glBindFragDataLocation(shaderProgram, 1, "OUT1");
-	glBindFragDataLocation(shaderProgram, 2, "OUT2");
-	glBindFragDataLocation(shaderProgram, 3, "OUT3");
-	glBindFragDataLocation(shaderProgram, 4, "OUT4");
-	glBindFragDataLocation(shaderProgram, 5, "OUT5");
-	glBindFragDataLocation(shaderProgram, 6, "OUT6");
-	//These make sure the locations for vertex, uv and normal are always stable.
-	//These are in turn used in mesh files to specify sizes for every attribute.
-	glBindAttribLocation(shaderProgram, 0, "vertex");
-	glBindAttribLocation(shaderProgram, 1, "uv");
-	glBindAttribLocation(shaderProgram, 2, "normal");
+
+	switch(type)
+	{
+	case ShaderProgramType::Surface:
+		//The OUTn variables are pre-bound to point to specific targets in framebuffers.
+		glBindFragDataLocation(shaderProgram, 0, "OUT0");
+		glBindFragDataLocation(shaderProgram, 1, "OUT1");
+		glBindFragDataLocation(shaderProgram, 2, "OUT2");
+		glBindFragDataLocation(shaderProgram, 3, "OUT3");
+		glBindFragDataLocation(shaderProgram, 4, "OUT4");
+		glBindFragDataLocation(shaderProgram, 5, "OUT5");
+		glBindFragDataLocation(shaderProgram, 6, "OUT6");
+		//These make sure the locations for vertex, uv and normal are always stable.
+		//These are in turn used in mesh files to specify sizes for every attribute.
+		glBindAttribLocation(shaderProgram, 0, "vertex");
+		glBindAttribLocation(shaderProgram, 1, "uv");
+		glBindAttribLocation(shaderProgram, 2, "normal");
+
+		break;
+	}
 
 	glLinkProgram(shaderProgram);
+
+	//Do the same for uniform blocks
+	GLuint blockIndex = glGetUniformBlockIndex(shaderProgram, "TimeDataBuffer");
+	if(blockIndex != GL_INVALID_INDEX)
+		glUniformBlockBinding(shaderProgram, blockIndex, (GLuint)UniformBlockBindingPoints::TimeDataBuffer);
+
+	blockIndex = glGetUniformBlockIndex(shaderProgram, "RenderingDataBuffer");
+	if(blockIndex != GL_INVALID_INDEX)
+		glUniformBlockBinding(shaderProgram, blockIndex, (GLuint)UniformBlockBindingPoints::RenderingDataBuffer);
+	
+	blockIndex = glGetProgramResourceIndex(shaderProgram, GL_SHADER_STORAGE_BLOCK, "CommonVec4Buffer");
+	if(blockIndex != GL_INVALID_INDEX)
+		glShaderStorageBlockBinding(shaderProgram, blockIndex, (GLuint)ShaderStorageBlockBindingPoints::CommonVec4Buffer);
 
 	return shaderProgram;
 }
@@ -201,7 +257,7 @@ void GraphicsGL::UpdateFrameBuffer(FrameBuffer& frameBuffer)
 	if(!frameBuffer._valid)
 		glDrawBuffers(attachments.size(), &attachments[0]);
 
-	glClearColor(frameBuffer.clearColor.x, frameBuffer.clearColor.y, frameBuffer.clearColor.z, frameBuffer.clearColor.w);
+	glClearColor(frameBuffer._clearColor.x, frameBuffer._clearColor.y, frameBuffer._clearColor.z, frameBuffer._clearColor.w);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 	if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
@@ -219,7 +275,7 @@ void GraphicsGL::UpdateFrameBuffer(FrameBuffer& frameBuffer)
 void GraphicsGL::ClearFrameBuffer(FrameBuffer& frameBuffer)
 {
 	BindFrameBuffer(frameBuffer);
-	glClearColor(frameBuffer.clearColor.x, frameBuffer.clearColor.y, frameBuffer.clearColor.z, frameBuffer.clearColor.w);
+	glClearColor(frameBuffer._clearColor.x, frameBuffer._clearColor.y, frameBuffer._clearColor.z, frameBuffer._clearColor.w);
 	glClear(frameBuffer.clearFlags);
 }
 
@@ -237,6 +293,32 @@ void GraphicsGL::DestroyFrameBuffer(FrameBuffer& frameBuffer)
 		glDeleteFramebuffers(1, &frameBuffer.id);
 
 	frameBuffer._valid = false;
+}
+
+void GraphicsGL::UpdateGraphicsBuffer(const GraphicsBuffer& buffer)
+{
+	GLenum bindingTarget = GL_UNIFORM_BUFFER;
+	switch(buffer._type)
+	{
+	case GraphicsBufferType::ShaderStorage:
+		bindingTarget = GL_SHADER_STORAGE_BUFFER;
+		break;
+	case GraphicsBufferType::Uniform:
+		bindingTarget = GL_UNIFORM_BUFFER;
+		break;
+	}
+
+	const std::vector<float>& bufferData = buffer.data();
+
+	if(buffer._dataSize != bufferData.size())
+	{
+		glNamedBufferData(buffer._id, sizeof(float) * bufferData.size(), &bufferData[0], GL_DYNAMIC_DRAW);
+		buffer._dataSize = bufferData.size();
+	}
+	else
+	{
+		glNamedBufferSubData(buffer._id, 0, sizeof(float) * bufferData.size(), &bufferData[0]);
+	}
 }
 
 std::unique_ptr<Font> GraphicsGL::CreateFont(std::string name)
@@ -312,32 +394,13 @@ void GraphicsGL::DestroyFont(Font& font)
 	}
 }
 
-std::unique_ptr<Shader> GraphicsGL::CreateShader(const std::string& name, const std::vector<ShaderAttachment>& attachments)
+void GraphicsGL::DestroyShader(BaseShader& shader)
 {
-	std::vector<GLuint> shaderAttachments;
-	shaderAttachments.reserve(attachments.size());
-
-	for(auto& attachment : attachments)
-	{
-		GLuint attachmentId = CreateShaderAttachment(attachment);
-		if(attachmentId != 0)
-		{
-			shaderAttachments.push_back(attachmentId);
-		}
-	}
-
-	GLuint shaderProgram = CreateShaderProgram(shaderAttachments);
-
-	return std::make_unique<Shader>(name, shaderProgram);
-}
-
-void GraphicsGL::DestroyShader(Shader& shader)
-{
-	if(_boundShader == shader.id)
+	if(_boundShader == shader._id)
 	{
 		glUseProgram(0);
 	}
-	glDeleteProgram(shader.id);
+	glDeleteProgram(shader._id);
 }
 
 std::unique_ptr<Mesh> GraphicsGL::CreateMesh(const std::string& name, CachedMesh* meshData)
@@ -379,7 +442,7 @@ void GraphicsGL::DestroyMesh(Mesh & mesh)
 {
 	glDeleteBuffers(1, &mesh._vbo);
 	glDeleteBuffers(1, &mesh._ebo);
-	glDeleteBuffers(1, &mesh._vao);
+	glDeleteVertexArrays(1, &mesh._vao);
 }
 
 bool GraphicsGL::BindTextureUnit(GLuint pos)
@@ -399,12 +462,12 @@ bool GraphicsGL::BindTextureUnit(GLuint pos)
 	return false;
 }
 
-bool GraphicsGL::BindShader(const Shader& shader)
+bool GraphicsGL::BindShader(const BaseShader& shader)
 {
-	if(_boundShader != shader.id)
+	if(_boundShader != shader._id)
 	{
-		_boundShader = shader.id;
-		glUseProgram(shader.id);
+		_boundShader = shader._id;
+		glUseProgram(shader._id);
 		return true;
 	}
 
@@ -433,9 +496,37 @@ bool GraphicsGL::BindFrameBuffer(const FrameBuffer& frameBuffer)
 	return false;
 }
 
+bool GraphicsGL::BindGraphicsBuffer(const GraphicsBuffer& buffer, GLenum target)
+{
+	return BindGraphicsBufferId(buffer._id, target);
+}
+
+bool GraphicsGL::UnbindGraphicsBuffer(GLenum target)
+{
+	return BindGraphicsBufferId(0, target);
+}
+
 bool GraphicsGL::BindDefaultFrameBuffer()
 {
 	return BindFrameBufferId(0);
+}
+
+void GraphicsGL::BindTextureToImageUnit(GLuint unit, const Texture& tex, GLenum accessType)
+{
+	glBindImageTexture(unit, tex._id, 0, GL_FALSE, 0, accessType, GL_RGBA16);
+}
+
+void GraphicsGL::BindBufferToBindingPoint(GLuint unit, const GraphicsBuffer& buffer)
+{
+	switch(buffer._type)
+	{
+	case GraphicsBufferType::ShaderStorage:
+		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, unit, buffer._id);
+		break;
+	case GraphicsBufferType::Uniform:
+		glBindBufferBase(GL_UNIFORM_BUFFER, unit, buffer._id);
+		break;
+	}
 }
 
 void GraphicsGL::ApplyMaterial(const Material& material)
@@ -465,6 +556,12 @@ void GraphicsGL::ApplyMaterialProperties(const Material & material)
 	else
 		ToggleFeature(GL_DEPTH_TEST, false);
 
+}
+
+void GraphicsGL::DispatchCompute(const ComputeShader& shader, unsigned int workGroupSizeX, unsigned int workGroupSizeY, unsigned int workGroupSizeZ)
+{
+	BindShader(shader);
+	glDispatchCompute(workGroupSizeX, workGroupSizeY, workGroupSizeZ);
 }
 
 bool GraphicsGL::BindTexture(const Texture& texture)

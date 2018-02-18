@@ -107,7 +107,6 @@ ServiceManager::ServiceManager()
 	_servicesUpdated = true;
 }
 
-
 ServiceManager::~ServiceManager()
 {
 }

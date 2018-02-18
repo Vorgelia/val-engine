@@ -8,7 +8,7 @@
 namespace FS = boost::filesystem;
 
 class Texture;
-class Shader;
+class SurfaceShader;
 struct MaterialTexture
 {
 public:
@@ -35,7 +35,7 @@ public:
 	};
 
 	std::string name;
-	Shader* shader;
+	SurfaceShader* shader;
 	unsigned char properties;
 	std::unordered_map<std::string, GLfloat> uniformFloats;
 	std::unordered_map<std::string, MaterialTexture> uniformTextures;
@@ -43,6 +43,6 @@ public:
 
 	bool HasProperty(Properties pr) const;
 
-	Material(const std::string& name, Shader* shader, unsigned char properties, const std::vector<uniformFloat>& floats, const std::vector<uniformVec>& vecs, const std::vector<uniformTex>& textures);
+	Material(const std::string& name, SurfaceShader* shader, unsigned char properties, const std::vector<uniformFloat>& floats, const std::vector<uniformVec>& vecs, const std::vector<uniformTex>& textures);
 	Material(const std::string& name);
 };

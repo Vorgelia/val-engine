@@ -13,7 +13,7 @@
 #include "ResourceManager.h"
 #include "CachedMesh.h"
 #include "Material.h"
-#include "Shader.h"
+#include "BaseShader.h"
 #include "Texture.h"
 #include "PostEffect.h"
 #include "Object.h"

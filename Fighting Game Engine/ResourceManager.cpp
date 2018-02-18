@@ -2,7 +2,8 @@
 #include "ServiceManager.h"
 #include "CachedMesh.h"
 #include "Mesh.h"
-#include "Shader.h"
+#include "SurfaceShader.h"
+#include "ComputeShader.h"
 #include "FilesystemManager.h"
 #include "Material.h"
 #include "Texture.h"
@@ -25,13 +26,13 @@ void ResourceManager::GenerateDefaultTextures()
 		255, 0, 255, 255,	 0, 0, 0, 255,
 		0, 0, 0, 255,	 255, 0, 255, 255
 	};
-	baseTextures.emplace(std::make_pair("base_texture", _graphics->CreateTexture("base_texture", pixels, glm::ivec2(2, 2), GL_RGBA, GL_NEAREST, GL_REPEAT)));
+	baseTextures.emplace(std::make_pair("base_texture", _graphics->CreateTexture("base_texture", pixels, glm::ivec2(2, 2), GL_RGBA16, GL_NEAREST, GL_REPEAT)));
 
 	pixels = std::vector<unsigned char>{ 0, 0, 0, 255 };
-	baseTextures.emplace(std::make_pair("black", _graphics->CreateTexture("black", pixels, glm::ivec2(1, 1), GL_RGBA, GL_NEAREST, GL_REPEAT)));
+	baseTextures.emplace(std::make_pair("black", _graphics->CreateTexture("black", pixels, glm::ivec2(1, 1), GL_RGBA16, GL_NEAREST, GL_REPEAT)));
 
 	pixels = std::vector<unsigned char>{ 255, 255, 255, 255 };
-	baseTextures.emplace(std::make_pair("white", _graphics->CreateTexture("white", pixels, glm::ivec2(1, 1), GL_RGBA, GL_NEAREST, GL_REPEAT)));
+	baseTextures.emplace(std::make_pair("white", _graphics->CreateTexture("white", pixels, glm::ivec2(1, 1), GL_RGBA16, GL_NEAREST, GL_REPEAT)));
 }
 
 void ResourceManager::LoadDefaultResources()
@@ -39,13 +40,43 @@ void ResourceManager::LoadDefaultResources()
 	//Base shaders
 	GetShader("Shaders/Base/2D");
 	GetShader("Shaders/Base/Screen");
+
+	GetComputeShader("Shaders/Base/Test_FB");
+
 	//Base meshes
 	GetMesh("Meshes/Base/quad.vm");
 	GetMesh("Meshes/Base/screenQuad.vm");
+
 	//Base materials
 	GetMaterial("Materials/Base/Screen.vmat");
+
 	//Fonts
 	GetFont("Fonts/Amble.ttf");
+}
+
+void ResourceManager::PreprocessShaderSource(std::string& inoutShaderSource)
+{
+	const std::string& includeSignature = "#pragma include";
+	size_t index = inoutShaderSource.find(includeSignature);
+	while(index != std::string::npos)
+	{
+		size_t nextNewline = inoutShaderSource.find('\n', index);
+		if(nextNewline == std::string::npos)
+		{
+			nextNewline = inoutShaderSource.size();
+		}
+
+		std::string includeDir = inoutShaderSource.substr(index + includeSignature.size() + 1, nextNewline - index - includeSignature.size() - 1);
+		std::string includeContents = GetTextData(includeDir);
+
+		inoutShaderSource
+			= inoutShaderSource.substr(0, index)
+			+ "\n"
+			+ includeContents
+			+ inoutShaderSource.substr(nextNewline, inoutShaderSource.size() - nextNewline);
+
+		index = inoutShaderSource.find(includeSignature);
+	}
 }
 
 Font* ResourceManager::GetFont(FS::path path)
@@ -68,6 +99,27 @@ Font* ResourceManager::GetFont(FS::path path)
 	return fonts.emplace(
 		std::make_pair(pathString, _graphics->CreateFont(path.string()))
 	).first->second.get();
+}
+
+const std::string & ResourceManager::GetTextData(const FS::path & path)
+{
+	const std::string& pathString = path.string();
+
+	auto& iter = textData.find(pathString);
+	if(iter != textData.end())
+	{
+		return iter->second;
+	}
+
+	if(!FS::exists(path))
+	{
+		_debug->VE_LOG("Failed to load Text Data" + pathString);
+		return textData.emplace(pathString, "").first->second;
+	}
+	else
+	{
+		return textData.emplace(pathString, _filesystem->ReturnFile(path)).first->second;
+	}
 }
 
 //The way these functions work is similar. If the resource exists in the per GameState resources, retrieve a pointer to it.
@@ -110,7 +162,7 @@ Texture* ResourceManager::GetTexture(FS::path path)
 	return container->emplace(
 		std::make_pair(
 			pathString,
-			_graphics->CreateTexture(pathString, pixels, size, GL_RGBA, GL_NEAREST, GL_REPEAT))
+			_graphics->CreateTexture(pathString, pixels, size, GL_RGBA16, GL_NEAREST, GL_REPEAT))
 	).first->second.get();
 }
 
@@ -136,7 +188,7 @@ PostEffect* ResourceManager::GetPostEffect(FS::path path)
 	)).first->second.get();
 }
 
-Shader* ResourceManager::GetShader(std::string name)
+SurfaceShader* ResourceManager::GetShader(std::string name)
 {
 	auto& iter = shaders.find(name);
 	if(iter != shaders.end())
@@ -146,16 +198,46 @@ Shader* ResourceManager::GetShader(std::string name)
 
 	if(!FS::exists(name + ".vert") || !FS::exists(name + ".frag"))
 	{
-		shaders.emplace(std::pair<std::string, std::unique_ptr<Shader>>(name, nullptr));
+		shaders.emplace(std::pair<std::string, std::unique_ptr<SurfaceShader>>(name, nullptr));
 		_debug->VE_LOG("Failed to load Shader " + name);
 		return nullptr;
 	}
 
-	return shaders.emplace(std::pair<std::string, std::unique_ptr<Shader>>(
+	std::string vertSource = _filesystem->ReturnFile(name + ".vert");
+	PreprocessShaderSource(vertSource);
+	std::string fragSource = _filesystem->ReturnFile(name + ".frag");
+	PreprocessShaderSource(fragSource);
+
+	return shaders.emplace(std::pair<std::string, std::unique_ptr<SurfaceShader>>(
 		name,
-		_graphics->CreateShader(name, std::vector<ShaderAttachment>{
-		ShaderAttachment(_filesystem->ReturnFile(name + ".vert"), GL_VERTEX_SHADER),
-			ShaderAttachment(_filesystem->ReturnFile(name + ".frag"), GL_FRAGMENT_SHADER)
+		_graphics->CreateShader<SurfaceShader>(name, std::vector<ShaderAttachment>{
+		ShaderAttachment(vertSource, GL_VERTEX_SHADER),
+			ShaderAttachment(fragSource, GL_FRAGMENT_SHADER)
+	}))).first->second.get();
+}
+
+ComputeShader* ResourceManager::GetComputeShader(std::string name)
+{
+	auto& iter = computeShaders.find(name);
+	if(iter != computeShaders.end())
+	{
+		return iter->second.get();
+	}
+
+	if(!FS::exists(name + ".comp"))
+	{
+		computeShaders.emplace(std::pair<std::string, std::unique_ptr<ComputeShader>>(name, nullptr));
+		_debug->VE_LOG("Failed to load Compute Shader " + name);
+		return nullptr;
+	}
+
+	std::string shaderSource = _filesystem->ReturnFile(name + ".comp");
+	PreprocessShaderSource(shaderSource);
+
+	return computeShaders.emplace(std::pair<std::string, std::unique_ptr<ComputeShader>>(
+		name,
+		_graphics->CreateShader<ComputeShader>(name, std::vector<ShaderAttachment>{
+		ShaderAttachment(shaderSource, GL_COMPUTE_SHADER)
 	}))).first->second.get();
 }
 
@@ -317,6 +399,12 @@ ResourceManager::~ResourceManager()
 		_graphics->DestroyShader(*(iter.second.get()));
 	}
 	shaders.clear();
+
+	for(auto& iter : computeShaders)
+	{
+		_graphics->DestroyShader(*(iter.second.get()));
+	}
+	computeShaders.clear();
 
 	for(auto& tex : baseTextures)
 	{
