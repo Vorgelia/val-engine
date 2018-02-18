@@ -18,6 +18,13 @@ void Debug::Init()
 {
 }
 
+void Debug::Cleanup()
+{
+	_endWrite.store(true);
+	_writeThread.join();
+	_writeStream.close();
+}
+
 //Infinite loop thread that goes through the write queue and prints its contents to a file, and the console.
 void Debug::WriteThread()
 {
@@ -160,9 +167,7 @@ Debug::Debug(ServiceManager* serviceManager) : BaseService(serviceManager)
 
 Debug::~Debug()
 {
-	_endWrite.store(true);
-	_writeThread.join();
-	_writeStream.close();
+
 }
 
 #pragma endregion

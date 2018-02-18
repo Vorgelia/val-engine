@@ -32,6 +32,8 @@ public:
 
 	void Init() override;
 	void Update() override;
+	void Cleanup() override;
+
 	void HandleResized(GLFWwindow* wnd, int width, int height);
 
 	void SetActiveWindow(GLFWwindow* window);

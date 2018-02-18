@@ -25,6 +25,8 @@ public:
 
 	void Init() override;
 	void Update() override;
+	void Cleanup() override;
+
 	void FrameUpdate();
 
 	//TODO: Create temporary network device

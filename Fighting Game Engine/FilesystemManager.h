@@ -57,6 +57,7 @@ public:
 
 	void Init() override;
 	void Update() override;
+	void Cleanup() override;
 
 	FilesystemManager(ServiceManager* serviceManager);
 	~FilesystemManager() = default;

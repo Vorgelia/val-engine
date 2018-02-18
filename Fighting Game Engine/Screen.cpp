@@ -21,6 +21,11 @@ void Screen::Update()
 	}
 }
 
+void Screen::Cleanup()
+{
+	glfwTerminate();
+}
+
 void Screen::HandleResized(GLFWwindow* wnd, int sizeX, int sizeY)
 {
 	size = glm::ivec2(sizeX, sizeY);
@@ -84,5 +89,4 @@ Screen::Screen(ServiceManager* serviceManager) :
 
 Screen::~Screen()
 {
-	glfwTerminate();
 }

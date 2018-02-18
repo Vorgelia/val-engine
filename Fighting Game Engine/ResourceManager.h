@@ -60,7 +60,8 @@ public:
 
 	void Init() override;
 	void Update() override;
-	
+	void Cleanup() override;
+
 	void Unload();
 
 	ResourceManager(ServiceManager* serviceManager);

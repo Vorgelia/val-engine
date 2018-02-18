@@ -82,6 +82,11 @@ void FightingGameManager::Update()
 	}
 }
 
+void FightingGameManager::Cleanup()
+{
+	ChangeState(FightingGameState::None);
+}
+
 FightingGameManager::FightingGameManager(ServiceManager* serviceManager) : BaseService(serviceManager)
 {
 	_allowServiceUpdate = true;
@@ -89,5 +94,4 @@ FightingGameManager::FightingGameManager(ServiceManager* serviceManager) : BaseS
 
 FightingGameManager::~FightingGameManager()
 {
-	ChangeState(FightingGameState::None);
 }

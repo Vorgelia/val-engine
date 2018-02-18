@@ -23,6 +23,8 @@ private:
 
 	void Init() override;
 	void Update() override;
+	void Cleanup() override;
+
 public:
 	FightingGameManager(ServiceManager* serviceManager);
 	~FightingGameManager();

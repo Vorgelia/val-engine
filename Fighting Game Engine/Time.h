@@ -22,6 +22,7 @@ public:
 
 	void Init() override;
 	void Update() override;
+	void Cleanup() override;
 
 	void FrameUpdate();
 	void HandleSceneLoaded();

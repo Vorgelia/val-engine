@@ -61,6 +61,7 @@ private:
 public:
 	void Init() override;
 	void Update() override;
+	void Cleanup() override;
 
 	std::unique_ptr<Texture> CreateTexture(const std::string& name, const std::vector<unsigned char>& pixels, glm::ivec2 dimensions, int format, GLuint filt, GLuint edgeBehaviour);
 	void UpdateTexture(Texture& texture, const std::vector<unsigned char>& pixels);

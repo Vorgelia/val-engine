@@ -24,8 +24,9 @@ public:
 	void RemovePlayer(int id);
 	void ClearPlayers();
 
-	void Init();
-	void Update();
+	void Init() override;
+	void Update() override;
+	void Cleanup() override;
 
 	PlayerManager(ServiceManager* serviceManager);
 	~PlayerManager();

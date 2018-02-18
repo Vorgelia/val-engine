@@ -19,6 +19,10 @@ void Time::Update()
 	Time::updateRate = 0;
 }
 
+void Time::Cleanup()
+{
+}
+
 //Advance game update related variables by one frame
 void Time::FrameUpdate()
 {
