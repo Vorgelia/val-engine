@@ -53,7 +53,7 @@ void CharacterStateManager::EvaluateNextState()
 			continue;
 		}
 
-		//TODO: Evaluate motion on input device of owner
+		//TODO: What is hapen here
 		if(_owner->_playerOwner->inputDevice()->EvaluateMotion(i.second->associatedMotion()))
 		{
 			if(nextState == nullptr || nextState->priority() < i.second->priority())
@@ -61,7 +61,7 @@ void CharacterStateManager::EvaluateNextState()
 				const std::unordered_set<std::string>& stateTypeFlags = i.second->stateTypeFlags();
 
 				const std::unordered_set<std::string>& cancelFlags = GetFlags(CharacterStateFlagType::CancelTargets);
-				bool validCancel = _stateEnded;
+				bool validCancel = _stateEnded || _currentState == nullptr;
 				for(auto& iter : stateTypeFlags)
 				{
 					if(cancelFlags.find(iter) != cancelFlags.end())
@@ -92,7 +92,6 @@ void CharacterStateManager::EvaluateNextState()
 		}
 	}
 
-	//TODO: Add cancelling rules
 	if(nextState != nullptr)
 	{
 		StartState(nextState->name());
@@ -196,17 +195,17 @@ const std::unordered_set<std::string>& CharacterStateManager::GetFlags(Character
 	return iter->second;
 }
 
-CharacterStateManager::CharacterStateManager(GameCharacter* owner, ServiceManager* serviceManager, const json& states, const json& frames) :
-	_owner(owner)
+CharacterStateManager::CharacterStateManager(GameCharacter* owner, ServiceManager* serviceManager) 
+	: _owner(owner)
 {
 	_input = serviceManager->Input();
 	_scriptManager = serviceManager->ScriptManager();
 	_filesystem = serviceManager->Filesystem();
 	_resource = serviceManager->ResourceManager();
 
-	for(auto& iter : states)
+	GameCharacterData* characterData = owner->_characterData.get();
+	for(const std::string& path : characterData->_statePaths)
 	{
-		std::string path = JSON::Get<std::string>(iter);
 		_filesystem->ApplyFunctionToFiles(path, [this](const FS::path path)
 		{
 			if(path.extension().string() != ".json")
@@ -230,9 +229,8 @@ CharacterStateManager::CharacterStateManager(GameCharacter* owner, ServiceManage
 		});
 	}
 
-	for(auto& iter : frames)
+	for(const std::string& path : characterData->_frameDataPaths)
 	{
-		std::string path = JSON::Get<std::string>(iter);
 		_filesystem->ApplyFunctionToFiles(path, [this](const FS::path path)
 		{
 			if(path.extension().string() != ".json")

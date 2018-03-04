@@ -1,6 +1,5 @@
 #include "GameCharacterData.h"
 
-
 GameCharacterData::GameCharacterData(const json& j)
 {
 	JSON::TryGetMember(j, "name", _name);
@@ -10,7 +9,6 @@ GameCharacterData::GameCharacterData(const json& j)
 	JSON::TryGetMember(j, "sizeMultiplier", _sizeMultiplier);
 	JSON::TryGetMember(j, "characterScript", _characterScript);
 }
-
 
 GameCharacterData::~GameCharacterData()
 {

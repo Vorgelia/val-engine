@@ -7,7 +7,7 @@
 
 struct GameCharacterData
 {
-private:
+public:
 	std::string _name;
 	std::string _characterScript;
 	std::unordered_set<std::string> _flags;
@@ -16,7 +16,6 @@ private:
 
 	std::vector<std::string> _statePaths;
 	std::vector<std::string> _frameDataPaths;
-public:
 
 	GameCharacterData(const json& j);
 	GameCharacterData() = default;

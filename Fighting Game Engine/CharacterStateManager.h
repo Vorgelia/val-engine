@@ -70,7 +70,7 @@ private:
 	const std::unordered_set<std::string>& GetFlags(CharacterStateFlagType type);
 
 public:
-	CharacterStateManager(GameCharacter* owner, ServiceManager* serviceManager, const json& states, const json& frames);
+	CharacterStateManager(GameCharacter* owner, ServiceManager* serviceManager);
 	~CharacterStateManager();
 };
 

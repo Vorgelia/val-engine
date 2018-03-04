@@ -11,6 +11,11 @@
 
 VE_BEHAVIOUR_REGISTER_TYPE(GameCharacter);
 
+const GameCharacterData * GameCharacter::characterData() const
+{
+	return _characterData.get();
+}
+
 CharacterStateManager* GameCharacter::stateManager()
 {
 	return _stateManager.get();
@@ -59,15 +64,23 @@ GameCharacter::GameCharacter(Object* owner, ServiceManager* serviceManager, cons
 	_resource = serviceManager->ResourceManager();
 
 	_initialized = false;
-	if(JSON::TryGetMember<std::string>(j, "dataPath", _dataPath))
+
+	std::string dataPath;
+	if(JSON::TryGetMember<std::string>(j, "dataPath", dataPath))
 	{
-		json* dataJson = _resource->GetJsonData(_dataPath);
-		_stateManager = std::make_unique<CharacterStateManager>(this, _serviceManager, j["states"], j["frames"]);
+		json* dataJson = _resource->GetJsonData(dataPath);
+		if(dataJson != nullptr)
+		{
+			_characterData = std::make_unique<GameCharacterData>(*dataJson);
+			_stateManager = std::make_unique<CharacterStateManager>(this, _serviceManager);
 
-		JSON::TryGetMember<glm::vec2>(j, "sizeMultiplier", _sizeMultiplier);
-
-		_characterScript = _scriptManager->GetScript(JSON::Get<std::string>(j["characterScript"]));
-		_scriptManager->HandleScriptCharacterBindings(*this, _characterScript);
+			std::string scriptPath;
+			if(JSON::TryGetMember(j, "characterScript", scriptPath))
+			{
+				_characterScript = _scriptManager->GetScript(scriptPath);
+				_scriptManager->HandleScriptCharacterBindings(*this, _characterScript);
+			}
+		}
 	}
 }
 

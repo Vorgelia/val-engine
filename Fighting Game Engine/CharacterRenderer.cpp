@@ -70,7 +70,7 @@ void CharacterRenderer::HandleRenderingMaterial(const CharacterSprite* spriteDat
 void CharacterRenderer::HandleRenderingTransform(const CharacterSprite* spriteData, Texture* texture)
 {
 	glm::ivec2 originOffset = spriteData->originOffset();
-	glm::vec2 sizeMultiplier = _character->_sizeMultiplier;
+	glm::vec2 sizeMultiplier = _character->characterData()->_sizeMultiplier;
 	glm::ivec4 pixelRect = spriteData->pixelRect();
 
 	_renderingTransform->SnapTo(*_owner->transform());

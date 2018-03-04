@@ -31,16 +31,15 @@ private:
 	ResourceManager* _resource;
 
 private:
-	std::string _dataPath;
 	bool _initialized;
+	std::unique_ptr<GameCharacterData> _characterData;
 
 	GamePlayer* _playerOwner;
 
-	glm::vec2 _sizeMultiplier;
-	bool _flipped;
-
 	Script* _characterScript;
 	std::unordered_map<std::string, std::shared_ptr<BaseScriptVariable>> _variables;
+
+	bool _flipped;
 
 	std::unique_ptr<CharacterStateManager> _stateManager;
 
@@ -52,6 +51,7 @@ public:
 
 	VE_BEHAVIOUR_REGISTER_FUNCTION(GameUpdate);
 
+	const GameCharacterData* characterData() const;
 	CharacterStateManager* stateManager();
 
 	void SetOwner(GamePlayer* owner);
