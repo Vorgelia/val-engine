@@ -61,8 +61,7 @@ GameCharacter::GameCharacter(Object* owner, ServiceManager* serviceManager, cons
 	_initialized = false;
 	if(JSON::TryGetMember<std::string>(j, "dataPath", _dataPath))
 	{
-		
-		json dataJson = _resource->GetTextData<json>(_dataPath);
+		json* dataJson = _resource->GetJsonData(_dataPath);
 		_stateManager = std::make_unique<CharacterStateManager>(this, _serviceManager, j["states"], j["frames"]);
 
 		JSON::TryGetMember<glm::vec2>(j, "sizeMultiplier", _sizeMultiplier);

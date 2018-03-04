@@ -11,12 +11,12 @@ protected:
 	ContainerT _resources;
 
 public:
-	virtual ResourceT* Add(const KeyT& key, std::unique_ptr<ResourceT>& value, bool isPersistent = false);
+	virtual ResourceT* Add(const KeyT& key, std::unique_ptr<ResourceT>&& value, bool isPersistent = false);
 	virtual bool TryGet(const KeyT& key, ResourceT*& out_value);
 
 	void Cleanup(bool includePersistent = false);
 
-	ResourceContainer(size_t capacityHint = 0);
+	ResourceContainer() = default;
 	~ResourceContainer() = default;
 };
 
@@ -41,12 +41,10 @@ inline bool ResourceContainer<KeyT, ResourceT>::TryGet(const KeyT& key, Resource
 }
 
 template<typename KeyT, typename ResourceT>
-inline ResourceT * ResourceContainer<KeyT, ResourceT>::Add(const KeyT& key, std::unique_ptr<ResourceT>& value, bool isPersistent)
+inline ResourceT * ResourceContainer<KeyT, ResourceT>::Add(const KeyT& key, std::unique_ptr<ResourceT>&& value, bool isPersistent)
 {
 	ContainerT* container = isPersistent ? &_persistentResources : &_resources;
-	return container->insert(
-		std::make_pair(key, value)
-	).first->second.get();
+	return container->emplace(std::make_pair(key, std::move(std::forward<std::unique_ptr<ResourceT>>(value)))).first->second.get();
 }
 
 template<typename KeyT, typename ResourceT>
@@ -57,11 +55,4 @@ inline void ResourceContainer<KeyT, ResourceT>::Cleanup(bool includePersistent)
 	{
 		_persistentResources.clear();
 	}
-}
-
-template<typename KeyT, typename ResourceT>
-inline ResourceContainer<KeyT, ResourceT>::ResourceContainer(size_t capacityHint)
-{
-	_persistentResources.reserve(capacityHint);
-	_resources.reserve(capacityHint);
 }

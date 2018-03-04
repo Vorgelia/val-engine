@@ -42,17 +42,11 @@ public:
 
 	template<typename ResourceT>
 	std::unique_ptr<ResourceT> LoadFileResource(const FS::path& path);
-	template<>
-	std::unique_ptr<json> LoadFileResource(const FS::path& path);
-	template<>
-	std::unique_ptr<CachedMesh> LoadFileResource(const FS::path& path);
-	template<>
-	std::unique_ptr<Material> LoadFileResource(const FS::path& path);
-	template<>
-	std::unique_ptr<PostEffect> LoadFileResource(const FS::path& path);
 
 	void LoadTextureData(const FS::path & path, std::vector<unsigned char>& out_pixels, glm::ivec2& out_size);
 	void LoadControlSettings(const FS::path& path, std::unordered_map<InputDirection, InputEvent>& dir, std::unordered_map<InputButton, InputEvent>& bt);
+
+	void ApplyFunctionToFiles(const FS::path& dir, std::function<void(const FS::path&)> func);
 
 	bool SaveFile(const FS::path& dir, std::string& content, int flags = std::ios::out | std::ios::trunc);
 
@@ -64,8 +58,21 @@ public:
 	~FilesystemManager() = default;
 };
 
+template<>
+std::unique_ptr<json> FilesystemManager::LoadFileResource(const FS::path& path);
+template<>
+std::unique_ptr<CachedMesh> FilesystemManager::LoadFileResource(const FS::path& path);
+template<>
+std::unique_ptr<Material> FilesystemManager::LoadFileResource(const FS::path& path);
+template<>
+std::unique_ptr<PostEffect>	FilesystemManager::LoadFileResource(const FS::path& path);
+
 template<typename ResourceT>
 inline std::unique_ptr<ResourceT> FilesystemManager::LoadFileResource(const FS::path & path)
 {
+	if(!FS::exists(path))
+	{
+		return std::unique_ptr<ResourceT>(nullptr);
+	}
 	return std::make_unique<ResourceT>(ReturnFile(path));
 }

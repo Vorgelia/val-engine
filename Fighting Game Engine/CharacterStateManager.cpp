@@ -202,6 +202,7 @@ CharacterStateManager::CharacterStateManager(GameCharacter* owner, ServiceManage
 	_input = serviceManager->Input();
 	_scriptManager = serviceManager->ScriptManager();
 	_filesystem = serviceManager->Filesystem();
+	_resource = serviceManager->ResourceManager();
 
 	for(auto& iter : states)
 	{
@@ -212,8 +213,14 @@ CharacterStateManager::CharacterStateManager(GameCharacter* owner, ServiceManage
 			{
 				return;
 			}
-			const json& stateJson = _filesystem->LoadJsonResource(path);
-			for(auto& iter : stateJson)
+
+			const json* stateJson = _resource->GetJsonData(path.string());
+			if(stateJson == nullptr)
+			{
+				return;
+			}
+
+			for(auto& iter : *stateJson)
 			{
 				auto& result = this->_stateLookup.insert(std::make_pair(
 					JSON::Get<std::string>(iter["name"]),
@@ -232,8 +239,14 @@ CharacterStateManager::CharacterStateManager(GameCharacter* owner, ServiceManage
 			{
 				return;
 			}
-			const json& frameJson = _filesystem->LoadJsonResource(path);
-			for(auto& iter : frameJson)
+
+			const json* frameJson = _resource->GetJsonData(path.string());
+			if(frameJson == nullptr)
+			{
+				return;
+			}
+
+			for(auto& iter : *frameJson)
 			{
 				this->_frameLookup.insert(std::make_pair(
 					JSON::Get<std::string>(iter["id"]),

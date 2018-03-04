@@ -26,13 +26,13 @@ void ResourceManager::GenerateDefaultTextures()
 		0, 0, 0, 255,	 255, 0, 255, 255
 	};
 
-	_cachedTexture.Add("base_texture", _graphics->CreateTexture("base_texture", pixels, glm::ivec2(2, 2), GL_RGBA16, GL_NEAREST, GL_REPEAT), true);
+	_cachedTexture.Add("base_texture", _graphics->CreateTexture("base_texture", pixels, glm::ivec2(2, 2)), true);
 
 	pixels = std::vector<unsigned char>{ 0, 0, 0, 255 };
-	_cachedTexture.Add("black", _graphics->CreateTexture("black", pixels, glm::ivec2(1, 1), GL_RGBA16, GL_NEAREST, GL_REPEAT), true);
+	_cachedTexture.Add("black", _graphics->CreateTexture("black", pixels, glm::ivec2(1, 1)), true);
 
 	pixels = std::vector<unsigned char>{ 255, 255, 255, 255 };
-	_cachedTexture.Add("white", _graphics->CreateTexture("white", pixels, glm::ivec2(1, 1), GL_RGBA16, GL_NEAREST, GL_REPEAT), true);
+	_cachedTexture.Add("white", _graphics->CreateTexture("white", pixels, glm::ivec2(1, 1)), true);
 }
 
 void ResourceManager::LoadDefaultResources()
@@ -79,56 +79,6 @@ void ResourceManager::PreprocessShaderSource(std::string& inoutShaderSource)
 	}
 }
 
-
-template<>
-std::unique_ptr<SurfaceShader> ResourceManager::CreateResource(const std::string& key)
-{
-	std::string vertSource = _filesystem->ReturnFile(key + ".vert");
-	PreprocessShaderSource(vertSource);
-	std::string fragSource = _filesystem->ReturnFile(key + ".frag");
-	PreprocessShaderSource(fragSource);
-
-	return	_graphics->CreateShader<SurfaceShader>(
-		key,
-		std::vector<ShaderAttachment>{
-		ShaderAttachment(vertSource, GL_VERTEX_SHADER),
-			ShaderAttachment(fragSource, GL_FRAGMENT_SHADER)});
-}
-
-template<>
-std::unique_ptr<ComputeShader> ResourceManager::CreateResource(const std::string& key)
-{
-	std::string shaderSource = _filesystem->ReturnFile(key + ".comp");
-	PreprocessShaderSource(shaderSource);
-
-	return _graphics->CreateShader<ComputeShader>(key, std::vector<ShaderAttachment>{
-		ShaderAttachment(shaderSource, GL_COMPUTE_SHADER)
-	});
-}
-
-template<>
-std::unique_ptr<Mesh> ResourceManager::CreateResource(const std::string& key)
-{
-	CachedMesh* cachedMesh = GetResourceFromContainer<CachedMesh>(_cachedMeshData, key);
-	return _graphics->CreateMesh(key, cachedMesh);
-}
-
-template<>
-std::unique_ptr<Font> ResourceManager::CreateResource(const std::string& key)
-{
-	return _graphics->CreateFont(key);
-}
-
-template<>
-std::unique_ptr<Texture> ResourceManager::CreateResource(const std::string& key)
-{
-	std::vector<unsigned char> pixels;
-	glm::ivec2 size;
-	_filesystem->LoadTextureData(key, pixels, size);
-
-	return _graphics->CreateTexture(key, pixels, size, GL_RGBA16, GL_NEAREST, GL_REPEAT);
-}
-
 void ResourceManager::Init()
 {
 	_debug = _serviceManager->Debug();
@@ -161,7 +111,7 @@ void ResourceManager::Unload(bool includePersistent)
 	_cachedJsonData.Cleanup(includePersistent);
 	_cachedMaterial.Cleanup(includePersistent);
 	_cachedMesh.Cleanup(includePersistent);
-	_cachedMeshData.Cleanup(includePersistent);
+	_cachedCachedMesh.Cleanup(includePersistent);
 	_cachedPostEffect.Cleanup(includePersistent);
 	_cachedSurfaceShader.Cleanup(includePersistent);
 	_cachedTextData.Cleanup(includePersistent);

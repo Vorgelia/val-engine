@@ -1,7 +1,7 @@
 #include "MenuBehaviour.h"
+#include "Texture.h"
 #include "RenderingGL.h"
 #include "ResourceManager.h"
-#include "Texture.h"
 #include "Material.h"
 #include "ServiceManager.h"
 #include "Screen.h"

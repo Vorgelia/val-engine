@@ -7,6 +7,7 @@
 #include <functional>
 #include <boost\filesystem.hpp>
 
+#include "ResourceManager.h"
 #include "FilesystemManager.h"
 
 namespace FS = boost::filesystem;
@@ -67,34 +68,15 @@ public:
 	virtual void RenderUI();
 	virtual void Cleanup();
 
-	template<typename ObjectT, typename... Args>
-	ObjectT* AddObject(const std::string& prefabPath, Args&&... args);
+	Object* LoadObject(const std::string& prefabPath);
+	Object* AddObject(const json& jsonData);
+
 	template<typename ObjectT>
 	ObjectT* FindObject(const std::string& name);
 
 	GameScene(const FS::path& path, ServiceManager* serviceManager);
 	virtual ~GameScene();
 };
-
-template<typename ObjectT, typename... Args>
-ObjectT* GameScene::AddObject(const std::string& prefabPath, Args&&... args)
-{
-	_objects.emplace_back(
-		_filesystem->LoadJsonObject<ObjectT>(prefabPath, _serviceManager, std::forward<Args>(args)...));
-	ObjectT* result = static_cast<ObjectT*>(_objects.back().get());
-
-	int nearestAvailableId = _objects.back()->_id + 1;
-	while(_objectLookup.count(nearestAvailableId) > 0)
-	{
-		nearestAvailableId += 1;
-	}
-
-	result->_id = nearestAvailableId;
-
-	RegisterObject(result);
-
-	return result;
-}
 
 template<typename ObjectT>
 ObjectT* GameScene::FindObject(const std::string& name)

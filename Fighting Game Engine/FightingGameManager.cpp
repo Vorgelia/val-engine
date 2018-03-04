@@ -50,7 +50,7 @@ void FightingGameManager::ChangeState(FightingGameState state)
 	case FightingGameState::InGame:
 	{
 		//PLACEHOLDER
-		Object* char1 = _gameSceneManager->currentScene()->AddObject<Object>("Characters/Fritz/Prefab.json");;
+		Object* char1 = _gameSceneManager->currentScene()->LoadObject("Characters/Fritz/Prefab.json");
 		GameCharacter* char1CharacterBehaviour = char1->GetBehaviour<GameCharacter>("GameCharacter");
 		char1CharacterBehaviour->SetOwner(_playerManager->AddPlayer(0, -1));
 		break;

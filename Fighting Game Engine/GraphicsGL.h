@@ -63,7 +63,7 @@ public:
 	void Update() override;
 	void Cleanup() override;
 
-	std::unique_ptr<Texture> CreateTexture(const std::string& name, const std::vector<unsigned char>& pixels, glm::ivec2 dimensions, int format, GLuint filt, GLuint edgeBehaviour);
+	std::unique_ptr<Texture> CreateTexture(const std::string& name, const std::vector<unsigned char>& pixels, glm::ivec2 dimensions, int format = GL_RGBA16, GLuint filt = GL_NEAREST, GLuint edgeBehaviour = GL_REPEAT);
 	void UpdateTexture(Texture& texture, const std::vector<unsigned char>& pixels);
 	void DestroyTexture(Texture& texture);
 

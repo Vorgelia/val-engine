@@ -11,6 +11,7 @@ class CharacterFrame;
 class ServiceManager;
 class InputManager;
 class FilesystemManager;
+class ResourceManager;
 
 enum class CharacterStateFlagType
 {
@@ -30,6 +31,7 @@ private:
 	InputManager* _input;
 	ScriptManager* _scriptManager;
 	FilesystemManager* _filesystem;
+	ResourceManager* _resource;
 
 private:
 	GameCharacter* _owner;

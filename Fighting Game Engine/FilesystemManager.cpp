@@ -10,7 +10,6 @@
 
 #include "ServiceManager.h"
 #include "FilesystemManager.h"
-#include "ResourceManager.h"
 #include "CachedMesh.h"
 #include "Material.h"
 #include "BaseShader.h"
@@ -24,6 +23,7 @@
 #include "InputEvent.h"
 #include "InputFrame.h"
 #include "DebugLog.h"
+#include "ResourceManager.h"
 
 //Probably my least favourite part of making this engine is importing files.
 //The code always looks like a mess but at least i don't have to touch it after making it.
@@ -117,6 +117,11 @@ std::vector<std::string> FilesystemManager::ReturnFileLines(const FS::path& dir,
 template<>
 std::unique_ptr<json> FilesystemManager::LoadFileResource(const FS::path& path)
 {
+	if(!FS::exists(path))
+	{
+		return std::unique_ptr<json>(nullptr);
+	}
+
 	std::string& file = ReturnFile(path);
 
 	std::unique_ptr<json> j;
@@ -141,6 +146,11 @@ std::unique_ptr<json> FilesystemManager::LoadFileResource(const FS::path& path)
 template<>
 std::unique_ptr<CachedMesh> FilesystemManager::LoadFileResource(const FS::path& path)
 {
+	if(!FS::exists(path))
+	{
+		return std::unique_ptr<CachedMesh>(nullptr);
+	}
+
 	std::vector<std::string> lines = ReturnFileLines(path, true);
 
 	std::unique_ptr<CachedMesh> mesh = std::make_unique<CachedMesh>(path.string());
@@ -195,6 +205,11 @@ std::unique_ptr<CachedMesh> FilesystemManager::LoadFileResource(const FS::path& 
 template<>
 std::unique_ptr<Material> FilesystemManager::LoadFileResource(const FS::path& path)
 {
+	if(!FS::exists(path))
+	{
+		return std::unique_ptr<Material>(nullptr);
+	}
+
 	std::vector<std::string> lines = ReturnFileLines(path, true);
 
 	std::unique_ptr<Material> mat = std::make_unique<Material>(path.string());
@@ -276,6 +291,11 @@ std::unique_ptr<Material> FilesystemManager::LoadFileResource(const FS::path& pa
 template<>
 std::unique_ptr<PostEffect> FilesystemManager::LoadFileResource(const FS::path& path)
 {
+	if(!FS::exists(path))
+	{
+		return std::unique_ptr<PostEffect>(nullptr);
+	}
+
 	std::vector<std::string> lines = ReturnFileLines(path, true);
 
 	std::unique_ptr<PostEffect> postEffect = std::make_unique<PostEffect>();
@@ -390,6 +410,23 @@ void FilesystemManager::LoadControlSettings(const FS::path& path, std::unordered
 	}
 }
 
+void FilesystemManager::ApplyFunctionToFiles(const FS::path& dir, std::function<void(const FS::path&)> func)
+{
+	if(!FS::is_directory(dir))
+	{
+		func(dir);
+		return;
+	}
+
+	for(auto& iter : boost::make_iterator_range(FS::directory_iterator(dir)))
+	{
+		if(!FS::is_directory(iter.path()))
+		{
+			func(iter.path());
+		}
+	}
+}
+
 void FilesystemManager::Init()
 {
 	_debug = _serviceManager->Debug();
@@ -413,6 +450,7 @@ void FilesystemManager::LoadTextureData(const FS::path& path, std::vector<unsign
 	if(pixels == nullptr)
 	{
 		_debug->VE_LOG("Unable to load texture at path " + path.string(), LogItem::Type::Warning);
+		SOIL_free_image_data(pixels);
 		return;
 	}
 

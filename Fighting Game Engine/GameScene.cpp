@@ -41,10 +41,11 @@ void GameScene::LoadResources()
 			if(rfl[i].substr(0, 2) != "//" && rfl[i] != "")
 				_resource->GetTexture(rfl[i]);
 
-		_filesystem->LoadObjects(_dataPath.string() + "/SceneObjects.txt", _objects);
-		for(auto& iter : _objects)
+		json& j = *_resource->GetJsonData(_dataPath.string() + "/SceneObjects.txt");
+		for(const json& objData : j)
 		{
-			RegisterObject(iter.get());
+			_objects.emplace_back(std::make_unique<Object>(objData, _serviceManager));
+			RegisterObject(_objects.back().get());
 		}
 
 		_postEffectsOrder = _filesystem->ReturnFileLines(_dataPath.string() + "/PostEffectsOrder.txt", true);
@@ -164,6 +165,36 @@ void GameScene::Cleanup()
 
 	_loaded = false;
 	_initialized = false;
+}
+
+Object* GameScene::LoadObject(const std::string & prefabPath)
+{
+	const json* data = _resource->GetJsonData(prefabPath);
+	if(data == nullptr)
+	{
+		return nullptr;
+	}
+
+	return AddObject(*data);
+}
+
+Object* GameScene::AddObject(const json & jsonData)
+{
+	_objects.emplace_back(
+		std::make_unique<Object>(jsonData, _serviceManager));
+	Object* result = _objects.back().get();
+
+	int nearestAvailableId = _objects.back()->_id + 1;
+	while(_objectLookup.count(nearestAvailableId) > 0)
+	{
+		nearestAvailableId += 1;
+	}
+
+	result->_id = nearestAvailableId;
+
+	RegisterObject(result);
+
+	return result;
 }
 
 GameScene::GameScene(const FS::path& path, ServiceManager* serviceManager)

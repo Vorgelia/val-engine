@@ -23,8 +23,9 @@ void IntroBehaviour::OnSceneInit()
 
 void IntroBehaviour::OnRenderUI()
 {
-	_resource->GetMaterial("Materials/Intro/Intro_Screen.vmat")->uniformVectors["ve_color"].a = glm::clamp<float>(glm::min<float>((float)_time->timeSinceLoad, _introDuration - (float)_time->timeSinceLoad), 0.0f, 1.0f);
-	_rendering->DrawScreenMesh(glm::vec4(0, 0, 1920, 1080), (Mesh*)nullptr, _resource->GetMaterial("Materials/Intro/Intro_Screen.vmat"));
+	Material* screenMat = _resource->GetMaterial("Materials/Intro/Intro_Screen.vmat");
+	screenMat->uniformVectors["ve_color"].a = glm::clamp<float>(glm::min<float>((float)_time->timeSinceLoad, _introDuration - (float)_time->timeSinceLoad), 0.0f, 1.0f);
+	_rendering->DrawScreenMesh(glm::vec4(0, 0, 1920, 1080), (Mesh*)nullptr, screenMat);
 
 	_rendering->DrawScreenText(glm::vec4(0, 10, 100, 100), 24, std::to_string(glm::min<double>((int)std::round(1.0 / _time->smoothDeltaTime), 60)), nullptr);
 	_rendering->DrawScreenText(glm::vec4(0, 30, 100, 100), 24, std::to_string(glm::max<double>(((int)(_time->smoothUpdateRate * 100))*0.01, 1.0)), nullptr);
