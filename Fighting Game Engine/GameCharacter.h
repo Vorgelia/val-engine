@@ -12,6 +12,7 @@ class CharacterState;
 class CharacterFrame;
 class CharacterStateManager;
 class GamePlayer;
+struct GameCharacterData;
 
 class ScriptManager;
 class FilesystemManager;
@@ -42,8 +43,6 @@ private:
 	std::unordered_map<std::string, std::shared_ptr<BaseScriptVariable>> _variables;
 
 	std::unique_ptr<CharacterStateManager> _stateManager;
-
-	void HandleCharacterData(const json& j);
 
 	void CharacterInit();
 	void CharacterUpdate();

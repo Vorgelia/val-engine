@@ -14,10 +14,12 @@
 
 void FightingGameManager::HandleSceneLoaded(const GameScene* scene)
 {
+	//PLACEHOLDER
 	switch(_currentState)
 	{
 	case FightingGameState::None:
-		ChangeState(FightingGameState::InGame);
+		if(scene->name() == "Menu")
+			ChangeState(FightingGameState::InGame);
 		break;
 	case FightingGameState::InputDeviceSelection:
 		break;
@@ -47,11 +49,8 @@ void FightingGameManager::ChangeState(FightingGameState state)
 		break;
 	case FightingGameState::InGame:
 	{
-		Object* char1 = _gameSceneManager->currentScene()->FindObject("Char_1");
-		if(char1 == nullptr)
-		{
-			return;
-		}
+		//PLACEHOLDER
+		Object* char1 = _gameSceneManager->currentScene()->AddObject<Object>("Characters/Fritz/Prefab.json");;
 		GameCharacter* char1CharacterBehaviour = char1->GetBehaviour<GameCharacter>("GameCharacter");
 		char1CharacterBehaviour->SetOwner(_playerManager->AddPlayer(0, -1));
 		break;

@@ -19,6 +19,7 @@ private:
 
 private:
 	const GameCharacter* _character;
+	std::unique_ptr<Material> _renderingMaterialCopy;
 	std::unique_ptr<Transform> _renderingTransform;
 
 	glm::vec2 _pixelsToWorldUnits;

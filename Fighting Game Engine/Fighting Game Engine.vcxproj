@@ -103,6 +103,7 @@
     <ClCompile Include="Font.cpp" />
     <ClCompile Include="FrameBuffer.cpp" />
     <ClCompile Include="GameCharacter.cpp" />
+    <ClCompile Include="GameCharacterData.cpp" />
     <ClCompile Include="GamePlayer.cpp" />
     <ClCompile Include="GameScene.cpp" />
     <ClCompile Include="GameSceneManager.cpp" />
@@ -193,6 +194,7 @@
     <ClInclude Include="Font.h" />
     <ClInclude Include="FrameBuffer.h" />
     <ClInclude Include="GameCharacter.h" />
+    <ClInclude Include="GameCharacterData.h" />
     <ClInclude Include="GamePlayer.h" />
     <ClInclude Include="GameScene.h" />
     <ClInclude Include="GameSceneManager.h" />
@@ -227,6 +229,7 @@
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="RenderingDataBuffer.h" />
     <ClInclude Include="RenderingGL.h" />
+    <ClInclude Include="ResourceContainer.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="ResourceInitializer.h" />

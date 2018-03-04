@@ -52,7 +52,7 @@ void RenderingGL::BeginFrame()
 
 	_graphics->ClearFrameBuffer(*_mainBuffer);
 
-	_timeDataBuffer->SetupData((float)_time->time, (float)_time->updateRate * VE_FRAME_TIME, (float)_time->frameCountSinceLoad);
+	_timeDataBuffer->SetupData((float)_time->time, (float)(_time->updateRate * VE_FRAME_TIME), (float)_time->frameCountSinceLoad);
 	_renderingDataBuffer->SetupData(_screen->size, _screen->invSize);
 
 	_graphics->UpdateGraphicsBuffer(*_timeDataBuffer);
@@ -488,7 +488,7 @@ void RenderingGL::Init()
 	_graphics->BindBufferToBindingPoint((GLuint)UniformBlockBindingPoints::RenderingDataBuffer, *_renderingDataBuffer);
 
 	_commonComputeVec4Buffer = _graphics->CreateGraphicsBuffer<Vec4Buffer>(1024 * 4, GraphicsBufferType::ShaderStorage);
-	_commonComputeVec4Buffer->SetupData(4096);
+	_commonComputeVec4Buffer->SetupData(4096*4);
 	_graphics->UpdateGraphicsBuffer(*_commonComputeVec4Buffer);
 	_graphics->BindBufferToBindingPoint((GLuint)ShaderStorageBlockBindingPoints::CommonVec4Buffer, *_commonComputeVec4Buffer);
 
@@ -511,7 +511,7 @@ void RenderingGL::Cleanup()
 void RenderingGL::InitTextDrawing()
 {
 	//Initialize states for text drawing to minimize unnecessary state changes.
-	SurfaceShader* cShad = _resourceManager->GetShader("Shaders/Base/Screen_Text");
+	SurfaceShader* cShad = _resourceManager->GetSurfaceShader("Shaders/Base/Screen_Text");
 	Mesh* cMesh = _resourceManager->GetMesh("Meshes/Base/screenQuad.vm");
 
 	_graphics->BindMesh(*cMesh);
@@ -526,7 +526,7 @@ void RenderingGL::DrawTextCharacter(glm::vec4 rect, glm::vec4 params, Texture* t
 {
 	//Draw individual text characters while assuming things set by InitTextDrawing are still bound.
 	//So much more optimization could be put into this.
-	SurfaceShader* cShad = _resourceManager->GetShader("Shaders/Base/Screen_Text");
+	SurfaceShader* cShad = _resourceManager->GetSurfaceShader("Shaders/Base/Screen_Text");
 	Mesh* cMesh = _resourceManager->GetMesh("Meshes/Base/screenQuad.vm");
 
 	_graphics->BindTexture(*tex, 0);

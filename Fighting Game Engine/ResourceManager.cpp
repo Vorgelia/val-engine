@@ -1,6 +1,5 @@
 #include "ResourceManager.h"
 #include "ServiceManager.h"
-#include "CachedMesh.h"
 #include "Mesh.h"
 #include "SurfaceShader.h"
 #include "ComputeShader.h"
@@ -11,8 +10,8 @@
 #include "Font.h"
 #include "ResourceInitializer.h"
 #include "DebugLog.h"
+#include "CachedMesh.h"
 #include "GraphicsGL.h"
-#include <memory>
 
 //If the following define exists, the engine will create some default resource files if the folder structure is missing.
 //I opt to create and then read files rather than reading directly from the resources because the generated files have comments in them that explain how they work
@@ -26,20 +25,21 @@ void ResourceManager::GenerateDefaultTextures()
 		255, 0, 255, 255,	 0, 0, 0, 255,
 		0, 0, 0, 255,	 255, 0, 255, 255
 	};
-	baseTextures.emplace(std::make_pair("base_texture", _graphics->CreateTexture("base_texture", pixels, glm::ivec2(2, 2), GL_RGBA16, GL_NEAREST, GL_REPEAT)));
+
+	_cachedTexture.Add("base_texture", _graphics->CreateTexture("base_texture", pixels, glm::ivec2(2, 2), GL_RGBA16, GL_NEAREST, GL_REPEAT), true);
 
 	pixels = std::vector<unsigned char>{ 0, 0, 0, 255 };
-	baseTextures.emplace(std::make_pair("black", _graphics->CreateTexture("black", pixels, glm::ivec2(1, 1), GL_RGBA16, GL_NEAREST, GL_REPEAT)));
+	_cachedTexture.Add("black", _graphics->CreateTexture("black", pixels, glm::ivec2(1, 1), GL_RGBA16, GL_NEAREST, GL_REPEAT), true);
 
 	pixels = std::vector<unsigned char>{ 255, 255, 255, 255 };
-	baseTextures.emplace(std::make_pair("white", _graphics->CreateTexture("white", pixels, glm::ivec2(1, 1), GL_RGBA16, GL_NEAREST, GL_REPEAT)));
+	_cachedTexture.Add("white", _graphics->CreateTexture("white", pixels, glm::ivec2(1, 1), GL_RGBA16, GL_NEAREST, GL_REPEAT), true);
 }
 
 void ResourceManager::LoadDefaultResources()
 {
 	//Base shaders
-	GetShader("Shaders/Base/2D");
-	GetShader("Shaders/Base/Screen");
+	GetSurfaceShader("Shaders/Base/2D");
+	GetSurfaceShader("Shaders/Base/Screen");
 
 	GetComputeShader("Shaders/Base/Test_FB");
 
@@ -67,7 +67,7 @@ void ResourceManager::PreprocessShaderSource(std::string& inoutShaderSource)
 		}
 
 		std::string includeDir = inoutShaderSource.substr(index + includeSignature.size() + 1, nextNewline - index - includeSignature.size() - 1);
-		std::string includeContents = GetTextData(includeDir);
+		std::string includeContents = *GetTextData(includeDir);
 
 		inoutShaderSource
 			= inoutShaderSource.substr(0, index)
@@ -79,263 +79,54 @@ void ResourceManager::PreprocessShaderSource(std::string& inoutShaderSource)
 	}
 }
 
-Font* ResourceManager::GetFont(FS::path path)
+
+template<>
+std::unique_ptr<SurfaceShader> ResourceManager::CreateResource(const std::string& key)
 {
-	std::string pathString = path.string();
-	auto& iter = fonts.find(pathString);
-
-	if(iter != fonts.end())
-	{
-		return iter->second.get();
-	}
-
-	if(!FS::exists(path))
-	{
-		fonts.emplace(std::make_pair(pathString, nullptr));
-		_debug->VE_LOG("Failed to load Font " + pathString);
-		return nullptr;
-	}
-
-	return fonts.emplace(
-		std::make_pair(pathString, _graphics->CreateFont(path.string()))
-	).first->second.get();
-}
-
-const std::string & ResourceManager::GetTextData(const FS::path & path)
-{
-	const std::string& pathString = path.string();
-
-	auto& iter = textData.find(pathString);
-	if(iter != textData.end())
-	{
-		return iter->second;
-	}
-
-	if(!FS::exists(path))
-	{
-		_debug->VE_LOG("Failed to load Text Data" + pathString);
-		return textData.emplace(pathString, "").first->second;
-	}
-	else
-	{
-		return textData.emplace(pathString, _filesystem->ReturnFile(path)).first->second;
-	}
-}
-
-//The way these functions work is similar. If the resource exists in the per GameState resources, retrieve a pointer to it.
-//Else, if the resource exists in the base resources, do the same.
-//Else, attempt to load the resource, caching it as nullptr if it doesn't exist, so no further loading attempts are made.
-Texture* ResourceManager::GetTexture(FS::path path)
-{
-	std::string pathString = path.string();
-
-	auto& iter = textures.find(pathString);
-	if(iter != textures.end())
-	{
-		return iter->second.get();
-	}
-
-	iter = baseTextures.find(pathString);
-	if(iter != baseTextures.end())
-	{
-		return iter->second.get();
-	}
-
-	if(!FS::exists(path))
-	{
-		_debug->VE_LOG("Unable to find texture at " + pathString);
-		textures.emplace(std::make_pair(pathString, nullptr));
-		return nullptr;
-	}
-
-	auto* container = &textures;
-
-	if(path.parent_path().leaf().string() == "Base")
-	{
-		container = &baseTextures;
-	}
-
-	std::vector<unsigned char> pixels;
-	glm::ivec2 size;
-	_filesystem->LoadTextureData(path, pixels, size);
-
-	return container->emplace(
-		std::make_pair(
-			pathString,
-			_graphics->CreateTexture(pathString, pixels, size, GL_RGBA16, GL_NEAREST, GL_REPEAT))
-	).first->second.get();
-}
-
-PostEffect* ResourceManager::GetPostEffect(FS::path path)
-{
-	std::string pathString = path.string();
-	auto& iter = postEffects.find(pathString);
-
-	if(iter != postEffects.end())
-	{
-		return iter->second.get();
-	}
-
-	if(!FS::exists(path))
-	{
-		_debug->VE_LOG("Failed to load Texture " + pathString);
-		postEffects.emplace(std::make_pair(pathString, nullptr));
-		return nullptr;
-	}
-
-	return postEffects.emplace(std::make_pair(
-		pathString, _filesystem->LoadPostEffect(pathString)
-	)).first->second.get();
-}
-
-SurfaceShader* ResourceManager::GetShader(std::string name)
-{
-	auto& iter = shaders.find(name);
-	if(iter != shaders.end())
-	{
-		return iter->second.get();
-	}
-
-	if(!FS::exists(name + ".vert") || !FS::exists(name + ".frag"))
-	{
-		shaders.emplace(std::pair<std::string, std::unique_ptr<SurfaceShader>>(name, nullptr));
-		_debug->VE_LOG("Failed to load Shader " + name);
-		return nullptr;
-	}
-
-	std::string vertSource = _filesystem->ReturnFile(name + ".vert");
+	std::string vertSource = _filesystem->ReturnFile(key + ".vert");
 	PreprocessShaderSource(vertSource);
-	std::string fragSource = _filesystem->ReturnFile(name + ".frag");
+	std::string fragSource = _filesystem->ReturnFile(key + ".frag");
 	PreprocessShaderSource(fragSource);
 
-	return shaders.emplace(std::pair<std::string, std::unique_ptr<SurfaceShader>>(
-		name,
-		_graphics->CreateShader<SurfaceShader>(name, std::vector<ShaderAttachment>{
+	return	_graphics->CreateShader<SurfaceShader>(
+		key,
+		std::vector<ShaderAttachment>{
 		ShaderAttachment(vertSource, GL_VERTEX_SHADER),
-			ShaderAttachment(fragSource, GL_FRAGMENT_SHADER)
-	}))).first->second.get();
+			ShaderAttachment(fragSource, GL_FRAGMENT_SHADER)});
 }
 
-ComputeShader* ResourceManager::GetComputeShader(std::string name)
+template<>
+std::unique_ptr<ComputeShader> ResourceManager::CreateResource(const std::string& key)
 {
-	auto& iter = computeShaders.find(name);
-	if(iter != computeShaders.end())
-	{
-		return iter->second.get();
-	}
-
-	if(!FS::exists(name + ".comp"))
-	{
-		computeShaders.emplace(std::pair<std::string, std::unique_ptr<ComputeShader>>(name, nullptr));
-		_debug->VE_LOG("Failed to load Compute Shader " + name);
-		return nullptr;
-	}
-
-	std::string shaderSource = _filesystem->ReturnFile(name + ".comp");
+	std::string shaderSource = _filesystem->ReturnFile(key + ".comp");
 	PreprocessShaderSource(shaderSource);
 
-	return computeShaders.emplace(std::pair<std::string, std::unique_ptr<ComputeShader>>(
-		name,
-		_graphics->CreateShader<ComputeShader>(name, std::vector<ShaderAttachment>{
+	return _graphics->CreateShader<ComputeShader>(key, std::vector<ShaderAttachment>{
 		ShaderAttachment(shaderSource, GL_COMPUTE_SHADER)
-	}))).first->second.get();
+	});
 }
 
-Material* ResourceManager::GetMaterial(FS::path path)
+template<>
+std::unique_ptr<Mesh> ResourceManager::CreateResource(const std::string& key)
 {
-	std::string pathString = path.string();
-
-	auto& iter = materials.find(pathString);
-	if(iter != materials.end())
-	{
-		return iter->second.get();
-	}
-
-	iter = baseMaterials.find(pathString);
-	if(iter != baseMaterials.end())
-	{
-		return iter->second.get();
-	}
-
-	if(!FS::exists(path))
-	{
-		materials.emplace(std::pair<std::string, std::unique_ptr<Material>>(pathString, nullptr));
-		_debug->VE_LOG("Failed to load material " + pathString);
-		return nullptr;
-	}
-
-	auto* container = &materials;
-
-	if(path.parent_path().leaf().string() == "Base")
-	{
-		container = &baseMaterials;
-	}
-
-	return container->emplace(std::pair<std::string, std::unique_ptr<Material>>(
-		pathString,
-		_filesystem->LoadMaterial(pathString))
-	).first->second.get();
+	CachedMesh* cachedMesh = GetResourceFromContainer<CachedMesh>(_cachedMeshData, key);
+	return _graphics->CreateMesh(key, cachedMesh);
 }
 
-Material* ResourceManager::CopyMaterial(Material* mat)
+template<>
+std::unique_ptr<Font> ResourceManager::CreateResource(const std::string& key)
 {
-	if(mat == nullptr)
-		return nullptr;
-
-	int copyIndex = 0;
-	while(materials.count(mat->name + "_Copy" + std::to_string(copyIndex)) > 0)
-	{
-		++copyIndex;
-	}
-
-	auto& iter =
-		materials.emplace(std::pair<std::string, std::unique_ptr<Material>>(
-			mat->name + "_Copy" + std::to_string(copyIndex),
-			std::make_unique<Material>(*mat)))
-		.first;
-	iter->second->name = mat->name + "_Copy" + std::to_string(copyIndex);
-	return iter->second.get();
+	return _graphics->CreateFont(key);
 }
 
-Mesh* ResourceManager::GetMesh(FS::path path)
+template<>
+std::unique_ptr<Texture> ResourceManager::CreateResource(const std::string& key)
 {
-	std::string pathString = path.string();
+	std::vector<unsigned char> pixels;
+	glm::ivec2 size;
+	_filesystem->LoadTextureData(key, pixels, size);
 
-	auto& iter = meshes.find(pathString);
-	if(iter != meshes.end())
-	{
-		return iter->second.get();
-	}
-
-	iter = baseMeshes.find(pathString);
-	if(iter != baseMeshes.end())
-	{
-		return iter->second.get();
-	}
-
-	if(!FS::exists(path))
-	{
-		_debug->VE_LOG("Failed to load Mesh: " + pathString);
-		postEffects.emplace(std::pair<std::string, std::unique_ptr<PostEffect>>(pathString, nullptr));
-		return nullptr;
-	}
-
-	auto& cachedMeshIter = cachedMeshes.find(pathString);
-
-	if(cachedMeshIter == cachedMeshes.end())
-	{
-		cachedMeshIter = cachedMeshes.emplace(
-			std::pair<std::string, std::unique_ptr<CachedMesh>>
-			(pathString, _filesystem->LoadMeshVM(path)))
-			.first;
-	}
-
-	iter = meshes.emplace(
-		std::pair<std::string, std::unique_ptr<Mesh>>
-		(pathString, _graphics->CreateMesh(pathString, cachedMeshIter->second.get())))
-		.first;
-
-	return iter->second.get();
+	return _graphics->CreateTexture(key, pixels, size, GL_RGBA16, GL_NEAREST, GL_REPEAT);
 }
 
 void ResourceManager::Init()
@@ -360,59 +151,21 @@ void ResourceManager::Update() {}
 
 void ResourceManager::Cleanup()
 {
-	for(auto& iter : baseMeshes)
-	{
-		_graphics->DestroyMesh(*(iter.second.get()));
-	}
-	baseMeshes.clear();
-
-	Unload();
-
-	baseMaterials.clear();
-
-	for(auto& iter : shaders)
-	{
-		_graphics->DestroyShader(*(iter.second.get()));
-	}
-	shaders.clear();
-
-	for(auto& iter : computeShaders)
-	{
-		_graphics->DestroyShader(*(iter.second.get()));
-	}
-	computeShaders.clear();
-
-	for(auto& tex : baseTextures)
-	{
-		_graphics->DestroyTexture(*(tex.second.get()));
-	}
-	baseTextures.clear();
-
-	for(auto& iter : fonts)
-	{
-		_graphics->DestroyFont(*(iter.second.get()));
-	}
-	fonts.clear();
-	postEffects.clear();
+	Unload(true);
 }
 
-void ResourceManager::Unload()
+void ResourceManager::Unload(bool includePersistent)
 {
-	for(auto& iter : meshes)
-	{
-		_graphics->DestroyMesh(*(iter.second.get()));
-	}
-	meshes.clear();
-
-	cachedMeshes.clear();
-
-	for(auto& iter : textures)
-	{
-		_graphics->DestroyTexture(*(iter.second.get()));
-	}
-	textures.clear();
-
-	materials.clear();
+	_cachedComputeShader.Cleanup(includePersistent);
+	_cachedFont.Cleanup(includePersistent);
+	_cachedJsonData.Cleanup(includePersistent);
+	_cachedMaterial.Cleanup(includePersistent);
+	_cachedMesh.Cleanup(includePersistent);
+	_cachedMeshData.Cleanup(includePersistent);
+	_cachedPostEffect.Cleanup(includePersistent);
+	_cachedSurfaceShader.Cleanup(includePersistent);
+	_cachedTextData.Cleanup(includePersistent);
+	_cachedTexture.Cleanup(includePersistent);
 }
 
 ResourceManager::ResourceManager(ServiceManager* serviceManager) : BaseService(serviceManager)

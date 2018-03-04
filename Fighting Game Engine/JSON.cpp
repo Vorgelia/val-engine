@@ -1,4 +1,5 @@
 #include "JSON.h"
+#include "GameCharacterData.h"
 
 template<>
 glm::quat JSON::Get(const json_t& j)

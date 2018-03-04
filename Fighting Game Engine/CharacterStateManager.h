@@ -4,6 +4,7 @@
 #include <unordered_set>
 #include <memory>
 #include "JSON.h"
+#include "GameCharacterData.h"
 
 class CharacterState;
 class CharacterFrame;
@@ -24,8 +25,8 @@ class CharacterStateManager
 	friend class GameCharacter;
 	friend class ScriptManager;
 	friend class CharacterRenderer;
-private:
 
+private:
 	InputManager* _input;
 	ScriptManager* _scriptManager;
 	FilesystemManager* _filesystem;
@@ -46,7 +47,6 @@ private:
 	std::unordered_map<std::string, std::unique_ptr<CharacterState>> _stateLookup;
 	std::unordered_map<std::string, std::unique_ptr<CharacterFrame>> _frameLookup;
 
-	//Throw invuln, air invuln, etc
 	std::unordered_map<CharacterStateFlagType, std::unordered_set<std::string>> _flags;
 
 	void EvaluateNextState();

@@ -16,7 +16,6 @@ private:
 
 private:
 	FightingGameState _currentState;
-	std::vector<GamePlayer> _currentPlayers;
 
 	void HandleSceneLoaded(const GameScene* scene);
 	void ChangeState(FightingGameState state);

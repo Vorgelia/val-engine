@@ -159,6 +159,9 @@
     <Filter Include="Val Engine\Engine\Data\Rendering\Native\Shaders">
       <UniqueIdentifier>{beb03040-8953-40ae-9594-74d3a69b23f9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Val Engine\Engine\Utilities\Data\Containers">
+      <UniqueIdentifier>{d204695e-b0c4-46da-90d8-da35c8a827b9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameScene.cpp">
@@ -413,6 +416,7 @@
     <ClCompile Include="ComputeShader.cpp">
       <Filter>Val Engine\Engine\Data\Rendering\Native\Shaders</Filter>
     </ClCompile>
+    <ClCompile Include="GameCharacterData.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FGIncludes.hpp">
@@ -552,9 +556,6 @@
     </ClInclude>
     <ClInclude Include="CollisionBox.h">
       <Filter>Val Engine\Engine\Utilities\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="CircularBuffer.h">
-      <Filter>Val Engine\Engine\Utilities\Data</Filter>
     </ClInclude>
     <ClInclude Include="BaseService.h">
       <Filter>Val Engine\Engine\Services</Filter>
@@ -699,6 +700,15 @@
     </ClInclude>
     <ClInclude Include="GraphicsBindingData.h">
       <Filter>Val Engine\Engine\Data\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="GameCharacterData.h">
+      <Filter>Val Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="CircularBuffer.h">
+      <Filter>Val Engine\Engine\Utilities\Data\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceContainer.h">
+      <Filter>Val Engine\Engine\Utilities\Data\Containers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

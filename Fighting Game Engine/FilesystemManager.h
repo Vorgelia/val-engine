@@ -38,20 +38,21 @@ public:
 	std::vector<unsigned char> LoadBinaryResource(int id, const std::string& type);
 
 	std::string ReturnFile(const FS::path& dir);
-	std::vector<std::string> ReturnFileLines(const FS::path& dir, bool removeWhitespace);
+	std::vector<std::string> ReturnFileLines(const FS::path& dir, bool removeWhitespace = false);
 
-	void ApplyFunctionToFiles(const FS::path& dir, std::function<void(const FS::path&)> func);
-
-	json LoadJsonResource(FS::path path);
-
-	std::unique_ptr<Object> LoadObject(const FS::path& path);
-	std::unique_ptr<CachedMesh> LoadMeshVM(const FS::path& path);
-	std::unique_ptr<Material> LoadMaterial(const FS::path& path);
-	std::unique_ptr<PostEffect> LoadPostEffect(const FS::path& path);
+	template<typename ResourceT>
+	std::unique_ptr<ResourceT> LoadFileResource(const FS::path& path);
+	template<>
+	std::unique_ptr<json> LoadFileResource(const FS::path& path);
+	template<>
+	std::unique_ptr<CachedMesh> LoadFileResource(const FS::path& path);
+	template<>
+	std::unique_ptr<Material> LoadFileResource(const FS::path& path);
+	template<>
+	std::unique_ptr<PostEffect> LoadFileResource(const FS::path& path);
 
 	void LoadTextureData(const FS::path & path, std::vector<unsigned char>& out_pixels, glm::ivec2& out_size);
 	void LoadControlSettings(const FS::path& path, std::unordered_map<InputDirection, InputEvent>& dir, std::unordered_map<InputButton, InputEvent>& bt);
-	void LoadObjects(const FS::path& path, std::vector<std::unique_ptr<Object>>& objects);
 
 	bool SaveFile(const FS::path& dir, std::string& content, int flags = std::ios::out | std::ios::trunc);
 
@@ -62,3 +63,9 @@ public:
 	FilesystemManager(ServiceManager* serviceManager);
 	~FilesystemManager() = default;
 };
+
+template<typename ResourceT>
+inline std::unique_ptr<ResourceT> FilesystemManager::LoadFileResource(const FS::path & path)
+{
+	return std::make_unique<ResourceT>(ReturnFile(path));
+}

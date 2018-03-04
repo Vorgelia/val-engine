@@ -96,7 +96,8 @@ CharacterRenderer::CharacterRenderer(Object* owner, ServiceManager* serviceManag
 	_resource = _serviceManager->ResourceManager();
 	_rendering = _serviceManager->Rendering();
 
-	_material = _resource->CopyMaterial(_material);
+	_renderingMaterialCopy = std::make_unique<Material>(*_material);
+	_material = _renderingMaterialCopy.get();
 	_renderingTransform = std::make_unique<Transform>(_owner, serviceManager);
 }
 

@@ -1,9 +1,11 @@
 #include "GameCharacter.h"
 #include "Script.h"
 #include "ScriptManager.h"
+#include "ResourceManager.h"
 #include "FilesystemManager.h"
 #include "CharacterStateManager.h"
 #include "GamePlayer.h"
+#include "GameCharacterData.h"
 #include "Delegate.h"
 #include "ServiceManager.h"
 
@@ -17,17 +19,6 @@ CharacterStateManager* GameCharacter::stateManager()
 void GameCharacter::SetOwner(GamePlayer* owner)
 {
 	_playerOwner = owner;
-}
-
-//TODO: I'm not particularly happy about resource management here. Figure out something better.
-void GameCharacter::HandleCharacterData(const json& j)
-{
-	_stateManager = std::make_unique<CharacterStateManager>(this, _serviceManager, j["states"], j["frames"]);
-
-	JSON::TryGetMember<glm::vec2>(j, "sizeMultiplier", _sizeMultiplier);
-
-	_characterScript = _scriptManager->GetScript(JSON::Get<std::string>(j["characterScript"]));
-	_scriptManager->HandleScriptCharacterBindings(*this, _characterScript);
 }
 
 void GameCharacter::CharacterInit()
@@ -68,8 +59,17 @@ GameCharacter::GameCharacter(Object* owner, ServiceManager* serviceManager, cons
 	_resource = serviceManager->ResourceManager();
 
 	_initialized = false;
-	_dataPath = JSON::Get<std::string>(j["dataPath"]);
-	HandleCharacterData(_filesystem->LoadJsonResource(_dataPath));
+	if(JSON::TryGetMember<std::string>(j, "dataPath", _dataPath))
+	{
+		
+		json dataJson = _resource->GetTextData<json>(_dataPath);
+		_stateManager = std::make_unique<CharacterStateManager>(this, _serviceManager, j["states"], j["frames"]);
+
+		JSON::TryGetMember<glm::vec2>(j, "sizeMultiplier", _sizeMultiplier);
+
+		_characterScript = _scriptManager->GetScript(JSON::Get<std::string>(j["characterScript"]));
+		_scriptManager->HandleScriptCharacterBindings(*this, _characterScript);
+	}
 }
 
 GameCharacter::~GameCharacter()
