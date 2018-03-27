@@ -53,7 +53,6 @@ void CharacterStateManager::EvaluateNextState()
 			continue;
 		}
 
-		//TODO: What is hapen here
 		if(_owner->_playerOwner->inputDevice()->EvaluateMotion(i.second->associatedMotion()))
 		{
 			if(nextState == nullptr || nextState->priority() < i.second->priority())

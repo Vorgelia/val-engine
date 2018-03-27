@@ -168,6 +168,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AttackData.h" />
+    <ClInclude Include="BaseResource.h" />
     <ClInclude Include="BaseService.h" />
     <ClInclude Include="BaseShader.h" />
     <ClInclude Include="Behaviour.h" />

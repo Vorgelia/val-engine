@@ -3,6 +3,7 @@
 
 function StateInit() : int
 	character_addFlag(VE_STATE_FLAG_CANCEL_TARGET, "VE_NORMAL")
+	character_addFlag(VE_STATE_FLAG_CANCEL_REQUIREMENT, "VE_GROUNDED")
 end
 
 //This function runs every frame

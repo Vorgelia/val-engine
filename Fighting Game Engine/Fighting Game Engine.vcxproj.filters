@@ -416,7 +416,9 @@
     <ClCompile Include="ComputeShader.cpp">
       <Filter>Val Engine\Engine\Data\Rendering\Native\Shaders</Filter>
     </ClCompile>
-    <ClCompile Include="GameCharacterData.cpp" />
+    <ClCompile Include="GameCharacterData.cpp">
+      <Filter>Val Engine\Game\Characters</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FGIncludes.hpp">
@@ -701,14 +703,17 @@
     <ClInclude Include="GraphicsBindingData.h">
       <Filter>Val Engine\Engine\Data\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="GameCharacterData.h">
-      <Filter>Val Engine</Filter>
-    </ClInclude>
     <ClInclude Include="CircularBuffer.h">
       <Filter>Val Engine\Engine\Utilities\Data\Containers</Filter>
     </ClInclude>
     <ClInclude Include="ResourceContainer.h">
       <Filter>Val Engine\Engine\Utilities\Data\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseResource.h">
+      <Filter>Val Engine\Engine\Utilities\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="GameCharacterData.h">
+      <Filter>Val Engine\Game\Characters</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

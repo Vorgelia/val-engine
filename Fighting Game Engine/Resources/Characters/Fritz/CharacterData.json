@@ -1,14 +1,18 @@
 {
-	"states":[
-		"Characters/Fritz/States"
-	],
-	"frames":[
-		"Characters/Fritz/Frames"
-	],
+	"name":"Fritz!",
+	"characterScript":"Characters/Fritz/Fritz.vscript",
 	"sizeMultiplier":
 	{
 		"x":5,
 		"y":5
 	},
-	"characterScript":"Characters/Fritz/Fritz.vscript"
+	"flags":[
+		"whatever"
+	],
+	"statePaths":[
+		"Characters/Fritz/States"
+	],
+	"frameDataPaths":[
+		"Characters/Fritz/Frames"
+	]
 }
