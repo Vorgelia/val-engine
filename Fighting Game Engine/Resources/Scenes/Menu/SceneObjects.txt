@@ -1,19 +1,6 @@
 [
     {
-        "id":0,
-        "name":"Manager",
-        "enabled":true,
-        "behaviours":[
-            {
-                "name":"MenuBehaviour",
-                "enabled":true
-            },
-			{
-				"name":"ComputeShaderEffect",
-				"enabled":true,
-				"shaderPath":"Shaders/Base/Test_FB"
-			}
-        ]
+        "prefabPath" : "Prefabs/MenuManager.json"
     },
     {
         "id":1,
@@ -28,8 +15,8 @@
                     "y":0
                 },
                 "scale":{
-                    "x":6000,
-                    "y":4800
+                    "x":2000000,
+                    "y":1600000
                 },
                 "rotation":{
                     "x":0,
@@ -60,8 +47,8 @@
                     "y":200
                 },
                 "scale":{
-                    "x":3400,
-                    "y":2500
+                    "x":1130000,
+                    "y":830000
                 },
                 "rotation":{
                     "x":0,

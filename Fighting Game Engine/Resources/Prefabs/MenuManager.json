@@ -1,0 +1,26 @@
+{
+	"id":0,
+	"name":"Manager",
+	"enabled":true,
+	"behaviours":[
+		{
+			"name":"MenuBehaviour",
+			"enabled":true
+		},
+		{
+			"name":"FightingStageBehaviour",
+			"enabled":true,
+			"stageBounds":{
+				"x": -600000,
+				"y": 0,
+				"z": 600000,
+				"w": 500000
+			}
+		},
+		{
+			"name":"ComputeShaderEffect",
+			"enabled":false,
+			"shaderPath":"Shaders/Base/Test_FB"
+		}
+	]
+}

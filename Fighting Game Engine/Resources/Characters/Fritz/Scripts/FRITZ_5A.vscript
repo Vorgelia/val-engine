@@ -5,30 +5,32 @@
 function StateUpdate(int frame) : void
 	switch(frame)
 		case 0->2
-		  character_setFrame("fritz_5a_01")
+		  character_state_setFrame("fritz_5a_01")
 		  break
 		case 3->5
-		  character_setFrame("fritz_5a_02")
+		  character_state_setFrame("fritz_5a_02")
 		  break
-		case 5->7
-		  character_setFrame("fritz_5a_03")
+		case 6->7
+		  character_state_setFrame("fritz_5a_03")
 		  break
-		case 7->12
-		  character_setFrame("fritz_5a_04")
+		case 8
+		  character_physics_addForce(10, 7000, 0)
+		case 8->12
+		  character_state_setFrame("fritz_5a_04")
 		  break
-		case 12->20
-		  character_setFrame("fritz_5a_05")
+		case 13->20
+		  character_state_setFrame("fritz_5a_05")
 		  break
-		case 20->24
-		  character_setFrame("fritz_5a_06")
+		case 21->24
+		  character_state_setFrame("fritz_5a_06")
 		  break
-		case 24->28
-		  character_setFrame("fritz_5a_07")
+		case 25->28
+		  character_state_setFrame("fritz_5a_07")
 		  break
 		case 34
-		  character_markStateEnded()
+		  character_state_markStateEnded()
 		case 29->34
-		  character_setFrame("fritz_5a_08")
+		  character_state_setFrame("fritz_5a_08")
 		  break
 	end
 end
