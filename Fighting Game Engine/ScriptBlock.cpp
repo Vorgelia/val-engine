@@ -8,7 +8,7 @@
 #include "ScriptExpression.h"
 #include "ScriptLine.h"
 
-size_t ScriptBlock::cursor(bool absolute)
+size_t ScriptBlock::cursor(bool absolute) const
 {
 	return _cursor + (absolute ? _lines.front() : 0);
 }
@@ -45,7 +45,7 @@ void ScriptBlock::ParseLine(ScriptLine &line)
 
 void ScriptBlock::HandleExpressionLine(std::vector<ScriptToken>& tokens)
 {
-	if(tokens.size() < 1)
+	if(tokens.empty())
 	{
 		return;
 	}
@@ -110,7 +110,7 @@ void ScriptBlock::HandleConditionalDeclarationLine(std::vector<ScriptToken>& tok
 	int nextBlockBegin = _cursor;
 	out_blockEnd = nextBlockBegin;
 
-	while(tokens.size() > 0)
+	while(!tokens.empty())
 	{
 		if(tokens[0].token == ScriptToken::conditional_else)
 		{
@@ -265,6 +265,4 @@ ScriptBlock::ScriptBlock(ScriptLinesView lines, int depth, ScriptBlock* parent, 
 }
 
 ScriptBlock::~ScriptBlock()
-{
-
-}
+= default;

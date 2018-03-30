@@ -1,5 +1,6 @@
 #pragma once
 #include "BaseShader.h"
+#include <unordered_map>
 
 class SurfaceShader : public BaseShader
 {

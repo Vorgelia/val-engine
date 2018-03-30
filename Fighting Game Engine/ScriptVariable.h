@@ -1,12 +1,18 @@
 #pragma once
-#include <memory>
 #include <string>
+#include <cstdint>
 #include "BaseScriptVariable.h"
+#include "ScriptError.h"
 
 template<typename T>
 class ScriptVariable :
 	public BaseScriptVariable
 {
+public:
+	typedef T ValueType;
+
+private:
+
 	T _value;
 public:
 	T value() const;
@@ -16,7 +22,7 @@ public:
 	ScriptVariable(T value = T(), bool isConst = false);
 };
 
-typedef ScriptVariable<long> ScriptInt;
+typedef ScriptVariable<std::int64_t> ScriptInt;
 typedef ScriptVariable<bool> ScriptBool;
 typedef ScriptVariable<std::string> ScriptString;
 
@@ -57,7 +63,7 @@ template<>
 std::string ScriptString::ToString();
 
 template<>
-ScriptInt::ScriptVariable(long value, bool isConst);
+ScriptInt::ScriptVariable(std::int64_t value, bool isConst);
 template<>
 ScriptBool::ScriptVariable(bool value, bool isConst);
 template<>

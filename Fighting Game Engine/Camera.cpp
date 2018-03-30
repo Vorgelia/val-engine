@@ -8,7 +8,7 @@ Camera::Camera(glm::vec2 pos, glm::mat4* mat)
 	zoomLevel = 1;
 }
 
-glm::mat4 Camera::ViewMatrix(float depth)
+glm::mat4 Camera::ViewMatrix(float depth) const
 {
 	glm::mat4 view;
 	view = glm::translate(view, glm::vec3(-this->position / (1 + glm::abs(depth)), 0));

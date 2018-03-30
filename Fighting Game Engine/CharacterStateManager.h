@@ -4,7 +4,6 @@
 #include <unordered_set>
 #include <memory>
 #include "JSON.h"
-#include "GameCharacterData.h"
 
 class CharacterState;
 class CharacterFrame;

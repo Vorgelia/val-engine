@@ -1,7 +1,6 @@
 #include "NetworkMessage.h"
 #include "DebugLog.h"
-#include <assert.h>
-
+#include <cassert>
 
 
 std::vector<unsigned int> NetworkMessage::g_identifierSizes = { 1, 1, 1, 3, 3, 3, 5 };//Amount of bits that hold information on every message type. Includes the type identifying bit.
@@ -19,12 +18,12 @@ For instance. A NetworkMessage of type TextMessage whose identifying bits say is
 Ooooor if it has less than 3 identifying bits to begin with.
 */
 
-NetworkMessageType NetworkMessage::type()
+NetworkMessageType NetworkMessage::type() const
 {
 	return _type;
 }
 
-std::string NetworkMessage::Serialize()
+std::string NetworkMessage::Serialize() const
 {
 	return _dataIdentifiers + data;
 }
@@ -88,7 +87,7 @@ bool NetworkMessage::Append(std::string str)
 	return true;
 }
 
-NetworkMessageState NetworkMessage::State()
+NetworkMessageState NetworkMessage::State() const
 {
 	if(_dataIdentifiers.length() < g_identifierSizes[static_cast<int>(_type)])
 		return NetworkMessageState::Incomplete;
@@ -101,7 +100,7 @@ NetworkMessageState NetworkMessage::State()
 	return NetworkMessageState::Complete;
 }
 
-int NetworkMessage::MissingDataSize()
+int NetworkMessage::MissingDataSize() const
 {//Almost equivalent to State(), except State() produces more readable results and is less error-prone.
 	return (g_identifierSizes[static_cast<int>(_type)] - _dataIdentifiers.length()) + (_size - data.length());
 }
@@ -144,5 +143,4 @@ NetworkMessage::NetworkMessage(NetworkMessageType type, std::string data)
 }
 
 NetworkMessage::~NetworkMessage()
-{
-}
+= default;

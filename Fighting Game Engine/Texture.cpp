@@ -1,9 +1,8 @@
 #include "Texture.h"
 #include "GraphicsGL.h"
 #include "DebugLog.h"
-#include <SOIL\src\SOIL.h>
 
-const glm::vec4& Texture::size()
+const glm::vec4& Texture::size() const
 {
 	return _size;
 }

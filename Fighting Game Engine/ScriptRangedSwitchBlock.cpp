@@ -52,8 +52,8 @@ void ScriptRangedSwitchBlock::ParseLine(ScriptLine & line)
 	{
 		if(line.tokens[0].token == ScriptToken::switch_case)
 		{
-			if(_handledCaseLabel
-				|| (_handledCaseLabel = (line.tokens[1].token == ScriptToken::switch_default && line.tokens.size() == 2)))
+			_handledCaseLabel |= (line.tokens[1].token == ScriptToken::switch_default && line.tokens.size() == 2);
+			if(_handledCaseLabel)
 			{
 				return;
 			}
@@ -116,5 +116,4 @@ ScriptRangedSwitchBlock::ScriptRangedSwitchBlock(std::vector<ScriptToken>& condi
 }
 
 ScriptRangedSwitchBlock::~ScriptRangedSwitchBlock()
-{
-}
+= default;

@@ -1,6 +1,5 @@
 #pragma once
 #include "BaseService.h"
-#include <vector>
 #include "GLIncludes.hpp"
 #include <GLM\glm.hpp>
 #include "Delegate.h"

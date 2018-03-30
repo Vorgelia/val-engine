@@ -1,5 +1,4 @@
 #pragma once
-#include <map>
 #include <unordered_map>
 #include <vector>
 #include <string>
@@ -53,7 +52,7 @@ public:
 	bool initialized() const;
 	bool loaded() const;
 
-	const std::vector<std::string>& postEffectsOrder();
+	const std::vector<std::string>& postEffectsOrder() const;
 
 	virtual void LoadResources();
 	virtual void OnLoaded();
@@ -81,7 +80,7 @@ public:
 template<typename ObjectT>
 ObjectT* GameScene::FindObject(const std::string& name)
 {
-	auto& iter = _objectNameLookup.find(name);
+	auto iter = _objectNameLookup.find(name);
 	if(iter != _objectNameLookup.end())
 	{
 		return dynamic_cast<ObjectT>(iter->second);

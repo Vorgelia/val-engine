@@ -49,14 +49,14 @@ private:
 
 	FT_Library _freetypeLibrary;
 
-	GLuint CombineShaderAttachments(const std::vector<ShaderAttachment>& attachments, ShaderProgramType type);
+	GLuint CombineShaderAttachments(const std::vector<ShaderAttachment>& attachments, ShaderProgramType type) const;
 
 	bool ToggleFeature(GLenum feature, bool enable);
 	bool BindFrameBufferId(GLuint id);
 	bool BindGraphicsBufferId(GLuint id, GLenum target);
 
-	GLuint CreateShaderAttachment(const ShaderAttachment& shaderAttachment);
-	GLuint CreateShaderProgram(const std::vector<GLuint>& shaders, ShaderProgramType type);
+	GLuint CreateShaderAttachment(const ShaderAttachment& shaderAttachment) const;
+	GLuint CreateShaderProgram(const std::vector<GLuint>& shaders, ShaderProgramType type) const;
 
 public:
 	void Init() override;
@@ -65,26 +65,26 @@ public:
 
 	std::unique_ptr<Texture> CreateTexture(const std::string& name, const std::vector<unsigned char>& pixels, glm::ivec2 dimensions, int format = GL_RGBA16, GLuint filt = GL_NEAREST, GLuint edgeBehaviour = GL_REPEAT);
 	void UpdateTexture(Texture& texture, const std::vector<unsigned char>& pixels);
-	void DestroyTexture(Texture& texture);
+	void DestroyTexture(Texture& texture) const;
 
 	std::unique_ptr<FrameBuffer> CreateFrameBuffer(glm::ivec2 size, int texAmount, bool depthStencil = true, GLint format = GL_RGBA16, glm::vec4 clearColor = glm::vec4(0, 0, 0, 0), GLint filtering = GL_LINEAR, GLuint clearFlags = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	void UpdateFrameBuffer(FrameBuffer& frameBuffer);
 	void ClearFrameBuffer(FrameBuffer& frameBuffer);
-	void DestroyFrameBuffer(FrameBuffer& frameBuffer);
+	void DestroyFrameBuffer(FrameBuffer& frameBuffer) const;
 
 	template<typename BufferT>
 	std::unique_ptr<BufferT> CreateGraphicsBuffer(GLuint defaultSize, GraphicsBufferType type);
-	void UpdateGraphicsBuffer(const GraphicsBuffer& buffer);
+	void UpdateGraphicsBuffer(const GraphicsBuffer& buffer) const;
 
 	std::unique_ptr<Font> CreateFont(std::string name);
-	void DestroyFont(Font& font);
+	void DestroyFont(Font& font) const;
 
 	template<typename ShaderT>
 	std::unique_ptr<ShaderT> CreateShader(const std::string& name, const std::vector<ShaderAttachment>& attachments);
-	void DestroyShader(BaseShader& shader);
+	void DestroyShader(BaseShader& shader) const;
 
 	std::unique_ptr<Mesh> CreateMesh(const std::string& name, CachedMesh* meshData);
-	void DestroyMesh(Mesh& mesh);
+	void DestroyMesh(Mesh& mesh) const;
 
 	bool BindTextureUnit(GLuint pos);
 	bool BindShader(const BaseShader& id);
@@ -96,8 +96,8 @@ public:
 	bool UnbindGraphicsBuffer(GLenum target);
 	bool BindDefaultFrameBuffer();
 
-	void BindTextureToImageUnit(GLuint unit, const Texture& tex, GLenum accessType = GL_READ_WRITE);
-	void BindBufferToBindingPoint(GLuint unit, const GraphicsBuffer& buffer);
+	void BindTextureToImageUnit(GLuint unit, const Texture& tex, GLenum accessType = GL_READ_WRITE) const;
+	void BindBufferToBindingPoint(GLuint unit, const GraphicsBuffer& buffer) const;
 
 	void ApplyMaterial(const Material& material);
 	void ApplyMaterialProperties(const Material& material);
@@ -125,7 +125,6 @@ inline std::unique_ptr<BufferT> GraphicsGL::CreateGraphicsBuffer(GLuint defaultS
 		BindGraphicsBuffer(*buffer, GL_SHADER_STORAGE_BUFFER);
 		glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(float) * defaultSize, nullptr, GL_DYNAMIC_COPY);
 		break;
-		return nullptr;
 	case GraphicsBufferType::Uniform:
 		BindGraphicsBuffer(*buffer, GL_UNIFORM_BUFFER);
 		glBufferData(GL_UNIFORM_BUFFER, sizeof(float) * defaultSize, nullptr, GL_DYNAMIC_DRAW);

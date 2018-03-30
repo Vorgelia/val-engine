@@ -1,5 +1,4 @@
 #include "BaseScriptVariable.h"
-#include "ScriptParsingUtils.h"
 #include "ScriptError.h"
 #include "ScriptOperator.h"
 #include "ScriptToken.h"
@@ -34,7 +33,7 @@ bool BaseScriptVariable::isConst() const
 	return _const;
 }
 
-bool BaseScriptVariable::isInitialized()
+bool BaseScriptVariable::isInitialized() const
 {
 	return _initialized;
 }
@@ -59,5 +58,4 @@ BaseScriptVariable::BaseScriptVariable()
 }
 
 BaseScriptVariable::~BaseScriptVariable()
-{
-}
+= default;

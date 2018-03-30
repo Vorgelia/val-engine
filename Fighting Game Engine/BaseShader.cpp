@@ -25,5 +25,4 @@ BaseShader::BaseShader(const std::string& name, GLuint id, ShaderProgramType typ
 
 
 BaseShader::~BaseShader()
-{
-}
+= default;

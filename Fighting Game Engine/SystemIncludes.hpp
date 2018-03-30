@@ -4,7 +4,6 @@
 #include "GraphicsGL.h" 
 //Rendering
 #include "RenderingGL.h"
-#include "Shader.h"
 #include "Texture.h"
 #include "CachedMesh.h"
 #include "Mesh.h"

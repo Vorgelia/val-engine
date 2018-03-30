@@ -13,12 +13,12 @@ class AttackData :
 	std::vector<std::string> _flags;
 
 public:
-	int damage();
-	int hitstun();
-	int blockstun();
+	int damage() const;
+	int hitstun() const;
+	int blockstun() const;
 
-	const std::vector<std::string>& flags();
+	const std::vector<std::string>& flags() const;
 
 	AttackData(const json& j);
-	~AttackData();
+	~AttackData() = default;
 };

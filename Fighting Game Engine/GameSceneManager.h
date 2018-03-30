@@ -2,7 +2,6 @@
 #include "BaseService.h"
 #include "Delegate.h"
 #include <memory>
-#include <vector>
 #include <functional>
 #include <unordered_map>
 
@@ -37,14 +36,14 @@ private:
 	bool HandleSceneUpdate();
 	void HandleSceneLoad();
 
-	void ApplyFunctionToCurrentScene(std::function<void(GameScene*)> func, bool requiredInitializedState = true);
+	void ApplyFunctionToCurrentScene(std::function<void(GameScene*)> func, bool requiredInitializedState = true) const;
 
 public:
 	typedef Delegate<const GameScene*> GameSceneEventHandler;
 	GameSceneEventHandler SceneLoaded;
 
-	GameScene* currentScene();
-	bool isLoading();
+	GameScene* currentScene() const;
+	bool isLoading() const;
 
 	void Update() override;
 	void Init() override;

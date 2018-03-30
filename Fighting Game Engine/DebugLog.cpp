@@ -2,12 +2,12 @@
 #include <windows.h>
 #include "Time.h"
 #include <sstream>
+#include <iostream>
 #include <DbgHelp.h>
 #include "LogItem.h"
 #include <stdexcept>
 
 #include "BaseScriptVariable.h"
-#include "ScriptError.h"
 #include "Script.h"
 
 #include "ServiceManager.h"
@@ -109,7 +109,7 @@ void Debug::Log(const std::string& data, std::string fileName, int fileLine, Log
 	Log("[" + fileName + ":" + std::to_string(fileLine) + "] " + data, type);
 }
 
-void Debug::GetStackTrace(std::vector<std::string>* storage, unsigned int stackSize)
+void Debug::GetStackTrace(std::vector<std::string>* storage, unsigned int stackSize) const
 {
 	//Copy-pasted from somewhere.
 	//Get the call stack, run it against the debug symbols and get a bunch of text out of it.
@@ -120,8 +120,8 @@ void Debug::GetStackTrace(std::vector<std::string>* storage, unsigned int stackS
 	SYMBOL_INFO   *symbol;
 	HANDLE         process;
 	process = GetCurrentProcess();
-	SymInitialize(process, NULL, TRUE);
-	frames = CaptureStackBackTrace(2, 100, stack, NULL);
+	SymInitialize(process, nullptr, TRUE);
+	frames = CaptureStackBackTrace(2, 100, stack, nullptr);
 	symbol = (SYMBOL_INFO *)calloc(sizeof(SYMBOL_INFO) + 256 * sizeof(char), 1);
 	symbol->MaxNameLen = 255;
 	symbol->SizeOfStruct = sizeof(SYMBOL_INFO);
@@ -129,7 +129,7 @@ void Debug::GetStackTrace(std::vector<std::string>* storage, unsigned int stackS
 	frames = (frames - 5) > (int)stackSize ? (int)stackSize : (frames - 5);
 	for(i = 0; i < frames; i++)
 	{
-		SymFromAddr(process, (DWORD64)(stack[i]), 0, symbol);
+		SymFromAddr(process, (DWORD64)(stack[i]), nullptr, symbol);
 		std::string symbol_name = "unknown symbol";
 		if(!std::string(symbol->Name).empty())
 			symbol_name = std::string(symbol->Name);
@@ -166,8 +166,6 @@ Debug::Debug(ServiceManager* serviceManager) : BaseService(serviceManager)
 }
 
 Debug::~Debug()
-{
-
-}
+= default;
 
 #pragma endregion

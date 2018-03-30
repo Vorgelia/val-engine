@@ -1,7 +1,7 @@
 #include "DefenceData.h"
 
 
-float DefenceData::damageMultiplier()
+float DefenceData::damageMultiplier() const
 {
 	return _damageMultiplier;
 }
@@ -12,6 +12,4 @@ DefenceData::DefenceData(const json& j) : CharacterHitData(j)
 }
 
 DefenceData::~DefenceData()
-{
-
-}
+= default;

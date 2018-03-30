@@ -445,7 +445,7 @@ void ScriptParsingUtils::ParseFunctionArgumentSignatures(const std::string & tok
 			throw ScriptError("Unexpected token " + parenthesisTokens[i + 2].token);
 		}
 
-		out_signatures.push_back(ScriptVariableSignature(variableType, nameToken.token));
+		out_signatures.emplace_back(variableType, nameToken.token);
 	}
 }
 

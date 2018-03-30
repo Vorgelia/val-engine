@@ -24,6 +24,17 @@ glm::ivec4 JSON::Get(const json_t& j)
 }
 
 template<>
+glm::lvec4 JSON::Get(const json_t& j)
+{
+	return glm::lvec4(
+		j["x"].get<std::int64_t>(),
+		j["y"].get<std::int64_t>(),
+		j["z"].get<std::int64_t>(),
+		j["w"].get<std::int64_t>()
+	);
+}
+
+template<>
 glm::vec4 JSON::Get(const json_t& j)
 {
 	return glm::vec4(
@@ -40,6 +51,15 @@ glm::ivec2 JSON::Get(const json_t& j)
 	return glm::ivec2(
 		j["x"].get<int>(),
 		j["y"].get<int>()
+	);
+}
+
+template<>
+glm::lvec2 JSON::Get(const json_t& j)
+{
+	return glm::lvec2(
+		j["x"].get<std::int64_t>(),
+		j["y"].get<std::int64_t>()
 	);
 }
 

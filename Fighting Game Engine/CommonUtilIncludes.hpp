@@ -5,7 +5,7 @@
 #include <windows.h>
 #include <iostream>
 #include <vector>
-#include <locale.h>
+#include <clocale>
 #include <unordered_map>
 #include <map>
 #include <queue>

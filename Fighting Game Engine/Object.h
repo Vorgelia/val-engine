@@ -2,7 +2,6 @@
 #include <string>
 #include <memory>
 #include <map>
-#include <GLM\glm.hpp>
 #include <functional>
 #include "JSON.h"
 #include "BehaviourFactory.h"
@@ -78,7 +77,7 @@ Behaviour* Object::AddBehaviour(std::string behaviourName, Types ... args)
 template<typename T>
 inline T* Object::GetBehaviour(std::string name)
 {
-	auto& iter = _behaviours.find(name);
+	auto iter = _behaviours.find(name);
 	if(iter == _behaviours.end())
 	{
 		return nullptr;

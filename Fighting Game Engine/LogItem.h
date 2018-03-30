@@ -21,8 +21,8 @@ private:
 	std::vector<std::string> _stack;
 public:
 
-	std::string message();
-	LogItem::Type type();
+	std::string message() const;
+	LogItem::Type type() const;
 	std::vector<std::string>* stack();
 
 	std::string ToString(unsigned int stackAmount = 100);

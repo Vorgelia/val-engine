@@ -42,7 +42,7 @@ ve_named_service_getter(Rendering, RenderingGL);
 
 void ServiceManager::InitializeServices()
 {
-	if(_activeServices.size() > 0)
+	if(!_activeServices.empty())
 	{
 		CleanupServices();
 	}
@@ -113,5 +113,4 @@ ServiceManager::ServiceManager()
 }
 
 ServiceManager::~ServiceManager()
-{
-}
+= default;

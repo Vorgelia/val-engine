@@ -1,7 +1,6 @@
 #pragma once
 #include <json.hpp>
-#include <GLM\glm.hpp>
-#include <GLM\gtc\quaternion.hpp>
+#include "MathIncludes.hpp"
 #include "DebugLog.h"
 
 namespace JSON
@@ -18,9 +17,13 @@ namespace JSON
 	template<>
 	glm::ivec4 Get(const json_t& j);
 	template<>
+	glm::lvec4 Get(const json_t& j);
+	template<>
 	glm::vec4 Get(const json_t& j);
 	template<>
 	glm::ivec2 Get(const json_t& j);
+	template<>
+	glm::lvec2 Get(const json_t& j);
 	template<>
 	glm::vec2 Get(const json_t& j);
 	template<>

@@ -1,7 +1,6 @@
 #pragma once
 #include <string>
 #include <vector>
-#include <map>
 #include <memory>
 #include "ScriptLinesView.h"
 #include "BaseScriptVariable.h"
@@ -38,7 +37,7 @@ protected:
 
 	virtual bool HandleControlFlag();
 public:
-	size_t cursor(bool absolute = true);
+	size_t cursor(bool absolute = true) const;
 
 	virtual void Run();
 
@@ -48,6 +47,6 @@ public:
 	std::shared_ptr<BaseScriptVariable> GetVariable(std::string name);
 
 	ScriptBlock(ScriptLinesView lines, int depth, ScriptBlock* parent, Script* owner);
-	~ScriptBlock();
+	virtual ~ScriptBlock();
 };
 

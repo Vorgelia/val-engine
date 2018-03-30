@@ -48,7 +48,7 @@ inline void Delegate<argTypes...>::operator-=(func_t& listener)
 {
 	for(auto& iter = _listeners.begin(); iter != _listeners.end(); ++iter)
 	{
-		if(iter->target<void(argTypes...)>() == listener.target<void(argTypes...)>())
+		if(iter->template target<void(argTypes...)>() == listener.template target<void(argTypes...)>())
 		{
 			_listeners.erase(iter);
 			break;

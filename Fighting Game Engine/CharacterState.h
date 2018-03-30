@@ -1,5 +1,4 @@
 #pragma once
-#include <memory>
 #include <unordered_set>
 #include <string>
 #include "JSON.h"
@@ -22,7 +21,7 @@ public:
 	std::string name() const;
 	int priority() const;
 
-	Script* script();
+	Script* script() const;
 
 	//air, crouching, light, medium, etc
 	const std::unordered_set<std::string>& stateTypeFlags() const;

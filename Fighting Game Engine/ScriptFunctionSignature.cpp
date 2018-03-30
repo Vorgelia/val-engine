@@ -17,9 +17,7 @@ ScriptVariableSignature::ScriptVariableSignature(ScriptVariableType type, std::s
 }
 
 ScriptFunctionSignature::ScriptFunctionSignature()
-{
-}
+= default;
 
 ScriptFunctionSignature::~ScriptFunctionSignature()
-{
-}
+= default;

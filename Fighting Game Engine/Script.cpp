@@ -20,12 +20,12 @@ bool Script::valid() const
 	return _valid;
 }
 
-ScriptControlFlag Script::controlFlag()
+ScriptControlFlag Script::controlFlag() const
 {
 	return _controlFlag;
 }
 
-bool Script::HasFunction(std::string name)
+bool Script::HasFunction(std::string name) const
 {
 	return _parentBlock != nullptr && _parentBlock->HasFunction(name);
 }
@@ -61,9 +61,9 @@ std::shared_ptr<BaseScriptVariable> Script::GetVariable(const std::string& name)
 	{
 		return _parentBlock->GetVariable(name);
 	}
-	catch(ScriptError error)
+	catch(ScriptError& error)
 	{
-		_debug->VE_LOG("Could not find variable " + name + " in script " + _name + ".", LogItem::Type::Warning);
+		_debug->VE_LOG("Could not find variable " + name + " in script " + _name + ".\n" + error.what(), LogItem::Type::Warning);
 		return nullptr;
 	}
 }
@@ -79,9 +79,9 @@ void Script::PreProcess()
 		std::vector<ScriptToken> tokens;
 		ScriptParsingUtils::ParseLineTokens(line, tokens);
 
-		if(indentation >= 0 && tokens.size() > 0 && tokens[0].type != ScriptTokenType::Preprocessor)
+		if(indentation >= 0 && !tokens.empty() && tokens[0].type != ScriptTokenType::Preprocessor)
 		{
-			_lines.push_back(ScriptLine(line, i, indentation, tokens));
+			_lines.emplace_back(ScriptLine(line, i, indentation, tokens));
 		}
 
 		if(indentation != 0 || tokens.size() < 3 || tokens[0].type != ScriptTokenType::Preprocessor || tokens[1].token != ScriptToken::preprocessor_pragma)
@@ -139,7 +139,7 @@ void Script::Init()
 	{
 		_parentBlock = std::make_shared<ScriptParentBlock>(ScriptLinesView(&_lines), 0, this);
 	}
-	catch(ScriptError error)
+	catch(ScriptError& error)
 	{
 		_debug->VE_LOG("(Preprocessing " + _name + ") " + std::string(error.what()), LogItem::Type::Warning);
 		_valid = false;
@@ -159,14 +159,14 @@ void Script::ExecuteFunction(std::string name, std::vector<std::shared_ptr<BaseS
 	{
 		_parentBlock->RunFunction(name, variables);
 	}
-	catch(ScriptError error)
+	catch(ScriptError& error)
 	{
 		int blockCursor = _blockStack.empty() ? _parentBlock->cursor() : _blockStack.top()->cursor();
 
 		_debug->VE_LOG("(" + _name + " : line " + std::to_string(_lines[blockCursor].index) + ") " + std::string(error.what()), LogItem::Type::Warning);
 		_valid = false;
 	}
-	catch(std::exception error)
+	catch(std::exception& error)
 	{
 		_debug->VE_LOG("Unhandled exception on script[" + _name + "]:\n" + std::string(error.what()), LogItem::Type::Error);
 		_valid = false;
@@ -196,5 +196,4 @@ Script::Script(std::string name, std::vector<std::string> lines, ServiceManager*
 }
 
 Script::~Script()
-{
-}
+= default;

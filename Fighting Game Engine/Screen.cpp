@@ -31,7 +31,7 @@ void Screen::HandleResized(GLFWwindow* wnd, int sizeX, int sizeY)
 	size = glm::ivec2(sizeX, sizeY);
 	invSize = glm::vec2(1.0 / (float)sizeX, 1.0 / (float)sizeY);
 
-	windowAspect = size.x / size.y;
+	windowAspect = float(size.x) / float(size.y);
 	windowAspectInv = 1.0 / windowAspect;
 
 	if(targetAspect > windowAspect)
@@ -88,5 +88,4 @@ Screen::Screen(ServiceManager* serviceManager) :
 }
 
 Screen::~Screen()
-{
-}
+= default;

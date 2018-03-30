@@ -1,16 +1,7 @@
 #include "ResourceManager.h"
 #include "ServiceManager.h"
-#include "Mesh.h"
-#include "SurfaceShader.h"
 #include "ComputeShader.h"
 #include "FilesystemManager.h"
-#include "Material.h"
-#include "Texture.h"
-#include "PostEffect.h"
-#include "Font.h"
-#include "ResourceInitializer.h"
-#include "DebugLog.h"
-#include "CachedMesh.h"
 #include "GraphicsGL.h"
 
 //If the following define exists, the engine will create some default resource files if the folder structure is missing.
@@ -71,9 +62,9 @@ void ResourceManager::PreprocessShaderSource(std::string& inoutShaderSource)
 
 		inoutShaderSource
 			= inoutShaderSource.substr(0, index)
-			+ "\n"
-			+ includeContents
-			+ inoutShaderSource.substr(nextNewline, inoutShaderSource.size() - nextNewline);
+			.append("\n")
+			.append(includeContents)
+			.append(inoutShaderSource.substr(nextNewline, inoutShaderSource.size() - nextNewline));
 
 		index = inoutShaderSource.find(includeSignature);
 	}
@@ -124,6 +115,4 @@ ResourceManager::ResourceManager(ServiceManager* serviceManager) : BaseService(s
 }
 
 ResourceManager::~ResourceManager()
-{
-
-}
+= default;

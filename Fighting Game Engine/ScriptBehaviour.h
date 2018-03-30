@@ -12,7 +12,7 @@ private:
 private:
 	Script* _script;
 
-	void RunScriptFunction(std::string name);
+	void RunScriptFunction(std::string name) const;
 public:
 	VE_BEHAVIOUR_NAME(ScriptBehaviour);
 

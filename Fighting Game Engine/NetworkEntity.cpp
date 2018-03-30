@@ -1,13 +1,12 @@
 #include "NetworkEntity.h"
 #include "DebugLog.h"
-#include "Time.h"
-#include <chrono>
+#include <Ws2tcpip.h>
 
 bool NetworkEntity::ConnectTo(std::string ip, int port)
 {
 	in_addr addr;
 	InetPton(AF_INET, ip.c_str(), &addr);
-	connections.push_back(ConnectionSocket(addr, port));
+	connections.emplace_back(addr, port);
 	return connections.back().Connect();
 }
 
@@ -16,7 +15,7 @@ bool NetworkEntity::HostServer(int port)
 	in_addr addr;
 	addr.S_un.S_addr = INADDR_ANY;
 
-	connections.push_back(ConnectionSocket(addr, port));
+	connections.emplace_back(addr, port);
 	return connections.back().BindAsServer();
 }
 
@@ -200,7 +199,7 @@ void NetworkEntity::EndFrame()
 	}
 }
 
-double NetworkEntity::ping()
+double NetworkEntity::ping() const
 {
 	if(_pingOutTime > _pingInTime)
 		return _lastPing;

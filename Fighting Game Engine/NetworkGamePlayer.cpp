@@ -1,6 +1,6 @@
 #include "NetworkGamePlayer.h"
 #include "InputManager.h"
-#include "InputDevice.h"
+#include "InputDeviceId.h"
 
 void NetworkGamePlayer::Update()
 {

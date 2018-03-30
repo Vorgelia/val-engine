@@ -28,7 +28,7 @@ std::shared_ptr<BaseScriptVariable> ScriptExpression::Evaluate()
 	std::stack<std::shared_ptr<BaseScriptVariable>> variableStack;
 	std::stack<const ScriptOperator*> operatorStack;
 
-	if(_tokens.size() == 0)
+	if(_tokens.empty())
 	{
 		throw ScriptError("Parser Error - Expected an expression");
 	}
@@ -290,5 +290,4 @@ ScriptExpression::ScriptExpression(ScriptBlock* parent, const std::vector<Script
 }
 
 ScriptExpression::~ScriptExpression()
-{
-}
+= default;

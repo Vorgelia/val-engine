@@ -8,11 +8,11 @@
 
 #define VE_BEHAVIOUR_FUNCTION(name)\
 	virtual void name(); \
-	inline virtual const bool using##name(){ return false; };
+	inline virtual bool using##name() const{ return false; };
 
 #define VE_BEHAVIOUR_REGISTER_FUNCTION(name)\
 	void name() override;\
-	inline virtual const bool using##name() override{ return true; };
+	inline virtual bool using##name() const override{ return true; };
 
 #define VE_BEHAVIOUR_FUNCTION_CALLER(name)\
 	[](Behaviour* behaviour)\
@@ -28,6 +28,8 @@ protected:
 
 public:
 	bool enabled;
+
+	Object* object() const;
 
 	virtual const std::string name() const = 0;
 

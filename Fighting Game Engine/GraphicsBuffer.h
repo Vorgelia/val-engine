@@ -25,6 +25,6 @@ public:
 	virtual const std::vector<float>& data() const;
 
 	GraphicsBuffer();
-	~GraphicsBuffer();
+	virtual ~GraphicsBuffer();
 };
 

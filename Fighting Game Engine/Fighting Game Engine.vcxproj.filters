@@ -419,6 +419,7 @@
     <ClCompile Include="GameCharacterData.cpp">
       <Filter>Val Engine\Game\Characters</Filter>
     </ClCompile>
+    <ClCompile Include="CharacterPhysicsManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FGIncludes.hpp">
@@ -714,6 +715,9 @@
     </ClInclude>
     <ClInclude Include="GameCharacterData.h">
       <Filter>Val Engine\Game\Characters</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterPhysicsManager.h">
+      <Filter>Val Engine</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

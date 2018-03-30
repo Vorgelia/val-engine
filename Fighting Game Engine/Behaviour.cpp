@@ -73,3 +73,8 @@ Behaviour::~Behaviour()
 {
 	VE_BEHAVIOUR_FUNCTION_CALLER(Cleanup)(this);
 }
+
+Object* Behaviour::object() const
+{
+	return _owner;
+}

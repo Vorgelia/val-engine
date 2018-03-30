@@ -7,12 +7,11 @@
 #include "Script.h"
 #include "ScriptVariable.h"
 #include "ScriptManager.h"
-#include "InputManager.h"
 #include "InputDevice.h"
-#include "InputMotion.h"
 #include "FilesystemManager.h"
 #include "ResourceManager.h"
 #include "GamePlayer.h"
+#include "GameCharacterData.h"
 
 void CharacterStateManager::StateUpdate()
 {
@@ -99,7 +98,7 @@ void CharacterStateManager::EvaluateNextState()
 
 bool CharacterStateManager::StartState(std::string name)
 {
-	auto& iter = _stateLookup.find(name);
+	auto iter = _stateLookup.find(name);
 	if(iter != _stateLookup.end())
 	{
 		_currentState = iter->second.get();
@@ -119,7 +118,7 @@ bool CharacterStateManager::StartState(std::string name)
 
 bool CharacterStateManager::SetFrame(std::string name)
 {
-	auto& iter = _frameLookup.find(name);
+	auto iter = _frameLookup.find(name);
 	if(iter != _frameLookup.end())
 	{
 		_currentFrame = iter->second.get();
@@ -158,7 +157,7 @@ void CharacterStateManager::Unfreeze()
 
 bool CharacterStateManager::AddFlag(CharacterStateFlagType type, std::string flag)
 {
-	auto& iter = _flags.find(type);
+	auto iter = _flags.find(type);
 	if(iter == _flags.end())
 	{
 		iter = _flags.emplace(type, std::unordered_set<std::string>()).first;
@@ -169,7 +168,7 @@ bool CharacterStateManager::AddFlag(CharacterStateFlagType type, std::string fla
 
 bool CharacterStateManager::RemoveFlag(CharacterStateFlagType type, std::string flag)
 {
-	auto& iter = _flags.find(type);
+	auto iter = _flags.find(type);
 	if(iter == _flags.end())
 	{
 		return false;
@@ -185,7 +184,7 @@ void CharacterStateManager::ClearFlags()
 
 const std::unordered_set<std::string>& CharacterStateManager::GetFlags(CharacterStateFlagType type)
 {
-	auto& iter = _flags.find(type);
+	auto iter = _flags.find(type);
 	if(iter == _flags.end())
 	{
 		iter = _flags.emplace(type, std::unordered_set<std::string>()).first;
@@ -220,7 +219,7 @@ CharacterStateManager::CharacterStateManager(GameCharacter* owner, ServiceManage
 
 			for(auto& iter : *stateJson)
 			{
-				auto& result = this->_stateLookup.insert(std::make_pair(
+				auto result = this->_stateLookup.insert(std::make_pair(
 					JSON::Get<std::string>(iter["name"]),
 					std::make_unique<CharacterState>(iter,  _scriptManager->AddScript(JSON::Get<std::string>(iter["script"])))));
 				_scriptManager->HandleScriptCharacterBindings(*_owner, result.first->second->script());
@@ -259,5 +258,4 @@ CharacterStateManager::CharacterStateManager(GameCharacter* owner, ServiceManage
 }
 
 CharacterStateManager::~CharacterStateManager()
-{
-}
+= default;

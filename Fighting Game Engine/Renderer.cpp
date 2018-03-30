@@ -16,8 +16,11 @@ void Renderer::OnRenderObjects()
 	_rendering->DrawMesh(_owner->transform(), _mesh, _material);
 }
 
-Renderer::Renderer(Object* owner, ServiceManager* serviceManager, Mesh* mesh, Material* material) :Behaviour(owner, serviceManager)
+Renderer::Renderer(Object* owner, ServiceManager* serviceManager, Mesh* mesh, Material* material) : Behaviour(owner, serviceManager)
 {
+	_resource = serviceManager->ResourceManager();
+	_rendering = serviceManager->Rendering();
+
 	_mesh = mesh;
 	if(_mesh == nullptr)
 	{
@@ -55,8 +58,4 @@ Renderer::Renderer(Object* owner, ServiceManager* serviceManager, const json& j)
 	{
 		_material = nullptr;
 	}
-}
-
-Renderer::~Renderer()
-{
 }

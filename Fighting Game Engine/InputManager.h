@@ -1,10 +1,7 @@
 #pragma once
-#include "GLIncludes.hpp"
 #include <unordered_map>
-#include <unordered_set>
 #include <memory>
 #include <thread>
-#include <functional>
 #include "BaseService.h"
 #include "Delegate.h"
 
@@ -30,7 +27,7 @@ public:
 	void FrameUpdate();
 
 	//TODO: Create temporary network device
-	const std::unordered_map<int, std::shared_ptr<InputDevice>>& inputDevices();
+	const std::unordered_map<int, std::shared_ptr<InputDevice>>& inputDevices() const;
 
 	InputDevice* GetInputDevice(int id);
 	InputDevice* GetTemporaryNetworkDevice();

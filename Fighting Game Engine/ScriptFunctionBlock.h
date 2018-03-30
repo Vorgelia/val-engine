@@ -1,7 +1,5 @@
 #pragma once
 #include "ScriptBlock.h"
-#include <string>
-#include <stdarg.h>
 
 struct ScriptFunctionSignature;
 
@@ -10,7 +8,7 @@ class ScriptFunctionBlock :
 {
 	ScriptFunctionSignature* _signature;
 
-	bool HandleControlFlag();
+	bool HandleControlFlag() override;
 public:
 	std::shared_ptr<BaseScriptVariable> returnValue() const;
 

@@ -37,7 +37,7 @@ public:
 	Script* AddScript(const FS::path& path);
 	void AddVariable(const std::string& name, const std::shared_ptr<BaseScriptVariable>& variable);
 
-	void HandleScriptCharacterBindings(GameCharacter& character, Script* script);
+	void HandleScriptCharacterBindings(GameCharacter& character, Script* script) const;
 
 	void RemoveScript(Script* script);
 

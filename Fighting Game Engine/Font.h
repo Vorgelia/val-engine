@@ -43,12 +43,12 @@ public:
 	const unsigned int atlasSize;
 	const unsigned int atlasPadding;
 
-	const GLuint height();
-	const GLuint topBearing();
+	const GLuint height() const;
+	const GLuint topBearing() const;
 
 	Texture* GetAtlas(int index);
 	const FontCharacter* GetCharacter(GLubyte ch);
 
-	Font(const std::string& name, unsigned int textSize = 64, unsigned int atlasSize = 1024, unsigned int atlasPadding = 2);
+	Font(std::string name, unsigned int textSize = 64, unsigned int atlasSize = 1024, unsigned int atlasPadding = 2);
 	~Font() = default;
 };

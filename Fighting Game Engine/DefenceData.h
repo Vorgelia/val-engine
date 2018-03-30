@@ -7,7 +7,7 @@ class DefenceData :
 	float _damageMultiplier;
 
 public:
-	float damageMultiplier();
+	float damageMultiplier() const;
 
 	DefenceData(const json& j);
 	~DefenceData();

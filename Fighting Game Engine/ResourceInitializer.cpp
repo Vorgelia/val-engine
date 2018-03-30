@@ -1,6 +1,6 @@
-#include "CommonUtilIncludes.hpp"
-#include "FilesystemManager.h"
-#include "resource.h"
+//#include "CommonUtilIncludes.hpp"
+//#include "FilesystemManager.h"
+//#include "resource.h"
 #include "ResourceInitializer.h"
 
 void ResourceInitializer::Init()

@@ -11,12 +11,12 @@
 #define VE_SCENE_FUNCTION_CALL(fnName, ...)\
 	ApplyFunctionToCurrentScene([](GameScene* scene) { scene->fnName(); }, ##__VA_ARGS__);
 
-GameScene* GameSceneManager::currentScene()
+GameScene* GameSceneManager::currentScene() const
 {
 	return _currentScene;
 }
 
-bool GameSceneManager::isLoading()
+bool GameSceneManager::isLoading() const
 {
 	return _isLoading;
 }
@@ -141,7 +141,7 @@ void GameSceneManager::Cleanup()
 	_resourceManager->Unload();
 }
 
-void GameSceneManager::ApplyFunctionToCurrentScene(std::function<void(GameScene*)> func, bool requiredInitializedState)
+void GameSceneManager::ApplyFunctionToCurrentScene(std::function<void(GameScene*)> func, bool requiredInitializedState) const
 {
 	if(_isLoading || _currentScene == nullptr || (requiredInitializedState != _currentScene->initialized()))
 		return;
@@ -178,5 +178,4 @@ GameSceneManager::GameSceneManager(ServiceManager* serviceManager) :
 }
 
 GameSceneManager::~GameSceneManager()
-{
-}
+= default;

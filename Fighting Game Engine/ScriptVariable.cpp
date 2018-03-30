@@ -19,7 +19,7 @@ std::string ScriptString::ToString()
 }
 
 template<>
-ScriptInt::ScriptVariable(long value, bool isConst) : BaseScriptVariable(ScriptVariableType::Int, isConst)
+ScriptInt::ScriptVariable(std::int64_t value, bool isConst) : BaseScriptVariable(ScriptVariableType::Int, isConst)
 {
 	_value = value;
 	_initialized = true;

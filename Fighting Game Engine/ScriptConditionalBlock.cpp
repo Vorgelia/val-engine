@@ -36,5 +36,4 @@ ScriptConditionalBlock::ScriptConditionalBlock(std::vector<ScriptToken>& conditi
 }
 
 ScriptConditionalBlock::~ScriptConditionalBlock()
-{
-}
+= default;

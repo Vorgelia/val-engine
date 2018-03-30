@@ -28,10 +28,10 @@ public:
 
 	ScriptVariableType type() const;
 	bool isConst() const;
-	bool isInitialized();
+	bool isInitialized() const;
 	virtual std::string ToString();
 
 	BaseScriptVariable(ScriptVariableType type, bool isConst = false);
 	BaseScriptVariable();
-	~BaseScriptVariable();
+	virtual ~BaseScriptVariable();
 };

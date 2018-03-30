@@ -24,6 +24,4 @@ CharacterSprite::CharacterSprite(const json& j)
 }
 
 CharacterSprite::~CharacterSprite()
-{
-
-}
+= default;

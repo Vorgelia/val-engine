@@ -4,7 +4,7 @@
 
 GLint SurfaceShader::UniformLocation(const std::string& str) const
 {
-	auto& iter = _uniformLocations.find(str);
+	auto iter = _uniformLocations.find(str);
 	if(iter != _uniformLocations.end())
 	{
 		return iter->second;
@@ -23,6 +23,4 @@ SurfaceShader::SurfaceShader(const std::string & name, GLuint id)
 }
 
 SurfaceShader::~SurfaceShader()
-{
-
-}
+= default;

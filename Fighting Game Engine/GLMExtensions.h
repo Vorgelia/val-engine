@@ -1,7 +1,6 @@
 #pragma once
 #include<GLM\glm.hpp>
-#include<GLM\gtc\matrix_transform.hpp>
-#include<GLM\gtc\type_ptr.hpp>
+#include <cstdint>
 
 namespace glm
 {
@@ -14,4 +13,21 @@ namespace glm
 		}
 		return from + (to - from)*amount;
 	}
+
+	template<typename T>
+	T moveTowards(T from, T to, T rate)
+	{
+		if (to == from)
+		{
+			return from;
+		}
+
+		T toTarget = to - from;
+		toTarget = glm::sign(toTarget) * glm::sign(rate) * glm::min(glm::abs(toTarget), glm::abs(rate));
+
+		return from + toTarget;
+	}
+
+	typedef glm::tvec2<std::int64_t, glm::highp> lvec2;
+	typedef glm::tvec4<std::int64_t, glm::highp> lvec4;
 }

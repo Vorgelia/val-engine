@@ -11,6 +11,7 @@ class BaseScriptVariable;
 class CharacterState;
 class CharacterFrame;
 class CharacterStateManager;
+class CharacterPhysicsManager;
 class GamePlayer;
 struct GameCharacterData;
 
@@ -40,8 +41,10 @@ private:
 	std::unordered_map<std::string, std::shared_ptr<BaseScriptVariable>> _variables;
 
 	bool _flipped;
+	std::unordered_set<std::string> _systemFlags;
 
 	std::unique_ptr<CharacterStateManager> _stateManager;
+	std::unique_ptr<CharacterPhysicsManager> _physicsManager;
 
 	void CharacterInit();
 	void CharacterUpdate();
@@ -52,7 +55,8 @@ public:
 	VE_BEHAVIOUR_REGISTER_FUNCTION(GameUpdate);
 
 	const GameCharacterData* characterData() const;
-	CharacterStateManager* stateManager();
+	CharacterStateManager* stateManager() const;
+	CharacterPhysicsManager* physicsManager() const;
 
 	void SetOwner(GamePlayer* owner);
 

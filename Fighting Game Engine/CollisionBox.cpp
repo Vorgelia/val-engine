@@ -1,23 +1,23 @@
 #include "CollisionBox.h"
 
-bool CollisionBox::Overlaps(CollisionBox* hitbox)
+bool CollisionBox::Overlaps(CollisionBox* hitbox) const
 {
 	return (abs(rect.x - hitbox->rect.x) < rect.z + hitbox->rect.z) && (abs(rect.y - hitbox->rect.y) < rect.w + hitbox->rect.w);
 }
 
-CollisionBox CollisionBox::flipped()
+CollisionBox CollisionBox::flipped() const
 {
-	return CollisionBox(glm::ivec4(-rect.x, rect.y, rect.z, rect.w));
+	return { glm::ivec4(-rect.x, rect.y, rect.z, rect.w) };
 }
 
 CollisionBox CollisionBox::FromTopLeft(glm::ivec4 rect)
 {
-	return CollisionBox(glm::ivec4(rect.x + rect.z*0.5, rect.y + rect.w*0.5, rect.z*0.5, rect.w*0.5));
+	return { glm::ivec4(rect.x + rect.z*0.5, rect.y + rect.w*0.5, rect.z*0.5, rect.w*0.5) };
 }
 
-CollisionBox CollisionBox::operator+(const glm::ivec2& rhs)
+CollisionBox CollisionBox::operator+(const glm::ivec2& rhs) const
 {
-	return CollisionBox(glm::ivec4(rect.x + rhs.x, rect.y + rhs.y, rect.z, rect.w));
+	return { glm::ivec4(rect.x + rhs.x, rect.y + rhs.y, rect.z, rect.w) };
 }
 
 CollisionBox::CollisionBox(glm::ivec4 rect)

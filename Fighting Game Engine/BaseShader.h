@@ -1,7 +1,6 @@
 #pragma once
 #include <string>
 #include <vector>
-#include <unordered_map>
 #include "GLIncludes.hpp"
 
 enum class ShaderProgramType

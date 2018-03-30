@@ -1,9 +1,7 @@
 #include "GraphicsGL.h"
 #include "ServiceManager.h"
-#include "Profiler.h"
 #include "BaseShader.h"
 #include "ComputeShader.h"
-#include "SurfaceShader.h"
 #include "Texture.h"
 #include "FrameBuffer.h"
 #include "GraphicsBuffer.h"
@@ -13,7 +11,6 @@
 #include "CachedMesh.h"
 #include "Material.h"
 #include "DebugLog.h"
-#include "Screen.h"
 #include "InputManager.h"
 #include <memory>
 
@@ -49,7 +46,7 @@ std::unique_ptr<Texture> GraphicsGL::CreateTexture(const std::string& name, cons
 		break;
 	}
 
-	const unsigned char* data = (pixels.size() > 0) ? &pixels[0] : nullptr;
+	const unsigned char* data = (!pixels.empty()) ? &pixels[0] : nullptr;
 	glTexImage2D(GL_TEXTURE_2D, 0, format, dimensions.x, dimensions.y, 0, dataType, GL_UNSIGNED_BYTE, data);
 
 	UpdateTexture(*texture, pixels);
@@ -75,13 +72,13 @@ void GraphicsGL::UpdateTexture(Texture& texture, const std::vector<unsigned char
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, texture._filtering);
 }
 
-void GraphicsGL::DestroyTexture(Texture& texture)
+void GraphicsGL::DestroyTexture(Texture& texture) const
 {
 	glDeleteTextures(1, &texture._id);
 	texture._valid = false;
 }
 
-GLuint GraphicsGL::CombineShaderAttachments(const std::vector<ShaderAttachment>& attachments, ShaderProgramType type)
+GLuint GraphicsGL::CombineShaderAttachments(const std::vector<ShaderAttachment>& attachments, ShaderProgramType type) const
 {
 	std::vector<GLuint> shaderAttachments;
 	shaderAttachments.reserve(attachments.size());
@@ -138,12 +135,12 @@ bool GraphicsGL::BindGraphicsBufferId(GLuint id, GLenum target)
 	return true;
 }
 
-GLuint GraphicsGL::CreateShaderAttachment(const ShaderAttachment& shaderAttachment)
+GLuint GraphicsGL::CreateShaderAttachment(const ShaderAttachment& shaderAttachment) const
 {
 	GLuint shader = glCreateShader(shaderAttachment.type);
 	const char* codeStr = shaderAttachment.code.c_str();
 
-	glShaderSource(shader, 1, &codeStr, NULL);
+	glShaderSource(shader, 1, &codeStr, nullptr);
 	glCompileShader(shader);
 
 	GLint shaderStatus;
@@ -152,7 +149,7 @@ GLuint GraphicsGL::CreateShaderAttachment(const ShaderAttachment& shaderAttachme
 	if(shaderStatus != GL_TRUE)
 	{
 		char shaderLog[512];
-		glGetShaderInfoLog(shader, 512, NULL, shaderLog);
+		glGetShaderInfoLog(shader, 512, nullptr, shaderLog);
 		_debug->VE_LOG("Shader compilation failure:\n" + std::string(shaderLog), LogItem::Type::Warning);
 		return 0;
 	}
@@ -162,9 +159,9 @@ GLuint GraphicsGL::CreateShaderAttachment(const ShaderAttachment& shaderAttachme
 	}
 }
 
-GLuint GraphicsGL::CreateShaderProgram(const std::vector<GLuint>& shaders, ShaderProgramType type)
+GLuint GraphicsGL::CreateShaderProgram(const std::vector<GLuint>& shaders, ShaderProgramType type) const
 {
-	GLuint shaderProgram = glCreateProgram();
+	const GLuint shaderProgram = glCreateProgram();
 	//Attach all the shaders into a shader program.
 	for(unsigned int i = 0; i < shaders.size(); ++i)
 	{
@@ -283,7 +280,7 @@ void GraphicsGL::ClearFrameBuffer(FrameBuffer& frameBuffer)
 	glClear(frameBuffer.clearFlags);
 }
 
-void GraphicsGL::DestroyFrameBuffer(FrameBuffer& frameBuffer)
+void GraphicsGL::DestroyFrameBuffer(FrameBuffer& frameBuffer) const
 {
 	for(const std::unique_ptr<Texture>& tex : frameBuffer.textures)
 	{
@@ -299,19 +296,8 @@ void GraphicsGL::DestroyFrameBuffer(FrameBuffer& frameBuffer)
 	frameBuffer._valid = false;
 }
 
-void GraphicsGL::UpdateGraphicsBuffer(const GraphicsBuffer& buffer)
+void GraphicsGL::UpdateGraphicsBuffer(const GraphicsBuffer& buffer) const
 {
-	GLenum bindingTarget = GL_UNIFORM_BUFFER;
-	switch(buffer._type)
-	{
-	case GraphicsBufferType::ShaderStorage:
-		bindingTarget = GL_SHADER_STORAGE_BUFFER;
-		break;
-	case GraphicsBufferType::Uniform:
-		bindingTarget = GL_UNIFORM_BUFFER;
-		break;
-	}
-
 	const std::vector<float>& bufferData = buffer.data();
 
 	if(buffer._dataSize != bufferData.size())
@@ -390,7 +376,7 @@ std::unique_ptr<Font> GraphicsGL::CreateFont(std::string name)
 	return font;
 }
 
-void GraphicsGL::DestroyFont(Font& font)
+void GraphicsGL::DestroyFont(Font& font) const
 {
 	for(auto& iter : font._atlases)
 	{
@@ -398,7 +384,7 @@ void GraphicsGL::DestroyFont(Font& font)
 	}
 }
 
-void GraphicsGL::DestroyShader(BaseShader& shader)
+void GraphicsGL::DestroyShader(BaseShader& shader) const
 {
 	if(_boundShader == shader._id)
 	{
@@ -442,7 +428,7 @@ std::unique_ptr<Mesh> GraphicsGL::CreateMesh(const std::string& name, CachedMesh
 	return mesh;
 }
 
-void GraphicsGL::DestroyMesh(Mesh & mesh)
+void GraphicsGL::DestroyMesh(Mesh & mesh) const
 {
 	glDeleteBuffers(1, &mesh._vbo);
 	glDeleteBuffers(1, &mesh._ebo);
@@ -515,12 +501,12 @@ bool GraphicsGL::BindDefaultFrameBuffer()
 	return BindFrameBufferId(0);
 }
 
-void GraphicsGL::BindTextureToImageUnit(GLuint unit, const Texture& tex, GLenum accessType)
+void GraphicsGL::BindTextureToImageUnit(GLuint unit, const Texture& tex, GLenum accessType) const
 {
 	glBindImageTexture(unit, tex._id, 0, GL_FALSE, 0, accessType, GL_RGBA16);
 }
 
-void GraphicsGL::BindBufferToBindingPoint(GLuint unit, const GraphicsBuffer& buffer)
+void GraphicsGL::BindBufferToBindingPoint(GLuint unit, const GraphicsBuffer& buffer) const
 {
 	switch(buffer._type)
 	{
@@ -596,5 +582,4 @@ GraphicsGL::GraphicsGL(ServiceManager* serviceManager) : BaseService(serviceMana
 }
 
 GraphicsGL::~GraphicsGL()
-{
-}
+= default;

@@ -8,7 +8,7 @@ class ScriptParentBlock :
 {
 	std::unordered_map<std::string, ScriptFunctionSignature> _functions;
 
-	bool HandleControlFlag();
+	bool HandleControlFlag() override;
 
 	void HandleFunctionDeclarationLine(std::vector<ScriptToken> &tokens) override;
 public:

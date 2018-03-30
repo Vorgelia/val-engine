@@ -23,6 +23,6 @@ public:
 
 	Renderer(Object* owner, ServiceManager* serviceManager, Mesh* mesh = nullptr, Material* material = nullptr);
 	Renderer(Object* owner, ServiceManager* serviceManager, const json& j);
-	~Renderer();
+	~Renderer() = default;
 };
 

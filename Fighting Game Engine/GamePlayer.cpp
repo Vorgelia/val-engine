@@ -17,7 +17,7 @@ void GamePlayer::HandleDeviceRemoved(InputDevice* device)
 	}
 }
 
-InputDevice * GamePlayer::inputDevice()
+InputDevice * GamePlayer::inputDevice() const
 {
 	return _inputDevice;
 }
@@ -38,5 +38,4 @@ GamePlayer::GamePlayer(int id, int deviceId, ServiceManager* serviceManager)
 }
 
 GamePlayer::~GamePlayer()
-{
-}
+= default;

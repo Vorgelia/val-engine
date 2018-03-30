@@ -20,7 +20,7 @@ public:
 	const T& back() const;//Latest entry
 	const T& end() const;//Earliest entry, to be overwritten.
 
-	int position();
+	int position() const;
 
 	int InternalIndex(int index) const;
 
@@ -131,7 +131,7 @@ void CircularBuffer<T>::SetPosition(int pos)
 }
 
 template <class T>
-int CircularBuffer<T>::position()
+int CircularBuffer<T>::position() const
 {
 	return _bufferEnd;
 }

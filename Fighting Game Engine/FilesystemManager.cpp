@@ -12,31 +12,26 @@
 #include "FilesystemManager.h"
 #include "CachedMesh.h"
 #include "Material.h"
-#include "BaseShader.h"
-#include "Texture.h"
 #include "PostEffect.h"
-#include "Object.h"
 #include "Transform.h"
 #include "GLIncludes.hpp"
-#include "InputManager.h"
 #include "InputDevice.h"
 #include "InputEvent.h"
-#include "InputFrame.h"
 #include "DebugLog.h"
 #include "ResourceManager.h"
 
 //Probably my least favourite part of making this engine is importing files.
 //The code always looks like a mess but at least i don't have to touch it after making it.
-std::string FilesystemManager::LoadTextResource(int id, const std::string& type)
+std::string FilesystemManager::LoadTextResource(int id, const std::string& type) const
 {
 	//Copypasta text resource loading. Could probably be optimized.
-	HRSRC hResource = FindResource(NULL, MAKEINTRESOURCE(id), (LPCSTR)type.c_str());
+	HRSRC hResource = FindResource(nullptr, MAKEINTRESOURCE(id), (LPCSTR)type.c_str());
 	if(hResource == nullptr)
 	{
 		throw std::runtime_error("Unable to find resource with ID " + std::to_string(id));
 	}
 
-	HGLOBAL hLoadedResource = LoadResource(NULL, hResource);
+	HGLOBAL hLoadedResource = LoadResource(nullptr, hResource);
 	if(hLoadedResource == nullptr)
 	{
 		throw std::runtime_error("Unable to load resource with ID " + std::to_string(id));
@@ -46,21 +41,21 @@ std::string FilesystemManager::LoadTextResource(int id, const std::string& type)
 	LPBYTE sData = (LPBYTE)pdata;
 	LPTSTR sText = (LPTSTR)sData;
 
-	int size = SizeofResource(NULL, hResource) / sizeof(char);
+	int size = SizeofResource(nullptr, hResource) / sizeof(char);
 	return std::string(sText).substr(0, size);
 }
 
-std::vector<unsigned char> FilesystemManager::LoadBinaryResource(int id, const std::string& type)
+std::vector<unsigned char> FilesystemManager::LoadBinaryResource(int id, const std::string& type) const
 {
 	//Doesn't work, completely unused.
-	HRSRC hResource = FindResource(NULL, MAKEINTRESOURCE(id), (LPCSTR)type.c_str());
-	if(hResource == 0)
+	HRSRC hResource = FindResource(nullptr, MAKEINTRESOURCE(id), (LPCSTR)type.c_str());
+	if(hResource == nullptr)
 	{
 		throw std::runtime_error("Unable to find binary resource with ID " + std::to_string(id));
 	}
 
-	HGLOBAL hLoadedResource = LoadResource(NULL, hResource);
-	if(hLoadedResource == 0)
+	HGLOBAL hLoadedResource = LoadResource(nullptr, hResource);
+	if(hLoadedResource == nullptr)
 	{
 		throw std::runtime_error("Unable to load binary resource with ID " + std::to_string(id));
 	}
@@ -68,11 +63,11 @@ std::vector<unsigned char> FilesystemManager::LoadBinaryResource(int id, const s
 	LPVOID pdata = LockResource(hLoadedResource);
 	LPBYTE sData = (LPBYTE)pdata;
 
-	int size = SizeofResource(NULL, hResource) / sizeof(unsigned char);
+	int size = SizeofResource(nullptr, hResource) / sizeof(unsigned char);
 	return std::vector<unsigned char>((unsigned char*)sData, (unsigned char*)sData[size]);
 }
 
-std::string FilesystemManager::ReturnFile(const FS::path& dir)
+std::string FilesystemManager::ReturnFile(const FS::path& dir) const
 {
 	//Abstraction for turning a file into a string.
 	if(!FS::exists(dir))
@@ -95,7 +90,7 @@ std::string FilesystemManager::ReturnFile(const FS::path& dir)
 }
 
 //Abstraction for turning a file into an array of its lines. Heavily used in parsing.
-std::vector<std::string> FilesystemManager::ReturnFileLines(const FS::path& dir, bool removeWhitespace)
+std::vector<std::string> FilesystemManager::ReturnFileLines(const FS::path& dir, bool removeWhitespace) const
 {
 	std::string& content = ReturnFile(dir);
 
@@ -129,7 +124,7 @@ std::unique_ptr<json> FilesystemManager::LoadFileResource(const FS::path& path)
 	{
 		j = std::make_unique<json>(json::parse(file));
 	}
-	catch(std::invalid_argument err)
+	catch(std::invalid_argument& err)
 	{
 		_debug->VE_LOG("Error when parsing JSON file " + path.string() + "\n\t" + err.what(), LogItem::Type::Error);
 		j->clear();
@@ -344,7 +339,7 @@ std::unique_ptr<PostEffect> FilesystemManager::LoadFileResource(const FS::path& 
 	return postEffect;
 }
 
-bool FilesystemManager::SaveFile(const FS::path& dir, std::string& content, int flags)
+bool FilesystemManager::SaveFile(const FS::path& dir, std::string& content, int flags) const
 {
 	boost::algorithm::erase_all(content, "\r");
 
@@ -361,7 +356,7 @@ bool FilesystemManager::SaveFile(const FS::path& dir, std::string& content, int 
 
 //Most of these parsers work in similar ways.
 //Lines beginning with // are comments, #DIRECTIVES change where the data goes, the data itself is split on = and ,
-void FilesystemManager::LoadControlSettings(const FS::path& path, std::unordered_map<InputDirection, InputEvent>& dir, std::unordered_map<InputButton, InputEvent>& bt)
+void FilesystemManager::LoadControlSettings(const FS::path& path, std::unordered_map<InputDirection, InputEvent>& dir, std::unordered_map<InputButton, InputEvent>& bt) const
 {
 	std::vector<std::string> lines;
 
@@ -410,7 +405,7 @@ void FilesystemManager::LoadControlSettings(const FS::path& path, std::unordered
 	}
 }
 
-void FilesystemManager::ApplyFunctionToFiles(const FS::path& dir, std::function<void(const FS::path&)> func)
+void FilesystemManager::ApplyFunctionToFiles(const FS::path& dir, std::function<void(const FS::path&)> func) const
 {
 	if(!FS::is_directory(dir))
 	{
@@ -441,12 +436,12 @@ void FilesystemManager::Cleanup()
 {
 }
 
-void FilesystemManager::LoadTextureData(const FS::path& path, std::vector<unsigned char>& out_pixels, glm::ivec2& out_size)
+void FilesystemManager::LoadTextureData(const FS::path& path, std::vector<unsigned char>& out_pixels, glm::ivec2& out_size) const
 {
 	out_size.x = out_size.y = 0;
 	out_pixels.clear();
 
-	unsigned char* pixels = SOIL_load_image(path.string().c_str(), &out_size.x, &out_size.y, 0, SOIL_LOAD_RGBA);
+	unsigned char* pixels = SOIL_load_image(path.string().c_str(), &out_size.x, &out_size.y, nullptr, SOIL_LOAD_RGBA);
 	if(pixels == nullptr)
 	{
 		_debug->VE_LOG("Unable to load texture at path " + path.string(), LogItem::Type::Warning);

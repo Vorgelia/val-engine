@@ -55,5 +55,4 @@ ScriptFunctionBlock::ScriptFunctionBlock(ScriptFunctionSignature* signature, Scr
 
 
 ScriptFunctionBlock::~ScriptFunctionBlock()
-{
-}
+= default;

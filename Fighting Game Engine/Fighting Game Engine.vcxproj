@@ -89,6 +89,7 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CharacterFrame.cpp" />
     <ClCompile Include="CharacterHitData.cpp" />
+    <ClCompile Include="CharacterPhysicsManager.cpp" />
     <ClCompile Include="CharacterRenderer.cpp" />
     <ClCompile Include="CharacterSprite.cpp" />
     <ClCompile Include="CharacterState.cpp" />
@@ -177,6 +178,7 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CharacterFrame.h" />
     <ClInclude Include="CharacterHitData.h" />
+    <ClInclude Include="CharacterPhysicsManager.h" />
     <ClInclude Include="CharacterRenderer.h" />
     <ClInclude Include="CharacterSprite.h" />
     <ClInclude Include="CharacterState.h" />

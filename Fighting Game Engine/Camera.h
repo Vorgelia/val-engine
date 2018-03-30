@@ -8,7 +8,7 @@ public:
 	glm::mat4* projectionMatrix;
 	float zoomLevel;
 
-	glm::mat4 ViewMatrix(float depth = 1);
+	glm::mat4 ViewMatrix(float depth = 1) const;
 	Camera(glm::vec2 pos, glm::mat4* mat);
 };
 

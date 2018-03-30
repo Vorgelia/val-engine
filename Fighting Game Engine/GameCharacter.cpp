@@ -2,11 +2,10 @@
 #include "Script.h"
 #include "ScriptManager.h"
 #include "ResourceManager.h"
-#include "FilesystemManager.h"
 #include "CharacterStateManager.h"
+#include "CharacterPhysicsManager.h"
 #include "GamePlayer.h"
 #include "GameCharacterData.h"
-#include "Delegate.h"
 #include "ServiceManager.h"
 
 VE_BEHAVIOUR_REGISTER_TYPE(GameCharacter);
@@ -16,9 +15,14 @@ const GameCharacterData * GameCharacter::characterData() const
 	return _characterData.get();
 }
 
-CharacterStateManager* GameCharacter::stateManager()
+CharacterStateManager* GameCharacter::stateManager() const
 {
 	return _stateManager.get();
+}
+
+CharacterPhysicsManager* GameCharacter::physicsManager() const
+{
+	return _physicsManager.get();
 }
 
 void GameCharacter::SetOwner(GamePlayer* owner)
@@ -55,6 +59,7 @@ void GameCharacter::GameUpdate()
 	CharacterUpdate();
 
 	_stateManager->StateUpdate();
+	_physicsManager->Update();
 }
 
 GameCharacter::GameCharacter(Object* owner, ServiceManager* serviceManager, const json& j) : Behaviour(owner, serviceManager, j)
@@ -73,6 +78,7 @@ GameCharacter::GameCharacter(Object* owner, ServiceManager* serviceManager, cons
 		{
 			_characterData = std::make_unique<GameCharacterData>(*dataJson);
 			_stateManager = std::make_unique<CharacterStateManager>(this, _serviceManager);
+			_physicsManager = std::make_unique<CharacterPhysicsManager>(this, serviceManager);
 
 			std::string scriptPath;
 			if(JSON::TryGetMember(j, "characterScript", scriptPath))
@@ -85,6 +91,4 @@ GameCharacter::GameCharacter(Object* owner, ServiceManager* serviceManager, cons
 }
 
 GameCharacter::~GameCharacter()
-{
-
-}
+= default;

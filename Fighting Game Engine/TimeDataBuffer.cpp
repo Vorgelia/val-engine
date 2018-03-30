@@ -15,10 +15,8 @@ void TimeDataBuffer::SetupData(float time, float deltaTime, float frameCount)
 }
 
 TimeDataBuffer::TimeDataBuffer()
-{
-}
+= default;
 
 
 TimeDataBuffer::~TimeDataBuffer()
-{
-}
+= default;

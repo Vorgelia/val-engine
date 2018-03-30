@@ -3,12 +3,10 @@
 #include <string>
 #include <unordered_map>
 #include <memory>
-#include "InputDeviceId.h"
 #include "InputFrame.h"
 #include "InputEvent.h"
 #include "CircularBuffer.h"
 #include "InputIdentifiers.h"
-#include "GLIncludes.hpp"
 #include "Delegate.h"
 
 class FilesystemManager;
@@ -45,7 +43,7 @@ private:
 	int InputMotionDistance(int currentIndex, InputMotionComponent motionComp, int maxBuffer, bool firstInput = false);
 
 public:
-	const int deviceID() const;
+	int deviceID() const;
 	const std::string& deviceName() const;
 	const InputBuffer* inputBuffer() const;
 
@@ -57,7 +55,7 @@ public:
 
 	bool EvaluateInput(const InputEvent& ie);
 	bool EvaluateMotion(const InputMotion& motion);
-	bool InputMotionFrameCheck(const InputMotionComponent& motionComp, int index);
+	bool InputMotionFrameCheck(const InputMotionComponent& motionComp, int index) const;
 
 	InputDevice(int deviceID, ServiceManager* serviceManager);
 	~InputDevice();

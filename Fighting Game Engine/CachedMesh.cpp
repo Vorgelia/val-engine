@@ -1,7 +1,7 @@
 #include "CachedMesh.h"
 #include "Mesh.h"
+#include <utility>
 #include "FilesystemManager.h"
-#include "DebugLog.h"
 
 //Cached meshes are just raw vertex data that is stored in memory before being turned into meshes.
 //Helps with duplicating or editing meshes in realtime.
@@ -19,13 +19,13 @@ std::vector<VertexAttribute> VertexAttribute::defaultMesh()
 
 bool CachedMesh::RegisterOwner(Mesh* owner)
 {
-	auto& result = owners.insert(owner);
+	auto result = owners.insert(owner);
 	return result.second;
 }
 
 bool CachedMesh::UnregisterOwner(Mesh* owner)
 {
-	auto& iter = owners.find(owner);
+	auto iter = owners.find(owner);
 	if(iter != owners.end())
 	{
 		owners.erase(iter);
@@ -42,9 +42,7 @@ CachedMesh::CachedMesh(const std::string& name, std::vector<float>& verts, std::
 	this->vertexFormat = vertexFormat;
 }
 
-CachedMesh::CachedMesh(const std::string & name) : name(name) {}
+CachedMesh::CachedMesh(std::string name) : name(std::move(name)) {}
 
 CachedMesh::~CachedMesh()
-{
-
-}
+= default;

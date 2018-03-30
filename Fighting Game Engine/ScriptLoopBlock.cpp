@@ -24,5 +24,4 @@ ScriptLoopBlock::ScriptLoopBlock(std::vector<ScriptToken>& conditionTokens, Scri
 }
 
 ScriptLoopBlock::~ScriptLoopBlock()
-{
-}
+= default;

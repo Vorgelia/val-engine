@@ -5,9 +5,19 @@
 #include "MathIncludes.hpp"
 #include "JSON.h"
 
+struct GameCharacterPhysicsParams
+{
+	int gravity;
+	int baseGroundFriction;
+	int baseAirFriction;
+
+	GameCharacterPhysicsParams(const json& j);
+	GameCharacterPhysicsParams() = default;
+	~GameCharacterPhysicsParams() = default;
+};
+
 struct GameCharacterData
 {
-public:
 	std::string _name;
 	std::string _characterScript;
 	std::unordered_set<std::string> _flags;
@@ -17,7 +27,9 @@ public:
 	std::vector<std::string> _statePaths;
 	std::vector<std::string> _frameDataPaths;
 
+	GameCharacterPhysicsParams _physicsParams;
+
 	GameCharacterData(const json& j);
 	GameCharacterData() = default;
-	~GameCharacterData();
+	~GameCharacterData() = default;
 };

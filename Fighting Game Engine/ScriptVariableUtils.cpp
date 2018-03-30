@@ -85,18 +85,13 @@ std::shared_ptr<BaseScriptVariable> ScriptVariableUtils::Operate(std::shared_ptr
 	{
 	case ScriptVariableType::Bool:
 		return ApplyOperation<ScriptBool>(std::static_pointer_cast<ScriptBool>(lhs), std::static_pointer_cast<ScriptBool>(rhs), operation);
-		break;
 	case ScriptVariableType::Int:
 		return ApplyOperation<ScriptInt>(std::static_pointer_cast<ScriptInt>(lhs), std::static_pointer_cast<ScriptInt>(rhs), operation);
-		break;
 	case ScriptVariableType::String:
 		return ApplyOperation<ScriptString>(std::static_pointer_cast<ScriptString>(lhs), std::static_pointer_cast<ScriptString>(rhs), operation);
-		break;
 	default:
 		throw ScriptError("Operation on variable of undefined type");//add stuff
 	}
-
-	return rhs;
 }
 
 std::shared_ptr<BaseScriptVariable> ScriptVariableUtils::Operate(std::shared_ptr<BaseScriptVariable>& rhs, ScriptOperatorType operation)
@@ -115,12 +110,10 @@ std::shared_ptr<BaseScriptVariable> ScriptVariableUtils::Operate(std::shared_ptr
 	{
 	case ScriptVariableType::Bool:
 		return ApplyOperation<ScriptBool>(std::static_pointer_cast<ScriptBool>(rhs), operation);
-		break;
 	case ScriptVariableType::Int:
 		return ApplyOperation<ScriptInt>(std::static_pointer_cast<ScriptInt>(rhs), operation);
 	case ScriptVariableType::String:
 		return ApplyOperation<ScriptString>(std::static_pointer_cast<ScriptString>(rhs), operation);
-		break;
 	default:
 		throw ScriptError("Operation on variable of undefined type");//add stuff
 	}

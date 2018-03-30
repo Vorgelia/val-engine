@@ -2,7 +2,6 @@
 #include <string>
 #include <vector>
 #include <WinSock2.h>
-#include <Ws2tcpip.h>
 #include "NetworkMessage.h"
 #include "ConnectionSocket.h"
 
@@ -20,7 +19,7 @@ class NetworkEntity
 public:
 	std::vector<ConnectionSocket> connections;
 
-	double ping();
+	double ping() const;
 
 	bool ConnectTo(std::string ip, int port);
 	bool HostServer(int port);

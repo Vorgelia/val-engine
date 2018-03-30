@@ -5,11 +5,9 @@
 #include "FilesystemManager.h"
 #include "RenderingGL.h"
 #include "ResourceManager.h"
-#include "Time.h"
 #include "Screen.h"
 #include "Behaviour.h"
 #include "DebugLog.h"
-#include "Object.h"
 
 //GameScene variables are this engine's equivalent to levels. Why they were not named levels, who knows.
 //The Unity style callbacks sort of betray my Unity background 
@@ -28,32 +26,40 @@ void GameScene::LoadResources()
 	{
 		rfl = _filesystem->ReturnFileLines(_dataPath.string() + "/MaterialResources.txt", true);
 		for(unsigned int i = 0; i < rfl.size(); ++i)
-			if(rfl[i].substr(0, 2) != "//" && rfl[i] != "")
+			if(rfl[i].substr(0, 2) != "//" && !rfl[i].empty())
 				_resource->GetMaterial(rfl[i]);//Materials also load their associated textures with them.
 
 		rfl = _filesystem->ReturnFileLines(_dataPath.string() + "/MeshResources.txt", true);
 		for(unsigned int i = 0; i < rfl.size(); ++i)
-			if(rfl[i].substr(0, 2) != "//" && rfl[i] != "")
+			if(rfl[i].substr(0, 2) != "//" && !rfl[i].empty())
 				_resource->GetMesh(rfl[i]);
 
 		rfl = _filesystem->ReturnFileLines(_dataPath.string() + "/TextureResources.txt", true);
 		for(unsigned int i = 0; i < rfl.size(); ++i)
-			if(rfl[i].substr(0, 2) != "//" && rfl[i] != "")
+			if(rfl[i].substr(0, 2) != "//" && !rfl[i].empty())
 				_resource->GetTexture(rfl[i]);
 
 		json& j = *_resource->GetJsonData(_dataPath.string() + "/SceneObjects.txt");
 		for(const json& objData : j)
 		{
-			_objects.emplace_back(std::make_unique<Object>(objData, _serviceManager));
+			std::string prefabPath;
+			if(objData.size() == 1 && JSON::TryGetMember<std::string>(objData, "prefabPath", prefabPath))
+			{
+				_objects.emplace_back(std::make_unique<Object>(*_resource->GetJsonData(prefabPath), _serviceManager));
+			}
+			else
+			{
+				_objects.emplace_back(std::make_unique<Object>(objData, _serviceManager));
+			}
 			RegisterObject(_objects.back().get());
 		}
 
 		_postEffectsOrder = _filesystem->ReturnFileLines(_dataPath.string() + "/PostEffectsOrder.txt", true);
 		for(unsigned int i = 0; i < _postEffectsOrder.size(); ++i)
-			if(_postEffectsOrder[i].substr(0, 2) != "//" && _postEffectsOrder[i] != "")
+			if(_postEffectsOrder[i].substr(0, 2) != "//" && !_postEffectsOrder[i].empty())
 				_resource->GetPostEffect(_postEffectsOrder[i]);
 	}
-	catch(std::runtime_error err)
+	catch(std::runtime_error& err)
 	{
 		_debug->VE_LOG(err.what());
 	}
@@ -65,7 +71,7 @@ bool GameScene::loaded() const
 	return _loaded;
 }
 
-const std::vector<std::string>& GameScene::postEffectsOrder()
+const std::vector<std::string>& GameScene::postEffectsOrder() const
 {
 	return _postEffectsOrder;
 }
@@ -215,5 +221,5 @@ GameScene::GameScene(const FS::path& path, ServiceManager* serviceManager)
 
 GameScene::~GameScene()
 {
-	Cleanup();
+	GameScene::Cleanup();
 }

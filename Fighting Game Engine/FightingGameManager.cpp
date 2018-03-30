@@ -4,9 +4,7 @@
 #include "Object.h"
 #include "PlayerManager.h"
 #include "GameScene.h"
-#include "GamePlayer.h"
 #include "GameCharacter.h"
-#include "ServiceManager.h"
 #include "Screen.h"
 
 #include "GLIncludes.hpp"
@@ -92,5 +90,4 @@ FightingGameManager::FightingGameManager(ServiceManager* serviceManager) : BaseS
 }
 
 FightingGameManager::~FightingGameManager()
-{
-}
+= default;

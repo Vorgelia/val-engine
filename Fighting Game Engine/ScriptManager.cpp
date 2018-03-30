@@ -5,11 +5,10 @@
 #include "ScriptVariable.h"
 #include "ScriptCollection.h"
 #include "FilesystemManager.h"
-#include <unordered_map>
 #include <memory>
-#include "ScriptBehaviour.h"
 #include "GameCharacter.h"
 #include "CharacterStateManager.h"
+#include "CharacterPhysicsManager.h"
 #include "DebugLog.h"
 #include "Time.h"
 
@@ -47,7 +46,7 @@ Script* ScriptManager::GetScript(const FS::path & path)
 Script* ScriptManager::AddScript(const FS::path& path)
 {
 	std::vector<std::string> lines = _filesystem->ReturnFileLines(path, false);
-	if(lines.size() > 0)
+	if(!lines.empty())
 	{
 		const std::string& scriptName = path.string();
 		Script* script = _scripts.emplace(std::make_unique<Script>(scriptName, lines, _serviceManager)).first->get();
@@ -109,12 +108,12 @@ void ScriptManager::AddVariable(const std::string& name, const std::shared_ptr<B
 	_globalVariables.emplace(name, variable);
 }
 
-void ScriptManager::HandleScriptCharacterBindings(GameCharacter& character, Script* script)
+void ScriptManager::HandleScriptCharacterBindings(GameCharacter& character, Script* script) const
 {
 	script->BindFunction("character_startState",
 		[&character](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
 	{
-		if(args.size() >= 1 && args[0]->type() == ScriptVariableType::String)
+		if(!args.empty() && args[0]->type() == ScriptVariableType::String)
 			character.stateManager()->StartState(std::static_pointer_cast<ScriptString>(args[0])->value());
 		return nullptr;
 	});
@@ -136,7 +135,7 @@ void ScriptManager::HandleScriptCharacterBindings(GameCharacter& character, Scri
 	script->BindFunction("character_setFrame",
 		[&character](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
 	{
-		if(args.size() >= 1 && args[0]->type() == ScriptVariableType::String)
+		if(!args.empty() && args[0]->type() == ScriptVariableType::String)
 			return std::make_shared<ScriptBool>(
 				character.stateManager()->SetFrame(std::static_pointer_cast<ScriptString>(args[0])->value()));
 		return nullptr;
@@ -145,7 +144,7 @@ void ScriptManager::HandleScriptCharacterBindings(GameCharacter& character, Scri
 	script->BindFunction("character_allowStateSelfChaining",
 		[&character](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
 	{
-		if(args.size() >= 1 && args[0]->type() == ScriptVariableType::Bool)
+		if(!args.empty() && args[0]->type() == ScriptVariableType::Bool)
 			character.stateManager()->_allowStateSelfCancelling = std::static_pointer_cast<ScriptBool>(args[0])->value();
 		return nullptr;
 	});
@@ -153,16 +152,16 @@ void ScriptManager::HandleScriptCharacterBindings(GameCharacter& character, Scri
 	script->BindFunction("character_modifyStateFrame",
 		[&character](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
 	{
-		if(args.size() >= 1 && args[0]->type() == ScriptVariableType::Int)
-			character.stateManager()->ModifyCurrentStateFrame(std::static_pointer_cast<ScriptInt>(args[0])->value());
+		if(!args.empty() && args[0]->type() == ScriptVariableType::Int)
+			character.stateManager()->ModifyCurrentStateFrame(int(std::static_pointer_cast<ScriptInt>(args[0])->value()));
 		return nullptr;
 	});
 
 	script->BindFunction("character_freeze",
 		[&character](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
 	{
-		if(args.size() >= 1 && args[0]->type() == ScriptVariableType::Int)
-			character.stateManager()->Freeze(std::static_pointer_cast<ScriptInt>(args[0])->value());
+		if(!args.empty() && args[0]->type() == ScriptVariableType::Int)
+			character.stateManager()->Freeze(int(std::static_pointer_cast<ScriptInt>(args[0])->value()));
 		return nullptr;
 	});
 
@@ -200,6 +199,39 @@ void ScriptManager::HandleScriptCharacterBindings(GameCharacter& character, Scri
 		character.stateManager()->ClearFlags();
 		return nullptr;
 	});
+
+	script->BindFunction("character_addOffset",
+		[&character](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
+	{
+		if(args.size() == 2 && args[0]->type() == ScriptVariableType::Int && args[1]->type() == ScriptVariableType::Int)
+			character.physicsManager()->AddOffset(
+				std::static_pointer_cast<ScriptInt>(args[0])->value(),
+				std::static_pointer_cast<ScriptInt>(args[1])->value()
+			);
+		return nullptr;
+	});
+
+	script->BindFunction("character_addVelocity",
+		[&character](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
+	{
+		if(args.size() == 2 && args[0]->type() == ScriptVariableType::Int && args[1]->type() == ScriptVariableType::Int)
+			character.physicsManager()->AddVelocity(
+				std::static_pointer_cast<ScriptInt>(args[0])->value(),
+				std::static_pointer_cast<ScriptInt>(args[1])->value()
+			);
+		return nullptr;
+	});
+
+	script->BindFunction("character_setVelocity",
+		[&character](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
+	{
+		if(args.size() == 2 && args[0]->type() == ScriptVariableType::Int && args[1]->type() == ScriptVariableType::Int)
+			character.physicsManager()->AddVelocity(
+				std::static_pointer_cast<ScriptInt>(args[0])->value(),
+				std::static_pointer_cast<ScriptInt>(args[1])->value()
+			);
+		return nullptr;
+	});
 }
 
 void ScriptManager::RemoveScript(Script* script)
@@ -230,6 +262,4 @@ ScriptManager::ScriptManager(ServiceManager* serviceManager) : BaseService(servi
 }
 
 ScriptManager::~ScriptManager()
-{
-
-}
+= default;

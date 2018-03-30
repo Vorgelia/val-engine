@@ -4,11 +4,9 @@
 #include "FrameBuffer.h"
 #include "Mesh.h"
 #include "SurfaceShader.h"
-#include "ComputeShader.h"
 #include "Texture.h"
 #include "Camera.h"
 #include "Transform.h"
-#include "FrameBuffer.h"
 #include "Time.h"
 #include "Material.h"
 #include "ResourceManager.h"
@@ -29,7 +27,7 @@
 //Auxiliary buffers are framebuffers used for multipass post processing effects.
 #define VE_AUX_BUFFER_AMOUNT 3
 //World scale controls how many world units correspond to one pixel at a resolution of 1920x1080. Object positions are integers for consistency.
-#define VE_WORLD_SCALE 3
+#define VE_WORLD_SCALE 1000
 
 void RenderingGL::BeginFrame()
 {
@@ -90,7 +88,7 @@ void RenderingGL::OnScreenResize()
 	}
 }
 
-void RenderingGL::BindMaterialUniforms(const Material& material, int& out_texturesBound)
+void RenderingGL::BindMaterialUniforms(const Material& material, int& out_texturesBound) const
 {
 	out_texturesBound = 0;
 	_graphics->BindShader(*material.shader);
@@ -125,7 +123,7 @@ void RenderingGL::BindMaterialUniforms(const Material& material, int& out_textur
 	}
 }
 
-void RenderingGL::BindShaderTextures(SurfaceShader* shader, const std::vector<MaterialTexture>& textures, int& out_textureUnitOffset)
+void RenderingGL::BindShaderTextures(SurfaceShader* shader, const std::vector<MaterialTexture>& textures, int& out_textureUnitOffset) const
 {
 	int uniformIndex = 0;
 	for(auto& iter = textures.begin(); iter != textures.end(); ++iter)
@@ -174,7 +172,7 @@ void RenderingGL::BindBufferUniforms(SurfaceShader* shad, int& index)
 	}
 }
 
-void RenderingGL::BindFrameBufferImages(const FrameBuffer* buffer, GLuint bindingPoint)
+void RenderingGL::BindFrameBufferImages(const FrameBuffer* buffer, GLuint bindingPoint) const
 {
 	if(buffer == nullptr)
 	{
@@ -249,7 +247,7 @@ void RenderingGL::DrawPostEffect(PostEffect* pf)
 			_graphics->ApplyMaterial(*cMat);
 
 		//Finally, draw our mesh.
-		glDrawElements(GL_TRIANGLES, cMesh->elementAmount(), GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, cMesh->elementAmount(), GL_UNSIGNED_INT, nullptr);
 	}
 }
 
@@ -259,7 +257,7 @@ void RenderingGL::DrawScreenMesh(glm::vec4 rect, Mesh* mesh, FrameBuffer* fb, Ma
 	std::vector<MaterialTexture> textures;
 	for(unsigned int i = 0; i < fb->textures.size(); ++i)
 	{
-		textures.push_back(MaterialTexture(fb->textures[i].get(), params));
+		textures.emplace_back(fb->textures[i].get(), params);
 	}
 
 	DrawScreenMesh(rect, mesh, textures, mat);
@@ -300,7 +298,7 @@ void RenderingGL::DrawScreenMesh(glm::vec4 rect, Mesh* mesh, const std::vector<M
 
 	glUniform4f(mat->shader->UniformLocation("ve_tintColor"), tintColor.x, tintColor.y, tintColor.z, tintColor.w);
 
-	glDrawElements(GL_TRIANGLES, mesh->elementAmount(), GL_UNSIGNED_INT, 0);
+	glDrawElements(GL_TRIANGLES, mesh->elementAmount(), GL_UNSIGNED_INT, nullptr);
 }
 
 void RenderingGL::DrawMesh(Transform* transform, Mesh* mesh, Material* mat, Camera* camera)
@@ -326,13 +324,13 @@ void RenderingGL::DrawMesh(Transform* transform, Mesh* mesh, Material* mat, Came
 
 	glUniform1f(mat->shader->UniformLocation("ve_depth"), transform->depth);
 
-	glDrawElements(GL_TRIANGLES, mesh->elementAmount(), GL_UNSIGNED_INT, 0);
+	glDrawElements(GL_TRIANGLES, mesh->elementAmount(), GL_UNSIGNED_INT, nullptr);
 }
 
 //TODO: Refactor, use instancing
 void RenderingGL::DrawScreenText(glm::vec4 rect, GLuint size, std::string text, Font* font, TextAlignment alignment)
 {
-	if(text.size() == 0)
+	if(text.empty())
 		return;
 
 	if(font == nullptr)
@@ -399,7 +397,7 @@ void RenderingGL::DrawScreenText(glm::vec4 rect, GLuint size, std::string text, 
 		}
 		currentLine = 0;
 		cursor = glm::ivec2(rect.x, rect.y);
-		if(alignment != TextAlignment::Left&&lineIndents.size() > 0)
+		if(alignment != TextAlignment::Left&& !lineIndents.empty())
 			cursor.x += (int)glm::round(lineIndents[0]);
 
 	}
@@ -477,7 +475,7 @@ void RenderingGL::Init()
 	//The ortho mat is used for rendering objects into the world and essentially controlling what the camera is seeing. Which is why it's modifiable with the world scale, and also has its center at (0,0).
 	_orthoMat = glm::ortho(-960.0*VE_WORLD_SCALE, 960.0*VE_WORLD_SCALE, 0.0, 1080.0*VE_WORLD_SCALE, 0.0, 1.0);
 	_screenMat = glm::ortho(0.0, 1920.0, 1080.0, 0.0, 0.0, 1.0);
-	cameras.push_back(Camera(glm::vec2(0, 0), &_orthoMat));
+	cameras.emplace_back(glm::vec2(0, 0), &_orthoMat);
 	cameras.back().zoomLevel = 1.25;
 
 	//Create graphics buffers
@@ -522,7 +520,7 @@ void RenderingGL::InitTextDrawing()
 	_graphics->ApplyMaterial(*_resourceManager->GetMaterial("Materials/Base/Screen.vmat"));
 }
 
-void RenderingGL::DrawTextCharacter(glm::vec4 rect, glm::vec4 params, Texture* tex)
+void RenderingGL::DrawTextCharacter(glm::vec4 rect, glm::vec4 params, Texture* tex) const
 {
 	//Draw individual text characters while assuming things set by InitTextDrawing are still bound.
 	//So much more optimization could be put into this.
@@ -540,7 +538,7 @@ void RenderingGL::DrawTextCharacter(glm::vec4 rect, glm::vec4 params, Texture* t
 
 	glUniformMatrix4fv(cShad->UniformLocation("ve_matrix_model"), 1, false, glm::value_ptr(modelMat));
 	glUniformMatrix4fv(cShad->UniformLocation("ve_matrix_mvp"), 1, false, glm::value_ptr(mvpmat));
-	glDrawElements(GL_TRIANGLES, cMesh->elementAmount(), GL_UNSIGNED_INT, 0);
+	glDrawElements(GL_TRIANGLES, cMesh->elementAmount(), GL_UNSIGNED_INT, nullptr);
 }
 
 RenderingGL::RenderingGL(ServiceManager* serviceManager) : BaseService(serviceManager)
@@ -549,6 +547,4 @@ RenderingGL::RenderingGL(ServiceManager* serviceManager) : BaseService(serviceMa
 }
 
 RenderingGL::~RenderingGL()
-{
-
-}
+= default;

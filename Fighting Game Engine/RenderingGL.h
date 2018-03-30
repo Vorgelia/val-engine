@@ -50,13 +50,13 @@ private:
 	std::unique_ptr<Vec4Buffer> _commonComputeVec4Buffer;
 
 	void InitTextDrawing();
-	void DrawTextCharacter(glm::vec4 rect, glm::vec4 params, Texture* tex);
+	void DrawTextCharacter(glm::vec4 rect, glm::vec4 params, Texture* tex) const;
 
-	void BindMaterialUniforms(const Material& material, int& out_texturesBound);
-	void BindShaderTextures(SurfaceShader* shader, const std::vector<MaterialTexture>& textures, int& out_textureUnitOffset);
+	void BindMaterialUniforms(const Material& material, int& out_texturesBound) const;
+	void BindShaderTextures(SurfaceShader* shader, const std::vector<MaterialTexture>& textures, int& out_textureUnitOffset) const;
 	void BindBufferUniforms(SurfaceShader* shad, int& index);
 
-	void BindFrameBufferImages(const FrameBuffer* buffer, GLuint bindingPoint);
+	void BindFrameBufferImages(const FrameBuffer* buffer, GLuint bindingPoint) const;
 
 	void OnScreenResize();
 	

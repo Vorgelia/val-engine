@@ -11,6 +11,7 @@
 #include "Transform.h"
 #include "RenderingGL.h"
 #include "ResourceManager.h"
+#include "GameCharacterData.h"
 
 VE_BEHAVIOUR_REGISTER_TYPE(CharacterRenderer);
 
@@ -47,7 +48,7 @@ void CharacterRenderer::OnRenderObjects()
 	_rendering->DrawMesh(_renderingTransform.get(), _mesh, _material);
 }
 
-void CharacterRenderer::HandleRenderingMaterial(const CharacterSprite* spriteData, Texture* texture, bool flipped)
+void CharacterRenderer::HandleRenderingMaterial(const CharacterSprite* spriteData, Texture* texture, bool flipped) const
 {
 	if(texture == nullptr)
 	{
@@ -67,7 +68,7 @@ void CharacterRenderer::HandleRenderingMaterial(const CharacterSprite* spriteDat
 	_material->uniformTextures.insert_or_assign("tex0", MaterialTexture(texture, params));
 }
 
-void CharacterRenderer::HandleRenderingTransform(const CharacterSprite* spriteData, Texture* texture)
+void CharacterRenderer::HandleRenderingTransform(const CharacterSprite* spriteData, Texture* texture) const
 {
 	glm::ivec2 originOffset = spriteData->originOffset();
 	glm::vec2 sizeMultiplier = _character->characterData()->_sizeMultiplier;
@@ -102,5 +103,4 @@ CharacterRenderer::CharacterRenderer(Object* owner, ServiceManager* serviceManag
 }
 
 CharacterRenderer::~CharacterRenderer()
-{
-}
+= default;

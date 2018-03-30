@@ -33,5 +33,4 @@ ScriptCollection::ScriptCollection(bool isConst) :
 }
 
 ScriptCollection::~ScriptCollection()
-{
-}
+= default;

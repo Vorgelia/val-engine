@@ -57,9 +57,9 @@ public:
 	std::string name() const;
 	bool valid() const;
 
-	ScriptControlFlag controlFlag();
+	ScriptControlFlag controlFlag() const;
 
-	bool HasFunction(std::string name);
+	bool HasFunction(std::string name) const;
 
 	void BindFunction(std::string name, std::function<std::shared_ptr<BaseScriptVariable>(const Script*, ScriptArgumentCollection&)> func);
 	std::shared_ptr<BaseScriptVariable> CallBoundFunction(std::string name, std::vector<std::shared_ptr<BaseScriptVariable>> &variables);

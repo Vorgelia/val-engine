@@ -1,15 +1,16 @@
 #include "Mesh.h"
+#include <utility>
 #include "CachedMesh.h"
-#include "GraphicsGL.h"
 #include "DebugLog.h"
 
-Mesh::Mesh(const std::string& name, CachedMesh* meshData) :	name(name)
+Mesh::Mesh(std::string name, CachedMesh* meshData) 
+	: name(std::move(name))
 {
 	_vbo = _ebo = _vao = 0;
 	_meshData = meshData;
 }
 
-GLuint Mesh::elementAmount()
+GLuint Mesh::elementAmount() const
 {
 	return _elementAmount;
 }

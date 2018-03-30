@@ -1,7 +1,6 @@
 #pragma once
 #include "BaseService.h"
 #include "FightingGameState.h"
-#include <vector>
 
 class GameSceneManager;
 class GameScene;

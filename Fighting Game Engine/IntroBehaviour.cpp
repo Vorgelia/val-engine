@@ -7,7 +7,6 @@
 #include "InputManager.h"
 #include "InputFrame.h"
 #include "InputDevice.h"
-#include "InputMotion.h"
 #include "GameSceneManager.h"
 #include "Screen.h"
 #include "DebugLog.h"
@@ -56,6 +55,13 @@ void IntroBehaviour::GameUpdate()
 
 IntroBehaviour::IntroBehaviour(Object * owner, ServiceManager* serviceManager) : Behaviour(owner, serviceManager)
 {
+	_debug = serviceManager->Debug();
+	_input = serviceManager->Input();
+	_rendering = serviceManager->Rendering();
+	_gameSceneManager = serviceManager->GameSceneManager();
+	_time = serviceManager->Time();
+	_resource = serviceManager->ResourceManager();
+
 	enabled = true;
 }
 

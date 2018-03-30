@@ -1,10 +1,6 @@
 #include "Object.h"
 #include "Transform.h"
-#include "Mesh.h"
-#include "Material.h"
-#include "IntroBehaviour.h"
 #include "ResourceManager.h"
-#include "RenderingGL.h"
 #include "Behaviour.h"
 #include "Renderer.h"
 
@@ -60,7 +56,7 @@ Object::Object(const json & j, ServiceManager* serviceManager)
 
 	for(auto& iter : j["behaviours"])
 	{
-		std::string& behaviourName = iter["name"].get<std::string>();
-		Behaviour* addedBehaviour = AddBehaviour(behaviourName, iter);
+		std::string behaviourName = iter["name"].get<std::string>();
+		AddBehaviour(behaviourName, iter);
 	}
 }

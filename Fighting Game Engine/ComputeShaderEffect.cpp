@@ -1,11 +1,7 @@
 #include "ComputeShaderEffect.h"
 #include "ServiceManager.h"
 #include "GraphicsGL.h"
-#include "RenderingGL.h"
 #include "Screen.h"
-#include "FrameBuffer.h"
-#include "Texture.h"
-#include "ComputeShader.h"
 #include "ResourceManager.h"
 
 VE_BEHAVIOUR_REGISTER_TYPE(ComputeShaderEffect);
@@ -35,5 +31,4 @@ ComputeShaderEffect::ComputeShaderEffect(Object* owner, ServiceManager* serviceM
 }
 
 ComputeShaderEffect::~ComputeShaderEffect()
-{
-}
+= default;
