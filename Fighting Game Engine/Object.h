@@ -49,12 +49,12 @@ public:
 };
 
 template<typename ... Types>
-Behaviour* Object::AddBehaviour(std::string behaviourName, Types ... args)
+Behaviour* Object::AddBehaviour(std::string name, Types ... args)
 {
 	Behaviour* behaviour = _behaviours.emplace(
 		std::make_pair(
-			behaviourName,
-			BehaviourFactory::Create(behaviourName, this, _serviceManager, args...))
+			name,
+			BehaviourFactory::Create(name, this, _serviceManager, args...))
 	).first->second.get();
 
 	if(behaviour->usingInit())
@@ -62,11 +62,11 @@ Behaviour* Object::AddBehaviour(std::string behaviourName, Types ... args)
 		behaviour->Init();
 	}
 
-	if(behaviourName == "Transform")
+	if(name == "Transform")
 	{
 		_transform = static_cast<Transform*>(behaviour);
 	}
-	else if(behaviourName == "Renderer")
+	else if(name == "Renderer")
 	{
 		_renderer = static_cast<Renderer*>(behaviour);
 	}

@@ -6,6 +6,7 @@ class GameSceneManager;
 class GameScene;
 class GamePlayer;
 class PlayerManager;
+class FightingStageBehaviour;
 
 class FightingGameManager : public BaseService
 {
@@ -16,6 +17,8 @@ private:
 private:
 	FightingGameState _currentState;
 
+	FightingStageBehaviour* _stageBehaviour;
+
 	void HandleSceneLoaded(const GameScene* scene);
 	void ChangeState(FightingGameState state);
 
@@ -24,6 +27,9 @@ private:
 	void Cleanup() override;
 
 public:
+	FightingGameState currentState() const;
+	FightingStageBehaviour* stageBehaviour() const;
+
 	FightingGameManager(ServiceManager* serviceManager);
 	~FightingGameManager();
 };

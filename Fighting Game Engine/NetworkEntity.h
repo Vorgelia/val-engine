@@ -21,7 +21,7 @@ public:
 
 	double ping() const;
 
-	bool ConnectTo(std::string ip, int port);
+	bool ConnectTo(const std::string& ip, int port);
 	bool HostServer(int port);
 	void Disconnect(unsigned int index);
 	void AcceptConnections(unsigned int index);

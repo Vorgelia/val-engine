@@ -70,21 +70,9 @@ public:
 	Object* LoadObject(const std::string& prefabPath);
 	Object* AddObject(const json& jsonData);
 
-	template<typename ObjectT>
-	ObjectT* FindObject(const std::string& name);
+	Object* FindObject(const std::string& name);
+	Behaviour* FindBehaviour(const std::string& name);
 
 	GameScene(const FS::path& path, ServiceManager* serviceManager);
 	virtual ~GameScene();
 };
-
-template<typename ObjectT>
-ObjectT* GameScene::FindObject(const std::string& name)
-{
-	auto iter = _objectNameLookup.find(name);
-	if(iter != _objectNameLookup.end())
-	{
-		return dynamic_cast<ObjectT>(iter->second);
-	}
-
-	return nullptr;
-}

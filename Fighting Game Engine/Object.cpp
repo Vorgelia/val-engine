@@ -33,7 +33,7 @@ void Object::RunFunctionOnBehaviours(std::function<void(Behaviour*)> func)
 
 	for(auto& iter : _behaviours)
 	{
-		if(iter.second != nullptr)
+		if(iter.second != nullptr && iter.second->enabled)
 		{
 			func(iter.second.get());
 		}

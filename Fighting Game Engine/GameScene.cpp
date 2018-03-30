@@ -25,19 +25,19 @@ void GameScene::LoadResources()
 	try
 	{
 		rfl = _filesystem->ReturnFileLines(_dataPath.string() + "/MaterialResources.txt", true);
-		for(unsigned int i = 0; i < rfl.size(); ++i)
-			if(rfl[i].substr(0, 2) != "//" && !rfl[i].empty())
-				_resource->GetMaterial(rfl[i]);//Materials also load their associated textures with them.
+		for (auto& i : rfl)
+			if(!i.empty() && i.substr(0, 2) != "//")
+				_resource->GetMaterial(i);//Materials also load their associated textures with them.
 
 		rfl = _filesystem->ReturnFileLines(_dataPath.string() + "/MeshResources.txt", true);
-		for(unsigned int i = 0; i < rfl.size(); ++i)
-			if(rfl[i].substr(0, 2) != "//" && !rfl[i].empty())
-				_resource->GetMesh(rfl[i]);
+		for (auto& i : rfl)
+			if(!i.empty() && i.substr(0, 2) != "//")
+				_resource->GetMesh(i);
 
 		rfl = _filesystem->ReturnFileLines(_dataPath.string() + "/TextureResources.txt", true);
-		for(unsigned int i = 0; i < rfl.size(); ++i)
-			if(rfl[i].substr(0, 2) != "//" && !rfl[i].empty())
-				_resource->GetTexture(rfl[i]);
+		for (auto& i : rfl)
+			if(!i.empty() && i.substr(0, 2) != "//")
+				_resource->GetTexture(i);
 
 		json& j = *_resource->GetJsonData(_dataPath.string() + "/SceneObjects.txt");
 		for(const json& objData : j)
@@ -55,9 +55,9 @@ void GameScene::LoadResources()
 		}
 
 		_postEffectsOrder = _filesystem->ReturnFileLines(_dataPath.string() + "/PostEffectsOrder.txt", true);
-		for(unsigned int i = 0; i < _postEffectsOrder.size(); ++i)
-			if(_postEffectsOrder[i].substr(0, 2) != "//" && !_postEffectsOrder[i].empty())
-				_resource->GetPostEffect(_postEffectsOrder[i]);
+		for (auto& i : _postEffectsOrder)
+			if(i.substr(0, 2) != "//" && !i.empty())
+				_resource->GetPostEffect(i);
 	}
 	catch(std::runtime_error& err)
 	{
@@ -201,6 +201,31 @@ Object* GameScene::AddObject(const json & jsonData)
 	RegisterObject(result);
 
 	return result;
+}
+
+Object* GameScene::FindObject(const std::string& name)
+{
+	auto iter = _objectNameLookup.find(name);
+	if(iter != _objectNameLookup.end())
+	{
+		return iter->second;
+	}
+
+	return nullptr;
+}
+
+Behaviour* GameScene::FindBehaviour(const std::string& name)
+{
+	for(auto& obj : _objects)
+	{
+		Behaviour* behaviour = obj->GetBehaviour<Behaviour>(name);
+		if(behaviour != nullptr)
+		{
+			return behaviour;
+		}
+	}
+
+	return nullptr;
 }
 
 GameScene::GameScene(const FS::path& path, ServiceManager* serviceManager)

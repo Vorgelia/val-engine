@@ -17,6 +17,9 @@ bool ScriptFunctionBlock::HandleControlFlag()
 	case ScriptControlFlag::Break:
 	case ScriptControlFlag::Continue:
 		throw ScriptError("Invalid script control flag inside function.");
+	case ScriptControlFlag::None:
+	default:
+		break;
 	}
 	return false;
 }

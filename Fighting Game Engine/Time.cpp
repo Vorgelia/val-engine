@@ -1,5 +1,5 @@
 #include "Time.h"
-#include <windows.h>
+#include <Windows.h>
 #include "GLIncludes.hpp"
 #include "MathIncludes.hpp"
 

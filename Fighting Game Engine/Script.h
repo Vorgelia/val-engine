@@ -59,12 +59,12 @@ public:
 
 	ScriptControlFlag controlFlag() const;
 
-	bool HasFunction(std::string name) const;
+	bool HasFunction(const std::string& name) const;
 
-	void BindFunction(std::string name, std::function<std::shared_ptr<BaseScriptVariable>(const Script*, ScriptArgumentCollection&)> func);
-	std::shared_ptr<BaseScriptVariable> CallBoundFunction(std::string name, std::vector<std::shared_ptr<BaseScriptVariable>> &variables);
+	void BindFunction(const std::string& name, std::function<std::shared_ptr<BaseScriptVariable>(const Script*, ScriptArgumentCollection&)> func);
+	std::shared_ptr<BaseScriptVariable> CallBoundFunction(const std::string& name, std::vector<std::shared_ptr<BaseScriptVariable>> &variables);
 
-	std::vector<std::string> GetPragmaDirectives(std::string id);
+	std::vector<std::string> GetPragmaDirectives(const std::string& id);
 	std::shared_ptr<BaseScriptVariable> GetVariable(const std::string& name) const;
 
 	void RaiseControlFlag(ScriptControlFlag flag);
@@ -72,8 +72,8 @@ public:
 
 	void Init();
 	void Execute();
-	void ExecuteFunction(std::string name, std::vector<std::shared_ptr<BaseScriptVariable>> &variables = std::vector<std::shared_ptr<BaseScriptVariable>>());
+	void ExecuteFunction(const std::string& name, std::vector<std::shared_ptr<BaseScriptVariable>> &variables = std::vector<std::shared_ptr<BaseScriptVariable>>());
 
-	Script(std::string name, std::vector<std::string> lines, ServiceManager* serviceManager);
+	Script(const std::string& name, std::vector<std::string> lines, ServiceManager* serviceManager);
 	~Script();
 };

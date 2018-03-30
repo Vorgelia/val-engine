@@ -87,7 +87,7 @@ public:
 	void DestroyMesh(Mesh& mesh) const;
 
 	bool BindTextureUnit(GLuint pos);
-	bool BindShader(const BaseShader& id);
+	bool BindShader(const BaseShader& shader);
 	bool BindMesh(const Mesh& mesh);
 	bool BindTexture(const Texture& texture);
 	bool BindTexture(const Texture& texture, GLuint pos);

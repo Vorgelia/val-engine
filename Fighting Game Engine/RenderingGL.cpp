@@ -201,26 +201,26 @@ void RenderingGL::DrawPostEffect(PostEffect* pf)
 
 	//Each element in the element chain is an std::pair with an index and a material. It essentially renders a screen-aligned quad with that material to the framebuffer at index.
 	//For each "step" specified in the current post processing effect:
-	for(unsigned int pi = 0; pi < pf->elementChain.size(); ++pi)
+	for (auto& element : pf->elementChain)
 	{
 		//Wait until all graphics operations are finished.
 		//Prevents IO on buffers that haven't had their effects finish rendering. Omitted for testing.
 		//glFinish();
 
-		Material* cMat = (pf->elementChain[pi].second);
+		Material* cMat = (element.second);
 		//If there is no material for this step, render the aux buffer specified to the main buffer.
 		if(cMat == nullptr)
 		{
 			_graphics->BindFrameBuffer(*_mainBuffer);
-			DrawScreenMesh(glm::vec4(0, 0, 1920, 1080), nullptr, _auxBuffers[pf->elementChain[pi].first].get(), _resourceManager->GetMaterial("Materials/Base/Screen_FB.vmat"));
+			DrawScreenMesh(glm::vec4(0, 0, 1920, 1080), nullptr, _auxBuffers[element.first].get(), _resourceManager->GetMaterial("Materials/Base/Screen_FB.vmat"));
 			continue;
 		}
 
 		//Index of -1 means render directly to the main buffer. Otherwise render to the indexed aux buffer.
-		if(pf->elementChain[pi].first == -1)
+		if(element.first == -1)
 			_graphics->BindFrameBuffer(*_mainBuffer);
 		else
-			_graphics->BindFrameBuffer(*(_auxBuffers[pf->elementChain[pi].first]));
+			_graphics->BindFrameBuffer(*(_auxBuffers[element.first]));
 
 		//Bind the shader in the specified material
 		_graphics->BindShader(*(cMat->shader));
@@ -252,12 +252,12 @@ void RenderingGL::DrawPostEffect(PostEffect* pf)
 }
 
 //Draw a screen mesh with a framebuffer instead of textures.
-void RenderingGL::DrawScreenMesh(glm::vec4 rect, Mesh* mesh, FrameBuffer* fb, Material* mat, glm::vec4 params)
+void RenderingGL::DrawScreenMesh(glm::vec4 rect, Mesh* mesh, FrameBuffer* frameBuffer, Material* mat, glm::vec4 params)
 {
 	std::vector<MaterialTexture> textures;
-	for(unsigned int i = 0; i < fb->textures.size(); ++i)
+	for (auto& texture : frameBuffer->textures)
 	{
-		textures.emplace_back(fb->textures[i].get(), params);
+		textures.emplace_back(texture.get(), params);
 	}
 
 	DrawScreenMesh(rect, mesh, textures, mat);

@@ -101,6 +101,7 @@
     <ClCompile Include="DefenceData.cpp" />
     <ClCompile Include="Delegate.cpp" />
     <ClCompile Include="FightingGameManager.cpp" />
+    <ClCompile Include="FightingStageBehaviour.cpp" />
     <ClCompile Include="Font.cpp" />
     <ClCompile Include="FrameBuffer.cpp" />
     <ClCompile Include="GameCharacter.cpp" />
@@ -194,6 +195,7 @@
     <ClInclude Include="FGIncludes.hpp" />
     <ClInclude Include="FightingGameManager.h" />
     <ClInclude Include="FightingGameState.h" />
+    <ClInclude Include="FightingStageBehaviour.h" />
     <ClInclude Include="Font.h" />
     <ClInclude Include="FrameBuffer.h" />
     <ClInclude Include="GameCharacter.h" />

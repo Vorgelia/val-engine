@@ -27,6 +27,7 @@
 //class ComputeShader;
 //class PostEffect;
 //class Font;
+//class ShaderAttachment;
 
 namespace FS = boost::filesystem;
 

@@ -1,5 +1,5 @@
 #include "DebugLog.h"
-#include <windows.h>
+#include <Windows.h>
 #include "Time.h"
 #include <sstream>
 #include <iostream>
@@ -48,7 +48,7 @@ void Debug::WriteThread()
 		//Print different stuff to the console and the file based on the message type.
 
 		int stackAmount = 0;
-		std::string messagePrefix = "";
+		std::string messagePrefix;
 
 		switch(li.type())
 		{

@@ -25,17 +25,17 @@ ScriptControlFlag Script::controlFlag() const
 	return _controlFlag;
 }
 
-bool Script::HasFunction(std::string name) const
+bool Script::HasFunction(const std::string& name) const
 {
 	return _parentBlock != nullptr && _parentBlock->HasFunction(name);
 }
 
-void Script::BindFunction(std::string name, std::function<std::shared_ptr<BaseScriptVariable>(const Script*, ScriptArgumentCollection&)> func)
+void Script::BindFunction(const std::string& name, std::function<std::shared_ptr<BaseScriptVariable>(const Script*, ScriptArgumentCollection&)> func)
 {
 	_boundFunctions[name] = func;
 }
 
-std::shared_ptr<BaseScriptVariable> Script::CallBoundFunction(std::string name, std::vector<std::shared_ptr<BaseScriptVariable>> &variables)
+std::shared_ptr<BaseScriptVariable> Script::CallBoundFunction(const std::string& name, std::vector<std::shared_ptr<BaseScriptVariable>> &variables)
 {
 	auto iter = _boundFunctions.find(name);
 	if(iter == _boundFunctions.end() || iter->second == nullptr)
@@ -45,7 +45,7 @@ std::shared_ptr<BaseScriptVariable> Script::CallBoundFunction(std::string name, 
 	return iter->second(this, variables);
 }
 
-std::vector<std::string> Script::GetPragmaDirectives(std::string id)
+std::vector<std::string> Script::GetPragmaDirectives(const std::string& id)
 {
 	const auto& iter = _pragmaDirectives.find(id);
 	if(iter != _pragmaDirectives.end())
@@ -151,7 +151,7 @@ void Script::Execute()
 	ExecuteFunction("Main", std::vector<std::shared_ptr<BaseScriptVariable>>());
 }
 
-void Script::ExecuteFunction(std::string name, std::vector<std::shared_ptr<BaseScriptVariable>> &variables)
+void Script::ExecuteFunction(const std::string& name, std::vector<std::shared_ptr<BaseScriptVariable>> &variables)
 {
 	size_t blockStackSize = _blockStack.size();
 
@@ -182,7 +182,7 @@ void Script::ExecuteFunction(std::string name, std::vector<std::shared_ptr<BaseS
 	}
 }
 
-Script::Script(std::string name, std::vector<std::string> lines, ServiceManager* serviceManager)
+Script::Script(const std::string& name, std::vector<std::string> lines, ServiceManager* serviceManager)
 {
 	_serviceManager = serviceManager;
 	_debug = serviceManager->Debug();

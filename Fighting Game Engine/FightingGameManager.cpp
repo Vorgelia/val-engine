@@ -8,6 +8,7 @@
 #include "Screen.h"
 
 #include "GLIncludes.hpp"
+#include "FightingStageBehaviour.h"
 
 
 void FightingGameManager::HandleSceneLoaded(const GameScene* scene)
@@ -51,6 +52,8 @@ void FightingGameManager::ChangeState(FightingGameState state)
 		Object* char1 = _gameSceneManager->currentScene()->LoadObject("Characters/Fritz/Prefab.json");
 		GameCharacter* char1CharacterBehaviour = char1->GetBehaviour<GameCharacter>("GameCharacter");
 		char1CharacterBehaviour->SetOwner(_playerManager->AddPlayer(0, -1));
+
+		_stageBehaviour = dynamic_cast<FightingStageBehaviour*>(_gameSceneManager->currentScene()->FindBehaviour("FightingStageBehaviour"));
 		break;
 	}
 	default:
@@ -82,6 +85,16 @@ void FightingGameManager::Update()
 void FightingGameManager::Cleanup()
 {
 	ChangeState(FightingGameState::None);
+}
+
+FightingGameState FightingGameManager::currentState() const
+{
+	return _currentState;
+}
+
+FightingStageBehaviour* FightingGameManager::stageBehaviour() const
+{
+	return _stageBehaviour;
 }
 
 FightingGameManager::FightingGameManager(ServiceManager* serviceManager) : BaseService(serviceManager)

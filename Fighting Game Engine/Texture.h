@@ -25,6 +25,6 @@ private:
 public:
 	const glm::vec4& size() const;
 
-	Texture(std::string name, GLuint id, glm::ivec2 dim, int format, GLuint filt, GLuint edgeBehaviour);
+	Texture(std::string name, GLuint id, glm::ivec2 dimensions, int format, GLuint filtering, GLuint edgeBehaviour);
 	~Texture() = default;
 };

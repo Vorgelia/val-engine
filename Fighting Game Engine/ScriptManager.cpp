@@ -177,8 +177,8 @@ void ScriptManager::HandleScriptCharacterBindings(GameCharacter& character, Scri
 	{
 		if(args.size() == 2 && args[0]->type() == ScriptVariableType::Int && args[1]->type() == ScriptVariableType::String)
 			character.stateManager()->AddFlag(
-				(CharacterStateFlagType)std::static_pointer_cast<ScriptInt>(args[0])->value(),
-					std::static_pointer_cast<ScriptString>(args[1])->value());
+			(CharacterStateFlagType)std::static_pointer_cast<ScriptInt>(args[0])->value(),
+				std::static_pointer_cast<ScriptString>(args[1])->value());
 		return nullptr;
 	});
 
@@ -187,8 +187,8 @@ void ScriptManager::HandleScriptCharacterBindings(GameCharacter& character, Scri
 	{
 		if(args.size() == 2 && args[0]->type() == ScriptVariableType::Int && args[1]->type() == ScriptVariableType::String)
 			character.stateManager()->RemoveFlag(
-				(CharacterStateFlagType)std::static_pointer_cast<ScriptInt>(args[0])->value(),
-					std::static_pointer_cast<ScriptString>(args[1])->value());
+			(CharacterStateFlagType)std::static_pointer_cast<ScriptInt>(args[0])->value(),
+				std::static_pointer_cast<ScriptString>(args[1])->value());
 
 		return nullptr;
 	});
@@ -205,9 +205,10 @@ void ScriptManager::HandleScriptCharacterBindings(GameCharacter& character, Scri
 	{
 		if(args.size() == 2 && args[0]->type() == ScriptVariableType::Int && args[1]->type() == ScriptVariableType::Int)
 			character.physicsManager()->AddOffset(
-				std::static_pointer_cast<ScriptInt>(args[0])->value(),
-				std::static_pointer_cast<ScriptInt>(args[1])->value()
-			);
+				glm::lvec2(
+					std::static_pointer_cast<ScriptInt>(args[0])->value(),
+					std::static_pointer_cast<ScriptInt>(args[1])->value()
+				));
 		return nullptr;
 	});
 
@@ -216,9 +217,10 @@ void ScriptManager::HandleScriptCharacterBindings(GameCharacter& character, Scri
 	{
 		if(args.size() == 2 && args[0]->type() == ScriptVariableType::Int && args[1]->type() == ScriptVariableType::Int)
 			character.physicsManager()->AddVelocity(
-				std::static_pointer_cast<ScriptInt>(args[0])->value(),
-				std::static_pointer_cast<ScriptInt>(args[1])->value()
-			);
+				glm::lvec2(
+					std::static_pointer_cast<ScriptInt>(args[0])->value(),
+					std::static_pointer_cast<ScriptInt>(args[1])->value()
+				));
 		return nullptr;
 	});
 
@@ -226,7 +228,66 @@ void ScriptManager::HandleScriptCharacterBindings(GameCharacter& character, Scri
 		[&character](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
 	{
 		if(args.size() == 2 && args[0]->type() == ScriptVariableType::Int && args[1]->type() == ScriptVariableType::Int)
-			character.physicsManager()->AddVelocity(
+			character.physicsManager()->SetVelocity(
+				glm::lvec2(
+					std::static_pointer_cast<ScriptInt>(args[0])->value(),
+					std::static_pointer_cast<ScriptInt>(args[1])->value()
+				));
+		return nullptr;
+	}); 
+
+	script->BindFunction("character_getVelocity_x",
+		[&character](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
+	{
+		return std::make_shared<ScriptInt>(character.physicsManager()->GetVelocity().x);
+	});
+
+	script->BindFunction("character_getVelocity_y",
+		[&character](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
+	{
+		return std::make_shared<ScriptInt>(character.physicsManager()->GetVelocity().y);
+	});
+
+	script->BindFunction("character_addForce",
+		[&character](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
+	{
+		if(args.size() == 3 && args[0]->type() == ScriptVariableType::Int && args[1]->type() == ScriptVariableType::Int && args[2]->type() == ScriptVariableType::Int)
+			character.physicsManager()->AddForce(
+				std::static_pointer_cast<ScriptInt>(args[0])->value(),
+				glm::lvec2(
+					std::static_pointer_cast<ScriptInt>(args[1])->value(),
+					std::static_pointer_cast<ScriptInt>(args[2])->value()
+				));
+		return nullptr;
+	});
+
+	script->BindFunction("character_overrideGravity",
+		[&character](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
+	{
+		if(args.size() == 2 && args[0]->type() == ScriptVariableType::Int && args[1]->type() == ScriptVariableType::Int)
+			character.physicsManager()->OverrideGravity(
+				std::static_pointer_cast<ScriptInt>(args[0])->value(),
+				std::static_pointer_cast<ScriptInt>(args[1])->value()
+			);
+		return nullptr;
+	});
+
+	script->BindFunction("character_overrideAirFriction",
+		[&character](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
+	{
+		if(args.size() == 2 && args[0]->type() == ScriptVariableType::Int && args[1]->type() == ScriptVariableType::Int)
+			character.physicsManager()->OverrideAirFriction(
+				std::static_pointer_cast<ScriptInt>(args[0])->value(),
+				std::static_pointer_cast<ScriptInt>(args[1])->value()
+			);
+		return nullptr;
+	});
+
+	script->BindFunction("character_overrideGroundFriction",
+		[&character](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
+	{
+		if(args.size() == 2 && args[0]->type() == ScriptVariableType::Int && args[1]->type() == ScriptVariableType::Int)
+			character.physicsManager()->OverrideGroundFriction(
 				std::static_pointer_cast<ScriptInt>(args[0])->value(),
 				std::static_pointer_cast<ScriptInt>(args[1])->value()
 			);

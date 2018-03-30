@@ -26,7 +26,6 @@ public:
 
 	void FrameUpdate();
 
-	//TODO: Create temporary network device
 	const std::unordered_map<int, std::shared_ptr<InputDevice>>& inputDevices() const;
 
 	InputDevice* GetInputDevice(int id);

@@ -33,11 +33,11 @@ class RenderingGL : public BaseService
 {
 	friend class GameSceneManager;
 private:
-	Debug* _debug;
-	GraphicsGL* _graphics;
-	ResourceManager* _resourceManager;
-	Screen* _screen;
-	Time* _time;
+	Debug* _debug{};
+	GraphicsGL* _graphics{};
+	ResourceManager* _resourceManager{};
+	Screen* _screen{};
+	Time* _time{};
 
 private:
 	std::unique_ptr<FrameBuffer> _mainBuffer;
@@ -71,7 +71,7 @@ public:
 
 	void DrawScreenMesh(glm::vec4 rect, Mesh* mesh, Material* mat);
 	void DrawScreenMesh(glm::vec4 rect, Mesh* mesh, const std::vector<MaterialTexture>& textures, Material* mat);
-	void DrawScreenMesh(glm::vec4 rect, Mesh* mesh, FrameBuffer* textures, Material* mat, glm::vec4 params = glm::vec4(0, 0, 1, 1));
+	void DrawScreenMesh(glm::vec4 rect, Mesh* mesh, FrameBuffer* frameBuffer, Material* mat, glm::vec4 params = glm::vec4(0, 0, 1, 1));
 
 	void DrawPostEffect(PostEffect* pf);
 	void DrawScreenText(glm::vec4 rect, GLuint size, std::string text, Font* font, TextAlignment alignment = TextAlignment::Left);

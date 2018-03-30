@@ -33,7 +33,7 @@ public:
 	void Update() override;
 	void Cleanup() override;
 
-	void HandleResized(GLFWwindow* wnd, int width, int height);
+	void HandleResized(GLFWwindow* wnd, int sizeX, int sizeY);
 
 	void SetActiveWindow(GLFWwindow* window);
 

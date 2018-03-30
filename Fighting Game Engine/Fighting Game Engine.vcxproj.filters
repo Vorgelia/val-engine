@@ -420,6 +420,7 @@
       <Filter>Val Engine\Game\Characters</Filter>
     </ClCompile>
     <ClCompile Include="CharacterPhysicsManager.cpp" />
+    <ClCompile Include="FightingStageBehaviour.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FGIncludes.hpp">
@@ -717,6 +718,9 @@
       <Filter>Val Engine\Game\Characters</Filter>
     </ClInclude>
     <ClInclude Include="CharacterPhysicsManager.h">
+      <Filter>Val Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="FightingStageBehaviour.h">
       <Filter>Val Engine</Filter>
     </ClInclude>
   </ItemGroup>

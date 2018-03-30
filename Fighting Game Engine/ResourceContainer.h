@@ -17,7 +17,7 @@ public:
 	void Cleanup(bool includePersistent = false);
 
 	ResourceContainer() = default;
-	~ResourceContainer() = default;
+	virtual ~ResourceContainer() = default;
 };
 
 template<typename KeyT, typename ResourceT>

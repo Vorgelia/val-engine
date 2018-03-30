@@ -7,7 +7,7 @@
 
 VE_BEHAVIOUR_REGISTER_TYPE(ScriptBehaviour);
 
-inline void ScriptBehaviour::RunScriptFunction(std::string name) const
+inline void ScriptBehaviour::RunScriptFunction(const std::string& name) const
 {
 	if(_script != nullptr && _script->HasFunction(name))
 	{

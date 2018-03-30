@@ -1,7 +1,7 @@
 #include "ScriptFunctionSignature.h"
 #include "BaseScriptVariable.h"
 
-ScriptFunctionSignature::ScriptFunctionSignature(std::string& name, int start, int end, std::vector<ScriptVariableSignature>& arguments, ScriptVariableType returnType)
+ScriptFunctionSignature::ScriptFunctionSignature(const std::string& name, int start, int end, std::vector<ScriptVariableSignature>& arguments, ScriptVariableType returnType)
 {
 	this->name = name;
 	this->start = start;
@@ -10,7 +10,7 @@ ScriptFunctionSignature::ScriptFunctionSignature(std::string& name, int start, i
 	this->returnType = returnType;
 }
 
-ScriptVariableSignature::ScriptVariableSignature(ScriptVariableType type, std::string name)
+ScriptVariableSignature::ScriptVariableSignature(ScriptVariableType type, const std::string& name)
 {
 	this->type = type;
 	this->name = name;

@@ -1,4 +1,5 @@
 #include "ScriptVariable.h"
+#include <utility>
 
 template<>
 std::string ScriptInt::ToString()
@@ -35,6 +36,6 @@ ScriptBool::ScriptVariable(bool value, bool isConst) : BaseScriptVariable(Script
 template<>
 ScriptString::ScriptVariable(std::string value, bool isConst) : BaseScriptVariable(ScriptVariableType::String, isConst)
 {
-	_value = value;
+	_value = std::move(value);
 	_initialized = true;
 }
