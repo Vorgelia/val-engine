@@ -115,9 +115,9 @@ void GameScene::Init()
 	RunFunctionOnObjectBehaviours(VE_BEHAVIOUR_FUNCTION_CALLER(OnSceneInit));
 }
 
-void GameScene::Update()
+void GameScene::EngineUpdate()
 {
-
+	RunFunctionOnObjectBehaviours(VE_BEHAVIOUR_FUNCTION_CALLER(EngineUpdate));
 }
 
 void GameScene::GameUpdate()

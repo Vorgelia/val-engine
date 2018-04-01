@@ -10,7 +10,7 @@ void Behaviour::OnSceneInit()
 
 }
 
-void Behaviour::Update()
+void Behaviour::EngineUpdate()
 {
 
 }

@@ -2,8 +2,8 @@
 #include <vector>
 #include <functional>
 
-#define VE_DELEGATE_FUNC(type, name, argType) \
-	type::func_t([this](##argType arg){ name(##arg); })
+#define VE_DELEGATE_FUNC(type, name) \
+	type::func_t([this](auto ...args){ name(args...); })
 
 template<typename... argTypes>
 class Delegate

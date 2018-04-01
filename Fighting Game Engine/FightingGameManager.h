@@ -1,6 +1,7 @@
 #pragma once
 #include "BaseService.h"
 #include "FightingGameState.h"
+#include "Delegate.h"
 
 class GameSceneManager;
 class GameScene;
@@ -27,6 +28,9 @@ private:
 	void Cleanup() override;
 
 public:
+	typedef Delegate<FightingGameState> FightingGameStateEventHandler;
+	FightingGameStateEventHandler FightingGameStateChanged;
+
 	FightingGameState currentState() const;
 	FightingStageBehaviour* stageBehaviour() const;
 

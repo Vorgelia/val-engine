@@ -35,6 +35,11 @@ void FightingGameManager::HandleSceneLoaded(const GameScene* scene)
 
 void FightingGameManager::ChangeState(FightingGameState state)
 {
+	if(state == _currentState)
+	{
+		return;
+	}
+
 	switch(state)
 	{
 	case FightingGameState::None:
@@ -60,16 +65,16 @@ void FightingGameManager::ChangeState(FightingGameState state)
 		break;
 	}
 	_currentState = state;
+	FightingGameStateChanged(state);
 }
 
 void FightingGameManager::Init()
 {
 	_playerManager = _serviceManager->PlayerManager();
-
 	_gameSceneManager = _serviceManager->GameSceneManager();
 	_gameSceneManager->SceneLoaded += GameSceneManager::GameSceneEventHandler::func_t([this](const GameScene* scene) { HandleSceneLoaded(scene); });
 
-	_currentState = FightingGameState::None;
+	ChangeState(FightingGameState::None);
 }
 
 void FightingGameManager::Update()

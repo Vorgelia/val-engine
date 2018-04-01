@@ -45,7 +45,6 @@ PlayerManager.cpp:      VE_MAX_PLAYERS
 #include <clocale>
 #include "GLIncludes.hpp"
 #include "ServiceManager.h"
-#include "GameSceneManager.h"
 #include "Screen.h"
 
 int main()
@@ -66,11 +65,6 @@ int main()
 		if(glfwGetKey(screen->window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		{
 			glfwSetWindowShouldClose(screen->window, GLFW_TRUE);
-		}
-
-		if(glfwGetKey(screen->window, GLFW_KEY_F2))
-		{
-			serviceManager.GameSceneManager()->ReloadScene();
 		}
 	}
 

@@ -20,7 +20,7 @@ void ScriptBehaviour::Init()
 	RunScriptFunction("Init");
 }
 
-void ScriptBehaviour::Update()
+void ScriptBehaviour::EngineUpdate()
 {
 	RunScriptFunction("Update");
 }

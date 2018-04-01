@@ -58,7 +58,7 @@ public:
 	virtual void OnLoaded();
 
 	virtual void Init();
-	virtual void Update();
+	virtual void EngineUpdate();
 	virtual void GameUpdate();
 	virtual void LateGameUpdate();
 	virtual void LateUpdate();

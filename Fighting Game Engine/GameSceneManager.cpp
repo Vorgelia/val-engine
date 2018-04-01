@@ -62,26 +62,30 @@ void GameSceneManager::HandleSceneInit()
 
 bool GameSceneManager::HandleSceneUpdate()
 {
-	bool gameUpdated = false;//This is a variable that keeps track of whether we've run a game update on this iteration. If we have, this will tell the engine to render at the end.
-	if(!_isLoading)
+	if(_isLoading)
 	{
-		VE_SCENE_FUNCTION_CALL(Update);//Send a game loop update regardless of game updates
-
-		int updateCount = 20;
-		//Run game updates until running one would put us ahead of our current time
-		while((_time->lastUpdateTime + VE_FRAME_TIME <= _time->time) && ((--updateCount) >= 0))
-		{
-			gameUpdated = true;
-
-			_time->FrameUpdate();
-			_input->FrameUpdate();
-
-			VE_SCENE_FUNCTION_CALL(GameUpdate);
-			VE_SCENE_FUNCTION_CALL(LateGameUpdate);
-		}
-
-		VE_SCENE_FUNCTION_CALL(LateUpdate);//Send a late game loop update regardless of game updates
+		return false;
 	}
+
+	//This is a variable that keeps track of whether we've run a game update on this iteration. If we have, this will tell the engine to render at the end.
+	bool gameUpdated = false;
+	VE_SCENE_FUNCTION_CALL(EngineUpdate);//Send an engine update regardless of game updates
+
+	int updateCount = 3;
+	//Run game updates until running one would put us ahead of our current time
+	while((_time->lastUpdateTime + VE_FRAME_TIME <= _time->time) && ((--updateCount) >= 0))
+	{
+		gameUpdated = true;
+
+		_time->FrameUpdate();
+		_input->FrameUpdate();
+
+		VE_SCENE_FUNCTION_CALL(GameUpdate);
+		VE_SCENE_FUNCTION_CALL(LateGameUpdate);
+	}
+
+	VE_SCENE_FUNCTION_CALL(LateUpdate);//Send a late game loop update regardless of game updates
+
 
 	return gameUpdated;
 }

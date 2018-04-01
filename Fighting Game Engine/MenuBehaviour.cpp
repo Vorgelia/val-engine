@@ -31,7 +31,7 @@ void MenuBehaviour::OnRenderUI()
 	}
 }
 
-void MenuBehaviour::Update()
+void MenuBehaviour::EngineUpdate()
 {
 	if(glfwGetKey(_screen->window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 	{
