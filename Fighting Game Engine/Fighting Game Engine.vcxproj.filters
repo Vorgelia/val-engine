@@ -138,9 +138,6 @@
     <Filter Include="Val Engine\Game\Characters\Frame">
       <UniqueIdentifier>{615b4344-ec17-4486-9a90-d76d50e310d4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Val Engine\Game\Behaviours">
-      <UniqueIdentifier>{d9d2eee2-a311-4516-bde6-88c61acca0c6}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Val Engine\Game\Services">
       <UniqueIdentifier>{6490bb19-f282-4a97-9f02-c55c6f72f33d}</UniqueIdentifier>
     </Filter>
@@ -162,6 +159,15 @@
     <Filter Include="Val Engine\Engine\Utilities\Data\Containers">
       <UniqueIdentifier>{d204695e-b0c4-46da-90d8-da35c8a827b9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Val Engine\Game\Characters\Components">
+      <UniqueIdentifier>{69db688c-aa3d-4238-ab4a-ecb0e126d791}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Val Engine\Game\Characters\Behaviours">
+      <UniqueIdentifier>{b16cfb7b-dad4-44b3-8c6d-c848776ff547}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Val Engine\Game\Scenes">
+      <UniqueIdentifier>{d9d2eee2-a311-4516-bde6-88c61acca0c6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameScene.cpp">
@@ -176,17 +182,11 @@
     <ClCompile Include="Main.cpp">
       <Filter>Val Engine</Filter>
     </ClCompile>
-    <ClCompile Include="CharacterRenderer.cpp">
-      <Filter>Val Engine\Game\Behaviours</Filter>
-    </ClCompile>
-    <ClCompile Include="GameCharacter.cpp">
-      <Filter>Val Engine\Game\Behaviours</Filter>
-    </ClCompile>
     <ClCompile Include="IntroBehaviour.cpp">
-      <Filter>Val Engine\Game\Behaviours</Filter>
+      <Filter>Val Engine\Game\Scenes</Filter>
     </ClCompile>
     <ClCompile Include="MenuBehaviour.cpp">
-      <Filter>Val Engine\Game\Behaviours</Filter>
+      <Filter>Val Engine\Game\Scenes</Filter>
     </ClCompile>
     <ClCompile Include="CharacterState.cpp">
       <Filter>Val Engine\Game\Characters\State</Filter>
@@ -419,8 +419,18 @@
     <ClCompile Include="GameCharacterData.cpp">
       <Filter>Val Engine\Game\Characters</Filter>
     </ClCompile>
-    <ClCompile Include="CharacterPhysicsManager.cpp" />
-    <ClCompile Include="FightingStageBehaviour.cpp" />
+    <ClCompile Include="CharacterPhysicsManager.cpp">
+      <Filter>Val Engine\Game\Characters\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="FightingStageBehaviour.cpp">
+      <Filter>Val Engine\Game\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="GameCharacter.cpp">
+      <Filter>Val Engine\Game\Characters\Behaviours</Filter>
+    </ClCompile>
+    <ClCompile Include="CharacterRenderer.cpp">
+      <Filter>Val Engine\Game\Characters\Behaviours</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FGIncludes.hpp">
@@ -481,10 +491,10 @@
       <Filter>Val Engine\Engine\Objects\Behaviours</Filter>
     </ClInclude>
     <ClInclude Include="IntroBehaviour.h">
-      <Filter>Val Engine\Game\Behaviours</Filter>
+      <Filter>Val Engine\Game\Scenes</Filter>
     </ClInclude>
     <ClInclude Include="MenuBehaviour.h">
-      <Filter>Val Engine\Game\Behaviours</Filter>
+      <Filter>Val Engine\Game\Scenes</Filter>
     </ClInclude>
     <ClInclude Include="ScriptBehaviour.h">
       <Filter>Val Engine\Engine\Objects\Behaviours</Filter>
@@ -509,12 +519,6 @@
     </ClInclude>
     <ClInclude Include="CharacterState.h">
       <Filter>Val Engine\Game\Characters\State</Filter>
-    </ClInclude>
-    <ClInclude Include="CharacterRenderer.h">
-      <Filter>Val Engine\Game\Behaviours</Filter>
-    </ClInclude>
-    <ClInclude Include="GameCharacter.h">
-      <Filter>Val Engine\Game\Behaviours</Filter>
     </ClInclude>
     <ClInclude Include="CharacterStateManager.h">
       <Filter>Val Engine\Game\Characters\State</Filter>
@@ -718,10 +722,16 @@
       <Filter>Val Engine\Game\Characters</Filter>
     </ClInclude>
     <ClInclude Include="CharacterPhysicsManager.h">
-      <Filter>Val Engine</Filter>
+      <Filter>Val Engine\Game\Characters\Components</Filter>
     </ClInclude>
     <ClInclude Include="FightingStageBehaviour.h">
-      <Filter>Val Engine</Filter>
+      <Filter>Val Engine\Game\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="GameCharacter.h">
+      <Filter>Val Engine\Game\Characters\Behaviours</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterRenderer.h">
+      <Filter>Val Engine\Game\Characters\Behaviours</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
