@@ -1,4 +1,4 @@
-#include "CharacterStateManager.h"
+#include "CharacterStateComponent.h"
 #include "ServiceManager.h"
 #include "CharacterFrame.h"
 #include "CharacterState.h"
@@ -13,7 +13,7 @@
 #include "GamePlayer.h"
 #include "GameCharacterData.h"
 
-void CharacterStateManager::StateUpdate()
+void CharacterStateComponent::StateUpdate()
 {
 	if(_freezeFrameCount > 0)
 	{
@@ -36,7 +36,7 @@ void CharacterStateManager::StateUpdate()
 	}
 }
 
-void CharacterStateManager::EvaluateNextState()
+void CharacterStateComponent::EvaluateNextState()
 {
 	if(_owner->_playerOwner == nullptr || _owner->_playerOwner->inputDevice() == nullptr)
 	{
@@ -96,7 +96,7 @@ void CharacterStateManager::EvaluateNextState()
 	}
 }
 
-bool CharacterStateManager::StartState(std::string name)
+bool CharacterStateComponent::StartState(std::string name)
 {
 	auto iter = _stateLookup.find(name);
 	if(iter != _stateLookup.end())
@@ -116,7 +116,7 @@ bool CharacterStateManager::StartState(std::string name)
 	return false;
 }
 
-bool CharacterStateManager::SetFrame(std::string name)
+bool CharacterStateComponent::SetFrame(std::string name)
 {
 	auto iter = _frameLookup.find(name);
 	if(iter != _frameLookup.end())
@@ -128,34 +128,34 @@ bool CharacterStateManager::SetFrame(std::string name)
 	return false;
 }
 
-bool CharacterStateManager::ModifyCurrentStateFrame(int newFrame)
+bool CharacterStateComponent::ModifyCurrentStateFrame(int newFrame)
 {
 	_currentStateFrame = newFrame;
 	_stateEnded = false;
 	return true;
 }
 
-bool CharacterStateManager::RestartState()
+bool CharacterStateComponent::RestartState()
 {
 	return StartState(_currentStateId);
 }
 
-void CharacterStateManager::MarkStateEnded()
+void CharacterStateComponent::MarkStateEnded()
 {
 	_stateEnded = true;
 }
 
-void CharacterStateManager::Freeze(int duration)
+void CharacterStateComponent::Freeze(int duration)
 {
 	_freezeFrameCount = duration;
 }
 
-void CharacterStateManager::Unfreeze()
+void CharacterStateComponent::Unfreeze()
 {
 	_freezeFrameCount = 0;
 }
 
-bool CharacterStateManager::AddFlag(CharacterStateFlagType type, std::string flag)
+bool CharacterStateComponent::AddFlag(CharacterStateFlagType type, std::string flag)
 {
 	auto iter = _flags.find(type);
 	if(iter == _flags.end())
@@ -166,7 +166,7 @@ bool CharacterStateManager::AddFlag(CharacterStateFlagType type, std::string fla
 	return iter->second.emplace(flag).second;
 }
 
-bool CharacterStateManager::RemoveFlag(CharacterStateFlagType type, std::string flag)
+bool CharacterStateComponent::RemoveFlag(CharacterStateFlagType type, std::string flag)
 {
 	auto iter = _flags.find(type);
 	if(iter == _flags.end())
@@ -177,12 +177,12 @@ bool CharacterStateManager::RemoveFlag(CharacterStateFlagType type, std::string 
 	return iter->second.erase(flag) != 0;
 }
 
-void CharacterStateManager::ClearFlags()
+void CharacterStateComponent::ClearFlags()
 {
 	_flags.clear();
 }
 
-const std::unordered_set<std::string>& CharacterStateManager::GetFlags(CharacterStateFlagType type)
+const std::unordered_set<std::string>& CharacterStateComponent::GetFlags(CharacterStateFlagType type)
 {
 	auto iter = _flags.find(type);
 	if(iter == _flags.end())
@@ -193,7 +193,7 @@ const std::unordered_set<std::string>& CharacterStateManager::GetFlags(Character
 	return iter->second;
 }
 
-CharacterStateManager::CharacterStateManager(GameCharacter* owner, ServiceManager* serviceManager) 
+CharacterStateComponent::CharacterStateComponent(GameCharacter* owner, ServiceManager* serviceManager) 
 	: _owner(owner)
 {
 	_input = serviceManager->Input();
@@ -256,6 +256,3 @@ CharacterStateManager::CharacterStateManager(GameCharacter* owner, ServiceManage
 		_owner->_resource->GetTexture(iter.second->spriteData()->sprite());
 	}
 }
-
-CharacterStateManager::~CharacterStateManager()
-= default;

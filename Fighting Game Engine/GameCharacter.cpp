@@ -2,27 +2,29 @@
 #include "Script.h"
 #include "ScriptManager.h"
 #include "ResourceManager.h"
-#include "CharacterStateManager.h"
-#include "CharacterPhysicsManager.h"
+#include "CharacterStateComponent.h"
+#include "CharacterPhysicsComponent.h"
 #include "GamePlayer.h"
+#include "CharacterState.h"
+#include "CharacterFrame.h"
 #include "GameCharacterData.h"
 #include "ServiceManager.h"
 
 VE_BEHAVIOUR_REGISTER_TYPE(GameCharacter);
 
-const GameCharacterData * GameCharacter::characterData() const
+const GameCharacterData* GameCharacter::characterData() const
 {
 	return _characterData.get();
 }
 
-CharacterStateManager* GameCharacter::stateManager() const
+CharacterStateComponent* GameCharacter::stateComponent() const
 {
-	return _stateManager.get();
+	return _stateComponent.get();
 }
 
-CharacterPhysicsManager* GameCharacter::physicsManager() const
+CharacterPhysicsComponent* GameCharacter::physicsComponent() const
 {
-	return _physicsManager.get();
+	return _physicsComponent.get();
 }
 
 void GameCharacter::SetOwner(GamePlayer* owner)
@@ -46,7 +48,7 @@ void GameCharacter::CharacterUpdate()
 		CharacterInit();
 	}
 
-	_stateManager->EvaluateNextState();
+	_stateComponent->EvaluateNextState();
 
 	if(_characterScript != nullptr)
 	{
@@ -58,8 +60,8 @@ void GameCharacter::GameUpdate()
 {
 	CharacterUpdate();
 
-	_stateManager->StateUpdate();
-	_physicsManager->Update();
+	_stateComponent->StateUpdate();
+	_physicsComponent->Update();
 }
 
 GameCharacter::GameCharacter(Object* owner, ServiceManager* serviceManager, const json& j) : Behaviour(owner, serviceManager, j)
@@ -77,8 +79,8 @@ GameCharacter::GameCharacter(Object* owner, ServiceManager* serviceManager, cons
 		if(dataJson != nullptr)
 		{
 			_characterData = std::make_unique<GameCharacterData>(*dataJson);
-			_stateManager = std::make_unique<CharacterStateManager>(this, _serviceManager);
-			_physicsManager = std::make_unique<CharacterPhysicsManager>(this, serviceManager);
+			_stateComponent = std::make_unique<CharacterStateComponent>(this, _serviceManager);
+			_physicsComponent = std::make_unique<CharacterPhysicsComponent>(this, serviceManager);
 
 			std::string scriptPath;
 			if(JSON::TryGetMember(j, "characterScript", scriptPath))
@@ -89,6 +91,3 @@ GameCharacter::GameCharacter(Object* owner, ServiceManager* serviceManager, cons
 		}
 	}
 }
-
-GameCharacter::~GameCharacter()
-= default;

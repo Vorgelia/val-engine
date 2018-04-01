@@ -10,8 +10,8 @@ class Script;
 class BaseScriptVariable;
 class CharacterState;
 class CharacterFrame;
-class CharacterStateManager;
-class CharacterPhysicsManager;
+class CharacterStateComponent;
+class CharacterPhysicsComponent;
 class GamePlayer;
 struct GameCharacterData;
 
@@ -24,7 +24,7 @@ class GameCharacter :
 {
 	friend class ScriptManager;
 	friend class CharacterRenderer;
-	friend class CharacterStateManager;
+	friend class CharacterStateComponent;
 
 private:
 	ScriptManager* _scriptManager;
@@ -43,8 +43,8 @@ private:
 	bool _flipped;
 	std::unordered_set<std::string> _systemFlags;
 
-	std::unique_ptr<CharacterStateManager> _stateManager;
-	std::unique_ptr<CharacterPhysicsManager> _physicsManager;
+	std::unique_ptr<CharacterStateComponent> _stateComponent;
+	std::unique_ptr<CharacterPhysicsComponent> _physicsComponent;
 
 	void CharacterInit();
 	void CharacterUpdate();
@@ -55,11 +55,11 @@ public:
 	VE_BEHAVIOUR_REGISTER_FUNCTION(GameUpdate);
 
 	const GameCharacterData* characterData() const;
-	CharacterStateManager* stateManager() const;
-	CharacterPhysicsManager* physicsManager() const;
+	CharacterStateComponent* stateComponent() const;
+	CharacterPhysicsComponent* physicsComponent() const;
 
 	void SetOwner(GamePlayer* owner);
 
 	GameCharacter(Object* owner, ServiceManager* serviceManager, const json& j);
-	~GameCharacter();
+	~GameCharacter() = default;
 };

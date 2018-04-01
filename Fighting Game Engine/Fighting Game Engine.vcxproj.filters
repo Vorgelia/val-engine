@@ -144,9 +144,6 @@
     <Filter Include="Val Engine\Game\Data">
       <UniqueIdentifier>{39769fba-2aff-4488-9c3d-c855a283bde9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Val Engine\Game\Data\Game">
-      <UniqueIdentifier>{f9a8a99f-e95f-41c2-8460-80b42addd5e9}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Val Engine\Engine\Data\Rendering\Native">
       <UniqueIdentifier>{05dbbc0b-57e1-4759-a8cd-a52e63d7f376}</UniqueIdentifier>
     </Filter>
@@ -189,9 +186,6 @@
       <Filter>Val Engine\Game\Scenes</Filter>
     </ClCompile>
     <ClCompile Include="CharacterState.cpp">
-      <Filter>Val Engine\Game\Characters\State</Filter>
-    </ClCompile>
-    <ClCompile Include="CharacterStateManager.cpp">
       <Filter>Val Engine\Game\Characters\State</Filter>
     </ClCompile>
     <ClCompile Include="AttackData.cpp">
@@ -419,9 +413,6 @@
     <ClCompile Include="GameCharacterData.cpp">
       <Filter>Val Engine\Game\Characters</Filter>
     </ClCompile>
-    <ClCompile Include="CharacterPhysicsManager.cpp">
-      <Filter>Val Engine\Game\Characters\Components</Filter>
-    </ClCompile>
     <ClCompile Include="FightingStageBehaviour.cpp">
       <Filter>Val Engine\Game\Scenes</Filter>
     </ClCompile>
@@ -430,6 +421,15 @@
     </ClCompile>
     <ClCompile Include="CharacterRenderer.cpp">
       <Filter>Val Engine\Game\Characters\Behaviours</Filter>
+    </ClCompile>
+    <ClCompile Include="CharacterPhysicsComponent.cpp">
+      <Filter>Val Engine\Game\Characters\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="CharacterStateComponent.cpp">
+      <Filter>Val Engine\Game\Characters\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="CharacterCollisionComponent.cpp">
+      <Filter>Val Engine\Game\Characters\Components</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -518,9 +518,6 @@
       <Filter>Val Engine\Game\Characters\Frame</Filter>
     </ClInclude>
     <ClInclude Include="CharacterState.h">
-      <Filter>Val Engine\Game\Characters\State</Filter>
-    </ClInclude>
-    <ClInclude Include="CharacterStateManager.h">
       <Filter>Val Engine\Game\Characters\State</Filter>
     </ClInclude>
     <ClInclude Include="GamePlayer.h">
@@ -670,9 +667,6 @@
     <ClInclude Include="FightingGameManager.h">
       <Filter>Val Engine\Game\Services</Filter>
     </ClInclude>
-    <ClInclude Include="FightingGameState.h">
-      <Filter>Val Engine\Game\Data\Game</Filter>
-    </ClInclude>
     <ClInclude Include="Texture.h">
       <Filter>Val Engine\Engine\Data\Rendering\Native</Filter>
     </ClInclude>
@@ -721,9 +715,6 @@
     <ClInclude Include="GameCharacterData.h">
       <Filter>Val Engine\Game\Characters</Filter>
     </ClInclude>
-    <ClInclude Include="CharacterPhysicsManager.h">
-      <Filter>Val Engine\Game\Characters\Components</Filter>
-    </ClInclude>
     <ClInclude Include="FightingStageBehaviour.h">
       <Filter>Val Engine\Game\Scenes</Filter>
     </ClInclude>
@@ -732,6 +723,18 @@
     </ClInclude>
     <ClInclude Include="CharacterRenderer.h">
       <Filter>Val Engine\Game\Characters\Behaviours</Filter>
+    </ClInclude>
+    <ClInclude Include="FightingGameState.h">
+      <Filter>Val Engine\Game\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterPhysicsComponent.h">
+      <Filter>Val Engine\Game\Characters\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterStateComponent.h">
+      <Filter>Val Engine\Game\Characters\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterCollisionComponent.h">
+      <Filter>Val Engine\Game\Characters\Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

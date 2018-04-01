@@ -20,7 +20,7 @@ enum class CharacterStateFlagType
 	CancelRequirements = 3,
 };
 
-class CharacterStateManager
+class CharacterStateComponent
 {
 	friend class GameCharacter;
 	friend class ScriptManager;
@@ -69,7 +69,7 @@ private:
 	const std::unordered_set<std::string>& GetFlags(CharacterStateFlagType type);
 
 public:
-	CharacterStateManager(GameCharacter* owner, ServiceManager* serviceManager);
-	~CharacterStateManager();
+	CharacterStateComponent(GameCharacter* owner, ServiceManager* serviceManager);
+	~CharacterStateComponent() = default;
 };
 

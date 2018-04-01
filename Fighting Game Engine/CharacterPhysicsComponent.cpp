@@ -1,4 +1,4 @@
-#include "CharacterPhysicsManager.h"
+#include "CharacterPhysicsComponent.h"
 #include "GameCharacter.h"
 #include "GameCharacterData.h"
 #include "Transform.h"
@@ -6,7 +6,7 @@
 #include "FightingStageBehaviour.h"
 #include "FightingGameManager.h"
 
-void CharacterPhysicsManager::Update()
+void CharacterPhysicsComponent::Update()
 {
 	FightingStageBehaviour* stageBehaviour = _fightingGameManager->stageBehaviour();
 	if(stageBehaviour == nullptr)
@@ -71,37 +71,34 @@ void CharacterPhysicsManager::Update()
 		--_gravityOverride.duration;
 }
 
-void CharacterPhysicsManager::AddOffset(glm::lvec2 dir)
+void CharacterPhysicsComponent::AddOffset(glm::lvec2 dir)
 {
 	_accumulatedOffset += dir;
 }
 
-void CharacterPhysicsManager::AddVelocity(glm::lvec2 dir)
+void CharacterPhysicsComponent::AddVelocity(glm::lvec2 dir)
 {
 	_velocity += dir;
 }
 
-void CharacterPhysicsManager::SetVelocity(glm::lvec2 dir)
+void CharacterPhysicsComponent::SetVelocity(glm::lvec2 dir)
 {
 	_velocity = dir;
 }
 
-glm::lvec2 CharacterPhysicsManager::GetVelocity() const
+glm::lvec2 CharacterPhysicsComponent::GetVelocity() const
 {
 	return _velocity;
 }
 
-void CharacterPhysicsManager::AddForce(std::int64_t duration, glm::lvec2 dir)
+void CharacterPhysicsComponent::AddForce(std::int64_t duration, glm::lvec2 dir)
 {
 	_forces.emplace_back(CharacterPhysicsForce{ duration, dir });
 }
 
-CharacterPhysicsManager::CharacterPhysicsManager(GameCharacter * owner, ServiceManager * serviceManager)
+CharacterPhysicsComponent::CharacterPhysicsComponent(GameCharacter * owner, ServiceManager * serviceManager)
 	: _owner(owner)
 	, _grounded(false)
 {
 	_fightingGameManager = serviceManager->FightingGameManager();
 }
-
-CharacterPhysicsManager::~CharacterPhysicsManager()
-= default;

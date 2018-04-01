@@ -14,27 +14,37 @@ Boost http://www.boost.org/
 Freetype 2 https://www.freetype.org/
 FMTlib http://fmtlib.net
 Nlohmann JSON https://github.com/nlohmann/json
-Libraries planned to be used:
-IrrKlang
+
+----Conventions----
+#define DEFINE_NAME
+class ClassName
+private/protected: Type _variableName
+public: Type variableName
+Type FunctionName
+Type variableGetter/Setter()
 
 ----Arbitrary to-do list----
--Engine Features
+--Engine Features
 TODO: Find a way to multithread input so inputs are received and timed properly on sub-60FPS.
 TODO: Add more customization over cleaning up framebuffers between frames.
 TODO: Check if a framebuffer was used last frame before cleaning it up.
-----
-Important defines:
+TODO: Service for managing the type of the current build [debug, release]
+
+--Code Cleanup
+TODO: Replace some defines with service members [*].
+
+----Important defines----
 --Engine--
 Resource.cpp:           VE_CREATE_DEFAULT_RESOURCES
-InputDevice.cpp:        VE_INPUT_BUFFER_INIT
--                       VE_INPUT_BUFFER_MID
+InputDevice.cpp:        VE_INPUT_BUFFER_INIT*
+-                       VE_INPUT_BUFFER_MID*
 Rendering.cpp:          VE_AUX_BUFFER_AMOUNT
 -                       VE_WORLD_SCALE
 -                       VE_FONT_DEFAULT
 Screen.h:               VE_USE_SINGLE_BUFFER
-Time.h:                 VE_FRAME_TIME
--                       VE_FRAME_RATE
-Debug.h:		        VE_DEBUG_ERRORTHROW
+Time.h:                 VE_FRAME_TIME*
+-                       VE_FRAME_RATE*
+Debug.h:		        VE_DEBUG_ERRORTHROW*
 ScriptParsingUtils.cpp: VE_TAB_SPACE_AMOUNT
 
 --Game--

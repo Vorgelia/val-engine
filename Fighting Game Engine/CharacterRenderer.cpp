@@ -3,7 +3,7 @@
 #include "GameCharacter.h"
 #include "CharacterFrame.h"
 #include "CharacterSprite.h"
-#include "CharacterStateManager.h"
+#include "CharacterStateComponent.h"
 #include "ServiceManager.h"
 #include "Object.h"
 #include "Material.h"
@@ -33,13 +33,13 @@ void CharacterRenderer::OnRenderObjects()
 		}
 	}
 
-	if(_character->_stateManager->_currentFrame == nullptr)
+	if(_character->_stateComponent->_currentFrame == nullptr)
 	{
 		Renderer::OnRenderObjects();
 		return;
 	}
 
-	const CharacterSprite* spriteData = _character->_stateManager->_currentFrame->spriteData();
+	const CharacterSprite* spriteData = _character->_stateComponent->_currentFrame->spriteData();
 	Texture* frameTex = _resource->GetTexture(spriteData->sprite());
 
 	HandleRenderingMaterial(spriteData, frameTex, _character->_flipped);

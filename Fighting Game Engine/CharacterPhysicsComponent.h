@@ -6,7 +6,7 @@ class ServiceManager;
 class FightingGameManager;
 
 
-class CharacterPhysicsManager
+class CharacterPhysicsComponent
 {
 	friend class GameCharacter;
 
@@ -53,6 +53,6 @@ public:
 	void OverrideGroundFriction(std::int64_t duration, std::int64_t value) { _groundFrictionOverride = { duration, value }; }
 	void OverrideAirFriction(std::int64_t duration, std::int64_t value) { _airFrictionOverride = { duration, value }; }
 
-	CharacterPhysicsManager(GameCharacter* owner, ServiceManager* serviceManager);
-	~CharacterPhysicsManager();
+	CharacterPhysicsComponent(GameCharacter* owner, ServiceManager* serviceManager);
+	~CharacterPhysicsComponent() = default;
 };

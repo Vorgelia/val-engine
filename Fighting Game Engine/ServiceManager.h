@@ -3,13 +3,13 @@
 #include <vector>
 #include "BaseService.h"
 
-#define ve_named_service(name, type) \
+#define VE_NAMED_SERVICE(name, type) \
 	private:\
 	std::unique_ptr<BaseService> _s##type;\
 	public:\
 	::##type* name();
 
-#define ve_service(type) ve_named_service(type, type)
+#define VE_SERVICE(type) VE_NAMED_SERVICE(type, type)
 
 class Debug;
 class GameSceneManager;
@@ -27,19 +27,19 @@ class FightingGameManager;
 class ServiceManager
 {
 private:
-	ve_service(Debug);
-	ve_service(GameSceneManager);
-	ve_service(ResourceManager);
-	ve_service(ScriptManager);
-	ve_service(Time);
-	ve_service(Screen);
-	ve_service(PlayerManager);
-	ve_service(FightingGameManager);
+	VE_SERVICE(Debug);
+	VE_SERVICE(GameSceneManager);
+	VE_SERVICE(ResourceManager);
+	VE_SERVICE(ScriptManager);
+	VE_SERVICE(Time);
+	VE_SERVICE(Screen);
+	VE_SERVICE(PlayerManager);
+	VE_SERVICE(FightingGameManager);
 
-	ve_named_service(Input, InputManager);
-	ve_named_service(Filesystem, FilesystemManager);
-	ve_named_service(Graphics, GraphicsGL);
-	ve_named_service(Rendering, RenderingGL);
+	VE_NAMED_SERVICE(Input, InputManager);
+	VE_NAMED_SERVICE(Filesystem, FilesystemManager);
+	VE_NAMED_SERVICE(Graphics, GraphicsGL);
+	VE_NAMED_SERVICE(Rendering, RenderingGL);
 
 	bool _servicesUpdated;
 	std::vector<std::unique_ptr<BaseService>*> _activeServices;
@@ -59,5 +59,5 @@ public:
 	~ServiceManager();
 };
 
-#undef ve_named_service
-#undef ve_service
+#undef VE_NAMED_SERVICE
+#undef VE_SERVICE
