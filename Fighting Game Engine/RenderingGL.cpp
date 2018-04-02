@@ -19,8 +19,8 @@
 #include "TimeDataBuffer.h"
 #include "Vec4Buffer.h"
 
-#include <GLM\gtc\matrix_transform.hpp>
-#include <GLM\gtc\type_ptr.hpp>
+#include <GLM/gtc/matrix_transform.hpp>
+#include <GLM/gtc/type_ptr.hpp>
 
 //Define a default font.
 #define VE_FONT_DEFAULT "Fonts/Amble.ttf"

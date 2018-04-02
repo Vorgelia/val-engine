@@ -52,7 +52,7 @@ private:
 
 	void EvaluateNextState();
 
-	void StateUpdate();
+	void Update();
 
 	bool StartState(std::string name);
 	bool SetFrame(std::string name);
@@ -69,6 +69,9 @@ private:
 	const std::unordered_set<std::string>& GetFlags(CharacterStateFlagType type);
 
 public:
+	const CharacterState* currentState() const { return _currentState; }
+	const CharacterFrame* currentFrame() const { return _currentFrame; }
+
 	CharacterStateComponent(GameCharacter* owner, ServiceManager* serviceManager);
 	~CharacterStateComponent() = default;
 };

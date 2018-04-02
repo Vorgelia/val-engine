@@ -9,7 +9,7 @@
 #include "ScriptError.h"
 
 #include <stack>
-#include <boost\lexical_cast.hpp>
+#include <boost/lexical_cast.hpp>
 
 enum class ScriptExpression::State
 {

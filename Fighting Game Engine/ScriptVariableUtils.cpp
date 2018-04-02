@@ -2,7 +2,7 @@
 #include "ScriptOperator.h"
 #include "ScriptError.h"
 #include "ScriptVariable.h"
-#include <fmt\format.h>
+#include <fmt/format.h>
 namespace ScriptVariableUtils
 {
 	template<typename T>

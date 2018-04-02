@@ -53,6 +53,7 @@ private:
 	void PopBlock();
 
 	std::shared_ptr<BaseScriptVariable> GetGlobalVariable(const std::string& name) const;
+
 public:
 	std::string name() const;
 	bool valid() const;
@@ -66,6 +67,8 @@ public:
 
 	std::vector<std::string> GetPragmaDirectives(const std::string& id);
 	std::shared_ptr<BaseScriptVariable> GetVariable(const std::string& name) const;
+
+	void AddVariable(const std::string& name, std::shared_ptr<BaseScriptVariable> variable);
 
 	void RaiseControlFlag(ScriptControlFlag flag);
 	void ConsumeControlFlag();

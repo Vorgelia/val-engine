@@ -12,6 +12,7 @@ class CharacterState;
 class CharacterFrame;
 class CharacterStateComponent;
 class CharacterPhysicsComponent;
+class CharacterCollisionComponent;
 class GamePlayer;
 struct GameCharacterData;
 

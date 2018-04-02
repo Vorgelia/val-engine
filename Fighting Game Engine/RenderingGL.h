@@ -1,7 +1,7 @@
 #pragma once
 #include "BaseService.h"
 #include <vector>
-#include <GLM\glm.hpp>
+#include <GLM/glm.hpp>
 #include "Font.h"
 
 class Mesh;

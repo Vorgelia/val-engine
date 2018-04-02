@@ -6,7 +6,7 @@
 #include "GameScene.h"
 #include "GameCharacter.h"
 #include "Screen.h"
-
+#include "GameCharacter.h"
 #include "GLIncludes.hpp"
 #include "FightingStageBehaviour.h"
 
@@ -102,7 +102,7 @@ FightingStageBehaviour* FightingGameManager::stageBehaviour() const
 	return _stageBehaviour;
 }
 
-FightingGameManager::FightingGameManager(ServiceManager* serviceManager) : BaseService(serviceManager)
+FightingGameManager::FightingGameManager(ServiceManager* serviceManager) : BaseService(serviceManager, 500)
 {
 	_allowServiceUpdate = true;
 }

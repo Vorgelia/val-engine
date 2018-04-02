@@ -71,7 +71,7 @@ bool GameSceneManager::HandleSceneUpdate()
 	bool gameUpdated = false;
 	VE_SCENE_FUNCTION_CALL(EngineUpdate);//Send an engine update regardless of game updates
 
-	int updateCount = 3;
+	int updateCount = 2;
 	//Run game updates until running one would put us ahead of our current time
 	while((_time->lastUpdateTime + VE_FRAME_TIME <= _time->time) && ((--updateCount) >= 0))
 	{

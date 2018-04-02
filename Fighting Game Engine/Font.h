@@ -1,8 +1,8 @@
 #pragma once
 #include "GLIncludes.hpp"
-#include <GLM\glm.hpp>
+#include <GLM/glm.hpp>
 #include <unordered_map>
-#include <boost\filesystem.hpp>
+#include <boost/filesystem.hpp>
 
 namespace FS = boost::filesystem;
 

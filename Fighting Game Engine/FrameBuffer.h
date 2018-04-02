@@ -1,6 +1,6 @@
 #pragma once
 #include "GLIncludes.hpp"
-#include <GLM\glm.hpp>
+#include <GLM/glm.hpp>
 #include <vector>
 #include <memory>
 

@@ -7,7 +7,7 @@
 #include "InputEvent.h"
 #include "InputMotion.h"
 #include "InputMotionComponent.h"
-#include <GLM\glm.hpp>
+#include <GLM/glm.hpp>
 #include "InputDeviceId.h"
 
 //Default input leniency. We want the first input of every move to only count if it's the latest one by default.

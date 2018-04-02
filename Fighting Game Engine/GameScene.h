@@ -4,7 +4,7 @@
 #include <string>
 #include <memory>
 #include <functional>
-#include <boost\filesystem.hpp>
+#include <boost/filesystem.hpp>
 
 #include "ResourceManager.h"
 #include "FilesystemManager.h"

@@ -7,9 +7,11 @@
 
 struct GameCharacterPhysicsParams
 {
-	int gravity;
-	int baseGroundFriction;
-	int baseAirFriction;
+	std::int64_t gravity;
+	std::int64_t baseGroundFriction;
+	std::int64_t baseAirFriction;
+
+	std::int64_t mass;
 
 	GameCharacterPhysicsParams(const json& j);
 	GameCharacterPhysicsParams() = default;

@@ -1,7 +1,7 @@
 #pragma once
 #include "BaseService.h"
 #include "GLIncludes.hpp"
-#include <GLM\glm.hpp>
+#include <GLM/glm.hpp>
 #include "Delegate.h"
 
 //Controls whether a single render buffer should be used

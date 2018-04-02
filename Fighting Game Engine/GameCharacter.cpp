@@ -60,7 +60,7 @@ void GameCharacter::GameUpdate()
 {
 	CharacterUpdate();
 
-	_stateComponent->StateUpdate();
+	_stateComponent->Update();
 	_physicsComponent->Update();
 }
 

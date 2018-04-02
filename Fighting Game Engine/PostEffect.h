@@ -1,6 +1,6 @@
 #pragma once
 #include <vector>
-#include <boost\filesystem.hpp>
+#include <boost/filesystem.hpp>
 
 namespace FS = boost::filesystem;
 

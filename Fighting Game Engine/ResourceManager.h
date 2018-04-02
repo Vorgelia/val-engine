@@ -2,7 +2,7 @@
 #include "BaseService.h"
 #include <string>
 #include <memory>
-#include <boost\filesystem.hpp>
+#include <boost/filesystem.hpp>
 #include "JSON.h"
 #include "ResourceContainer.h"
 

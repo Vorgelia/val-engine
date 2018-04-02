@@ -1,5 +1,5 @@
 #include "InputMotionComponent.h"
-#include <GLM\glm.hpp>
+#include <GLM/glm.hpp>
 
 InputMotionComponent::InputMotionComponent(std::vector<InputButtonEvent>& buttons, unsigned char direction, int minDuration, int leniency, bool strict)
 {

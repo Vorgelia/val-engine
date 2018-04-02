@@ -1,46 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
-    <Filter Include="Resource Files\Fonts">
-      <UniqueIdentifier>{a5dc5a84-6179-46bd-bc9e-c5cbdac91f76}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Resource Files\Materials">
-      <UniqueIdentifier>{80c6740c-692d-4d02-84da-6b413cc3ef7e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Resource Files\Materials\Base">
-      <UniqueIdentifier>{ff96a66e-a6bf-4273-9775-54da6a786253}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Resource Files\Meshes">
-      <UniqueIdentifier>{7089c340-7730-478f-9734-5cd48eb83b8c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Resource Files\Meshes\Base">
-      <UniqueIdentifier>{cf1c1028-4269-4df3-8b35-ff0163e863ec}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Resource Files\PostEffects">
-      <UniqueIdentifier>{1b94fd97-217c-4fdc-b254-1ed40274f379}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Resource Files\Settings">
-      <UniqueIdentifier>{aee7876e-ea2d-4c2e-a033-e062568aceda}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Resource Files\Settings\Input">
-      <UniqueIdentifier>{1bb3ad5b-5759-4f96-9ceb-2db3ce72c65e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Resource Files\Materials\Intro">
-      <UniqueIdentifier>{7d3ca6a1-d9af-4326-9fb0-c7e73ca91d7b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Resource Files\Shaders">
-      <UniqueIdentifier>{c52735ba-4dad-4c2b-a79b-47f36050f8c7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Resource Files\Textures">
-      <UniqueIdentifier>{bbc25830-7f45-45a9-a275-81a7f36431d1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Resource Files\Textures\Intro">
-      <UniqueIdentifier>{cce49813-dc4b-40c6-af73-21484adb3cd7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Val Engine">
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
@@ -428,9 +388,6 @@
     <ClCompile Include="CharacterStateComponent.cpp">
       <Filter>Val Engine\Game\Characters\Components</Filter>
     </ClCompile>
-    <ClCompile Include="CharacterCollisionComponent.cpp">
-      <Filter>Val Engine\Game\Characters\Components</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FGIncludes.hpp">
@@ -567,9 +524,6 @@
     </ClInclude>
     <ClInclude Include="NetworkGamePlayer.h">
       <Filter>Val Engine\Engine\Objects\Players</Filter>
-    </ClInclude>
-    <ClInclude Include="resource.h">
-      <Filter>Val Engine</Filter>
     </ClInclude>
     <ClInclude Include="Delegate.h">
       <Filter>Val Engine\Engine\Utilities\Data</Filter>
@@ -733,88 +687,5 @@
     <ClInclude Include="CharacterStateComponent.h">
       <Filter>Val Engine\Game\Characters\Components</Filter>
     </ClInclude>
-    <ClInclude Include="CharacterCollisionComponent.h">
-      <Filter>Val Engine\Game\Characters\Components</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="Fighting Game Engine.rc">
-      <Filter>Resource Files</Filter>
-    </ResourceCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Materials\Base\Screen.vmat">
-      <Filter>Resource Files\Materials\Base</Filter>
-    </None>
-    <None Include="Resources\Materials\Base\Screen_BasePostFX.vmat">
-      <Filter>Resource Files\Materials\Base</Filter>
-    </None>
-    <None Include="Resources\Materials\Base\Screen_FB.vmat">
-      <Filter>Resource Files\Materials\Base</Filter>
-    </None>
-    <None Include="Resources\Materials\Base\Screen_Text.vmat">
-      <Filter>Resource Files\Materials\Base</Filter>
-    </None>
-    <None Include="Resources\Meshes\Base\quad.vm">
-      <Filter>Resource Files\Meshes\Base</Filter>
-    </None>
-    <None Include="Resources\Meshes\Base\screenQuad.vm">
-      <Filter>Resource Files\Meshes\Base</Filter>
-    </None>
-    <None Include="Resources\Materials\Base\Object2D.vmat">
-      <Filter>Resource Files\Materials\Base</Filter>
-    </None>
-    <None Include="Resources\PostEffects\BasePostFX.vfx">
-      <Filter>Resource Files\PostEffects</Filter>
-    </None>
-    <None Include="Resources\Settings\Input\Keyboard.vi">
-      <Filter>Resource Files\Settings\Input</Filter>
-    </None>
-    <None Include="Resources\Settings\Input\Default.vi">
-      <Filter>Resource Files\Settings\Input</Filter>
-    </None>
-    <None Include="Resources\Materials\Intro\Intro_Screen.vmat">
-      <Filter>Resource Files\Materials\Intro</Filter>
-    </None>
-    <None Include="Resources\Shaders\Base\2D.frag">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="Resources\Shaders\Base\2D.vert">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="Resources\Shaders\Base\BasePostProcessing.frag">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="Resources\Shaders\Base\BasePostProcessing.vert">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="Resources\Shaders\Base\Screen.frag">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="Resources\Shaders\Base\Screen.vert">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="Resources\Shaders\Base\Screen_Text.frag">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="Resources\Shaders\Base\Screen_Text.vert">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Font Include="Resources\Fonts\Amble.ttf">
-      <Filter>Resource Files\Fonts</Filter>
-    </Font>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="Resources\Textures\tex.png">
-      <Filter>Resource Files\Textures</Filter>
-    </Image>
-    <Image Include="Resources\Textures\Intro\Intro.png">
-      <Filter>Resource Files\Textures\Intro</Filter>
-    </Image>
-    <Image Include="Resources\fritz.ico">
-      <Filter>Resource Files</Filter>
-    </Image>
   </ItemGroup>
 </Project>

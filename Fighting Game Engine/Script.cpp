@@ -32,7 +32,7 @@ bool Script::HasFunction(const std::string& name) const
 
 void Script::BindFunction(const std::string& name, std::function<std::shared_ptr<BaseScriptVariable>(const Script*, ScriptArgumentCollection&)> func)
 {
-	_boundFunctions[name] = func;
+	_boundFunctions.insert_or_assign(name, func);
 }
 
 std::shared_ptr<BaseScriptVariable> Script::CallBoundFunction(const std::string& name, std::vector<std::shared_ptr<BaseScriptVariable>> &variables)
@@ -66,6 +66,11 @@ std::shared_ptr<BaseScriptVariable> Script::GetVariable(const std::string& name)
 		_debug->VE_LOG("Could not find variable " + name + " in script " + _name + ".\n" + error.what(), LogItem::Type::Warning);
 		return nullptr;
 	}
+}
+
+void Script::AddVariable(const std::string& name, std::shared_ptr<BaseScriptVariable> variable)
+{
+	_parentBlock->AddVariable(name, variable);
 }
 
 void Script::PreProcess()

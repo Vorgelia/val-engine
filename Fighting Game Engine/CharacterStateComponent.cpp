@@ -13,7 +13,7 @@
 #include "GamePlayer.h"
 #include "GameCharacterData.h"
 
-void CharacterStateComponent::StateUpdate()
+void CharacterStateComponent::Update()
 {
 	if(_freezeFrameCount > 0)
 	{
@@ -108,7 +108,7 @@ bool CharacterStateComponent::StartState(std::string name)
 		_stateEnded = false;
 
 		ClearFlags();
-		StateUpdate();
+		Update();
 
 		return true;
 	}

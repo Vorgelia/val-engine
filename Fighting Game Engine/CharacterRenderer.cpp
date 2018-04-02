@@ -1,5 +1,5 @@
 #include "CharacterRenderer.h"
-#include <GLM\glm.hpp>
+#include <GLM/glm.hpp>
 #include "GameCharacter.h"
 #include "CharacterFrame.h"
 #include "CharacterSprite.h"

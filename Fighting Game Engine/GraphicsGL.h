@@ -7,7 +7,7 @@
 #include <string>
 #include <unordered_map>
 #include <memory>
-#include <GLM\glm.hpp>
+#include <GLM/glm.hpp>
 
 #include<ft2build.h>
 #include FT_FREETYPE_H

@@ -1,12 +1,12 @@
 #include "JSON.h"
 
 #include <Windows.h>
-#include <SOIL\src\SOIL.h>
-#include <boost\filesystem.hpp>
-#include <boost\lexical_cast.hpp>
-#include <boost\algorithm\algorithm.hpp>
-#include <boost\assign\list_of.hpp>
-#include <boost\algorithm\string.hpp>
+#include <SOIL/src/SOIL.h>
+#include <boost/filesystem.hpp>
+#include <boost/lexical_cast.hpp>
+#include <boost/algorithm/algorithm.hpp>
+#include <boost/assign/list_of.hpp>
+#include <boost/algorithm/string.hpp>
 
 #include "ServiceManager.h"
 #include "FilesystemManager.h"

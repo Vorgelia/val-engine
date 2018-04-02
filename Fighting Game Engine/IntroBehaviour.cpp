@@ -10,7 +10,7 @@
 #include "GameSceneManager.h"
 #include "Screen.h"
 #include "DebugLog.h"
-#include <GLM\glm.hpp>
+#include <GLM/glm.hpp>
 #include "BehaviourFactory.h"
 
 VE_BEHAVIOUR_REGISTER_TYPE(IntroBehaviour);

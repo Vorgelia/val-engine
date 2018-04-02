@@ -6,7 +6,7 @@
 #include "ScriptError.h"
 #include "Script.h"
 
-#include <boost\lexical_cast.hpp>
+#include <boost/lexical_cast.hpp>
 
 bool ScriptRangedSwitchBlock::HandleControlFlag()
 {

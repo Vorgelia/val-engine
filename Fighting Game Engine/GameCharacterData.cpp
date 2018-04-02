@@ -5,6 +5,7 @@ GameCharacterPhysicsParams::GameCharacterPhysicsParams(const json & j)
 	JSON::TryGetMember(j, "gravity", gravity);
 	JSON::TryGetMember(j, "baseGroundFriction", baseGroundFriction);
 	JSON::TryGetMember(j, "baseGroundFriction", baseAirFriction);
+	JSON::TryGetMember(j, "mass", mass);
 }
 
 GameCharacterData::GameCharacterData(const json& j)
