@@ -130,9 +130,9 @@ void GameScene::LateGameUpdate()
 	RunFunctionOnObjectBehaviours(VE_BEHAVIOUR_FUNCTION_CALLER(LateGameUpdate));
 }
 
-void GameScene::LateUpdate()
+void GameScene::LateEngineUpdate()
 {
-	RunFunctionOnObjectBehaviours(VE_BEHAVIOUR_FUNCTION_CALLER(LateUpdate));
+	RunFunctionOnObjectBehaviours(VE_BEHAVIOUR_FUNCTION_CALLER(LateEngineUpdate));
 }
 
 void GameScene::RenderUI()

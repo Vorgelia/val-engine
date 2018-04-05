@@ -30,7 +30,7 @@ void ScriptBehaviour::GameUpdate()
 	RunScriptFunction("GameUpdate");
 }
 
-void ScriptBehaviour::LateUpdate()
+void ScriptBehaviour::LateEngineUpdate()
 {
 	RunScriptFunction("LateUpdate");
 }

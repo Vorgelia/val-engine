@@ -62,7 +62,7 @@ public:
 	virtual void EngineUpdate();
 	virtual void GameUpdate();
 	virtual void LateGameUpdate();
-	virtual void LateUpdate();
+	virtual void LateEngineUpdate();
 	virtual void RenderObjects();
 	virtual void ApplyPostEffects();
 	virtual void RenderUI();

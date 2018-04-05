@@ -84,8 +84,7 @@ bool GameSceneManager::HandleSceneUpdate()
 		VE_SCENE_FUNCTION_CALL(LateGameUpdate);
 	}
 
-	VE_SCENE_FUNCTION_CALL(LateUpdate);//Send a late game loop update regardless of game updates
-
+	VE_SCENE_FUNCTION_CALL(LateEngineUpdate);//Send a late engine update regardless of game updates
 
 	return gameUpdated;
 }
