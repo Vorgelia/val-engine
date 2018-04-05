@@ -21,7 +21,7 @@ private:
 private:
 	FightingGameState _currentState;
 
-	std::unordered_map<std::string, GameCharacter*> _characters;
+	std::unordered_map<int, GameCharacter*> _characters;
 	FightingStageBehaviour* _stageBehaviour;
 
 	void HandleSceneLoaded(const GameScene* scene);
@@ -31,8 +31,8 @@ private:
 	void Update() override;
 	void Cleanup() override;
 
-	void AddCharacter(const std::string& id, const std::string& path);
-	void RemoveCharacter();
+	int AddCharacter(const std::string& path);
+	void RemoveCharacter(int id);
 
 public:
 	typedef Delegate<FightingGameState> FightingGameStateEventHandler;
@@ -42,5 +42,5 @@ public:
 	FightingStageBehaviour* stageBehaviour() const;
 
 	FightingGameManager(ServiceManager* serviceManager);
-	~FightingGameManager();
+	~FightingGameManager() = default;
 };

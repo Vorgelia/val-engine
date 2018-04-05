@@ -46,17 +46,17 @@ Object::Object(const std::string& name, ServiceManager* serviceManager, int id)
 	this->_id = id;
 }
 
-Object::Object(const json & j, ServiceManager* serviceManager)
+Object::Object(const json & j, ServiceManager* serviceManager, int id)
 {
 	_serviceManager = serviceManager;
+	_id = id;
 
 	JSON::TryGetMember<bool>(j, "enabled", enabled);
 	JSON::TryGetMember(j, "name", _name);
-	JSON::TryGetMember<unsigned int>(j, "id", _id);
 
 	for(auto& iter : j["behaviours"])
 	{
-		std::string behaviourName = iter["name"].get<std::string>();
+		const std::string behaviourName = iter["name"].get<std::string>();
 		AddBehaviour(behaviourName, iter);
 	}
 }

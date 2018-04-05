@@ -46,6 +46,7 @@ protected:
 
 	void RegisterObject(Object* obj);
 	void UnregisterObject(Object* obj);
+
 public:
 	const std::string& name() const;
 
@@ -70,7 +71,11 @@ public:
 	Object* LoadObject(const std::string& prefabPath);
 	Object* AddObject(const json& jsonData);
 
+	void DestroyObject(Object* object);
+	void DestroyObject(int objectId);
+
 	Object* FindObject(const std::string& name);
+	Object* FindObject(int id);
 	Behaviour* FindBehaviour(const std::string& name);
 
 	GameScene(const FS::path& path, ServiceManager* serviceManager);

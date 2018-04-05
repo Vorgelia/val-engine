@@ -288,7 +288,7 @@ void ScriptManager::HandleScriptCharacterBindings(GameCharacter& character, Scri
 		return nullptr;
 	});
 
-	script->AddVariable("character_id", std::make_shared<ScriptInt>(character.object()->id()));
+	script->AddVariable("character_objectId", std::make_shared<ScriptInt>(character.object()->id(), true));
 }
 
 void ScriptManager::RemoveScript(Script* script)

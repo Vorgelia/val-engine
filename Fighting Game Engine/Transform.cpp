@@ -27,7 +27,7 @@ Transform::Transform(Object* owner, ServiceManager* serviceManager, glm::lvec2 p
 {
 	this->position = position;
 	this->scale = scale;
-	this->rotation = glm::quat(rotation);
+	this->rotation = glm::quat(eulerRotation);
 	this->depth = 0;
 }
 

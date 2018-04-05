@@ -45,11 +45,11 @@ void GameScene::LoadResources()
 			std::string prefabPath;
 			if(objData.size() == 1 && JSON::TryGetMember<std::string>(objData, "prefabPath", prefabPath))
 			{
-				_objects.emplace_back(std::make_unique<Object>(*_resource->GetJsonData(prefabPath), _serviceManager));
+				AddObject(*_resource->GetJsonData(prefabPath));
 			}
 			else
 			{
-				_objects.emplace_back(std::make_unique<Object>(objData, _serviceManager));
+				AddObject(objData);
 			}
 			RegisterObject(_objects.back().get());
 		}
@@ -186,21 +186,43 @@ Object* GameScene::LoadObject(const std::string & prefabPath)
 
 Object* GameScene::AddObject(const json & jsonData)
 {
-	_objects.emplace_back(
-		std::make_unique<Object>(jsonData, _serviceManager));
-	Object* result = _objects.back().get();
-
-	int nearestAvailableId = _objects.back()->_id + 1;
+	int nearestAvailableId = _objects.empty() ? 0 : _objects.back()->_id + 1;
 	while(_objectLookup.count(nearestAvailableId) > 0)
 	{
 		nearestAvailableId += 1;
 	}
 
-	result->_id = nearestAvailableId;
+	_objects.emplace_back(
+		std::make_unique<Object>(jsonData, _serviceManager, nearestAvailableId));
+	Object* result = _objects.back().get();
 
 	RegisterObject(result);
 
 	return result;
+}
+
+void GameScene::DestroyObject(Object* object)
+{
+	for(auto& iter = _objects.begin();iter !=_objects.end();++iter)
+	{
+		if(iter->get() == object)
+		{
+			UnregisterObject(object);
+			_objects.erase(iter);
+			return;
+		}
+	}
+}
+
+void GameScene::DestroyObject(int objectId)
+{
+	auto iter = _objectLookup.find(objectId);
+	if(iter == _objectLookup.end())
+	{
+		return;
+	}
+
+	DestroyObject(iter->second);
 }
 
 Object* GameScene::FindObject(const std::string& name)
@@ -211,6 +233,16 @@ Object* GameScene::FindObject(const std::string& name)
 		return iter->second;
 	}
 
+	return nullptr;
+}
+
+Object* GameScene::FindObject(int id)
+{
+	auto iter = _objectLookup.find(id);
+	if(iter != _objectLookup.end())
+	{
+		return iter->second;
+	}
 	return nullptr;
 }
 

@@ -132,6 +132,7 @@
     <ClCompile Include="PlayerManager.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="RenderingDataBuffer.cpp" />
+    <ClCompile Include="SceneRenderingManager.cpp" />
     <ClCompile Include="ScriptBehaviour.cpp" />
     <ClCompile Include="ScriptCollection.cpp" />
     <ClCompile Include="ScriptExpression.cpp" />
@@ -238,6 +239,7 @@
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="ResourceInitializer.h" />
     <ClInclude Include="FilesystemManager.h" />
+    <ClInclude Include="SceneRenderingManager.h" />
     <ClInclude Include="Screen.h" />
     <ClInclude Include="Script.h" />
     <ClInclude Include="ScriptBehaviour.h" />

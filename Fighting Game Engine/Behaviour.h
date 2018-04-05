@@ -26,6 +26,9 @@ protected:
 	Object* _owner;
 	ServiceManager* _serviceManager;
 
+private:
+	bool _initialized;
+
 public:
 	bool enabled;
 

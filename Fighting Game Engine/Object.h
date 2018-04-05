@@ -44,7 +44,7 @@ public:
 	T* GetBehaviour(std::string name);
 
 	Object(const std::string& name, ServiceManager* serviceManager, int id = 0);
-	Object(const json& j, ServiceManager* serviceManager);
+	Object(const json& j, ServiceManager* serviceManager, int id = 0);
 	~Object() = default;
 };
 

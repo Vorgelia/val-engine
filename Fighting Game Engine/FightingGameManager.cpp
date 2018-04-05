@@ -72,7 +72,7 @@ void FightingGameManager::Init()
 {
 	_playerManager = _serviceManager->PlayerManager();
 	_gameSceneManager = _serviceManager->GameSceneManager();
-	_gameSceneManager->SceneLoaded += GameSceneManager::GameSceneEventHandler::func_t([this](const GameScene* scene) { HandleSceneLoaded(scene); });
+	_gameSceneManager->SceneLoaded += VE_DELEGATE_FUNC(GameSceneManager::GameSceneEventHandler, HandleSceneLoaded);
 
 	ChangeState(FightingGameState::None);
 }
@@ -92,6 +92,41 @@ void FightingGameManager::Cleanup()
 	ChangeState(FightingGameState::None);
 }
 
+int FightingGameManager::AddCharacter(const std::string& path)
+{
+	if(currentState() == FightingGameState::None)
+	{
+		return -1;
+	}
+
+	Object* object = _gameSceneManager->currentScene()->LoadObject(path);
+	if(object == nullptr)
+	{
+		return -1;
+	}
+
+	GameCharacter* characterBehaviour = object->GetBehaviour<GameCharacter>("GameCharacter");
+	if(characterBehaviour == nullptr)
+	{
+		return -1;
+	}
+
+	_characters.emplace(object->id(), characterBehaviour);
+	return object->id();
+}
+
+void FightingGameManager::RemoveCharacter(int id)
+{
+	auto& iter = _characters.find(id);
+	if(iter == _characters.end())
+	{
+		return;
+	}
+
+	_characters.erase(iter);
+	_gameSceneManager->currentScene()->DestroyObject(id);
+}
+
 FightingGameState FightingGameManager::currentState() const
 {
 	return _currentState;
@@ -106,6 +141,3 @@ FightingGameManager::FightingGameManager(ServiceManager* serviceManager) : BaseS
 {
 	_allowServiceUpdate = true;
 }
-
-FightingGameManager::~FightingGameManager()
-= default;
