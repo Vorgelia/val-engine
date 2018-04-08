@@ -2,7 +2,7 @@
 #include <vector>
 #include "JSON.h"
 
-class CollisionBox;
+struct CollisionBox;
 
 class CharacterHitData
 {
@@ -12,5 +12,5 @@ public:
 	const std::vector<CollisionBox>& collision() const;
 
 	CharacterHitData(const json& j);
-	virtual ~CharacterHitData();
+	virtual ~CharacterHitData() = default;
 };

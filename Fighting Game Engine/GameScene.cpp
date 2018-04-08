@@ -78,6 +78,11 @@ const std::vector<std::string>& GameScene::postEffectsOrder() const
 
 void GameScene::RunFunctionOnObjectBehaviours(std::function<void(Behaviour*)> func)
 {
+	if(_shouldSortObjects)
+	{
+		SortObjects();
+	}
+
 	for(auto& iter : _objects)
 	{
 		if(iter != nullptr && iter->enabled)
@@ -97,6 +102,17 @@ void GameScene::UnregisterObject(Object* obj)
 {
 	_objectNameLookup.erase(obj->name());
 	_objectLookup.erase(obj->id());
+}
+
+void GameScene::SortObjects()
+{
+	const auto sortingPredicate = [](const std::unique_ptr<Object>& lhs, const std::unique_ptr<Object>& rhs)->bool
+	{
+		return lhs->updatePriority > rhs->updatePriority;
+	};
+
+	std::sort(_objects.begin(), _objects.end(), sortingPredicate);
+	_shouldSortObjects = false;
 }
 
 const std::string& GameScene::name() const
@@ -197,6 +213,7 @@ Object* GameScene::AddObject(const json & jsonData)
 	Object* result = _objects.back().get();
 
 	RegisterObject(result);
+	_shouldSortObjects = true;
 
 	return result;
 }
@@ -209,6 +226,7 @@ void GameScene::DestroyObject(Object* object)
 		{
 			UnregisterObject(object);
 			_objects.erase(iter);
+			_shouldSortObjects = true;
 			return;
 		}
 	}

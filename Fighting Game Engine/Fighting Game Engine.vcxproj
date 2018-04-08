@@ -94,6 +94,7 @@
     <ClCompile Include="CharacterSprite.cpp" />
     <ClCompile Include="CharacterState.cpp" />
     <ClCompile Include="CharacterStateComponent.cpp" />
+    <ClCompile Include="CollisionHitResult.cpp" />
     <ClCompile Include="ComputeShader.cpp" />
     <ClCompile Include="ComputeShaderEffect.cpp" />
     <ClCompile Include="ConnectionSocket.cpp" />
@@ -132,7 +133,6 @@
     <ClCompile Include="PlayerManager.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="RenderingDataBuffer.cpp" />
-    <ClCompile Include="SceneRenderingManager.cpp" />
     <ClCompile Include="ScriptBehaviour.cpp" />
     <ClCompile Include="ScriptCollection.cpp" />
     <ClCompile Include="ScriptExpression.cpp" />
@@ -186,6 +186,7 @@
     <ClInclude Include="CharacterState.h" />
     <ClInclude Include="CharacterStateComponent.h" />
     <ClInclude Include="CircularBuffer.h" />
+    <ClInclude Include="CollisionHitResult.h" />
     <ClInclude Include="CommonUtilIncludes.hpp" />
     <ClInclude Include="ComputeShader.h" />
     <ClInclude Include="ComputeShaderEffect.h" />
@@ -239,7 +240,6 @@
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="ResourceInitializer.h" />
     <ClInclude Include="FilesystemManager.h" />
-    <ClInclude Include="SceneRenderingManager.h" />
     <ClInclude Include="Screen.h" />
     <ClInclude Include="Script.h" />
     <ClInclude Include="ScriptBehaviour.h" />

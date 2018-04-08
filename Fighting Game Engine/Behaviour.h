@@ -4,19 +4,19 @@
 #include "JSON.h"
 
 #define VE_BEHAVIOUR_NAME(nameStr)\
-	const std::string name() const override{ return std::string(#nameStr); };
+	const std::string name() const override{ return std::string(#nameStr); }
 
 #define VE_BEHAVIOUR_FUNCTION(name)\
 	virtual void name(); \
-	inline virtual bool using##name() const{ return false; };
+	inline virtual bool using##name() const{ return false; }
 
 #define VE_BEHAVIOUR_REGISTER_FUNCTION(name)\
 	void name() override;\
-	inline virtual bool using##name() const override{ return true; };
+	inline virtual bool using##name() const override{ return true; }
 
 #define VE_BEHAVIOUR_FUNCTION_CALLER(name)\
 	[](Behaviour* behaviour)\
-		{ if(behaviour->using##name()) behaviour->name(); }
+		{ if (behaviour->using##name()) behaviour->name(); }
 
 class ServiceManager;
 

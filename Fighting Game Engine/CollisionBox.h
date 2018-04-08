@@ -1,18 +1,22 @@
 #pragma once
 #include "MathIncludes.hpp"
-#include "JSON.h"
 
-class CollisionBox
+
+struct CollisionBox
 {
-public:
-	glm::lvec4 rect;//Center X, Center Y, Width/2, Height/2
+	glm::lvec2 center;
+	glm::lvec2 extents;
 
-	CollisionBox flipped() const;
+	void AxisMinMax(glm::lvec2& out_minMaxX, glm::lvec2& out_minMaxY) const;
 
-	bool Overlaps(CollisionBox* hitbox) const;
+	glm::lvec2 DepenetrationDistance(const CollisionBox& other) const;
+	bool Overlaps(const CollisionBox& other) const;
 
 	CollisionBox operator+(const glm::lvec2& rhs) const;
 
-	static CollisionBox FromTopLeft(glm::lvec4 rect);
-	CollisionBox(glm::lvec4 rect);
+	CollisionBox RelativeTo(const glm::lvec2& position, bool flipped = false) const;
+	static CollisionBox FromTopLeft(const glm::lvec2& topLeft, const glm::lvec2& size);
+
+	CollisionBox(const glm::lvec2& center, const glm::lvec2& extents);
+	~CollisionBox() = default;
 };

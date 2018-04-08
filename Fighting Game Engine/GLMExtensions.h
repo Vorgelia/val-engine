@@ -28,6 +28,17 @@ namespace glm
 		return from + toTarget;
 	}
 
+	template<typename T>
+	T nonZeroSign(T val)
+	{
+		const T sgn = glm::sign(val);
+		if(sgn == T(0))
+		{
+			return T(1);
+		}
+		return sgn;
+	}
+
 	typedef glm::tvec2<std::int64_t, glm::highp> lvec2;
 	typedef glm::tvec4<std::int64_t, glm::highp> lvec4;
 }

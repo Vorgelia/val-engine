@@ -5,7 +5,6 @@
 class ServiceManager;
 class FightingGameManager;
 
-
 class CharacterPhysicsComponent
 {
 	friend class GameCharacter;

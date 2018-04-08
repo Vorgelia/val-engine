@@ -10,9 +10,6 @@ CharacterHitData::CharacterHitData(const json & j)
 {
 	for(auto& iter : j["collision"])
 	{
-		_collision.emplace_back(JSON::Get<glm::ivec4>(iter));
+		_collision.emplace_back(JSON::Get<CollisionBox>(iter));
 	}
 }
-
-CharacterHitData::~CharacterHitData()
-= default;

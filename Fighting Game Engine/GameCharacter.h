@@ -26,6 +26,7 @@ class GameCharacter :
 	friend class ScriptManager;
 	friend class CharacterRenderer;
 	friend class CharacterStateComponent;
+	friend class FightingStageBehaviour;
 
 private:
 	ScriptManager* _scriptManager;

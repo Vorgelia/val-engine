@@ -43,6 +43,7 @@ void FightingGameManager::ChangeState(FightingGameState state)
 	switch(state)
 	{
 	case FightingGameState::None:
+		CleanupCharacters();
 		_playerManager->ClearPlayers();
 		break;
 	case FightingGameState::InputDeviceSelection:
@@ -54,8 +55,7 @@ void FightingGameManager::ChangeState(FightingGameState state)
 	case FightingGameState::InGame:
 	{
 		//PLACEHOLDER
-		Object* char1 = _gameSceneManager->currentScene()->LoadObject("Characters/Fritz/Prefab.json");
-		GameCharacter* char1CharacterBehaviour = char1->GetBehaviour<GameCharacter>("GameCharacter");
+		GameCharacter* char1CharacterBehaviour = AddCharacter("Characters/Fritz/Prefab.json");
 		char1CharacterBehaviour->SetOwner(_playerManager->AddPlayer(0, -1));
 
 		_stageBehaviour = dynamic_cast<FightingStageBehaviour*>(_gameSceneManager->currentScene()->FindBehaviour("FightingStageBehaviour"));
@@ -92,39 +92,49 @@ void FightingGameManager::Cleanup()
 	ChangeState(FightingGameState::None);
 }
 
-int FightingGameManager::AddCharacter(const std::string& path)
+GameCharacter* FightingGameManager::AddCharacter(const std::string& path)
 {
 	if(currentState() == FightingGameState::None)
 	{
-		return -1;
+		return nullptr;
 	}
 
 	Object* object = _gameSceneManager->currentScene()->LoadObject(path);
 	if(object == nullptr)
 	{
-		return -1;
+		return nullptr;
 	}
 
 	GameCharacter* characterBehaviour = object->GetBehaviour<GameCharacter>("GameCharacter");
-	if(characterBehaviour == nullptr)
+	if(characterBehaviour != nullptr)
 	{
-		return -1;
+		_characters.emplace(characterBehaviour);
 	}
 
-	_characters.emplace(object->id(), characterBehaviour);
-	return object->id();
+	return characterBehaviour;
 }
 
 void FightingGameManager::RemoveCharacter(int id)
 {
-	auto& iter = _characters.find(id);
-	if(iter == _characters.end())
+	Object* object = _gameSceneManager->currentScene()->FindObject(id);
+	if(object == nullptr)
 	{
 		return;
 	}
 
-	_characters.erase(iter);
-	_gameSceneManager->currentScene()->DestroyObject(id);
+	GameCharacter* character = object->GetBehaviour<GameCharacter>("GameCharacter");
+	_characters.erase(character);
+	_gameSceneManager->currentScene()->DestroyObject(object);
+}
+
+void FightingGameManager::CleanupCharacters()
+{
+	for(auto& iter : _characters)
+	{
+		_gameSceneManager->currentScene()->DestroyObject(iter->object());
+	}
+
+	_characters.clear();
 }
 
 FightingGameState FightingGameManager::currentState() const
@@ -135,6 +145,11 @@ FightingGameState FightingGameManager::currentState() const
 FightingStageBehaviour* FightingGameManager::stageBehaviour() const
 {
 	return _stageBehaviour;
+}
+
+const std::unordered_set<GameCharacter*>& FightingGameManager::characters() const
+{
+	return _characters;
 }
 
 FightingGameManager::FightingGameManager(ServiceManager* serviceManager) : BaseService(serviceManager, 500)

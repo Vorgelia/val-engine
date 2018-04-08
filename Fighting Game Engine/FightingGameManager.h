@@ -3,6 +3,7 @@
 #include "FightingGameState.h"
 #include "Delegate.h"
 #include <unordered_map>
+#include <unordered_set>
 
 class GameCharacter;
 class GameSceneManager;
@@ -21,7 +22,8 @@ private:
 private:
 	FightingGameState _currentState;
 
-	std::unordered_map<int, GameCharacter*> _characters;
+	std::unordered_set<GameCharacter*> _characters;
+
 	FightingStageBehaviour* _stageBehaviour;
 
 	void HandleSceneLoaded(const GameScene* scene);
@@ -31,8 +33,9 @@ private:
 	void Update() override;
 	void Cleanup() override;
 
-	int AddCharacter(const std::string& path);
+	GameCharacter* AddCharacter(const std::string& path);
 	void RemoveCharacter(int id);
+	void CleanupCharacters();
 
 public:
 	typedef Delegate<FightingGameState> FightingGameStateEventHandler;
@@ -40,6 +43,10 @@ public:
 
 	FightingGameState currentState() const;
 	FightingStageBehaviour* stageBehaviour() const;
+
+	const std::unordered_set<GameCharacter*>& characters() const;
+
+	void ChackCharacterCollisions(GameCharacter* other);
 
 	FightingGameManager(ServiceManager* serviceManager);
 	~FightingGameManager() = default;

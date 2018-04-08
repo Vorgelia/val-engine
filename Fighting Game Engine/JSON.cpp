@@ -77,3 +77,13 @@ unsigned char JSON::Get(const json_t& j)
 {
 	return (unsigned char)j.get<int>();
 }
+
+template <>
+CollisionBox JSON::Get<CollisionBox>(const json_t& j)
+{
+	glm::lvec2 center;
+	JSON::TryGetMember(j, "center", center);
+	glm::lvec2 extents;
+	JSON::TryGetMember(j, "extents", extents);
+	return CollisionBox(center, extents);
+}

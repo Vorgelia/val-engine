@@ -2,6 +2,7 @@
 #include <json.hpp>
 #include "MathIncludes.hpp"
 #include "DebugLog.h"
+#include "CollisionBox.h"
 
 namespace JSON
 {
@@ -26,6 +27,8 @@ namespace JSON
 	glm::lvec2 Get(const json_t& j);
 	template<>
 	glm::vec2 Get(const json_t& j);
+	template<>
+	CollisionBox Get(const json_t& j);
 	template<>
 	unsigned char Get(const json_t& j);
 }

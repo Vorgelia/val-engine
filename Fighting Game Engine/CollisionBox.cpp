@@ -1,26 +1,48 @@
 #include "CollisionBox.h"
+#include <GLM/detail/type_mat.hpp>
+#include <GLM/detail/type_mat.hpp>
 
-bool CollisionBox::Overlaps(CollisionBox* hitbox) const
+void CollisionBox::AxisMinMax(glm::lvec2& out_minMaxX, glm::lvec2& out_minMaxY) const
 {
-	return (abs(rect.x - hitbox->rect.x) < rect.z + hitbox->rect.z) && (abs(rect.y - hitbox->rect.y) < rect.w + hitbox->rect.w);
+	out_minMaxX = glm::lvec2(center.x - extents.x, center.x + extents.x);
+	out_minMaxY = glm::lvec2(center.y - extents.y, center.y + extents.y);
 }
 
-CollisionBox CollisionBox::flipped() const
+bool CollisionBox::Overlaps(const CollisionBox& other) const
 {
-	return { glm::lvec4(-rect.x, rect.y, rect.z, rect.w) };
+	return (abs(center.x - other.center.x) < extents.y + other.extents.y) && (abs(center.y - other.center.y) < extents.y + other.extents.y);
 }
 
-CollisionBox CollisionBox::FromTopLeft(glm::lvec4 rect)
+glm::lvec2 CollisionBox::DepenetrationDistance(const CollisionBox& other) const
 {
-	return { glm::lvec4(rect.x + rect.z*0.5, rect.y + rect.w*0.5, rect.z*0.5, rect.w*0.5) };
+	if(!Overlaps(other))
+	{
+		return glm::lvec2(0, 0);
+	}
+	
+	const glm::lvec2 centerDist = center - other.center;
+	const glm::lvec2 centerDistSign = glm::nonZeroSign(centerDist);
+
+	const glm::lvec2 distRemaining = other.extents + extents - glm::abs(centerDist);
+
+	return glm::lvec2(distRemaining.x * centerDistSign.x, distRemaining.y * centerDistSign.y);
 }
+
+CollisionBox CollisionBox::FromTopLeft(const glm::lvec2& topLeft, const glm::lvec2& size)
+{
+	return CollisionBox(
+		topLeft + size / std::int64_t(2),
+		size / std::int64_t(2));
+};
 
 CollisionBox CollisionBox::operator+(const glm::lvec2& rhs) const
 {
-	return { glm::lvec4(rect.x + rhs.x, rect.y + rhs.y, rect.z, rect.w) };
+	return CollisionBox(center + rhs, extents);
 }
 
-CollisionBox::CollisionBox(glm::lvec4 rect)
+CollisionBox::CollisionBox(const glm::lvec2& center, const glm::lvec2& extents)
+	: center(center)
+	, extents(extents)
 {
-	this->rect = rect;
+	this->extents = glm::abs(extents);
 }

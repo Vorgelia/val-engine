@@ -26,7 +26,7 @@ CharacterFrame::CharacterFrame(const json& j)
 	_collision.reserve(j["collision"].size());
 	for(auto& iter : j["collision"])
 	{
-		_collision.emplace_back(JSON::Get<glm::ivec4>(iter));
+		_collision.emplace_back(JSON::Get<CollisionBox>(iter));
 	}
 
 	_spriteData = std::make_unique<CharacterSprite>(j["spriteData"]);

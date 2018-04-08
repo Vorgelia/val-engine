@@ -1,6 +1,6 @@
 /*
 Val Engine
-by Vorgelia
+
 -@Vorgelia
 https://valerie-laine-dev.com
 Specialized for Fighting Games
@@ -25,7 +25,7 @@ Type variableGetter/Setter()
 
 ----Arbitrary to-do list----
 --Engine Features
-TODO: Find a way to multithread input so inputs are received and timed properly on sub-60FPS.
+TODO: Multithread rendering
 TODO: Add more customization over cleaning up framebuffers between frames.
 TODO: Check if a framebuffer was used last frame before cleaning it up.
 TODO: Service for managing the type of the current build [debug, release]

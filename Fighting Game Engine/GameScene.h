@@ -28,6 +28,9 @@ protected:
 	ResourceManager* _resource;
 	FilesystemManager* _filesystem;
 
+private:
+	bool _shouldSortObjects;
+
 protected:
 	std::string _name;
 
@@ -46,6 +49,8 @@ protected:
 
 	void RegisterObject(Object* obj);
 	void UnregisterObject(Object* obj);
+
+	void SortObjects();
 
 public:
 	const std::string& name() const;

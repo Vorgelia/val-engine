@@ -122,7 +122,7 @@
     <Filter Include="Val Engine\Game\Characters\Behaviours">
       <UniqueIdentifier>{b16cfb7b-dad4-44b3-8c6d-c848776ff547}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Val Engine\Game\Scenes">
+    <Filter Include="Val Engine\Game\Characters\Behaviours\Scenes">
       <UniqueIdentifier>{d9d2eee2-a311-4516-bde6-88c61acca0c6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -140,10 +140,10 @@
       <Filter>Val Engine</Filter>
     </ClCompile>
     <ClCompile Include="IntroBehaviour.cpp">
-      <Filter>Val Engine\Game\Scenes</Filter>
+      <Filter>Val Engine\Game\Characters\Behaviours\Scenes</Filter>
     </ClCompile>
     <ClCompile Include="MenuBehaviour.cpp">
-      <Filter>Val Engine\Game\Scenes</Filter>
+      <Filter>Val Engine\Game\Characters\Behaviours\Scenes</Filter>
     </ClCompile>
     <ClCompile Include="CharacterState.cpp">
       <Filter>Val Engine\Game\Characters\State</Filter>
@@ -374,7 +374,7 @@
       <Filter>Val Engine\Game\Characters</Filter>
     </ClCompile>
     <ClCompile Include="FightingStageBehaviour.cpp">
-      <Filter>Val Engine\Game\Scenes</Filter>
+      <Filter>Val Engine\Game\Characters\Behaviours\Scenes</Filter>
     </ClCompile>
     <ClCompile Include="GameCharacter.cpp">
       <Filter>Val Engine\Game\Characters\Behaviours</Filter>
@@ -387,6 +387,9 @@
     </ClCompile>
     <ClCompile Include="CharacterStateComponent.cpp">
       <Filter>Val Engine\Game\Characters\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="CollisionHitResult.cpp">
+      <Filter>Val Engine\Engine\Utilities\Math</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -448,10 +451,10 @@
       <Filter>Val Engine\Engine\Objects\Behaviours</Filter>
     </ClInclude>
     <ClInclude Include="IntroBehaviour.h">
-      <Filter>Val Engine\Game\Scenes</Filter>
+      <Filter>Val Engine\Game\Characters\Behaviours\Scenes</Filter>
     </ClInclude>
     <ClInclude Include="MenuBehaviour.h">
-      <Filter>Val Engine\Game\Scenes</Filter>
+      <Filter>Val Engine\Game\Characters\Behaviours\Scenes</Filter>
     </ClInclude>
     <ClInclude Include="ScriptBehaviour.h">
       <Filter>Val Engine\Engine\Objects\Behaviours</Filter>
@@ -670,7 +673,7 @@
       <Filter>Val Engine\Game\Characters</Filter>
     </ClInclude>
     <ClInclude Include="FightingStageBehaviour.h">
-      <Filter>Val Engine\Game\Scenes</Filter>
+      <Filter>Val Engine\Game\Characters\Behaviours\Scenes</Filter>
     </ClInclude>
     <ClInclude Include="GameCharacter.h">
       <Filter>Val Engine\Game\Characters\Behaviours</Filter>
@@ -686,6 +689,9 @@
     </ClInclude>
     <ClInclude Include="CharacterStateComponent.h">
       <Filter>Val Engine\Game\Characters\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="CollisionHitResult.h">
+      <Filter>Val Engine\Engine\Utilities\Math</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

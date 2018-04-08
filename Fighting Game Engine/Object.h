@@ -28,6 +28,7 @@ private:
 
 public:
 	bool enabled;
+	int updatePriority;
 
 	std::string name() const;
 	int id() const;
