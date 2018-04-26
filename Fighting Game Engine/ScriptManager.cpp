@@ -99,13 +99,13 @@ void ScriptManager::HandleScriptBindings(Script* script)
 			script->BindFunction("time_frameCount",
 				[this](const Script*, ScriptArgumentCollection&)->std::shared_ptr<BaseScriptVariable>
 			{
-				return std::make_shared<ScriptInt>((long)_time->frameCount);
+				return std::make_shared<ScriptInt>(long(_time->frameCount));
 			});
 
 			script->BindFunction("time_frameCountSinceLoad",
 				[this](const Script*, ScriptArgumentCollection&)->std::shared_ptr<BaseScriptVariable>
 			{
-				return std::make_shared<ScriptInt>((long)_time->frameCountSinceLoad);
+				return std::make_shared<ScriptInt>(long(_time->frameCountSinceLoad));
 			});
 		}
 	}
@@ -126,6 +126,20 @@ void ScriptManager::AddVariable(const std::string& name, const std::shared_ptr<B
 
 void ScriptManager::HandleScriptCharacterBindings(GameCharacter& character, Script* script) const
 {
+	script->BindFunction("character_util_runCharacterScriptFunction",
+		[&character](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
+	{
+		if(args.size() <= 1)
+		{
+			return nullptr;
+		}
+
+		GET_ARG_STRING_CHECKED(args, 0, functionName);
+		ScriptArgumentCollection parentFunctionArgs = ScriptArgumentCollection(args.begin() + 1, args.end());
+		character._characterScript->ExecuteFunction(functionName, parentFunctionArgs);
+		return nullptr;
+	});
+
 	script->BindFunction("character_state_startState",
 		[&character](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
 	{

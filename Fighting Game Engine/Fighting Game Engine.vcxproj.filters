@@ -391,6 +391,12 @@
     <ClCompile Include="CollisionHitResult.cpp">
       <Filter>Val Engine\Engine\Utilities\Math</Filter>
     </ClCompile>
+    <ClCompile Include="CharacterEventComponent.cpp">
+      <Filter>Val Engine\Game\Characters\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="GameCharacterComponent.cpp">
+      <Filter>Val Engine\Game\Characters\Components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FGIncludes.hpp">
@@ -692,6 +698,12 @@
     </ClInclude>
     <ClInclude Include="CollisionHitResult.h">
       <Filter>Val Engine\Engine\Utilities\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterEventComponent.h">
+      <Filter>Val Engine\Game\Characters\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="GameCharacterComponent.h">
+      <Filter>Val Engine\Game\Characters\Components</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

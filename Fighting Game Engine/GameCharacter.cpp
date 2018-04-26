@@ -9,6 +9,7 @@
 #include "CharacterFrame.h"
 #include "GameCharacterData.h"
 #include "ServiceManager.h"
+#include "CharacterEventComponent.h"
 
 VE_BEHAVIOUR_REGISTER_TYPE(GameCharacter);
 
@@ -48,20 +49,26 @@ void GameCharacter::CharacterUpdate()
 		CharacterInit();
 	}
 
+	UpdateComponents();
+	UpdateSystemFlags();
+}
+
+void GameCharacter::UpdateComponents()
+{
 	_stateComponent->EvaluateNextState();
 
 	if(_characterScript != nullptr)
 	{
 		_characterScript->ExecuteFunction("CharacterUpdate");
 	}
-}
-
-void GameCharacter::GameUpdate()
-{
-	CharacterUpdate();
 
 	_stateComponent->Update();
 	_physicsComponent->Update();
+}
+
+void GameCharacter::UpdateSystemFlags()
+{
+	_systemFlags.clear();
 }
 
 GameCharacter::GameCharacter(Object* owner, ServiceManager* serviceManager, const json& j) : Behaviour(owner, serviceManager, j)
@@ -80,7 +87,8 @@ GameCharacter::GameCharacter(Object* owner, ServiceManager* serviceManager, cons
 		{
 			_characterData = std::make_unique<GameCharacterData>(*dataJson);
 			_stateComponent = std::make_unique<CharacterStateComponent>(this, _serviceManager);
-			_physicsComponent = std::make_unique<CharacterPhysicsComponent>(this, serviceManager);
+			_physicsComponent = std::make_unique<CharacterPhysicsComponent>(this, _serviceManager);
+			_eventComponent = std::make_unique<CharacterEventComponent>(this, _serviceManager);
 
 			std::string scriptPath;
 			if(JSON::TryGetMember(j, "characterScript", scriptPath))
@@ -88,6 +96,10 @@ GameCharacter::GameCharacter(Object* owner, ServiceManager* serviceManager, cons
 				_characterScript = _scriptManager->GetScript(scriptPath);
 				_scriptManager->HandleScriptCharacterBindings(*this, _characterScript);
 			}
+
+			_stateComponent->Init();
+			_physicsComponent->Init();
+			_eventComponent->Init();
 		}
 	}
 }

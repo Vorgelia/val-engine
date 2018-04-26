@@ -270,6 +270,8 @@ ScriptTokenType ScriptParsingUtils::GetNextTokenType(const std::string& line, si
 	case ScriptTokenType::NumericLiteral:
 		for(size_t i = startIndex; i < line.length(); ++i)
 		{
+			//TODO: Add support for parsing decimal numbers.
+			// || line[i] == '.'
 			if(isdigit(line[i]))
 			{
 				out_endIndex = i;

@@ -28,6 +28,11 @@ glm::lvec2 CollisionBox::DepenetrationDistance(const CollisionBox& other) const
 	return glm::lvec2(distRemaining.x * centerDistSign.x, distRemaining.y * centerDistSign.y);
 }
 
+CollisionBox CollisionBox::RelativeTo(const glm::lvec2& position, bool flipped) const
+{
+	return CollisionBox(center + (flipped ? -position : position), extents);
+}
+
 CollisionBox CollisionBox::FromTopLeft(const glm::lvec2& topLeft, const glm::lvec2& size)
 {
 	return CollisionBox(

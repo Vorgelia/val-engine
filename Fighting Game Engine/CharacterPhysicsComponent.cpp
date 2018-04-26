@@ -6,6 +6,10 @@
 #include "FightingStageBehaviour.h"
 #include "FightingGameManager.h"
 
+void CharacterPhysicsComponent::Init()
+{
+}
+
 void CharacterPhysicsComponent::Update()
 {
 	FightingStageBehaviour* stageBehaviour = _fightingGameManager->stageBehaviour();
@@ -97,8 +101,8 @@ void CharacterPhysicsComponent::AddForce(std::int64_t duration, glm::lvec2 dir)
 }
 
 CharacterPhysicsComponent::CharacterPhysicsComponent(GameCharacter * owner, ServiceManager * serviceManager)
-	: _owner(owner)
-	, _grounded(false)
+	: GameCharacterComponent(owner, serviceManager)
+	, _grounded(true)
 {
 	_fightingGameManager = serviceManager->FightingGameManager();
 }

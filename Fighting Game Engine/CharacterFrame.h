@@ -4,9 +4,9 @@
 #include <string>
 #include "JSON.h"
 
+struct CollisionBox;
 class AttackData;
 class DefenceData;
-class CollisionBox;
 class CharacterSprite;
 
 class CharacterFrame

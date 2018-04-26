@@ -1,11 +1,12 @@
 #pragma once
+#include "GameCharacterComponent.h"
 #include "MathIncludes.hpp"
 #include <vector>
 
 class ServiceManager;
 class FightingGameManager;
 
-class CharacterPhysicsComponent
+class CharacterPhysicsComponent : public GameCharacterComponent
 {
 	friend class GameCharacter;
 
@@ -23,7 +24,6 @@ class CharacterPhysicsComponent
 
 private:
 	FightingGameManager* _fightingGameManager;
-	GameCharacter* _owner;
 
 private:
 	glm::lvec2 _accumulatedOffset;
@@ -37,7 +37,8 @@ private:
 
 	bool _grounded;
 
-	void Update();
+	void Init() override;
+	void Update() override;
 
 public:
 	void AddOffset(glm::lvec2 dir);

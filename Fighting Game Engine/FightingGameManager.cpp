@@ -94,11 +94,6 @@ void FightingGameManager::Cleanup()
 
 GameCharacter* FightingGameManager::AddCharacter(const std::string& path)
 {
-	if(currentState() == FightingGameState::None)
-	{
-		return nullptr;
-	}
-
 	Object* object = _gameSceneManager->currentScene()->LoadObject(path);
 	if(object == nullptr)
 	{

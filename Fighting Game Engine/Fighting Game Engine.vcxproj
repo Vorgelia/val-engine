@@ -87,6 +87,7 @@
     <ClCompile Include="BehaviourFactory.cpp" />
     <ClCompile Include="CachedMesh.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="CharacterEventComponent.cpp" />
     <ClCompile Include="CharacterFrame.cpp" />
     <ClCompile Include="CharacterHitData.cpp" />
     <ClCompile Include="CharacterPhysicsComponent.cpp" />
@@ -106,6 +107,7 @@
     <ClCompile Include="Font.cpp" />
     <ClCompile Include="FrameBuffer.cpp" />
     <ClCompile Include="GameCharacter.cpp" />
+    <ClCompile Include="GameCharacterComponent.cpp" />
     <ClCompile Include="GameCharacterData.cpp" />
     <ClCompile Include="GamePlayer.cpp" />
     <ClCompile Include="GameScene.cpp" />
@@ -178,6 +180,7 @@
     <ClInclude Include="BehaviourFactory.h" />
     <ClInclude Include="CachedMesh.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="CharacterEventComponent.h" />
     <ClInclude Include="CharacterFrame.h" />
     <ClInclude Include="CharacterHitData.h" />
     <ClInclude Include="CharacterPhysicsComponent.h" />
@@ -201,6 +204,7 @@
     <ClInclude Include="Font.h" />
     <ClInclude Include="FrameBuffer.h" />
     <ClInclude Include="GameCharacter.h" />
+    <ClInclude Include="GameCharacterComponent.h" />
     <ClInclude Include="GameCharacterData.h" />
     <ClInclude Include="GamePlayer.h" />
     <ClInclude Include="GameScene.h" />

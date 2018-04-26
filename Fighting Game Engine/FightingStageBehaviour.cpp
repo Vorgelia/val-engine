@@ -12,6 +12,14 @@ const glm::lvec4& FightingStageBehaviour::stageBounds() const
 	return _stageBounds;
 }
 
+void FightingStageBehaviour::GameUpdate()
+{
+	for(auto& iter : _gameManager->characters())
+	{
+		iter->CharacterUpdate();
+	}
+}
+
 void FightingStageBehaviour::LateGameUpdate()
 {
 	for(auto& iter : _gameManager->characters())

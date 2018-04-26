@@ -12,7 +12,7 @@ class CharacterState;
 class CharacterFrame;
 class CharacterStateComponent;
 class CharacterPhysicsComponent;
-class CharacterCollisionComponent;
+class CharacterEventComponent;
 class GamePlayer;
 struct GameCharacterData;
 
@@ -47,14 +47,16 @@ private:
 
 	std::unique_ptr<CharacterStateComponent> _stateComponent;
 	std::unique_ptr<CharacterPhysicsComponent> _physicsComponent;
+	std::unique_ptr<CharacterEventComponent> _eventComponent;
 
 	void CharacterInit();
 	void CharacterUpdate();
 
+	void UpdateComponents();
+	void UpdateSystemFlags();
+
 public:
 	VE_BEHAVIOUR_NAME(GameCharacter);
-
-	VE_BEHAVIOUR_REGISTER_FUNCTION(GameUpdate);
 
 	const GameCharacterData* characterData() const;
 	CharacterStateComponent* stateComponent() const;

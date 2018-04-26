@@ -13,6 +13,64 @@
 #include "GamePlayer.h"
 #include "GameCharacterData.h"
 
+void CharacterStateComponent::Init()
+{
+	GameCharacterData* characterData = _owner->_characterData.get();
+	for(const std::string& path : characterData->_statePaths)
+	{
+		_filesystem->ApplyFunctionToFiles(path, [this](const FS::path path)
+		{
+			if(path.extension().string() != ".json")
+			{
+				return;
+			}
+
+			const json* stateJson = _resource->GetJsonData(path.string());
+			if(stateJson == nullptr)
+			{
+				return;
+			}
+
+			for(auto& iter : *stateJson)
+			{
+				auto result = this->_stateLookup.insert(std::make_pair(
+					JSON::Get<std::string>(iter["name"]),
+					std::make_unique<CharacterState>(iter, _scriptManager->AddScript(JSON::Get<std::string>(iter["script"])))));
+				_scriptManager->HandleScriptCharacterBindings(*_owner, result.first->second->script());
+			}
+		});
+	}
+
+	for(const std::string& path : characterData->_frameDataPaths)
+	{
+		_filesystem->ApplyFunctionToFiles(path, [this](const FS::path path)
+		{
+			if(path.extension().string() != ".json")
+			{
+				return;
+			}
+
+			const json* frameJson = _resource->GetJsonData(path.string());
+			if(frameJson == nullptr)
+			{
+				return;
+			}
+
+			for(auto& iter : *frameJson)
+			{
+				this->_frameLookup.insert(std::make_pair(
+					JSON::Get<std::string>(iter["id"]),
+					std::make_unique<CharacterFrame>(iter)));
+			}
+		});
+	}
+
+	for(auto& iter : _frameLookup)
+	{
+		_owner->_resource->GetTexture(iter.second->spriteData()->sprite());
+	}
+}
+
 void CharacterStateComponent::Update()
 {
 	if(_freezeFrameCount > 0)
@@ -194,65 +252,10 @@ const std::unordered_set<std::string>& CharacterStateComponent::GetFlags(Charact
 }
 
 CharacterStateComponent::CharacterStateComponent(GameCharacter* owner, ServiceManager* serviceManager) 
-	: _owner(owner)
+	: GameCharacterComponent(owner, serviceManager)
 {
 	_input = serviceManager->Input();
 	_scriptManager = serviceManager->ScriptManager();
 	_filesystem = serviceManager->Filesystem();
 	_resource = serviceManager->ResourceManager();
-
-	GameCharacterData* characterData = owner->_characterData.get();
-	for(const std::string& path : characterData->_statePaths)
-	{
-		_filesystem->ApplyFunctionToFiles(path, [this](const FS::path path)
-		{
-			if(path.extension().string() != ".json")
-			{
-				return;
-			}
-
-			const json* stateJson = _resource->GetJsonData(path.string());
-			if(stateJson == nullptr)
-			{
-				return;
-			}
-
-			for(auto& iter : *stateJson)
-			{
-				auto result = this->_stateLookup.insert(std::make_pair(
-					JSON::Get<std::string>(iter["name"]),
-					std::make_unique<CharacterState>(iter,  _scriptManager->AddScript(JSON::Get<std::string>(iter["script"])))));
-				_scriptManager->HandleScriptCharacterBindings(*_owner, result.first->second->script());
-			}
-		});
-	}
-
-	for(const std::string& path : characterData->_frameDataPaths)
-	{
-		_filesystem->ApplyFunctionToFiles(path, [this](const FS::path path)
-		{
-			if(path.extension().string() != ".json")
-			{
-				return;
-			}
-
-			const json* frameJson = _resource->GetJsonData(path.string());
-			if(frameJson == nullptr)
-			{
-				return;
-			}
-
-			for(auto& iter : *frameJson)
-			{
-				this->_frameLookup.insert(std::make_pair(
-					JSON::Get<std::string>(iter["id"]),
-					std::make_unique<CharacterFrame>(iter)));
-			}
-		});
-	}
-
-	for(auto& iter : _frameLookup)
-	{
-		_owner->_resource->GetTexture(iter.second->spriteData()->sprite());
-	}
 }
