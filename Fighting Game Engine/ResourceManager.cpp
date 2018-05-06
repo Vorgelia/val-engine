@@ -3,6 +3,8 @@
 #include "ComputeShader.h"
 #include "FilesystemManager.h"
 #include "GraphicsGL.h"
+#include <regex>
+#include <boost/algorithm/string/erase.hpp>
 
 //If the following define exists, the engine will create some default resource files if the folder structure is missing.
 //I opt to create and then read files rather than reading directly from the resources because the generated files have comments in them that explain how they work
@@ -45,8 +47,15 @@ void ResourceManager::LoadDefaultResources()
 	GetFont("Fonts/Amble.ttf");
 }
 
-void ResourceManager::PreprocessShaderSource(std::string& inoutShaderSource)
+void ResourceManager::PreprocessTextSource(std::string& inoutShaderSource)
 {
+	if(std::regex_match(inoutShaderSource, std::regex(R"(^\s*\#pragma noparse\s*$)")))
+	{
+		return;
+	}
+
+	std::regex_replace(inoutShaderSource, std::regex(R"(\/\/.*$)"), "");
+
 	const std::string& includeSignature = "#pragma include";
 	size_t index = inoutShaderSource.find(includeSignature);
 	while(index != std::string::npos)
@@ -57,8 +66,8 @@ void ResourceManager::PreprocessShaderSource(std::string& inoutShaderSource)
 			nextNewline = inoutShaderSource.size();
 		}
 
-		std::string includeDir = inoutShaderSource.substr(index + includeSignature.size() + 1, nextNewline - index - includeSignature.size() - 1);
-		std::string includeContents = *GetTextData(includeDir);
+		const std::string includeDir = inoutShaderSource.substr(index + includeSignature.size() + 1, nextNewline - index - includeSignature.size() - 1);
+		const std::string includeContents = *GetTextData(includeDir);
 
 		inoutShaderSource
 			= inoutShaderSource.substr(0, index)
@@ -68,6 +77,62 @@ void ResourceManager::PreprocessShaderSource(std::string& inoutShaderSource)
 
 		index = inoutShaderSource.find(includeSignature);
 	}
+}
+
+template<>
+std::unique_ptr<Texture> ResourceManager::CreateResource(const std::string& key)
+{
+	glm::ivec2 textureSize;
+	std::vector<unsigned char> textureData;
+	_filesystem->LoadTextureData(key, textureData, textureSize);
+	return _graphics->CreateTexture(key, textureData, textureSize);
+}
+
+template<>
+std::unique_ptr<SurfaceShader> ResourceManager::CreateResource(const std::string& key)
+{
+	std::string vertSource = _filesystem->ReturnFile(key + ".vert");
+	PreprocessTextSource(vertSource);
+	std::string fragSource = _filesystem->ReturnFile(key + ".frag");
+	PreprocessTextSource(fragSource);
+
+	return	_graphics->CreateShader<SurfaceShader>(
+		key,
+		std::vector<ShaderAttachment>{
+		ShaderAttachment(vertSource, GL_VERTEX_SHADER),
+			ShaderAttachment(fragSource, GL_FRAGMENT_SHADER)});
+}
+
+template<>
+std::unique_ptr<ComputeShader> ResourceManager::CreateResource(const std::string& key)
+{
+	std::string shaderSource = _filesystem->ReturnFile(key + ".comp");
+	PreprocessTextSource(shaderSource);
+
+	return _graphics->CreateShader<ComputeShader>(key, std::vector<ShaderAttachment>{
+		ShaderAttachment(shaderSource, GL_COMPUTE_SHADER)
+	});
+}
+
+template<>
+inline std::unique_ptr<Mesh> ResourceManager::CreateResource(const std::string& key)
+{
+	CachedMesh* cachedMesh = GetCachedMesh(key);
+	return _graphics->CreateMesh(key, cachedMesh);
+}
+
+template<>
+inline std::unique_ptr<Font> ResourceManager::CreateResource(const std::string& key)
+{
+	return _graphics->CreateFont(key);
+}
+
+template<>
+inline std::unique_ptr<std::string> ResourceManager::CreateResource(const std::string& key)
+{
+	std::unique_ptr<std::string> resource = _filesystem->LoadFileResource<std::string>(key);
+	PreprocessTextSource(*resource);
+	return resource;
 }
 
 void ResourceManager::Init()

@@ -36,6 +36,7 @@ public:
 
 	virtual const std::string name() const = 0;
 
+	void TryInit();
 	VE_BEHAVIOUR_FUNCTION(Init);
 	VE_BEHAVIOUR_FUNCTION(OnSceneInit);
 	VE_BEHAVIOUR_FUNCTION(EngineUpdate);

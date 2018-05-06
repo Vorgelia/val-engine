@@ -14,19 +14,21 @@ class GameCharacter;
 class Debug;
 class Time;
 class FilesystemManager;
+class ResourceManager;
 
 class ScriptManager : public BaseService
 {
 	Debug* _debug;
 	Time* _time;
 	FilesystemManager* _filesystem;
+	ResourceManager* _resource;
 
 private:
 	std::unordered_map<std::string, std::shared_ptr<BaseScriptVariable>> _globalVariables;
 	std::unordered_set<std::shared_ptr<Script>> _scripts;
 	
 	void HandleScriptBindings(Script* script);
-	void HandleCharacterStateVariables();
+	void CacheGlobalVariables();
 
 public:
 	void Init() override;

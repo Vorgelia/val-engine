@@ -91,7 +91,7 @@ GameCharacter::GameCharacter(Object* owner, ServiceManager* serviceManager, cons
 			_eventComponent = std::make_unique<CharacterEventComponent>(this, _serviceManager);
 
 			std::string scriptPath;
-			if(JSON::TryGetMember(j, "characterScript", scriptPath))
+			if(JSON::TryGetMember(*dataJson, "characterScript", scriptPath))
 			{
 				_characterScript = _scriptManager->GetScript(scriptPath);
 				_scriptManager->HandleScriptCharacterBindings(*this, _characterScript);

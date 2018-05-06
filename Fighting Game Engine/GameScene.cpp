@@ -133,6 +133,7 @@ void GameScene::Init()
 
 void GameScene::EngineUpdate()
 {
+	RunFunctionOnObjectBehaviours([](Behaviour* behaviour) { behaviour->TryInit(); });
 	RunFunctionOnObjectBehaviours(VE_BEHAVIOUR_FUNCTION_CALLER(EngineUpdate));
 }
 

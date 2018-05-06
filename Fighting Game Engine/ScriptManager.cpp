@@ -11,6 +11,8 @@
 #include "CharacterPhysicsComponent.h"
 #include "DebugLog.h"
 #include "Time.h"
+#include <boost/algorithm/string.hpp>
+#include "ResourceManager.h"
 
 #define GET_ARG_INT_CHECKED(collection, index, storage)\
 		if(((index) == 0 ? (collection).empty() : (collection).size() <= (index)) || (collection)[index]->type() != ScriptVariableType::Int)\
@@ -33,11 +35,9 @@ void ScriptManager::Init()
 	_debug = _serviceManager->Debug();
 	_time = _serviceManager->Time();
 	_filesystem = _serviceManager->Filesystem();
+	_resource = _serviceManager->ResourceManager();
 
-	std::shared_ptr<ScriptCollection> collection = std::make_shared<ScriptCollection>();
-	collection->AddMember("test", std::make_shared<ScriptInt>(5));
-	_globalVariables.emplace(std::make_pair("testCollection", collection));
-	HandleCharacterStateVariables();
+	CacheGlobalVariables();
 	AddScript("Scripts/Base/example.vscript");
 }
 
@@ -61,7 +61,15 @@ Script* ScriptManager::GetScript(const FS::path & path)
 
 Script* ScriptManager::AddScript(const FS::path& path)
 {
-	std::vector<std::string> lines = _filesystem->ReturnFileLines(path, false);
+	const std::string* scriptSource = _resource->GetTextData(path.string());
+	if(scriptSource == nullptr)
+	{
+		return nullptr;
+	}
+
+	std::vector<std::string> lines;
+	boost::split(lines, *scriptSource, boost::is_any_of(std::string("\n")), boost::token_compress_on);
+
 	if(!lines.empty())
 	{
 		const std::string& scriptName = path.string();
@@ -111,12 +119,16 @@ void ScriptManager::HandleScriptBindings(Script* script)
 	}
 }
 
-void ScriptManager::HandleCharacterStateVariables()
+void ScriptManager::CacheGlobalVariables()
 {
 	_globalVariables.emplace(std::make_pair("VE_STATE_FLAG_GENERIC", std::make_shared<ScriptInt>((int)CharacterStateFlagType::Generic)));
 	_globalVariables.emplace(std::make_pair("VE_STATE_FLAG_INVULN", std::make_shared<ScriptInt>((int)CharacterStateFlagType::Invuln)));
 	_globalVariables.emplace(std::make_pair("VE_STATE_FLAG_CANCEL_TARGET", std::make_shared<ScriptInt>((int)CharacterStateFlagType::CancelTargets)));
 	_globalVariables.emplace(std::make_pair("VE_STATE_FLAG_CANCEL_REQUIREMENT", std::make_shared<ScriptInt>((int)CharacterStateFlagType::CancelRequirements)));
+
+	std::shared_ptr<ScriptCollection> collection = std::make_shared<ScriptCollection>();
+	collection->AddMember("test", std::make_shared<ScriptInt>(5));
+	_globalVariables.emplace(std::make_pair("testCollection", collection));
 }
 
 void ScriptManager::AddVariable(const std::string& name, const std::shared_ptr<BaseScriptVariable>& variable)

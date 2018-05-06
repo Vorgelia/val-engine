@@ -67,7 +67,7 @@ private:
 	void GenerateDefaultTextures();
 	void LoadDefaultResources();
 
-	void PreprocessShaderSource(std::string& inoutShaderSource);
+	void PreprocessTextSource(std::string& inoutShaderSource);
 	
 public:
 	template<typename ResourceT>
@@ -89,52 +89,17 @@ public:
 #undef VE_RESOURCE_GETTER
 
 template<>
-inline std::unique_ptr<Texture> ResourceManager::CreateResource(const std::string& key)
-{
-	glm::ivec2 textureSize;
-	std::vector<unsigned char> textureData;
-	_filesystem->LoadTextureData(key, textureData, textureSize);
-	return _graphics->CreateTexture(key, textureData, textureSize);
-}
-
+std::unique_ptr<Texture> ResourceManager::CreateResource(const std::string& key);
 template<>
-inline std::unique_ptr<SurfaceShader> ResourceManager::CreateResource(const std::string& key)
-{
-	std::string vertSource = _filesystem->ReturnFile(key + ".vert");
-	PreprocessShaderSource(vertSource);
-	std::string fragSource = _filesystem->ReturnFile(key + ".frag");
-	PreprocessShaderSource(fragSource);
-
-	return	_graphics->CreateShader<SurfaceShader>(
-		key,
-		std::vector<ShaderAttachment>{
-		ShaderAttachment(vertSource, GL_VERTEX_SHADER),
-			ShaderAttachment(fragSource, GL_FRAGMENT_SHADER)});
-}
-
+std::unique_ptr<SurfaceShader> ResourceManager::CreateResource(const std::string& key);
 template<>
-inline std::unique_ptr<ComputeShader> ResourceManager::CreateResource(const std::string& key)
-{
-	std::string shaderSource = _filesystem->ReturnFile(key + ".comp");
-	PreprocessShaderSource(shaderSource);
-
-	return _graphics->CreateShader<ComputeShader>(key, std::vector<ShaderAttachment>{
-		ShaderAttachment(shaderSource, GL_COMPUTE_SHADER)
-	});
-}
-
+std::unique_ptr<ComputeShader> ResourceManager::CreateResource(const std::string& key);
 template<>
-inline std::unique_ptr<Mesh> ResourceManager::CreateResource(const std::string& key)
-{
-	CachedMesh* cachedMesh = GetCachedMesh(key);
-	return _graphics->CreateMesh(key, cachedMesh);
-}
-
+std::unique_ptr<Mesh> ResourceManager::CreateResource(const std::string& key);
 template<>
-inline std::unique_ptr<Font> ResourceManager::CreateResource(const std::string& key)
-{
-	return _graphics->CreateFont(key);
-}
+std::unique_ptr<Font> ResourceManager::CreateResource(const std::string& key);
+template<>
+std::unique_ptr<std::string> ResourceManager::CreateResource(const std::string& key);
 
 template<class ResourceT>
 std::unique_ptr<ResourceT> ResourceManager::CreateResource(const std::string& key)
