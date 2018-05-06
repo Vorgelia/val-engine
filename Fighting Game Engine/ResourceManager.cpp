@@ -49,14 +49,14 @@ void ResourceManager::LoadDefaultResources()
 
 void ResourceManager::PreprocessTextSource(std::string& inoutShaderSource)
 {
+	inoutShaderSource = std::regex_replace(inoutShaderSource, std::regex(R"(\/\/.*$)"), "");
+
 	std::regex noparseRegex(R"(^\s*\#pragma noparse\s*$)");
 	if(std::regex_match(inoutShaderSource, noparseRegex))
 	{
 		inoutShaderSource = std::regex_replace(inoutShaderSource, noparseRegex, "");
 		return;
 	}
-
-	inoutShaderSource = std::regex_replace(inoutShaderSource, std::regex(R"(\/\/.*$)"), "");
 
 	const std::string& includeSignature = "#pragma include";
 	size_t index = inoutShaderSource.find(includeSignature);
