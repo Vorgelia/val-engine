@@ -10,6 +10,7 @@
 #include "GameCharacterData.h"
 #include "ServiceManager.h"
 #include "CharacterEventComponent.h"
+#include "Transform.h"
 
 VE_BEHAVIOUR_REGISTER_TYPE(GameCharacter);
 
@@ -28,9 +29,64 @@ CharacterPhysicsComponent* GameCharacter::physicsComponent() const
 	return _physicsComponent.get();
 }
 
+CharacterEventComponent * GameCharacter::eventComponent() const
+{
+	return _eventComponent.get();
+}
+
 void GameCharacter::SetOwner(GamePlayer* owner)
 {
 	_playerOwner = owner;
+}
+
+CharacterCollisionResult GameCharacter::GenerateCollisions(const GameCharacter* other) const
+{
+	const CharacterFrame* otherFrame = other->stateComponent()->currentFrame();
+	const CharacterFrame* thisFrame = stateComponent()->currentFrame();
+
+	CharacterCollisionResult collisionResult;
+	collisionResult.otherCharacter = const_cast<GameCharacter*>(other);
+
+	auto& hitResultPicker = [&](const GameCharacter* attacker, const GameCharacter* defender, const std::vector<AttackData>& hitboxes, const std::vector<DefenceData>& hurtboxes)
+	-> boost::optional<AttackCollisionHit>
+	{
+		for(auto& hitbox : hitboxes)
+		{
+			for(auto& hurtbox : hurtboxes)
+			{
+				for(auto& hitCollision : hitbox.collision())
+				{
+					for(auto& hurtCollision : hurtbox.collision())
+					{
+						const CollisionBox relativeHitCollision = hitCollision.RelativeTo(attacker->object()->transform()->position, _flipped);
+						const CollisionBox relativeHurtCollision = hurtCollision.RelativeTo(defender->object()->transform()->position, other->_flipped);
+						if(relativeHitCollision.Overlaps(relativeHurtCollision))
+						{
+							return AttackCollisionHit(hitbox, hurtbox);
+						}
+					}
+				}
+			}
+		}
+		return boost::optional<AttackCollisionHit>();
+	};
+	
+	collisionResult.attackReceived = hitResultPicker(other, this, otherFrame->hitboxes(), thisFrame->hurtboxes());
+	collisionResult.attackHit = hitResultPicker(this, other, thisFrame->hitboxes(), otherFrame->hurtboxes());
+	
+	for(const CollisionBox& thisCollision : thisFrame->collision())
+	{
+		for(const CollisionBox& otherCollision : otherFrame->collision())
+		{
+			const glm::lvec2 depenetrationDist = thisCollision.DepenetrationDistance(otherCollision);
+			if(depenetrationDist != glm::lvec2(0,0))
+			{
+				collisionResult.collisionHits.emplace_back(CollisionHit(thisCollision, otherCollision, depenetrationDist));
+			}
+		}
+	}
+
+	return collisionResult;
 }
 
 void GameCharacter::CharacterInit()

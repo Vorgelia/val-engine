@@ -1,8 +1,9 @@
 #pragma Bind Debug
 #pragma Bind Time
+#pragma include Characters/Fritz/Fritz_Common.vscript
 
 function CharacterInit() : int
-	character_startState("FRITZ_IDLE")
+	character_state_startState("FRITZ_IDLE")
 end
 
 //This function runs every frame

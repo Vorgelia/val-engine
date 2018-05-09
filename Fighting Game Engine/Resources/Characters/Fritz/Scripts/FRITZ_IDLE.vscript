@@ -1,5 +1,6 @@
 #pragma Bind Debug
 #pragma Bind Time
+#pragma include Characters/Fritz/Fritz_Common.vscript
 
 function StateInit() : int
 	character_state_addFlag(VE_STATE_FLAG_CANCEL_TARGET, "VE_NORMAL")

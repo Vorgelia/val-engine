@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <memory>
+#include "CharacterCollisionResult.h"
 
 class Object;
 class Script;
@@ -61,8 +62,11 @@ public:
 	const GameCharacterData* characterData() const;
 	CharacterStateComponent* stateComponent() const;
 	CharacterPhysicsComponent* physicsComponent() const;
+	CharacterEventComponent* eventComponent() const;
 
 	void SetOwner(GamePlayer* owner);
+
+	CharacterCollisionResult GenerateCollisions(const GameCharacter* other) const;
 
 	GameCharacter(Object* owner, ServiceManager* serviceManager, const json& j);
 	~GameCharacter() = default;

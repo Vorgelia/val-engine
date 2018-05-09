@@ -2,6 +2,8 @@
 #include "Behaviour.h"
 #include "MathIncludes.hpp"
 
+struct CharacterCollisionResult;
+class GameCharacter;
 class FightingGameManager;
 
 class FightingStageBehaviour :
@@ -14,6 +16,8 @@ protected:
 	glm::lvec4 _stageBounds;
 	//TODO: Make characters send scene events.
 	//void HandleSceneEvent();
+
+	virtual std::unordered_map<GameCharacter*, std::vector<CharacterCollisionResult>> GenerateCharacterCollisionResults() const;
 
 public:
 	VE_BEHAVIOUR_NAME(FightingStageBehaviour);

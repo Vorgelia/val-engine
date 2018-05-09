@@ -27,12 +27,7 @@
 
         ],
         "collision":[
-            {
-                "x":0,
-                "y":0,
-                "z":10,
-                "w":60
-            }
+            { "center":{"x":0, "y":0}, "extents":{"x":1000, "y":6000} }
         ],
         "spriteData":{
             "sprite":"Characters/Fritz/Sprites/_Sheet_01.png",
@@ -57,12 +52,7 @@
 
         ],
         "collision":[
-            {
-                "x":0,
-                "y":0,
-                "z":10,
-                "w":60
-            }
+            { "center":{"x":0, "y":0}, "extents":{"x":1000, "y":6000} }
         ],
         "spriteData":{
             "sprite":"Characters/Fritz/Sprites/_Sheet_01.png",
@@ -87,12 +77,7 @@
 
         ],
         "collision":[
-            {
-                "x":0,
-                "y":0,
-                "z":10,
-                "w":60
-            }
+            { "center":{"x":0, "y":0}, "extents":{"x":1000, "y":6000} }
         ],
         "spriteData":{
             "sprite":"Characters/Fritz/Sprites/_Sheet_01.png",
@@ -117,12 +102,7 @@
 		
 		],
         "collision":[
-            {
-                "x":0,
-                "y":0,
-                "z":10,
-                "w":60
-            }
+            { "center":{"x":0, "y":0}, "extents":{"x":1000, "y":6000} }
         ],
         "spriteData":{
             "sprite":"Characters/Fritz/Sprites/_Sheet_01.png",
@@ -147,12 +127,7 @@
 		
 		],
         "collision":[
-            {
-                "x":0,
-                "y":0,
-                "z":10,
-                "w":60
-            }
+            { "center":{"x":0, "y":0}, "extents":{"x":1000, "y":6000} }
         ],
         "spriteData":{
             "sprite":"Characters/Fritz/Sprites/_Sheet_01.png",
@@ -177,12 +152,7 @@
 		
 		],
         "collision":[
-            {
-                "x":0,
-                "y":0,
-                "z":10,
-                "w":60
-            }
+            { "center":{"x":0, "y":0}, "extents":{"x":1000, "y":6000} }
         ],
         "spriteData":{
             "sprite":"Characters/Fritz/Sprites/_Sheet_01.png",
@@ -207,12 +177,7 @@
 		
 		],
         "collision":[
-            {
-                "x":0,
-                "y":0,
-                "z":10,
-                "w":60
-            }
+            { "center":{"x":0, "y":0}, "extents":{"x":1000, "y":6000} }
         ],
         "spriteData":{
             "sprite":"Characters/Fritz/Sprites/_Sheet_01.png",
@@ -233,18 +198,7 @@
         "hitboxes":[
             {
                 "collision":[
-                    {
-                        "x":0,
-                        "y":0,
-                        "z":30,
-                        "w":30
-                    },
-                    {
-                        "x":-60,
-                        "y":20,
-                        "z":30,
-                        "w":30
-                    }
+					{ "center":{"x":0, "y":0}, "extents":{"x":1000, "y":6000} }
                 ],
                 "damage":20,
                 "hitstun":20,
@@ -254,29 +208,13 @@
         "hurtboxes":[
             {
                 "collision":[
-                    {
-                        "x":0,
-                        "y":0,
-                        "z":30,
-                        "w":30
-                    },
-                    {
-                        "x":-60,
-                        "y":20,
-                        "z":30,
-                        "w":30
-                    }
+				   { "center":{"x":0, "y":0}, "extents":{"x":1000, "y":6000} }
                 ],
                 "damageMultiplier":1.2
             }
         ],
         "collision":[
-            {
-                "x":0,
-                "y":0,
-                "z":10,
-                "w":60
-            }
+           { "center":{"x":0, "y":0}, "extents":{"x":1000, "y":6000} }
         ],
         "spriteData":{
             "sprite":"Characters/Fritz/Sprites/_Sheet_01.png",
@@ -301,12 +239,7 @@
 		
 		],
         "collision":[
-            {
-                "x":0,
-                "y":0,
-                "z":10,
-                "w":60
-            }
+            { "center":{"x":0, "y":0}, "extents":{"x":1000, "y":6000} }
         ],
         "spriteData":{
             "sprite":"Characters/Fritz/Sprites/_Sheet_01.png",
@@ -331,12 +264,7 @@
 		
 		],
         "collision":[
-            {
-                "x":0,
-                "y":0,
-                "z":10,
-                "w":60
-            }
+            { "center":{"x":0, "y":0}, "extents":{"x":1000, "y":6000} }
         ],
         "spriteData":{
             "sprite":"Characters/Fritz/Sprites/_Sheet_01.png",
@@ -361,12 +289,7 @@
 		
 		],
         "collision":[
-            {
-                "x":0,
-                "y":0,
-                "z":10,
-                "w":60
-            }
+            { "center":{"x":0, "y":0}, "extents":{"x":1000, "y":6000} }
         ],
         "spriteData":{
             "sprite":"Characters/Fritz/Sprites/_Sheet_01.png",

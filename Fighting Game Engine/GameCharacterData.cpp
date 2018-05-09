@@ -16,6 +16,7 @@ GameCharacterData::GameCharacterData(const json& j)
 	JSON::TryGetMember(j, "frameDataPaths", _frameDataPaths);
 	JSON::TryGetMember(j, "sizeMultiplier", _sizeMultiplier);
 	JSON::TryGetMember(j, "characterScript", _characterScript);
+	JSON::TryGetMember(j, "eventResolutionPriority", _eventResolutionPriority);
 
 	auto physicsData = j.find("physicsParams");
 	if (physicsData != j.end())

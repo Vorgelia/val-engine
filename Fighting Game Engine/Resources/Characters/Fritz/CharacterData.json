@@ -10,7 +10,8 @@
 	{
 		"gravity":900,
 		"baseGroundFriction":1000,
-		"baseAirFriction":500
+		"baseAirFriction":500,
+		"mass":1000
 	},
 	"flags":
 	[

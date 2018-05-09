@@ -1,6 +1,10 @@
 #include "CollisionBox.h"
 #include <GLM/detail/type_mat.hpp>
-#include <GLM/detail/type_mat.hpp>
+
+glm::lvec2 CollisionBox::pivotedCenter() const
+{
+	return center + pivotOffset;
+}
 
 void CollisionBox::AxisMinMax(glm::lvec2& out_minMaxX, glm::lvec2& out_minMaxY) const
 {
@@ -19,13 +23,11 @@ glm::lvec2 CollisionBox::DepenetrationDistance(const CollisionBox& other) const
 	{
 		return glm::lvec2(0, 0);
 	}
-	
-	const glm::lvec2 centerDist = center - other.center;
-	const glm::lvec2 centerDistSign = glm::nonZeroSign(centerDist);
+	//TODO: Split this into AABB and non-stacking AABB
+	const glm::lvec2 displacementSign = glm::nonZeroSign(pivotedCenter() - other.pivotedCenter());
+	const glm::lvec2 desiredLocation = other.center + glm::lvec2(other.extents.x + extents.x, 0) * displacementSign;
 
-	const glm::lvec2 distRemaining = other.extents + extents - glm::abs(centerDist);
-
-	return glm::lvec2(distRemaining.x * centerDistSign.x, distRemaining.y * centerDistSign.y);
+	return desiredLocation - center;
 }
 
 CollisionBox CollisionBox::RelativeTo(const glm::lvec2& position, bool flipped) const
@@ -45,9 +47,9 @@ CollisionBox CollisionBox::operator+(const glm::lvec2& rhs) const
 	return CollisionBox(center + rhs, extents);
 }
 
-CollisionBox::CollisionBox(const glm::lvec2& center, const glm::lvec2& extents)
+CollisionBox::CollisionBox(const glm::lvec2& center, const glm::lvec2& extents, const glm::lvec2& pivotOffset)
 	: center(center)
-	, extents(extents)
+	, extents(glm::abs(extents))
+	, pivotOffset(pivotOffset)
 {
-	this->extents = glm::abs(extents);
 }

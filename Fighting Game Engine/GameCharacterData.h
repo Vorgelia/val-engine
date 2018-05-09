@@ -23,6 +23,7 @@ struct GameCharacterData
 	std::string _name;
 	std::string _characterScript;
 	std::unordered_set<std::string> _flags;
+	int _eventResolutionPriority;
 
 	glm::ivec2 _sizeMultiplier;
 

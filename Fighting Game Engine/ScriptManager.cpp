@@ -29,6 +29,15 @@
 			return nullptr;\
 		bool (storage) = std::static_pointer_cast<ScriptBool>((collection)[index])->value();
 
+#define GET_ARG_COLLECTION_CHECKED(collection, index, storage)\
+		if(((index) == 0 ? (collection).empty() : (collection).size() <= (index)) || (collection)[index]->type() != ScriptVariableType::Collection)\
+			return nullptr;\
+		ScriptCollection& (storage) = *std::static_pointer_cast<ScriptCollection>((collection)[index]);
+
+#define GET_ARG_VAR_CHECKED(collection, index, storage)\
+		if((index) == 0 ? (collection).empty() : (collection).size() <= (index))\
+			return nullptr;\
+		std::shared_ptr<BaseScriptVariable> (storage) = (collection)[index];
 
 void ScriptManager::Init()
 {
@@ -117,6 +126,25 @@ void ScriptManager::HandleScriptBindings(Script* script)
 			});
 		}
 	}
+
+	script->BindFunction("collection_add",
+		[](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
+	{
+		GET_ARG_COLLECTION_CHECKED(args, 0, collection);
+		GET_ARG_STRING_CHECKED(args, 1, name);
+		GET_ARG_VAR_CHECKED(args, 2, variable);
+		collection.AddMember(name, variable);
+		return nullptr;
+	});
+
+	script->BindFunction("collection_remove",
+		[](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
+	{
+		GET_ARG_COLLECTION_CHECKED(args, 0, collection);
+		GET_ARG_STRING_CHECKED(args, 1, name);
+		collection.RemoveMember(name);
+		return nullptr;
+	});
 }
 
 void ScriptManager::CacheGlobalVariables()

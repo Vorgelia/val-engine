@@ -75,7 +75,7 @@ glm::vec2 JSON::Get(const json_t& j)
 template<>
 unsigned char JSON::Get(const json_t& j)
 {
-	return (unsigned char)j.get<int>();
+	return unsigned char(j.get<int>());
 }
 
 template <>
@@ -85,5 +85,8 @@ CollisionBox JSON::Get<CollisionBox>(const json_t& j)
 	JSON::TryGetMember(j, "center", center);
 	glm::lvec2 extents;
 	JSON::TryGetMember(j, "extents", extents);
+	glm::lvec2 pivotOffset;
+	JSON::TryGetMember(j, "pivotOffset", pivotOffset);
+
 	return CollisionBox(center, extents);
 }

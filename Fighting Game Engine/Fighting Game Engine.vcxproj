@@ -54,6 +54,8 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <AdditionalOptions>-D_SCL_SECURE_NO_WARNINGS %(AdditionalOptions)</AdditionalOptions>
+      <LanguageStandard>stdcpp14</LanguageStandard>
+      <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
@@ -71,6 +73,8 @@
       <SDLCheck>true</SDLCheck>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
+      <LanguageStandard>stdcpp14</LanguageStandard>
+      <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -87,6 +91,7 @@
     <ClCompile Include="BehaviourFactory.cpp" />
     <ClCompile Include="CachedMesh.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="CharacterCollisionResult.cpp" />
     <ClCompile Include="CharacterEventComponent.cpp" />
     <ClCompile Include="CharacterFrame.cpp" />
     <ClCompile Include="CharacterHitData.cpp" />
@@ -95,7 +100,6 @@
     <ClCompile Include="CharacterSprite.cpp" />
     <ClCompile Include="CharacterState.cpp" />
     <ClCompile Include="CharacterStateComponent.cpp" />
-    <ClCompile Include="CollisionHitResult.cpp" />
     <ClCompile Include="ComputeShader.cpp" />
     <ClCompile Include="ComputeShaderEffect.cpp" />
     <ClCompile Include="ConnectionSocket.cpp" />
@@ -180,6 +184,7 @@
     <ClInclude Include="BehaviourFactory.h" />
     <ClInclude Include="CachedMesh.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="CharacterCollisionResult.h" />
     <ClInclude Include="CharacterEventComponent.h" />
     <ClInclude Include="CharacterFrame.h" />
     <ClInclude Include="CharacterHitData.h" />
@@ -189,7 +194,6 @@
     <ClInclude Include="CharacterState.h" />
     <ClInclude Include="CharacterStateComponent.h" />
     <ClInclude Include="CircularBuffer.h" />
-    <ClInclude Include="CollisionHitResult.h" />
     <ClInclude Include="CommonUtilIncludes.hpp" />
     <ClInclude Include="ComputeShader.h" />
     <ClInclude Include="ComputeShaderEffect.h" />

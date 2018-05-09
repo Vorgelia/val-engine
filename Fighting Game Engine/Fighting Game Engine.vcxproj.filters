@@ -388,14 +388,14 @@
     <ClCompile Include="CharacterStateComponent.cpp">
       <Filter>Val Engine\Game\Characters\Components</Filter>
     </ClCompile>
-    <ClCompile Include="CollisionHitResult.cpp">
-      <Filter>Val Engine\Engine\Utilities\Math</Filter>
-    </ClCompile>
     <ClCompile Include="CharacterEventComponent.cpp">
       <Filter>Val Engine\Game\Characters\Components</Filter>
     </ClCompile>
     <ClCompile Include="GameCharacterComponent.cpp">
       <Filter>Val Engine\Game\Characters\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="CharacterCollisionResult.cpp">
+      <Filter>Val Engine\Game\Characters\Hit Data</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -696,14 +696,14 @@
     <ClInclude Include="CharacterStateComponent.h">
       <Filter>Val Engine\Game\Characters\Components</Filter>
     </ClInclude>
-    <ClInclude Include="CollisionHitResult.h">
-      <Filter>Val Engine\Engine\Utilities\Math</Filter>
-    </ClInclude>
     <ClInclude Include="CharacterEventComponent.h">
       <Filter>Val Engine\Game\Characters\Components</Filter>
     </ClInclude>
     <ClInclude Include="GameCharacterComponent.h">
       <Filter>Val Engine\Game\Characters\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterCollisionResult.h">
+      <Filter>Val Engine\Game\Characters\Hit Data</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
