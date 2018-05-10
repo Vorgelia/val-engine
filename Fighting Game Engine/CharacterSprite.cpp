@@ -19,8 +19,8 @@ glm::ivec2 CharacterSprite::originOffset() const
 CharacterSprite::CharacterSprite(const json& j)
 {
 	_sprite = JSON::Get<std::string>(j["sprite"]);
-	_pixelRect = JSON::Get<glm::ivec4>(j["pixelRect"]);
-	_originOffset = JSON::Get<glm::ivec2>(j["originOffset"]);
+	_pixelRect = JSON::Get<ve::ivec4>(j["pixelRect"]);
+	_originOffset = JSON::Get<ve::ivec2>(j["originOffset"]);
 }
 
 CharacterSprite::~CharacterSprite()

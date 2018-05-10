@@ -45,7 +45,7 @@ struct ScriptToken
 	static const std::string value_true;
 	static const std::string value_false;
 
-	static const std::string type_int;
+	static const std::string type_dec;
 	static const std::string type_bool;
 	static const std::string type_string;
 	static const std::string type_collection;

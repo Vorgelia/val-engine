@@ -27,7 +27,7 @@
 //Auxiliary buffers are framebuffers used for multipass post processing effects.
 #define VE_AUX_BUFFER_AMOUNT 3
 //World scale controls how many world units correspond to one pixel at a resolution of 1920x1080. Object positions are integers for consistency.
-#define VE_WORLD_SCALE 1000
+#define VE_WORLD_SCALE 0.1
 
 void RenderingGL::BeginFrame()
 {

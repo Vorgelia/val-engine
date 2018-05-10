@@ -2,11 +2,12 @@
 #pragma Bind Time
 #pragma include Characters/Fritz/Fritz_Common.vscript
 
-function CharacterInit() : int
+function CharacterInit() : void
 	character_state_startState("FRITZ_IDLE")
+	ve_log(0.141 * 2.55)
 end
 
 //This function runs every frame
-function CharacterUpdate() : int
-	return 0
+function CharacterUpdate() : void
+
 end

@@ -26,7 +26,7 @@ struct GameCharacterData
 	std::unordered_set<std::string> _flags;
 	int _eventResolutionPriority;
 
-	ve::ivec2 _sizeMultiplier;
+	ve::vec2 _sizeMultiplier;
 
 	std::vector<std::string> _statePaths;
 	std::vector<std::string> _frameDataPaths;

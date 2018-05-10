@@ -713,4 +713,7 @@
       <Filter>Val Engine</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="FixedPoint64.natvis" />
+  </ItemGroup>
 </Project>

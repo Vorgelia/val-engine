@@ -55,7 +55,7 @@ void CharacterRenderer::HandleRenderingMaterial(const CharacterSprite* spriteDat
 		return;
 	}
 
-	glm::ivec4 pixelRect = spriteData->pixelRect();
+	ve::ivec4 pixelRect = spriteData->pixelRect();
 	glm::vec4 textureSize = texture->size();
 
 	glm::vec4 params(
@@ -70,20 +70,20 @@ void CharacterRenderer::HandleRenderingMaterial(const CharacterSprite* spriteDat
 
 void CharacterRenderer::HandleRenderingTransform(const CharacterSprite* spriteData, Texture* texture) const
 {
-	glm::ivec2 originOffset = spriteData->originOffset();
-	glm::vec2 sizeMultiplier = _character->characterData()->_sizeMultiplier;
-	glm::ivec4 pixelRect = spriteData->pixelRect();
+	ve::ivec2 originOffset = spriteData->originOffset();
+	ve::vec2 sizeMultiplier = _character->characterData()->_sizeMultiplier;
+	ve::ivec4 pixelRect = spriteData->pixelRect();
 
 	_renderingTransform->SnapTo(*_owner->transform());
 
-	_renderingTransform->position += glm::ivec2(
-		glm::round(originOffset.x * sizeMultiplier.x),
-		glm::round(originOffset.y * sizeMultiplier.y)
+	_renderingTransform->position += ve::vec2(
+		ve::dec_t(originOffset.x) * sizeMultiplier.x,
+		ve::dec_t(originOffset.y) * sizeMultiplier.y
 	);
 
-	_renderingTransform->scale = glm::vec2(
-		pixelRect.z * sizeMultiplier.x,
-		pixelRect.w * sizeMultiplier.y);
+	_renderingTransform->scale = ve::vec2(
+		ve::dec_t(pixelRect.z) * sizeMultiplier.x,
+		ve::dec_t(pixelRect.w) * sizeMultiplier.y);
 }
 
 CharacterRenderer::CharacterRenderer(Object* owner, ServiceManager* serviceManager, const json& j) : Renderer(owner, serviceManager, j)

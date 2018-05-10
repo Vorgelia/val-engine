@@ -22,7 +22,7 @@ void Transform::SnapTo(const Transform& tr)
 	scale = tr.scale;
 }
 
-Transform::Transform(Object* owner, ServiceManager* serviceManager, ve::vec2 position, glm::vec3 eulerRotation, glm::vec2 scale) : Behaviour(owner, serviceManager)
+Transform::Transform(Object* owner, ServiceManager* serviceManager, ve::vec2 position, glm::vec3 eulerRotation, ve::vec2 scale) : Behaviour(owner, serviceManager)
 {
 	this->position = position;
 	this->scale = scale;
@@ -30,7 +30,7 @@ Transform::Transform(Object* owner, ServiceManager* serviceManager, ve::vec2 pos
 	this->depth = 0;
 }
 
-Transform::Transform(Object* owner, ServiceManager* serviceManager, ve::vec2 position, glm::quat rotation, glm::vec2 scale) : Behaviour(owner, serviceManager)
+Transform::Transform(Object* owner, ServiceManager* serviceManager, ve::vec2 position, glm::quat rotation, ve::vec2 scale) : Behaviour(owner, serviceManager)
 {
 	this->position = position;
 	this->scale = scale;
@@ -42,7 +42,7 @@ Transform::Transform(Object* owner, ServiceManager* serviceManager, const json &
 {
 	position = JSON::Get<ve::vec2>(j["position"]);
 	rotation = JSON::Get<glm::quat>(j["rotation"]);
-	scale = JSON::Get<glm::vec2>(j["scale"]);
+	scale = JSON::Get<ve::vec2>(j["scale"]);
 	depth = j["depth"].get<float>();
 }
 

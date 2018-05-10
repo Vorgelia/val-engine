@@ -2,23 +2,21 @@
 #pragma Bind Time
 
 //This function runs every frame
-function GameUpdate() : int
-	int frameCount = time_frameCount()
+function GameUpdate() : void
+	dec frameCount = ve_time_frameCount()
 	
 	if((frameCount % 80) == 0)
 		ve_log("FrameCount: ",frameCount)
 	end
-	
-	return 0
 end
 
 //This function runs once when the script is loaded
-function Init() : int
+function Init() : dec
 	testCollection["test"] = 999
 	ve_log(testCollection["test"])
 
 	bool correctOperationOrder
-	int i=2*2+3
+	dec i=2*2+3
 	if(i==7)
 		correctOperationOrder = true
 	end
@@ -49,8 +47,8 @@ function Init() : int
 	
 	ve_log(i=i/2)
 	
-	int j=0
-	int k=0
+	dec j=0
+	dec k=0
 	while(k<5)
 		j = j+5
 		k = k+1
@@ -64,6 +62,6 @@ function Init() : int
 	return i/2
 end
 
-function JustReturn666():int
+function JustReturn666() : dec
 	return 666
 end

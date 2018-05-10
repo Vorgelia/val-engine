@@ -3,15 +3,15 @@
 	"characterScript":"Characters/Fritz/Fritz.vscript",
 	"sizeMultiplier":
 	{
-		"x":1800,
-		"y":1800
+		"x":0.18,
+		"y":0.18
 	},
 	"physicsParams":
 	{
-		"gravity":900,
-		"baseGroundFriction":1000,
-		"baseAirFriction":500,
-		"mass":1000
+		"gravity":0.09,
+		"baseGroundFriction":0.1,
+		"baseAirFriction":0.005,
+		"mass":10
 	},
 	"flags":
 	[

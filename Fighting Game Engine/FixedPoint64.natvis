@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+  <Type Name="FixedPoint64">
+    <DisplayString>{(float)_bits * (1.0f / 4294967296.0f)}</DisplayString>
+  </Type>
+</AutoVisualizer>

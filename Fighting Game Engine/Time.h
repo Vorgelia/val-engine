@@ -1,5 +1,6 @@
 #pragma once
 #include "BaseService.h"
+#include "ValEngine.h"
 
 #define VE_FRAME_RATE 60
 #define VE_FRAME_TIME (1.0/VE_FRAME_RATE)
@@ -17,8 +18,8 @@ public:
 	int updateRate;
 	double smoothUpdateRate;
 
-	unsigned long long frameCount;
-	unsigned long long frameCountSinceLoad;
+	ve::int_t frameCount;
+	ve::int_t frameCountSinceLoad;
 
 	void Init() override;
 	void Update() override;

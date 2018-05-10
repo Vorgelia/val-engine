@@ -8,7 +8,7 @@ public:
 	VE_BEHAVIOUR_NAME(Transform);
 
 	ve::vec2 position;
-	glm::vec2 scale;
+	ve::vec2 scale;
 	glm::quat rotation;
 	float depth;
 
@@ -16,8 +16,8 @@ public:
 
 	void SnapTo(const Transform& tr);
 
-	Transform(Object* owner, ServiceManager* serviceManager, ve::vec2 position, glm::vec3 eulerRotation, glm::vec2 scale);
-	Transform(Object* owner, ServiceManager* serviceManager, ve::vec2 position, glm::quat rotation, glm::vec2 scale);
+	Transform(Object* owner, ServiceManager* serviceManager, ve::vec2 position, glm::vec3 eulerRotation, ve::vec2 scale);
+	Transform(Object* owner, ServiceManager* serviceManager, ve::vec2 position, glm::quat rotation, ve::vec2 scale);
 	Transform(Object* owner, ServiceManager* serviceManager, const json& j);
 	Transform(Object* owner, ServiceManager* serviceManager);
 };

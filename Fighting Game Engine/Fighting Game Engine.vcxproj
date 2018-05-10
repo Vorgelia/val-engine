@@ -282,6 +282,9 @@
     <ClInclude Include="ValEngine.h" />
     <ClInclude Include="Vec4Buffer.h" />
   </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="FixedPoint64.natvis" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

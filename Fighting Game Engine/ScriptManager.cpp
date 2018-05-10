@@ -113,13 +113,13 @@ void ScriptManager::HandleScriptBindings(Script* script)
 		}
 		else if(directive == "Time")
 		{
-			script->BindFunction("time_frameCount",
+			script->BindFunction("ve_time_frameCount",
 				[this](const Script*, ScriptArgumentCollection&)->std::shared_ptr<BaseScriptVariable>
 			{
-				return std::make_shared<ScriptDec>(long(_time->frameCount));
+				return std::make_shared<ScriptDec>(_time->frameCount);
 			});
 
-			script->BindFunction("time_frameCountSinceLoad",
+			script->BindFunction("ve_time_frameCountSinceLoad",
 				[this](const Script*, ScriptArgumentCollection&)->std::shared_ptr<BaseScriptVariable>
 			{
 				return std::make_shared<ScriptDec>(long(_time->frameCountSinceLoad));
@@ -127,7 +127,7 @@ void ScriptManager::HandleScriptBindings(Script* script)
 		}
 	}
 
-	script->BindFunction("collection_add",
+	script->BindFunction("ve_collection_add",
 		[](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
 	{
 		GET_ARG_COLLECTION_CHECKED(args, 0, collection);
@@ -137,7 +137,7 @@ void ScriptManager::HandleScriptBindings(Script* script)
 		return nullptr;
 	});
 
-	script->BindFunction("collection_remove",
+	script->BindFunction("ve_collection_remove",
 		[](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
 	{
 		GET_ARG_COLLECTION_CHECKED(args, 0, collection);
@@ -147,6 +147,60 @@ void ScriptManager::HandleScriptBindings(Script* script)
 	});
 
 	//TODO: Fixed64 Math functions
+
+	script->BindFunction("ve_math_sin",
+		[](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
+	{
+		GET_ARG_DEC_CHECKED(args, 0, dec);
+		return std::make_shared<ScriptDec>(ve::dec_t::Sin(dec));
+	});
+
+	script->BindFunction("ve_math_cos",
+		[](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
+	{
+		GET_ARG_DEC_CHECKED(args, 0, dec);
+		return std::make_shared<ScriptDec>(ve::dec_t::Cos(dec));
+	});
+
+	script->BindFunction("ve_math_sqrt",
+		[](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
+	{
+		GET_ARG_DEC_CHECKED(args, 0, dec);
+		return std::make_shared<ScriptDec>(ve::dec_t::Sqrt(dec));
+	});
+
+	script->BindFunction("ve_math_rsqrt",
+		[](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
+	{
+		GET_ARG_DEC_CHECKED(args, 0, dec);
+		return std::make_shared<ScriptDec>(ve::dec_t::RSqrt(dec));
+	});
+
+	script->BindFunction("ve_math_abs",
+		[](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
+	{
+		GET_ARG_DEC_CHECKED(args, 0, dec);
+		return std::make_shared<ScriptDec>(ve::dec_t::Abs(dec));
+	});
+	script->BindFunction("ve_math_floor",
+		[](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
+	{
+		GET_ARG_DEC_CHECKED(args, 0, dec);
+		return std::make_shared<ScriptDec>(ve::dec_t::Floor(dec));
+	});
+	script->BindFunction("ve_math_ceil",
+		[](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
+	{
+		GET_ARG_DEC_CHECKED(args, 0, dec);
+		return std::make_shared<ScriptDec>(ve::dec_t::Ceil(dec));
+	});
+	script->BindFunction("ve_math_pow",
+		[](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
+	{
+		GET_ARG_DEC_CHECKED(args, 0, dec);
+		GET_ARG_DEC_CHECKED(args, 1, exp);
+		return std::make_shared<ScriptDec>(ve::dec_t::Pow(dec, exp));
+	});
 }
 
 void ScriptManager::CacheGlobalVariables()

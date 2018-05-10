@@ -41,7 +41,7 @@ void MenuBehaviour::EngineUpdate()
 
 void MenuBehaviour::GameUpdate()
 {
-	_rendering->cameras.at(0).position += _input->GetInputDevice(-1)->inputBuffer()->back().ToVector() * 100000.0f * float(VE_FRAME_TIME);
+	_rendering->cameras.at(0).position += _input->GetInputDevice(-1)->inputBuffer()->back().ToVector() * 10.0f * float(VE_FRAME_TIME);
 }
 
 MenuBehaviour::MenuBehaviour(Object* owner, ServiceManager* serviceManager, const json& j) : Behaviour(owner, serviceManager, j)

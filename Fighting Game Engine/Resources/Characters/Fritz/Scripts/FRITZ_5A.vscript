@@ -2,7 +2,7 @@
 #pragma Bind Time
 
 //This function runs every frame
-function StateUpdate(int frame) : void
+function StateUpdate(dec frame) : void
 	switch(frame)
 		case 0->2
 		  character_state_setFrame("fritz_5a_01")
@@ -14,7 +14,7 @@ function StateUpdate(int frame) : void
 		  character_state_setFrame("fritz_5a_03")
 		  break
 		case 8
-		  character_physics_addForce(10, 7000, 0)
+		  character_physics_addForce(10, 0.7, 0)
 		case 8->12
 		  character_state_setFrame("fritz_5a_04")
 		  break

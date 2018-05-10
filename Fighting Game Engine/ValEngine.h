@@ -8,6 +8,7 @@ namespace ValEngine
 {
 	typedef FixedPoint64 dec_t;
 	typedef std::int32_t int_t;
+	typedef std::uint32_t uint_t;
 
 	typedef glm::tvec2<dec_t> vec2;
 	typedef glm::tvec3<dec_t> vec3;

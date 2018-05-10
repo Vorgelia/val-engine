@@ -11,10 +11,10 @@
 			"name":"FightingStageBehaviour",
 			"enabled":true,
 			"stageBounds":{
-				"x": -600000,
-				"y": 20000,
-				"z": 600000,
-				"w": 500000
+				"x": -60,
+				"y": 2,
+				"z": 60,
+				"w": 50
 			}
 		},
 		{

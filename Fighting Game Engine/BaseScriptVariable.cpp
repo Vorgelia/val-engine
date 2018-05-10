@@ -5,7 +5,7 @@
 
 const std::unordered_map<std::string, ScriptVariableType> BaseScriptVariable::variableTypeLookup =
 {
-	{ ScriptToken::type_int, ScriptVariableType::Dec },
+	{ ScriptToken::type_dec, ScriptVariableType::Dec },
 	{ ScriptToken::type_bool, ScriptVariableType::Bool },
 	{ ScriptToken::type_string, ScriptVariableType::String },
 	{ ScriptToken::type_collection, ScriptVariableType::Collection },
