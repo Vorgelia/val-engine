@@ -14,10 +14,10 @@
 #include <boost/algorithm/string.hpp>
 #include "ResourceManager.h"
 
-#define GET_ARG_INT_CHECKED(collection, index, storage)\
-		if(((index) == 0 ? (collection).empty() : (collection).size() <= (index)) || (collection)[index]->type() != ScriptVariableType::Int)\
+#define GET_ARG_DEC_CHECKED(collection, index, storage)\
+		if(((index) == 0 ? (collection).empty() : (collection).size() <= (index)) || (collection)[index]->type() != ScriptVariableType::Dec)\
 			return nullptr;\
-		std::int64_t storage = std::static_pointer_cast<ScriptInt>((collection)[index])->value();
+		ve::dec_t storage = std::static_pointer_cast<ScriptDec>((collection)[index])->value();
 
 #define GET_ARG_STRING_CHECKED(collection, index, storage)\
 		if(((index) == 0 ? (collection).empty() : (collection).size() <= (index)) || (collection)[index]->type() != ScriptVariableType::String)\
@@ -116,13 +116,13 @@ void ScriptManager::HandleScriptBindings(Script* script)
 			script->BindFunction("time_frameCount",
 				[this](const Script*, ScriptArgumentCollection&)->std::shared_ptr<BaseScriptVariable>
 			{
-				return std::make_shared<ScriptInt>(long(_time->frameCount));
+				return std::make_shared<ScriptDec>(long(_time->frameCount));
 			});
 
 			script->BindFunction("time_frameCountSinceLoad",
 				[this](const Script*, ScriptArgumentCollection&)->std::shared_ptr<BaseScriptVariable>
 			{
-				return std::make_shared<ScriptInt>(long(_time->frameCountSinceLoad));
+				return std::make_shared<ScriptDec>(long(_time->frameCountSinceLoad));
 			});
 		}
 	}
@@ -145,17 +145,19 @@ void ScriptManager::HandleScriptBindings(Script* script)
 		collection.RemoveMember(name);
 		return nullptr;
 	});
+
+	//TODO: Fixed64 Math functions
 }
 
 void ScriptManager::CacheGlobalVariables()
 {
-	_globalVariables.emplace(std::make_pair("VE_STATE_FLAG_GENERIC", std::make_shared<ScriptInt>((int)CharacterStateFlagType::Generic)));
-	_globalVariables.emplace(std::make_pair("VE_STATE_FLAG_INVULN", std::make_shared<ScriptInt>((int)CharacterStateFlagType::Invuln)));
-	_globalVariables.emplace(std::make_pair("VE_STATE_FLAG_CANCEL_TARGET", std::make_shared<ScriptInt>((int)CharacterStateFlagType::CancelTargets)));
-	_globalVariables.emplace(std::make_pair("VE_STATE_FLAG_CANCEL_REQUIREMENT", std::make_shared<ScriptInt>((int)CharacterStateFlagType::CancelRequirements)));
+	_globalVariables.emplace(std::make_pair("VE_STATE_FLAG_GENERIC", std::make_shared<ScriptDec>((int)CharacterStateFlagType::Generic)));
+	_globalVariables.emplace(std::make_pair("VE_STATE_FLAG_INVULN", std::make_shared<ScriptDec>((int)CharacterStateFlagType::Invuln)));
+	_globalVariables.emplace(std::make_pair("VE_STATE_FLAG_CANCEL_TARGET", std::make_shared<ScriptDec>((int)CharacterStateFlagType::CancelTargets)));
+	_globalVariables.emplace(std::make_pair("VE_STATE_FLAG_CANCEL_REQUIREMENT", std::make_shared<ScriptDec>((int)CharacterStateFlagType::CancelRequirements)));
 
 	std::shared_ptr<ScriptCollection> collection = std::make_shared<ScriptCollection>();
-	collection->AddMember("test", std::make_shared<ScriptInt>(5));
+	collection->AddMember("test", std::make_shared<ScriptDec>(5));
 	_globalVariables.emplace(std::make_pair("testCollection", collection));
 }
 
@@ -220,7 +222,7 @@ void ScriptManager::HandleScriptCharacterBindings(GameCharacter& character, Scri
 	script->BindFunction("character_state_modifyStateFrame",
 		[&character](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
 	{
-		GET_ARG_INT_CHECKED(args, 0, frame);
+		GET_ARG_DEC_CHECKED(args, 0, frame);
 		character.stateComponent()->ModifyCurrentStateFrame(int(frame));
 		return nullptr;
 	});
@@ -228,7 +230,7 @@ void ScriptManager::HandleScriptCharacterBindings(GameCharacter& character, Scri
 	script->BindFunction("character_state_freeze",
 		[&character](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
 	{
-		GET_ARG_INT_CHECKED(args, 0, time);
+		GET_ARG_DEC_CHECKED(args, 0, time);
 		character.stateComponent()->Freeze(int(time));
 		return nullptr;
 	});
@@ -244,18 +246,18 @@ void ScriptManager::HandleScriptCharacterBindings(GameCharacter& character, Scri
 		[&character](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
 	{
 
-		GET_ARG_INT_CHECKED(args, 0, flagType);
+		GET_ARG_DEC_CHECKED(args, 0, flagType);
 		GET_ARG_STRING_CHECKED(args, 1, flag);
-		character.stateComponent()->AddFlag(CharacterStateFlagType(flagType), flag);
+		character.stateComponent()->AddFlag(CharacterStateFlagType(int(flagType)), flag);
 		return nullptr;
 	});
 
 	script->BindFunction("character_state_removeFlag",
 		[&character](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
 	{
-		GET_ARG_INT_CHECKED(args, 0, flagType);
+		GET_ARG_DEC_CHECKED(args, 0, flagType);
 		GET_ARG_STRING_CHECKED(args, 1, flag);
-		character.stateComponent()->RemoveFlag(CharacterStateFlagType(flagType), flag);
+		character.stateComponent()->RemoveFlag(CharacterStateFlagType(int(flagType)), flag);
 		return nullptr;
 	});
 
@@ -269,80 +271,80 @@ void ScriptManager::HandleScriptCharacterBindings(GameCharacter& character, Scri
 	script->BindFunction("character_physics_addOffset",
 		[&character](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
 	{
-		GET_ARG_INT_CHECKED(args, 0, x);
-		GET_ARG_INT_CHECKED(args, 1, y);
-		character.physicsComponent()->AddOffset(glm::lvec2(x, y));
+		GET_ARG_DEC_CHECKED(args, 0, x);
+		GET_ARG_DEC_CHECKED(args, 1, y);
+		character.physicsComponent()->AddOffset(ve::vec2(x, y));
 		return nullptr;
 	});
 
 	script->BindFunction("character_physics_addVelocity",
 		[&character](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
 	{
-		GET_ARG_INT_CHECKED(args, 0, x);
-		GET_ARG_INT_CHECKED(args, 1, y);
-		character.physicsComponent()->AddVelocity(glm::lvec2(x, y));
+		GET_ARG_DEC_CHECKED(args, 0, x);
+		GET_ARG_DEC_CHECKED(args, 1, y);
+		character.physicsComponent()->AddVelocity(ve::vec2(x, y));
 		return nullptr;
 	});
 
 	script->BindFunction("character_physics_setVelocity",
 		[&character](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
 	{
-		GET_ARG_INT_CHECKED(args, 0, x);
-		GET_ARG_INT_CHECKED(args, 1, y);
-		character.physicsComponent()->SetVelocity(glm::lvec2(x, y));
+		GET_ARG_DEC_CHECKED(args, 0, x);
+		GET_ARG_DEC_CHECKED(args, 1, y);
+		character.physicsComponent()->SetVelocity(ve::vec2(x, y));
 		return nullptr;
 	});
 
 	script->BindFunction("character_physics_getVelocity_x",
 		[&character](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
 	{
-		return std::make_shared<ScriptInt>(character.physicsComponent()->GetVelocity().x);
+		return std::make_shared<ScriptDec>(character.physicsComponent()->GetVelocity().x);
 	});
 
 	script->BindFunction("character_physics_getVelocity_y",
 		[&character](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
 	{
-		return std::make_shared<ScriptInt>(character.physicsComponent()->GetVelocity().y);
+		return std::make_shared<ScriptDec>(character.physicsComponent()->GetVelocity().y);
 	});
 
 	script->BindFunction("character_physics_addForce",
 		[&character](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
 	{
-		GET_ARG_INT_CHECKED(args, 0, duration);
-		GET_ARG_INT_CHECKED(args, 1, x);
-		GET_ARG_INT_CHECKED(args, 2, y);
-		character.physicsComponent()->AddForce(duration, glm::lvec2(x, y));
+		GET_ARG_DEC_CHECKED(args, 0, duration);
+		GET_ARG_DEC_CHECKED(args, 1, x);
+		GET_ARG_DEC_CHECKED(args, 2, y);
+		character.physicsComponent()->AddForce(ve::int_t(duration), ve::vec2(x, y));
 		return nullptr;
 	});
 
 	script->BindFunction("character_physics_overrideGravity",
 		[&character](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
 	{
-		GET_ARG_INT_CHECKED(args, 0, duration);
-		GET_ARG_INT_CHECKED(args, 1, value);
-		character.physicsComponent()->OverrideGravity(duration, value);
+		GET_ARG_DEC_CHECKED(args, 0, duration);
+		GET_ARG_DEC_CHECKED(args, 1, value);
+		character.physicsComponent()->OverrideGravity(ve::int_t(duration), value);
 		return nullptr;
 	});
 
 	script->BindFunction("character_physics_overrideAirFriction",
 		[&character](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
 	{
-		GET_ARG_INT_CHECKED(args, 0, duration);
-		GET_ARG_INT_CHECKED(args, 1, value);
-		character.physicsComponent()->OverrideAirFriction(duration, value);
+		GET_ARG_DEC_CHECKED(args, 0, duration);
+		GET_ARG_DEC_CHECKED(args, 1, value);
+		character.physicsComponent()->OverrideAirFriction(ve::int_t(duration), value);
 		return nullptr;
 	});
 
 	script->BindFunction("character_physics_overrideGroundFriction",
 		[&character](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
 	{
-		GET_ARG_INT_CHECKED(args, 0, duration);
-		GET_ARG_INT_CHECKED(args, 1, value);
-		character.physicsComponent()->OverrideGroundFriction(duration, value);
+		GET_ARG_DEC_CHECKED(args, 0, duration);
+		GET_ARG_DEC_CHECKED(args, 1, value);
+		character.physicsComponent()->OverrideGroundFriction(ve::int_t(duration), value);
 		return nullptr;
 	});
 
-	script->AddVariable("character_objectId", std::make_shared<ScriptInt>(character.object()->id(), true));
+	script->AddVariable("character_objectId", std::make_shared<ScriptDec>(character.object()->id(), true));
 }
 
 void ScriptManager::RemoveScript(Script* script)

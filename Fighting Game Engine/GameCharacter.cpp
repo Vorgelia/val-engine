@@ -78,8 +78,8 @@ CharacterCollisionResult GameCharacter::GenerateCollisions(const GameCharacter* 
 	{
 		for(const CollisionBox& otherCollision : otherFrame->collision())
 		{
-			const glm::lvec2 depenetrationDist = thisCollision.DepenetrationDistance(otherCollision);
-			if(depenetrationDist != glm::lvec2(0,0))
+			const ve::vec2 depenetrationDist = thisCollision.DepenetrationDistance(otherCollision);
+			if(depenetrationDist != ve::vec2(0,0))
 			{
 				collisionResult.collisionHits.emplace_back(CollisionHit(thisCollision, otherCollision, depenetrationDist));
 			}
@@ -105,12 +105,6 @@ void GameCharacter::CharacterUpdate()
 		CharacterInit();
 	}
 
-	UpdateComponents();
-	UpdateSystemFlags();
-}
-
-void GameCharacter::UpdateComponents()
-{
 	_stateComponent->EvaluateNextState();
 
 	if(_characterScript != nullptr)
@@ -120,6 +114,12 @@ void GameCharacter::UpdateComponents()
 
 	_stateComponent->Update();
 	_physicsComponent->Update();
+}
+
+void GameCharacter::CharacterLateUpdate()
+{
+	_physicsComponent->LateUpdate();
+	UpdateSystemFlags();
 }
 
 void GameCharacter::UpdateSystemFlags()
@@ -158,4 +158,18 @@ GameCharacter::GameCharacter(Object* owner, ServiceManager* serviceManager, cons
 			_eventComponent->Init();
 		}
 	}
+}
+
+bool CharacterSortingPredicate::operator()(const GameCharacter* lhs, const GameCharacter* rhs) const
+{
+	if(lhs->characterData() == nullptr)
+	{
+		return rhs;
+	}
+
+	if(rhs->characterData() == nullptr)
+	{
+		return lhs;
+	}
+	return lhs->characterData()->_eventResolutionPriority > rhs->characterData()->_eventResolutionPriority;
 }

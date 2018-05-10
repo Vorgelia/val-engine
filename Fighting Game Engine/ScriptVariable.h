@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <cstdint>
+#include "ValEngine.h"
 #include "BaseScriptVariable.h"
 #include "ScriptError.h"
 
@@ -22,7 +23,7 @@ public:
 	ScriptVariable(T value = T(), bool isConst = false);
 };
 
-typedef ScriptVariable<std::int64_t> ScriptInt;
+typedef ScriptVariable<ve::dec_t> ScriptDec;
 typedef ScriptVariable<bool> ScriptBool;
 typedef ScriptVariable<std::string> ScriptString;
 
@@ -56,14 +57,14 @@ inline ScriptVariable<T>::ScriptVariable(T value, bool isConst)
 }
 
 template<>
-std::string ScriptInt::ToString();
+std::string ScriptDec::ToString();
 template<>
 std::string ScriptBool::ToString();
 template<>
 std::string ScriptString::ToString();
 
 template<>
-ScriptInt::ScriptVariable(std::int64_t value, bool isConst);
+ScriptDec::ScriptVariable(ve::dec_t value, bool isConst);
 template<>
 ScriptBool::ScriptVariable(bool value, bool isConst);
 template<>

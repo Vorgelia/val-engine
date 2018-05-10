@@ -90,7 +90,7 @@ void CharacterStateComponent::Update()
 
 		_currentState->script()->ExecuteFunction("StateUpdate",
 			std::vector<std::shared_ptr<BaseScriptVariable>>{
-			std::make_shared<ScriptInt>(_currentStateFrame)});
+			std::make_shared<ScriptDec>(ve::dec_t(_currentStateFrame))});
 	}
 }
 

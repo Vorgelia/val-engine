@@ -108,6 +108,7 @@
     <ClCompile Include="Delegate.cpp" />
     <ClCompile Include="FightingGameManager.cpp" />
     <ClCompile Include="FightingStageBehaviour.cpp" />
+    <ClCompile Include="FixedPoint64.cpp" />
     <ClCompile Include="Font.cpp" />
     <ClCompile Include="FrameBuffer.cpp" />
     <ClCompile Include="GameCharacter.cpp" />
@@ -205,6 +206,7 @@
     <ClInclude Include="FightingGameManager.h" />
     <ClInclude Include="FightingGameState.h" />
     <ClInclude Include="FightingStageBehaviour.h" />
+    <ClInclude Include="FixedPoint64.h" />
     <ClInclude Include="Font.h" />
     <ClInclude Include="FrameBuffer.h" />
     <ClInclude Include="GameCharacter.h" />
@@ -277,6 +279,7 @@
     <ClInclude Include="SystemIncludes.hpp" />
     <ClInclude Include="TimeDataBuffer.h" />
     <ClInclude Include="Transform.h" />
+    <ClInclude Include="ValEngine.h" />
     <ClInclude Include="Vec4Buffer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

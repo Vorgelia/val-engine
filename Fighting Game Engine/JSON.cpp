@@ -1,6 +1,12 @@
 #include "JSON.h"
 #include "GameCharacterData.h"
 
+template <>
+FixedPoint64 JSON::Get<FixedPoint64>(const json_t& j)
+{
+	return FixedPoint64(j.get<double>());
+}
+
 template<>
 glm::quat JSON::Get(const json_t& j)
 {
@@ -13,66 +19,6 @@ glm::quat JSON::Get(const json_t& j)
 }
 
 template<>
-glm::ivec4 JSON::Get(const json_t& j)
-{
-	return glm::ivec4(
-		j["x"].get<int>(),
-		j["y"].get<int>(),
-		j["z"].get<int>(),
-		j["w"].get<int>()
-	);
-}
-
-template<>
-glm::lvec4 JSON::Get(const json_t& j)
-{
-	return glm::lvec4(
-		j["x"].get<std::int64_t>(),
-		j["y"].get<std::int64_t>(),
-		j["z"].get<std::int64_t>(),
-		j["w"].get<std::int64_t>()
-	);
-}
-
-template<>
-glm::vec4 JSON::Get(const json_t& j)
-{
-	return glm::vec4(
-		j["x"].get<float>(),
-		j["y"].get<float>(),
-		j["z"].get<float>(),
-		j["w"].get<float>()
-	);
-}
-
-template<>
-glm::ivec2 JSON::Get(const json_t& j)
-{
-	return glm::ivec2(
-		j["x"].get<int>(),
-		j["y"].get<int>()
-	);
-}
-
-template<>
-glm::lvec2 JSON::Get(const json_t& j)
-{
-	return glm::lvec2(
-		j["x"].get<std::int64_t>(),
-		j["y"].get<std::int64_t>()
-	);
-}
-
-template<>
-glm::vec2 JSON::Get(const json_t& j)
-{
-	return glm::vec2(
-		j["x"].get<float>(),
-		j["y"].get<float>()
-	);
-}
-
-template<>
 unsigned char JSON::Get(const json_t& j)
 {
 	return unsigned char(j.get<int>());
@@ -81,12 +27,82 @@ unsigned char JSON::Get(const json_t& j)
 template <>
 CollisionBox JSON::Get<CollisionBox>(const json_t& j)
 {
-	glm::lvec2 center;
+	ve::vec2 center;
 	JSON::TryGetMember(j, "center", center);
-	glm::lvec2 extents;
+	ve::vec2 extents;
 	JSON::TryGetMember(j, "extents", extents);
-	glm::lvec2 pivotOffset;
+	ve::vec2 pivotOffset;
 	JSON::TryGetMember(j, "pivotOffset", pivotOffset);
 
 	return CollisionBox(center, extents);
+}
+
+template <>
+ve::vec2 JSON::Get<ve::vec2>(const json_t& j)
+{
+	return ve::vec2(
+		JSON::Get<ve::dec_t>(j["x"]),
+		JSON::Get<ve::dec_t>(j["y"])
+	);
+}
+
+template <>
+ve::vec3 JSON::Get<ve::vec3>(const json_t& j)
+{
+	return ve::vec3(
+		JSON::Get<ve::dec_t>(j["x"]),
+		JSON::Get<ve::dec_t>(j["y"]),
+		JSON::Get<ve::dec_t>(j["z"])
+	);
+}
+
+template <>
+ve::vec4 JSON::Get<ve::vec4>(const json_t& j)
+{
+	return ve::vec4(
+		JSON::Get<ve::dec_t>(j["x"]),
+		JSON::Get<ve::dec_t>(j["y"]),
+		JSON::Get<ve::dec_t>(j["z"]),
+		JSON::Get<ve::dec_t>(j["w"])
+	);
+}
+
+template <>
+glm::vec2 JSON::Get<glm::vec2>(const json_t& j)
+{
+	return glm::vec2(
+		j["x"].get<glm::vec2::value_type>(),
+		j["y"].get<glm::vec2::value_type>()
+	);
+}
+
+template <>
+glm::ivec2 JSON::Get<glm::ivec2>(const json_t& j)
+{
+	return glm::ivec2(
+		j["x"].get<glm::ivec2::value_type>(),
+		j["y"].get<glm::ivec2::value_type>()
+	);
+}
+
+template <>
+glm::vec4 JSON::Get<glm::vec4>(const json_t& j)
+{
+	return glm::vec4(
+		j["x"].get<glm::vec4::value_type>(),
+		j["y"].get<glm::vec4::value_type>(),
+		j["z"].get<glm::vec4::value_type>(),
+		j["w"].get<glm::vec4::value_type>()
+	);
+}
+
+template <>
+glm::ivec4 JSON::Get<glm::ivec4>(const json_t& j)
+{
+	return glm::ivec4(
+		j["x"].get<glm::ivec4::value_type>(),
+		j["y"].get<glm::ivec4::value_type>(),
+		j["z"].get<glm::ivec4::value_type>(),
+		j["w"].get<glm::ivec4::value_type>()
+	);
 }

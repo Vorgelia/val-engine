@@ -1,25 +1,26 @@
 #pragma once
+#include "ValEngine.h"
 #include "MathIncludes.hpp"
 
 
 struct CollisionBox
 {
-	glm::lvec2 center;
-	glm::lvec2 extents;
-	glm::lvec2 pivotOffset;
+	ve::vec2 center;
+	ve::vec2 extents;
+	ve::vec2 pivotOffset;
 
-	glm::lvec2 pivotedCenter() const;
+	ve::vec2 pivotedCenter() const;
 
-	void AxisMinMax(glm::lvec2& out_minMaxX, glm::lvec2& out_minMaxY) const;
+	void AxisMinMax(ve::vec2& out_minMaxX, ve::vec2& out_minMaxY) const;
 
-	glm::lvec2 DepenetrationDistance(const CollisionBox& other) const;
+	ve::vec2 DepenetrationDistance(const CollisionBox& other) const;
 	bool Overlaps(const CollisionBox& other) const;
 
-	CollisionBox operator+(const glm::lvec2& rhs) const;
+	CollisionBox operator+(const ve::vec2& rhs) const;
 
-	CollisionBox RelativeTo(const glm::lvec2& position, bool flipped = false) const;
-	static CollisionBox FromTopLeft(const glm::lvec2& topLeft, const glm::lvec2& size);
+	CollisionBox RelativeTo(const ve::vec2& position, bool flipped = false) const;
+	static CollisionBox FromTopLeft(const ve::vec2& topLeft, const ve::vec2& size);
 
-	CollisionBox(const glm::lvec2& center, const glm::lvec2& extents, const glm::lvec2& pivotOffset = glm::lvec2(0,0));
+	CollisionBox(const ve::vec2& center, const ve::vec2& extents, const ve::vec2& pivotOffset = ve::vec2(0,0));
 	~CollisionBox() = default;
 };

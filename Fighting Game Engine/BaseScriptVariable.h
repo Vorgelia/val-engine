@@ -7,7 +7,7 @@ enum class ScriptVariableType
 	Invalid = -1,
 	Null = 0,
 	Bool = 1,
-	Int = 2,
+	Dec = 2,
 	String = 3,
 	Collection = 4,
 };

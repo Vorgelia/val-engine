@@ -137,8 +137,8 @@ std::shared_ptr<BaseScriptVariable> ScriptExpression::Evaluate()
 			case ScriptVariableType::Bool:
 				newVariable = std::make_shared<ScriptBool>();
 				break;
-			case ScriptVariableType::Int:
-				newVariable = std::make_shared<ScriptInt>();
+			case ScriptVariableType::Dec:
+				newVariable = std::make_shared<ScriptDec>();
 				break;
 			case ScriptVariableType::String:
 				newVariable = std::make_shared<ScriptString>();
@@ -147,7 +147,7 @@ std::shared_ptr<BaseScriptVariable> ScriptExpression::Evaluate()
 				newVariable = std::make_shared<ScriptCollection>();
 				break;
 			default:
-				throw ScriptError("Unhandled script variable type " + std::to_string((int)variableType));
+				throw ScriptError("Unhandled script variable type " + std::to_string(int(variableType)));
 			}
 
 			_parent->AddVariable(nameToken.token, newVariable);
@@ -174,7 +174,7 @@ std::shared_ptr<BaseScriptVariable> ScriptExpression::Evaluate()
 			}
 			else if(token.type == ScriptTokenType::NumericLiteral)
 			{
-				evaluatedVar = std::make_shared<ScriptInt>(boost::lexical_cast<long>(token.token), true);
+				evaluatedVar = std::make_shared<ScriptDec>(boost::lexical_cast<double>(token.token), true);
 			}
 			else if(token.type == ScriptTokenType::StringLiteral)
 			{

@@ -19,9 +19,9 @@ struct CollisionHit
 	CollisionBox thisCollision;
 	CollisionBox otherCollision;
 
-	glm::lvec2 depenetrationDistance;
+	ve::vec2 depenetrationDistance;
 
-	CollisionHit(const CollisionBox& thisCollision, const CollisionBox& otherCollision, const glm::lvec2& depenetrationDistance);
+	CollisionHit(const CollisionBox& thisCollision, const CollisionBox& otherCollision, const ve::vec2& depenetrationDistance);
 };
 
 enum class CharacterAttackResultFlags : unsigned char

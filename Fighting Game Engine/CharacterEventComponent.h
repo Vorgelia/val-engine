@@ -1,5 +1,8 @@
 #pragma once
 #include "GameCharacterComponent.h"
+#include "CharacterCollisionResult.h"
+
+struct CharacterCollisionResult;
 
 class CharacterEventComponent : public GameCharacterComponent
 {
@@ -10,9 +13,8 @@ protected:
 	void Update() override;
 
 public:
-	void HandleAttackHit();
-	void HandleAttackReceived();
-	void HandleAttackTraded();
+	void HandleAttackHit(GameCharacter* otherCharacter, const AttackCollisionHit& collisionResult);
+	void HandleAttackReceived(GameCharacter* otherCharacter, const AttackCollisionHit& collisionResult);
 
 	CharacterEventComponent(GameCharacter* owner, ServiceManager* serviceManager);
 	~CharacterEventComponent() = default;

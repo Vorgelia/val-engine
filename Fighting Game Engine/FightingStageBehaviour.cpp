@@ -6,13 +6,14 @@
 #include "CharacterFrame.h"
 #include "GameCharacterData.h"
 #include "CharacterEventComponent.h"
+#include "CharacterPhysicsComponent.h"
 
 VE_BEHAVIOUR_REGISTER_TYPE(FightingStageBehaviour);
 
-std::unordered_map<GameCharacter*, std::vector<CharacterCollisionResult>> FightingStageBehaviour::GenerateCharacterCollisionResults() const
+FightingStageBehaviour::CharacterCollisionResultMap FightingStageBehaviour::GenerateCharacterCollisionResults() const
 {
 	std::unordered_set<GameCharacter*> handledCharacters;
-	std::unordered_map<GameCharacter*, std::vector<CharacterCollisionResult>> collisionResults;
+	CharacterCollisionResultMap collisionResults;
 	for(GameCharacter* thisCharacter : _gameManager->characters())
 	{
 		for(GameCharacter* otherCharacter : _gameManager->characters())
@@ -58,7 +59,7 @@ std::unordered_map<GameCharacter*, std::vector<CharacterCollisionResult>> Fighti
 	return collisionResults;
 }
 
-const glm::lvec4& FightingStageBehaviour::stageBounds() const
+const ve::vec4& FightingStageBehaviour::stageBounds() const
 {
 	return _stageBounds;
 }
@@ -73,8 +74,9 @@ void FightingStageBehaviour::GameUpdate()
 
 void FightingStageBehaviour::LateGameUpdate()
 {
-	std::unordered_map<GameCharacter*, std::vector<CharacterCollisionResult>> collisionResults = GenerateCharacterCollisionResults();
+	CharacterCollisionResultMap collisionResults = GenerateCharacterCollisionResults();
 
+	std::unordered_map<GameCharacter*, std::unordered_set<GameCharacter*>> tradeResolutionMap;
 	for(auto& iter : collisionResults)
 	{
 		GameCharacter* character = iter.first;
@@ -86,18 +88,31 @@ void FightingStageBehaviour::LateGameUpdate()
 			{
 			case CharacterAttackResultFlags::None: 
 			default:
-				break;
-			case CharacterAttackResultFlags::AttackHit:
-				//character->eventComponent()->HandleAttackHit();
-				break;
-			case CharacterAttackResultFlags::AttackReceived: 
-				//character->eventComponent()->HandleAttackReceived();
-				break;
-			case CharacterAttackResultFlags::AttacksTraded: 
-				//character->eventComponent()->HandleAttackTraded();
-				break;
+				return;
+			case CharacterAttackResultFlags::AttackHit: break;
+			case CharacterAttackResultFlags::AttackReceived: break;
+			case CharacterAttackResultFlags::AttacksTraded: break;
 			}
 		}
+	}
+
+	for(auto& iter = collisionResults.rbegin() ; iter != collisionResults.rend(); ++iter)
+	{
+		GameCharacter* character = iter->first;
+		std::vector<CharacterCollisionResult>& results = iter->second;
+
+		for(const CharacterCollisionResult& result : results)
+		{
+			for(const CollisionHit hit : result.collisionHits)
+			{
+				character->physicsComponent()->HandleCharacterCollision(result.otherCharacter, hit);
+			}
+		}
+	}
+
+	for(auto& iter : _gameManager->characters())
+	{
+		iter->CharacterLateUpdate();
 	}
 
 	//after all events are handled, remove all characters that want to be removed this frame.

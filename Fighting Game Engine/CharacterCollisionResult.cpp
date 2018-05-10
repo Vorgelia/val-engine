@@ -6,7 +6,7 @@ AttackCollisionHit::AttackCollisionHit(const AttackData& hitbox, const DefenceDa
 {
 }
 
-CollisionHit::CollisionHit(const CollisionBox & thisCollision, const CollisionBox & otherCollision, const glm::lvec2& depenetrationDistance)
+CollisionHit::CollisionHit(const CollisionBox& thisCollision, const CollisionBox& otherCollision, const ve::vec2& depenetrationDistance)
 	: thisCollision(thisCollision)
 	, otherCollision(otherCollision)
 	, depenetrationDistance(depenetrationDistance)

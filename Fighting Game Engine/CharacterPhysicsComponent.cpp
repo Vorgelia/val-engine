@@ -12,14 +12,44 @@ void CharacterPhysicsComponent::Init()
 
 void CharacterPhysicsComponent::Update()
 {
+	_accumulatedOffset += _velocity;
+
+	UpdateForces();
+	ApplyAccumulatedOffset();
+	ApplyFriction();
+	
+	_accumulatedOffset = ve::vec2(0, 0);
+}
+
+void CharacterPhysicsComponent::LateUpdate()
+{
+	ApplyAccumulatedOffset();
+}
+
+void CharacterPhysicsComponent::ApplyAccumulatedOffset()
+{
 	FightingStageBehaviour* stageBehaviour = _fightingGameManager->stageBehaviour();
 	if(stageBehaviour == nullptr)
 	{
 		return;
 	}
 
-	_accumulatedOffset += _velocity;
+	if(_grounded)
+	{
+		_accumulatedOffset.y = glm::max<ve::dec_t>(ve::dec_t(0), _accumulatedOffset.y);
+	}
 
+	Transform* transform = _owner->object()->transform();
+
+	transform->position += _accumulatedOffset;
+	transform->position.x = glm::clamp(transform->position.x, stageBehaviour->stageBounds().x, stageBehaviour->stageBounds().z);
+	transform->position.y = glm::clamp(transform->position.y, stageBehaviour->stageBounds().y, stageBehaviour->stageBounds().w);
+
+	_grounded = (transform->position.y == stageBehaviour->stageBounds().y);
+}
+
+void CharacterPhysicsComponent::UpdateForces()
+{
 	for(size_t i = 0; i < _forces.size(); )
 	{
 		if(_forces[i].duration > 0)
@@ -37,36 +67,25 @@ void CharacterPhysicsComponent::Update()
 			_forces.pop_back();
 		}
 	}
+}
 
+void CharacterPhysicsComponent::ApplyFriction()
+{
 	if(_grounded)
 	{
-		_accumulatedOffset.y = glm::max<glm::lvec2::value_type>(0, _accumulatedOffset.y);
-	}
-
-	Transform* transform = _owner->object()->transform();
-
-	transform->position += _accumulatedOffset;
-	transform->position.x = glm::clamp(transform->position.x, stageBehaviour->stageBounds().x, stageBehaviour->stageBounds().z);
-	transform->position.y = glm::clamp(transform->position.y, stageBehaviour->stageBounds().y, stageBehaviour->stageBounds().w);
-
-	_grounded = (transform->position.y == 0);
-
-	if(_grounded)
-	{
-		const std::int64_t groundFriction = _groundFrictionOverride.duration > 0 ? _groundFrictionOverride.value : _owner->characterData()->_physicsParams.baseGroundFriction;
-		_velocity.x = glm::moveTowards<glm::lvec2::value_type>(_velocity.x, 0, groundFriction);
-		_velocity.y = 0;
+		const ve::dec_t groundFriction = _groundFrictionOverride.duration > 0 ? _groundFrictionOverride.value : _owner->characterData()->_physicsParams.baseGroundFriction;
+		_velocity.x = glm::moveTowards<ve::dec_t>(_velocity.x, ve::dec_t(0), groundFriction);
+		_velocity.y = ve::dec_t(0);
 	}
 	else
 	{
-		const std::int64_t airFriction = _airFrictionOverride.duration > 0 ? _airFrictionOverride.value : _owner->characterData()->_physicsParams.baseAirFriction;
-		const std::int64_t gravity = _gravityOverride.duration > 0 ? _gravityOverride.value : _owner->characterData()->_physicsParams.gravity;
+		const ve::dec_t airFriction = _airFrictionOverride.duration > 0 ? _airFrictionOverride.value : _owner->characterData()->_physicsParams.baseAirFriction;
+		const ve::dec_t gravity = _gravityOverride.duration > 0 ? _gravityOverride.value : _owner->characterData()->_physicsParams.gravity;
 
-		_velocity.x = glm::moveTowards<glm::lvec2::value_type>(_velocity.x, 0, airFriction);
+		_velocity.x = glm::moveTowards<ve::dec_t>(_velocity.x, ve::dec_t(0), airFriction);
 		_velocity.y -= gravity;
 	}
 
-	_accumulatedOffset = glm::lvec2(0, 0);
 	if(_groundFrictionOverride.duration > 0)
 		--_groundFrictionOverride.duration;
 	if(_airFrictionOverride.duration > 0)
@@ -75,29 +94,48 @@ void CharacterPhysicsComponent::Update()
 		--_gravityOverride.duration;
 }
 
-void CharacterPhysicsComponent::AddOffset(glm::lvec2 dir)
+void CharacterPhysicsComponent::AddOffset(ve::vec2 dir)
 {
 	_accumulatedOffset += dir;
 }
 
-void CharacterPhysicsComponent::AddVelocity(glm::lvec2 dir)
+void CharacterPhysicsComponent::AddVelocity(ve::vec2 dir)
 {
 	_velocity += dir;
 }
 
-void CharacterPhysicsComponent::SetVelocity(glm::lvec2 dir)
+void CharacterPhysicsComponent::SetVelocity(ve::vec2 dir)
 {
 	_velocity = dir;
 }
 
-glm::lvec2 CharacterPhysicsComponent::GetVelocity() const
+ve::vec2 CharacterPhysicsComponent::GetVelocity() const
 {
 	return _velocity;
 }
 
-void CharacterPhysicsComponent::AddForce(std::int64_t duration, glm::lvec2 dir)
+void CharacterPhysicsComponent::AddForce(ve::int_t duration, ve::vec2 dir)
 {
 	_forces.emplace_back(CharacterPhysicsForce{ duration, dir });
+}
+
+void CharacterPhysicsComponent::HandleCharacterCollision(const GameCharacter* other, const CollisionHit collision)
+{
+	//if (owner in corner and offset is in direction of corner)
+		//return;
+
+	ve::dec_t displacementPercentage;
+	//if (other in corner and offset is in direction of corner)
+		//displacementPercentage = ve::dec_t(1);
+	//else
+	{
+		const ve::dec_t thisMass = _owner->characterData()->_physicsParams.mass;
+		const ve::dec_t otherMass = other->characterData()->_physicsParams.mass;
+
+		displacementPercentage = thisMass / (thisMass + otherMass);
+	}
+	
+	 _accumulatedOffset.x += collision.depenetrationDistance.x * displacementPercentage;
 }
 
 CharacterPhysicsComponent::CharacterPhysicsComponent(GameCharacter * owner, ServiceManager * serviceManager)

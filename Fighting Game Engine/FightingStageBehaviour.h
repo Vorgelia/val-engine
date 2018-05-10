@@ -1,9 +1,10 @@
 #pragma once
+#include "ValEngine.h"
 #include "Behaviour.h"
 #include "MathIncludes.hpp"
+#include "GameCharacter.h"
 
 struct CharacterCollisionResult;
-class GameCharacter;
 class FightingGameManager;
 
 class FightingStageBehaviour :
@@ -13,16 +14,17 @@ protected:
 	FightingGameManager* _gameManager;
 
 protected:
-	glm::lvec4 _stageBounds;
+	ve::vec4 _stageBounds;
 	//TODO: Make characters send scene events.
 	//void HandleSceneEvent();
 
-	virtual std::unordered_map<GameCharacter*, std::vector<CharacterCollisionResult>> GenerateCharacterCollisionResults() const;
+	typedef std::map <GameCharacter*, std::vector<CharacterCollisionResult>, CharacterSortingPredicate> CharacterCollisionResultMap;
+	virtual CharacterCollisionResultMap GenerateCharacterCollisionResults() const;
 
 public:
 	VE_BEHAVIOUR_NAME(FightingStageBehaviour);
 
-	const glm::lvec4& stageBounds() const;
+	const ve::vec4& stageBounds() const;
 
 	VE_BEHAVIOUR_REGISTER_FUNCTION(GameUpdate);
 	VE_BEHAVIOUR_REGISTER_FUNCTION(LateGameUpdate);

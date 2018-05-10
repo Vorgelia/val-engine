@@ -52,6 +52,7 @@ private:
 
 	void CharacterInit();
 	void CharacterUpdate();
+	void CharacterLateUpdate();
 
 	void UpdateComponents();
 	void UpdateSystemFlags();
@@ -70,4 +71,9 @@ public:
 
 	GameCharacter(Object* owner, ServiceManager* serviceManager, const json& j);
 	~GameCharacter() = default;
+};
+
+struct CharacterSortingPredicate
+{
+	bool operator()(const GameCharacter* lhs, const GameCharacter* rhs) const;
 };

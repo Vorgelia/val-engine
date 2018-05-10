@@ -14,6 +14,7 @@ Boost http://www.boost.org/
 Freetype 2 https://www.freetype.org/
 FMTlib http://fmtlib.net
 Nlohmann JSON https://github.com/nlohmann/json
+FixPointCS https://github.com/XMunkki/FixPointCS
 
 ----Conventions----
 #define DEFINE_NAME
@@ -53,6 +54,7 @@ PlayerManager.cpp:      VE_MAX_PLAYERS
 */
 
 #include <clocale>
+#include "ValEngine.h"
 #include "GLIncludes.hpp"
 #include "ServiceManager.h"
 #include "Screen.h"

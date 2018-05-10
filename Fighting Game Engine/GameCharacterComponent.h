@@ -14,6 +14,7 @@ protected:
 protected:
 	virtual void Init() {}
 	virtual void Update() {}
+	virtual void LateUpdate() {}
 
 public:
 	GameCharacterComponent(GameCharacter* owner, ServiceManager* serviceManager);

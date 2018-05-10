@@ -2,9 +2,9 @@
 #include <utility>
 
 template<>
-std::string ScriptInt::ToString()
+std::string ScriptDec::ToString()
 {
-	return std::to_string(_value);
+	return std::to_string(double(_value));
 }
 
 template<>
@@ -20,7 +20,7 @@ std::string ScriptString::ToString()
 }
 
 template<>
-ScriptInt::ScriptVariable(std::int64_t value, bool isConst) : BaseScriptVariable(ScriptVariableType::Int, isConst)
+ScriptDec::ScriptVariable(ve::dec_t value, bool isConst) : BaseScriptVariable(ScriptVariableType::Dec, isConst)
 {
 	_value = value;
 	_initialized = true;

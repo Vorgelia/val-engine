@@ -397,6 +397,7 @@
     <ClCompile Include="CharacterCollisionResult.cpp">
       <Filter>Val Engine\Game\Characters\Hit Data</Filter>
     </ClCompile>
+    <ClCompile Include="FixedPoint64.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FGIncludes.hpp">
@@ -704,6 +705,12 @@
     </ClInclude>
     <ClInclude Include="CharacterCollisionResult.h">
       <Filter>Val Engine\Game\Characters\Hit Data</Filter>
+    </ClInclude>
+    <ClInclude Include="ValEngine.h">
+      <Filter>Val Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedPoint64.h">
+      <Filter>Val Engine</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
