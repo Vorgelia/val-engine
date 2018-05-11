@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <unordered_map>
+#include <memory>
 
 enum class ScriptVariableType
 {
@@ -9,7 +10,8 @@ enum class ScriptVariableType
 	Bool = 1,
 	Dec = 2,
 	String = 3,
-	Collection = 4,
+	Map = 4,
+	Array = 5
 };
 
 enum class ScriptOperatorType;
@@ -30,6 +32,7 @@ public:
 	bool isConst() const;
 	bool isInitialized() const;
 	virtual std::string ToString();
+	virtual std::shared_ptr<BaseScriptVariable> Clone() const;
 
 	BaseScriptVariable(ScriptVariableType type, bool isConst = false);
 	BaseScriptVariable();

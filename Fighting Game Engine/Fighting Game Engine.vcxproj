@@ -85,6 +85,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AttackData.cpp" />
+    <ClCompile Include="BaseScriptCollection.cpp" />
     <ClCompile Include="BaseService.cpp" />
     <ClCompile Include="BaseShader.cpp" />
     <ClCompile Include="Behaviour.cpp" />
@@ -140,8 +141,9 @@
     <ClCompile Include="PlayerManager.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="RenderingDataBuffer.cpp" />
+    <ClCompile Include="ScriptArray.cpp" />
     <ClCompile Include="ScriptBehaviour.cpp" />
-    <ClCompile Include="ScriptCollection.cpp" />
+    <ClCompile Include="ScriptMap.cpp" />
     <ClCompile Include="ScriptExpression.cpp" />
     <ClCompile Include="ScriptLine.cpp" />
     <ClCompile Include="ScriptLoopBlock.cpp" />
@@ -179,6 +181,7 @@
   <ItemGroup>
     <ClInclude Include="AttackData.h" />
     <ClInclude Include="BaseResource.h" />
+    <ClInclude Include="BaseScriptCollection.h" />
     <ClInclude Include="BaseService.h" />
     <ClInclude Include="BaseShader.h" />
     <ClInclude Include="Behaviour.h" />
@@ -252,9 +255,10 @@
     <ClInclude Include="FilesystemManager.h" />
     <ClInclude Include="Screen.h" />
     <ClInclude Include="Script.h" />
+    <ClInclude Include="ScriptArray.h" />
     <ClInclude Include="ScriptBehaviour.h" />
     <ClInclude Include="ScriptBlock.h" />
-    <ClInclude Include="ScriptCollection.h" />
+    <ClInclude Include="ScriptMap.h" />
     <ClInclude Include="ScriptConditionalBlock.h" />
     <ClInclude Include="ScriptError.h" />
     <ClInclude Include="ScriptExpression.h" />

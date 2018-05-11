@@ -8,7 +8,8 @@ const std::unordered_map<std::string, ScriptVariableType> BaseScriptVariable::va
 	{ ScriptToken::type_dec, ScriptVariableType::Dec },
 	{ ScriptToken::type_bool, ScriptVariableType::Bool },
 	{ ScriptToken::type_string, ScriptVariableType::String },
-	{ ScriptToken::type_collection, ScriptVariableType::Collection },
+	{ ScriptToken::type_map, ScriptVariableType::Map },
+	{ ScriptToken::type_array, ScriptVariableType::Array },
 	{ ScriptToken::type_void, ScriptVariableType::Null },
 };
 
@@ -43,18 +44,23 @@ std::string BaseScriptVariable::ToString()
 	return ScriptToken::value_null;
 }
 
-BaseScriptVariable::BaseScriptVariable(ScriptVariableType type, bool isConst)
+std::shared_ptr<BaseScriptVariable> BaseScriptVariable::Clone() const
 {
-	_type = type;
-	_const = isConst;
-	_initialized = false;
+	return std::make_shared<BaseScriptVariable>();
+}
+
+BaseScriptVariable::BaseScriptVariable(ScriptVariableType type, bool isConst)
+	: _type(type)
+	, _const(isConst)
+	, _initialized(false)
+{
 }
 
 BaseScriptVariable::BaseScriptVariable()
+	: _type(ScriptVariableType::Null)
+	, _const(false)
+	, _initialized(false)
 {
-	_type = ScriptVariableType::Null;
-	_const = false;
-	_initialized = false;
 }
 
 BaseScriptVariable::~BaseScriptVariable()

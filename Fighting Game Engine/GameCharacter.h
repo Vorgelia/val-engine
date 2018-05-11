@@ -54,7 +54,6 @@ private:
 	void CharacterUpdate();
 	void CharacterLateUpdate();
 
-	void UpdateComponents();
 	void UpdateSystemFlags();
 
 public:

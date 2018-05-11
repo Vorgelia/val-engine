@@ -3,41 +3,39 @@
 #include "ServiceManager.h"
 #include "BaseScriptVariable.h"
 #include "ScriptVariable.h"
-#include "ScriptCollection.h"
+#include "ScriptMap.h"
+#include "ScriptArray.h"
 #include "FilesystemManager.h"
-#include <memory>
 #include "GameCharacter.h"
 #include "CharacterStateComponent.h"
 #include "CharacterPhysicsComponent.h"
 #include "DebugLog.h"
 #include "Time.h"
-#include <boost/algorithm/string.hpp>
 #include "ResourceManager.h"
 
-#define GET_ARG_DEC_CHECKED(collection, index, storage)\
-		if(((index) == 0 ? (collection).empty() : (collection).size() <= (index)) || (collection)[index]->type() != ScriptVariableType::Dec)\
-			return nullptr;\
-		ve::dec_t storage = std::static_pointer_cast<ScriptDec>((collection)[index])->value();
+#include <memory>
+#include <boost/algorithm/string.hpp>
 
-#define GET_ARG_STRING_CHECKED(collection, index, storage)\
-		if(((index) == 0 ? (collection).empty() : (collection).size() <= (index)) || (collection)[index]->type() != ScriptVariableType::String)\
+#define GET_ARG_VALUE_CHECKED(collection, index, storage, varType, conversionType)\
+		if(((index) == 0 ? (collection).empty() : (collection).size() <= (index)) || (collection)[index]->type() != ScriptVariableType::varType)\
 			return nullptr;\
-		std::string storage = std::static_pointer_cast<ScriptString>((collection)[index])->value();
+		conversionType::ValueType storage = std::static_pointer_cast<conversionType>((collection)[index])->value();
 
-#define GET_ARG_BOOL_CHECKED(collection, index, storage)\
-		if(((index) == 0 ? (collection).empty() : (collection).size() <= (index)) || (collection)[index]->type() != ScriptVariableType::Bool)\
+#define GET_ARG_CHECKED(collection, index, storage, varType, conversionType)\
+		if(((index) == 0 ? (collection).empty() : (collection).size() <= (index)) || (collection)[index]->type() != ScriptVariableType::varType)\
 			return nullptr;\
-		bool (storage) = std::static_pointer_cast<ScriptBool>((collection)[index])->value();
-
-#define GET_ARG_COLLECTION_CHECKED(collection, index, storage)\
-		if(((index) == 0 ? (collection).empty() : (collection).size() <= (index)) || (collection)[index]->type() != ScriptVariableType::Collection)\
-			return nullptr;\
-		ScriptCollection& (storage) = *std::static_pointer_cast<ScriptCollection>((collection)[index]);
-
+		std::shared_ptr<conversionType> storage = std::static_pointer_cast<conversionType>((collection)[index]);
+	
 #define GET_ARG_VAR_CHECKED(collection, index, storage)\
 		if((index) == 0 ? (collection).empty() : (collection).size() <= (index))\
 			return nullptr;\
 		std::shared_ptr<BaseScriptVariable> (storage) = (collection)[index];
+
+#define GET_ARG_DEC_CHECKED(collection, index, storage) GET_ARG_VALUE_CHECKED(collection, index, storage, Dec, ScriptDec)
+#define GET_ARG_STRING_CHECKED(collection, index, storage) GET_ARG_VALUE_CHECKED(collection, index, storage, String, ScriptString)
+#define GET_ARG_BOOL_CHECKED(collection, index, storage) GET_ARG_VALUE_CHECKED(collection, index, storage, Bool, ScriptBool)
+#define GET_ARG_MAP_CHECKED(collection, index, storage) GET_ARG_CHECKED(collection, index, storage, Map, ScriptMap)
+#define GET_ARG_ARRAY_CHECKED(collection, index, storage) GET_ARG_CHECKED(collection, index, storage, Array, ScriptArray)
 
 void ScriptManager::Init()
 {
@@ -127,22 +125,61 @@ void ScriptManager::HandleScriptBindings(Script* script)
 		}
 	}
 
-	script->BindFunction("ve_collection_add",
+	script->BindFunction("ve_map_add",
 		[](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
 	{
-		GET_ARG_COLLECTION_CHECKED(args, 0, collection);
-		GET_ARG_STRING_CHECKED(args, 1, name);
+		GET_ARG_MAP_CHECKED(args, 0, collection);
+		GET_ARG_CHECKED(args, 1, name, String, ScriptString);
 		GET_ARG_VAR_CHECKED(args, 2, variable);
-		collection.AddMember(name, variable);
+		return collection->AddMember(name, variable);
+	});
+
+	script->BindFunction("ve_map_remove",
+		[](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
+	{
+		GET_ARG_MAP_CHECKED(args, 0, collection);
+		GET_ARG_CHECKED(args, 1, name, String, ScriptString);
+		collection->RemoveMember(name);
 		return nullptr;
 	});
 
-	script->BindFunction("ve_collection_remove",
+	script->BindFunction("ve_map_clear",
 		[](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
 	{
-		GET_ARG_COLLECTION_CHECKED(args, 0, collection);
-		GET_ARG_STRING_CHECKED(args, 1, name);
-		collection.RemoveMember(name);
+		GET_ARG_MAP_CHECKED(args, 0, collection);
+		collection->Clear();
+		return nullptr;
+	});
+
+	script->BindFunction("ve_array_push",
+		[](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
+	{
+		GET_ARG_ARRAY_CHECKED(args, 0, collection);
+		GET_ARG_VAR_CHECKED(args, 1, variable);
+		return collection->Push(variable);
+	});
+
+	script->BindFunction("ve_array_remove",
+		[](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
+	{
+		GET_ARG_ARRAY_CHECKED(args, 0, collection);
+		GET_ARG_CHECKED(args, 1, index, Dec, ScriptDec);
+		collection->RemoveMember(index);
+		return nullptr;
+	});
+
+	script->BindFunction("ve_array_size",
+		[](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
+	{
+		GET_ARG_ARRAY_CHECKED(args, 0, collection);
+		return collection->Size();
+	});
+
+	script->BindFunction("ve_array_clear",
+		[](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
+	{
+		GET_ARG_ARRAY_CHECKED(args, 0, collection);
+		collection->Clear();
 		return nullptr;
 	});
 
@@ -210,8 +247,8 @@ void ScriptManager::CacheGlobalVariables()
 	_globalVariables.emplace(std::make_pair("VE_STATE_FLAG_CANCEL_TARGET", std::make_shared<ScriptDec>((int)CharacterStateFlagType::CancelTargets)));
 	_globalVariables.emplace(std::make_pair("VE_STATE_FLAG_CANCEL_REQUIREMENT", std::make_shared<ScriptDec>((int)CharacterStateFlagType::CancelRequirements)));
 
-	std::shared_ptr<ScriptCollection> collection = std::make_shared<ScriptCollection>();
-	collection->AddMember("test", std::make_shared<ScriptDec>(5));
+	std::shared_ptr<ScriptMap> collection = std::make_shared<ScriptMap>();
+	collection->AddMember(std::make_shared<ScriptString>("test"), std::make_shared<ScriptDec>(5));
 	_globalVariables.emplace(std::make_pair("testCollection", collection));
 }
 

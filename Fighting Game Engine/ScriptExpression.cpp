@@ -2,7 +2,7 @@
 #include "ScriptBlock.h"
 #include "ScriptToken.h"
 #include "ScriptVariable.h"
-#include "ScriptCollection.h"
+#include "ScriptMap.h"
 #include "ScriptVariableUtils.h"
 #include "ScriptParsingUtils.h"
 #include "ScriptOperator.h"
@@ -10,6 +10,7 @@
 
 #include <stack>
 #include <boost/lexical_cast.hpp>
+#include "ScriptArray.h"
 
 enum class ScriptExpression::State
 {
@@ -143,8 +144,11 @@ std::shared_ptr<BaseScriptVariable> ScriptExpression::Evaluate()
 			case ScriptVariableType::String:
 				newVariable = std::make_shared<ScriptString>();
 				break;
-			case ScriptVariableType::Collection:
-				newVariable = std::make_shared<ScriptCollection>();
+			case ScriptVariableType::Map:
+				newVariable = std::make_shared<ScriptMap>();
+				break;
+			case ScriptVariableType::Array:
+				newVariable = std::make_shared<ScriptArray>();
 				break;
 			default:
 				throw ScriptError("Unhandled script variable type " + std::to_string(int(variableType)));
@@ -192,23 +196,40 @@ std::shared_ptr<BaseScriptVariable> ScriptExpression::Evaluate()
 			{
 				if(i < _tokens.size() - 1 && _tokens[i + 1].type == ScriptTokenType::SquareBracketGroup)
 				{
-					evaluatedVar = _parent->GetVariable(token.token);
-					if(evaluatedVar->type() != ScriptVariableType::Collection)
-					{
-						throw ScriptError("Attempting to index member of a variable that isn't a collection.");
-					}
-
 					std::vector<ScriptToken> squareBracketTokens;
 					ScriptParsingUtils::ParseLineTokens(_tokens[i + 1].token, squareBracketTokens);
 
 					std::shared_ptr<BaseScriptVariable> squareBracketResult = std::make_unique<ScriptExpression>(_parent, squareBracketTokens)->Evaluate();
-					if(squareBracketResult->type() != ScriptVariableType::String)
-					{
-						throw ScriptError("Attempting to reference collection member with an invalid variable type.");
+
+					evaluatedVar = _parent->GetVariable(token.token);
+					switch (evaluatedVar->type()) { 
+					case ScriptVariableType::Invalid: 
+					case ScriptVariableType::Null:
+					case ScriptVariableType::Bool:
+					case ScriptVariableType::Dec:
+					case ScriptVariableType::String:
+					default:
+						throw ScriptError("Attempting to index member of a variable that isn't a collection.");
+					case ScriptVariableType::Map:
+						if(squareBracketResult->type() != ScriptVariableType::String)
+						{
+							throw ScriptError("Attempting to reference collection member with an invalid variable type.");
+						}
+
+						evaluatedVar = std::static_pointer_cast<ScriptMap>(evaluatedVar)->GetMember(
+							std::static_pointer_cast<ScriptString>(squareBracketResult));
+						break;
+					case ScriptVariableType::Array:
+						if(squareBracketResult->type() != ScriptVariableType::Dec)
+						{
+							throw ScriptError("Attempting to reference collection member with an invalid variable type.");
+						}
+
+						evaluatedVar = std::static_pointer_cast<ScriptArray>(evaluatedVar)->GetMember(
+						std::static_pointer_cast<ScriptDec>(squareBracketResult));
+						break;
 					}
 
-					evaluatedVar = std::static_pointer_cast<ScriptCollection>(evaluatedVar)->GetMember(
-						std::static_pointer_cast<ScriptString>(squareBracketResult)->value());
 					i += 1;
 				}
 				else if(i < _tokens.size() - 1 && _tokens[i + 1].type == ScriptTokenType::ParenthesisGroup)

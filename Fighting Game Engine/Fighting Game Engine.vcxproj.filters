@@ -235,9 +235,6 @@
     <ClCompile Include="BaseScriptVariable.cpp">
       <Filter>Val Engine\Engine\Objects\Scripting\Variables</Filter>
     </ClCompile>
-    <ClCompile Include="ScriptCollection.cpp">
-      <Filter>Val Engine\Engine\Objects\Scripting\Variables</Filter>
-    </ClCompile>
     <ClCompile Include="ScriptVariable.cpp">
       <Filter>Val Engine\Engine\Objects\Scripting\Variables</Filter>
     </ClCompile>
@@ -398,6 +395,11 @@
       <Filter>Val Engine\Game\Characters\Hit Data</Filter>
     </ClCompile>
     <ClCompile Include="FixedPoint64.cpp" />
+    <ClCompile Include="ScriptMap.cpp">
+      <Filter>Val Engine\Engine\Objects\Scripting\Variables</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseScriptCollection.cpp" />
+    <ClCompile Include="ScriptArray.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FGIncludes.hpp">
@@ -447,9 +449,6 @@
     </ClInclude>
     <ClInclude Include="GLIncludes.hpp">
       <Filter>Val Engine\IncludeLists</Filter>
-    </ClInclude>
-    <ClInclude Include="ScriptCollection.h">
-      <Filter>Val Engine\Engine\Objects\Scripting\Variables</Filter>
     </ClInclude>
     <ClInclude Include="Renderer.h">
       <Filter>Val Engine\Engine\Objects\Behaviours</Filter>
@@ -710,6 +709,15 @@
       <Filter>Val Engine</Filter>
     </ClInclude>
     <ClInclude Include="FixedPoint64.h">
+      <Filter>Val Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptMap.h">
+      <Filter>Val Engine\Engine\Objects\Scripting\Variables</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseScriptCollection.h">
+      <Filter>Val Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptArray.h">
       <Filter>Val Engine</Filter>
     </ClInclude>
   </ItemGroup>

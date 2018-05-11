@@ -6,8 +6,7 @@
 #include "ScriptError.h"
 
 template<typename T>
-class ScriptVariable :
-	public BaseScriptVariable
+class ScriptVariable : public BaseScriptVariable
 {
 public:
 	typedef T ValueType;
@@ -17,10 +16,12 @@ private:
 	T _value;
 public:
 	T value() const;
-	std::string ToString() override;
+	std::string ToString() override; 
+	std::shared_ptr<BaseScriptVariable> Clone() const override;
 
 	void assign(const ScriptVariable<T>& value);
 	ScriptVariable(T value = T(), bool isConst = false);
+	
 };
 
 typedef ScriptVariable<ve::dec_t> ScriptDec;
@@ -37,6 +38,12 @@ template<typename T>
 std::string ScriptVariable<T>::ToString()
 {
 	return std::to_string(_value);
+}
+
+template <typename T>
+std::shared_ptr<BaseScriptVariable> ScriptVariable<T>::Clone() const
+{
+	return std::make_shared<ScriptVariable<T>>(*this);
 }
 
 template<typename T>
