@@ -33,6 +33,7 @@ TODO: Service for managing the type of the current build [debug, release]
 
 --Code Cleanup
 TODO: Replace some defines with service members [*].
+TODO: ValScript is a horrible mess. Do something about it.
 
 ----Important defines----
 --Engine--
