@@ -60,4 +60,6 @@ ScriptArray::ScriptArray(const ScriptArray& scriptArray) : BaseScriptCollection<
 	{
 		_storage.push_back(iter->Clone());
 	}
+
+	_const = false;
 }

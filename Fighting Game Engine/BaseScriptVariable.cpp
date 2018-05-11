@@ -46,7 +46,7 @@ std::string BaseScriptVariable::ToString()
 
 std::shared_ptr<BaseScriptVariable> BaseScriptVariable::Clone() const
 {
-	return std::make_shared<BaseScriptVariable>();
+	return std::make_shared<BaseScriptVariable>(_type, false);
 }
 
 BaseScriptVariable::BaseScriptVariable(ScriptVariableType type, bool isConst)

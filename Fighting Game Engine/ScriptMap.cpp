@@ -44,4 +44,6 @@ ScriptMap::ScriptMap(const ScriptMap& map) : BaseScriptCollection<ScriptString, 
 	{
 		_storage.emplace(iter.first, iter.second->Clone());
 	}
+
+	_const = false;
 }

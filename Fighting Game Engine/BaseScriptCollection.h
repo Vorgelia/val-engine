@@ -14,6 +14,13 @@ public:
 
 	virtual void Clear() = 0;
 
-	BaseScriptCollection(ScriptVariableType type, bool isConst = false) : BaseScriptVariable(type, isConst) { }
+	BaseScriptCollection(ScriptVariableType type, bool isConst = false);
 	virtual ~BaseScriptCollection() = default;
 };
+
+template <typename KeyT, typename ValueT>
+BaseScriptCollection<KeyT, ValueT>::BaseScriptCollection(ScriptVariableType type, bool isConst)
+	: BaseScriptVariable(type, isConst)
+{
+	_initialized = true;
+}

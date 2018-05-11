@@ -123,120 +123,138 @@ void ScriptManager::HandleScriptBindings(Script* script)
 				return std::make_shared<ScriptDec>(long(_time->frameCountSinceLoad));
 			});
 		}
+		else if(directive == "Map")
+		{
+			script->BindFunction("ve_map_add",
+				[](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
+			{
+				GET_ARG_MAP_CHECKED(args, 0, collection);
+				GET_ARG_CHECKED(args, 1, name, String, ScriptString);
+				GET_ARG_VAR_CHECKED(args, 2, variable);
+				return collection->AddMember(name, variable);
+			});
+
+			script->BindFunction("ve_map_remove",
+				[](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
+			{
+				GET_ARG_MAP_CHECKED(args, 0, collection);
+				GET_ARG_CHECKED(args, 1, name, String, ScriptString);
+				collection->RemoveMember(name);
+				return nullptr;
+			});
+
+			script->BindFunction("ve_map_clear",
+				[](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
+			{
+				GET_ARG_MAP_CHECKED(args, 0, collection);
+				collection->Clear();
+				return nullptr;
+			});
+		}
+		else if(directive == "Array")
+		{
+			script->BindFunction("ve_array_push",
+				[](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
+			{
+				GET_ARG_ARRAY_CHECKED(args, 0, collection);
+				GET_ARG_VAR_CHECKED(args, 1, variable);
+				return collection->Push(variable);
+			});
+
+			script->BindFunction("ve_array_remove",
+				[](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
+			{
+				GET_ARG_ARRAY_CHECKED(args, 0, collection);
+				GET_ARG_CHECKED(args, 1, index, Dec, ScriptDec);
+				collection->RemoveMember(index);
+				return nullptr;
+			});
+
+			script->BindFunction("ve_array_size",
+				[](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
+			{
+				GET_ARG_ARRAY_CHECKED(args, 0, collection);
+				return collection->Size();
+			});
+
+			script->BindFunction("ve_array_clear",
+				[](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
+			{
+				GET_ARG_ARRAY_CHECKED(args, 0, collection);
+				collection->Clear();
+				return nullptr;
+			});
+		}
+		else if(directive == "Math")
+		{
+			script->BindFunction("ve_math_sin",
+				[](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
+			{
+				GET_ARG_DEC_CHECKED(args, 0, dec);
+				return std::make_shared<ScriptDec>(ve::dec_t::Sin(dec));
+			});
+
+			script->BindFunction("ve_math_cos",
+				[](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
+			{
+				GET_ARG_DEC_CHECKED(args, 0, dec);
+				return std::make_shared<ScriptDec>(ve::dec_t::Cos(dec));
+			});
+
+			script->BindFunction("ve_math_sqrt",
+				[](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
+			{
+				GET_ARG_DEC_CHECKED(args, 0, dec);
+				return std::make_shared<ScriptDec>(ve::dec_t::Sqrt(dec));
+			});
+
+			script->BindFunction("ve_math_rsqrt",
+				[](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
+			{
+				GET_ARG_DEC_CHECKED(args, 0, dec);
+				return std::make_shared<ScriptDec>(ve::dec_t::RSqrt(dec));
+			});
+
+			script->BindFunction("ve_math_abs",
+				[](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
+			{
+				GET_ARG_DEC_CHECKED(args, 0, dec);
+				return std::make_shared<ScriptDec>(ve::dec_t::Abs(dec));
+			});
+			script->BindFunction("ve_math_floor",
+				[](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
+			{
+				GET_ARG_DEC_CHECKED(args, 0, dec);
+				return std::make_shared<ScriptDec>(ve::dec_t::Floor(dec));
+			});
+			script->BindFunction("ve_math_ceil",
+				[](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
+			{
+				GET_ARG_DEC_CHECKED(args, 0, dec);
+				return std::make_shared<ScriptDec>(ve::dec_t::Ceil(dec));
+			});
+			script->BindFunction("ve_math_pow",
+				[](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
+			{
+				GET_ARG_DEC_CHECKED(args, 0, dec);
+				GET_ARG_DEC_CHECKED(args, 1, exp);
+				return std::make_shared<ScriptDec>(ve::dec_t::Pow(dec, exp));
+			});
+		}
 	}
 
-	script->BindFunction("ve_map_add",
+	script->BindFunction("ve_assert",
 		[](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
 	{
-		GET_ARG_MAP_CHECKED(args, 0, collection);
-		GET_ARG_CHECKED(args, 1, name, String, ScriptString);
-		GET_ARG_VAR_CHECKED(args, 2, variable);
-		return collection->AddMember(name, variable);
-	});
+		GET_ARG_BOOL_CHECKED(args, 0, expr);
+		GET_ARG_STRING_CHECKED(args, 1, assertString);
 
-	script->BindFunction("ve_map_remove",
-		[](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
-	{
-		GET_ARG_MAP_CHECKED(args, 0, collection);
-		GET_ARG_CHECKED(args, 1, name, String, ScriptString);
-		collection->RemoveMember(name);
+		if(!expr)
+		{
+			throw ScriptError("Assertion Failed: " + assertString);
+		}
+
 		return nullptr;
-	});
-
-	script->BindFunction("ve_map_clear",
-		[](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
-	{
-		GET_ARG_MAP_CHECKED(args, 0, collection);
-		collection->Clear();
-		return nullptr;
-	});
-
-	script->BindFunction("ve_array_push",
-		[](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
-	{
-		GET_ARG_ARRAY_CHECKED(args, 0, collection);
-		GET_ARG_VAR_CHECKED(args, 1, variable);
-		return collection->Push(variable);
-	});
-
-	script->BindFunction("ve_array_remove",
-		[](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
-	{
-		GET_ARG_ARRAY_CHECKED(args, 0, collection);
-		GET_ARG_CHECKED(args, 1, index, Dec, ScriptDec);
-		collection->RemoveMember(index);
-		return nullptr;
-	});
-
-	script->BindFunction("ve_array_size",
-		[](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
-	{
-		GET_ARG_ARRAY_CHECKED(args, 0, collection);
-		return collection->Size();
-	});
-
-	script->BindFunction("ve_array_clear",
-		[](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
-	{
-		GET_ARG_ARRAY_CHECKED(args, 0, collection);
-		collection->Clear();
-		return nullptr;
-	});
-
-	//TODO: Fixed64 Math functions
-
-	script->BindFunction("ve_math_sin",
-		[](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
-	{
-		GET_ARG_DEC_CHECKED(args, 0, dec);
-		return std::make_shared<ScriptDec>(ve::dec_t::Sin(dec));
-	});
-
-	script->BindFunction("ve_math_cos",
-		[](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
-	{
-		GET_ARG_DEC_CHECKED(args, 0, dec);
-		return std::make_shared<ScriptDec>(ve::dec_t::Cos(dec));
-	});
-
-	script->BindFunction("ve_math_sqrt",
-		[](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
-	{
-		GET_ARG_DEC_CHECKED(args, 0, dec);
-		return std::make_shared<ScriptDec>(ve::dec_t::Sqrt(dec));
-	});
-
-	script->BindFunction("ve_math_rsqrt",
-		[](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
-	{
-		GET_ARG_DEC_CHECKED(args, 0, dec);
-		return std::make_shared<ScriptDec>(ve::dec_t::RSqrt(dec));
-	});
-
-	script->BindFunction("ve_math_abs",
-		[](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
-	{
-		GET_ARG_DEC_CHECKED(args, 0, dec);
-		return std::make_shared<ScriptDec>(ve::dec_t::Abs(dec));
-	});
-	script->BindFunction("ve_math_floor",
-		[](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
-	{
-		GET_ARG_DEC_CHECKED(args, 0, dec);
-		return std::make_shared<ScriptDec>(ve::dec_t::Floor(dec));
-	});
-	script->BindFunction("ve_math_ceil",
-		[](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
-	{
-		GET_ARG_DEC_CHECKED(args, 0, dec);
-		return std::make_shared<ScriptDec>(ve::dec_t::Ceil(dec));
-	});
-	script->BindFunction("ve_math_pow",
-		[](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
-	{
-		GET_ARG_DEC_CHECKED(args, 0, dec);
-		GET_ARG_DEC_CHECKED(args, 1, exp);
-		return std::make_shared<ScriptDec>(ve::dec_t::Pow(dec, exp));
 	});
 }
 
@@ -246,10 +264,6 @@ void ScriptManager::CacheGlobalVariables()
 	_globalVariables.emplace(std::make_pair("VE_STATE_FLAG_INVULN", std::make_shared<ScriptDec>((int)CharacterStateFlagType::Invuln)));
 	_globalVariables.emplace(std::make_pair("VE_STATE_FLAG_CANCEL_TARGET", std::make_shared<ScriptDec>((int)CharacterStateFlagType::CancelTargets)));
 	_globalVariables.emplace(std::make_pair("VE_STATE_FLAG_CANCEL_REQUIREMENT", std::make_shared<ScriptDec>((int)CharacterStateFlagType::CancelRequirements)));
-
-	std::shared_ptr<ScriptMap> collection = std::make_shared<ScriptMap>();
-	collection->AddMember(std::make_shared<ScriptString>("test"), std::make_shared<ScriptDec>(5));
-	_globalVariables.emplace(std::make_pair("testCollection", collection));
 }
 
 void ScriptManager::AddVariable(const std::string& name, const std::shared_ptr<BaseScriptVariable>& variable)

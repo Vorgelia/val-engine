@@ -12,14 +12,15 @@ public:
 	typedef T ValueType;
 
 private:
-
 	T _value;
+
 public:
 	T value() const;
 	std::string ToString() override; 
 	std::shared_ptr<BaseScriptVariable> Clone() const override;
 
 	void assign(const ScriptVariable<T>& value);
+	ScriptVariable(const ScriptVariable& other);
 	ScriptVariable(T value = T(), bool isConst = false);
 	
 };

@@ -26,6 +26,15 @@ ScriptDec::ScriptVariable(ve::dec_t value, bool isConst) : BaseScriptVariable(Sc
 	_initialized = true;
 }
 
+template <typename T>
+ScriptVariable<T>::ScriptVariable(const ScriptVariable& other)
+{
+	_value = other._value;
+	_initialized = other._initialized;
+	_type = other._type;
+	_const = false;
+}
+
 template<>
 ScriptBool::ScriptVariable(bool value, bool isConst) : BaseScriptVariable(ScriptVariableType::Bool, isConst)
 {
