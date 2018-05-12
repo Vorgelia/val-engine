@@ -93,10 +93,17 @@ Script* ScriptManager::AddScript(const FS::path& path)
 
 void ScriptManager::HandleScriptBindings(Script* script)
 {
-	std::vector<std::string> &bindings = script->GetPragmaDirectives("Bind");
+	std::vector<std::string>& bindings = script->GetPragmaDirectives("Bind");
+	std::unordered_set<std::string> handledBindings;
 
 	for(const auto& directive : bindings)
 	{
+		if(handledBindings.find(directive) != handledBindings.end())
+		{
+			continue;
+		}
+		handledBindings.emplace(directive);
+
 		if(directive == "UI")
 		{
 			//handle UI bindings
@@ -159,6 +166,13 @@ void ScriptManager::HandleScriptBindings(Script* script)
 				GET_ARG_ARRAY_CHECKED(args, 0, collection);
 				GET_ARG_VAR_CHECKED(args, 1, variable);
 				return collection->Push(variable);
+			});
+
+			script->BindFunction("ve_array_pop",
+				[](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
+			{
+				GET_ARG_ARRAY_CHECKED(args, 0, collection);
+				return collection->Pop();
 			});
 
 			script->BindFunction("ve_array_remove",
@@ -233,6 +247,12 @@ void ScriptManager::HandleScriptBindings(Script* script)
 				GET_ARG_DEC_CHECKED(args, 0, dec);
 				return std::make_shared<ScriptDec>(ve::dec_t::Ceil(dec));
 			});
+			script->BindFunction("ve_math_round",
+				[](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
+			{
+				GET_ARG_DEC_CHECKED(args, 0, dec);
+				return std::make_shared<ScriptDec>(ve::dec_t::Round(dec));
+			});
 			script->BindFunction("ve_math_pow",
 				[](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
 			{
@@ -244,7 +264,7 @@ void ScriptManager::HandleScriptBindings(Script* script)
 	}
 
 	script->BindFunction("ve_assert",
-		[](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
+		[this](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
 	{
 		GET_ARG_BOOL_CHECKED(args, 0, expr);
 		GET_ARG_STRING_CHECKED(args, 1, assertString);
@@ -253,6 +273,8 @@ void ScriptManager::HandleScriptBindings(Script* script)
 		{
 			throw ScriptError("Assertion Failed: " + assertString);
 		}
+
+		_debug->VE_LOG("Assertion Successful: " + assertString, LogItem::Type::ScriptLog);
 
 		return nullptr;
 	});

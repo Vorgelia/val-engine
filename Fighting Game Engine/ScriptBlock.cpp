@@ -61,7 +61,10 @@ void ScriptBlock::HandleExpressionLine(std::vector<ScriptToken>& tokens)
 	else if(tokens[0].token == ScriptToken::block_return)
 	{
 		_owner->RaiseControlFlag(ScriptControlFlag::Return);
-		_variables[VE_SCRIPT_RETURN_VARIABLE_ID] = EvaluateExpression(std::vector<ScriptToken>(tokens.begin() + 1, tokens.end()));
+		if(tokens.size() > 1)
+		{
+			_variables[VE_SCRIPT_RETURN_VARIABLE_ID] = EvaluateExpression(std::vector<ScriptToken>(tokens.begin() + 1, tokens.end()));
+		}
 		return;
 	}
 	else

@@ -60,8 +60,10 @@ public:
 
 	static FixedPoint64 Abs(const FixedPoint64& lhs);
 
+	static FixedPoint64 Round(const FixedPoint64& lhs);
 	static FixedPoint64 Floor(const FixedPoint64& lhs);
 	static FixedPoint64 Ceil(const FixedPoint64& lhs);
+	static int RoundToInt(const FixedPoint64& lhs);
 	static int FloorToInt(const FixedPoint64& lhs);
 	static int CeilToInt(const FixedPoint64& lhs);
 

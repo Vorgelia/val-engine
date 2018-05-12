@@ -175,6 +175,11 @@ FixedPoint64 FixedPoint64::Abs(const FixedPoint64& lhs)
 	return FromRawBits(Fixed64::Abs(lhs._bits));
 }
 
+FixedPoint64 FixedPoint64::Round(const FixedPoint64& lhs)
+{
+	return FromRawBits(Fixed64::Round(lhs._bits));
+}
+
 FixedPoint64 FixedPoint64::Floor(const FixedPoint64& lhs)
 {
 	return FromRawBits(Fixed64::Floor(lhs._bits));
@@ -183,6 +188,11 @@ FixedPoint64 FixedPoint64::Floor(const FixedPoint64& lhs)
 FixedPoint64 FixedPoint64::Ceil(const FixedPoint64& lhs)
 {
 	return FromRawBits(Fixed64::Ceil(lhs._bits));
+}
+
+int FixedPoint64::RoundToInt(const FixedPoint64 & lhs)
+{
+	return Fixed64::RoundToInt(lhs._bits);
 }
 
 int FixedPoint64::FloorToInt(const FixedPoint64& lhs)
