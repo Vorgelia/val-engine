@@ -13,6 +13,8 @@ private:
 public:
 	value_type GetMember(const key_type& key) override;
 	void RemoveMember(const key_type& key) override;
+
+	value_type Back();
 	
 	void Clear() override;
 	

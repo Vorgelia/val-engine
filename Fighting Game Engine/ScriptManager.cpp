@@ -163,9 +163,14 @@ void ScriptManager::HandleScriptBindings(Script* script)
 			script->BindFunction("ve_array_push",
 				[](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
 			{
+
 				GET_ARG_ARRAY_CHECKED(args, 0, collection);
-				GET_ARG_VAR_CHECKED(args, 1, variable);
-				return collection->Push(variable);
+				for(int i = 1 ; i < args.size(); ++i)
+				{
+					collection->Push(args[i]);
+				}
+				
+				return collection->Back();
 			});
 
 			script->BindFunction("ve_array_pop",
@@ -262,6 +267,14 @@ void ScriptManager::HandleScriptBindings(Script* script)
 			});
 		}
 	}
+
+	script->BindFunction("ve_make_const",
+		[this](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
+	{
+		GET_ARG_VAR_CHECKED(args, 0, var);
+		var->_const = true;
+		return var;
+	});
 
 	script->BindFunction("ve_assert",
 		[this](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>

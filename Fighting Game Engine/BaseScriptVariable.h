@@ -18,6 +18,7 @@ enum class ScriptOperatorType;
 
 class BaseScriptVariable
 {
+	friend class ScriptManager;
 protected:
 	ScriptVariableType _type;
 	bool _const;

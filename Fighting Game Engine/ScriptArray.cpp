@@ -22,6 +22,15 @@ void ScriptArray::RemoveMember(const key_type& key)
 	_storage.erase(_storage.begin() + intValue);
 }
 
+BaseScriptCollection<ScriptVariable<FixedPoint64>, BaseScriptVariable>::value_type ScriptArray::Back()
+{
+	if(_storage.empty())
+	{
+		return nullptr;
+	}
+	return _storage.back();
+}
+
 void ScriptArray::Clear()
 {
 	_storage.clear();
