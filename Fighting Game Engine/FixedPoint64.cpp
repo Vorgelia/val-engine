@@ -282,6 +282,31 @@ FixedPoint64 FixedPoint64::FromRawBits(std::int64_t bits)
 	return fixed;
 }
 
+//TODO: Slow. Come up with something better.
+FixedPoint64 FixedPoint64::FromString(const std::string & str)
+{
+	std::int32_t preDecimalNumber;
+	std::int32_t postDecimalNumber;
+
+	bool isPreDecimal = true;
+
+	for(int i = str.length() - 1; i >= 0; ++i)
+	{
+		const unsigned char number = str[i];
+		if(number == '-')
+		{
+			
+		}
+		else if(number < '0' || number > '9')
+		{
+			break;
+		}
+
+
+	}
+	return FixedPoint64();
+}
+
 FixedPoint64::FixedPoint64(int value)
 	: _bits(Fixed64::FromInt(value))
 {

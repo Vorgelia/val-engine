@@ -43,7 +43,7 @@ public:
 
 	virtual std::shared_ptr<BaseScriptVariable> RunFunction(std::string name, std::vector<std::shared_ptr<BaseScriptVariable>> &variables);
 
-	void AddVariable(std::string name, std::shared_ptr<BaseScriptVariable> variable);
+	void AddVariable(std::string name, std::shared_ptr<BaseScriptVariable> variable, bool allowReplace = false);
 	std::shared_ptr<BaseScriptVariable> GetVariable(std::string name);
 
 	ScriptBlock(ScriptLinesView lines, int depth, ScriptBlock* parent, Script* owner);

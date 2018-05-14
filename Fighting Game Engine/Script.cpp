@@ -68,9 +68,9 @@ std::shared_ptr<BaseScriptVariable> Script::GetVariable(const std::string& name)
 	}
 }
 
-void Script::AddVariable(const std::string& name, std::shared_ptr<BaseScriptVariable> variable)
+void Script::AddVariable(const std::string& name, std::shared_ptr<BaseScriptVariable> variable, bool allowReplace)
 {
-	_parentBlock->AddVariable(name, variable);
+	_parentBlock->AddVariable(name, variable, allowReplace);
 }
 
 void Script::PreProcess()

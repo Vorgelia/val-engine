@@ -85,6 +85,7 @@ public:
 	static FixedPoint64 Atan2(const FixedPoint64& lhs, const FixedPoint64& rhs);
 
 	static FixedPoint64 FromRawBits(std::int64_t bits);
+	static FixedPoint64 FromString(const std::string& str);
 
 	FixedPoint64(int value);
 	FixedPoint64(float value);

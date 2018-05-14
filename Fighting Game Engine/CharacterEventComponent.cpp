@@ -10,8 +10,28 @@ void CharacterEventComponent::Update()
 {
 }
 
+void CharacterEventComponent::HandleAttackHit(GameCharacter* otherCharacter, const AttackCollisionHit& collisionResult, const std::vector<std::string>& hitReactionFlags)
+{
+}
+
+std::vector<std::string> CharacterEventComponent::HandleAttackReceived(GameCharacter* otherCharacter, const AttackCollisionHit& collisionResult)
+{
+}
+
+bool CharacterEventComponent::ResolveTrade(GameCharacter* otherCharacter, const AttackCollisionHit& attackHit, const AttackCollisionHit& attackReceived)
+{
+}
+
+void CharacterEventComponent::HandleTradeUnresolved(GameCharacter* otherCharacter, const AttackCollisionHit& attackHit, const AttackCollisionHit& attackReceived)
+{
+}
+
+void CharacterEventComponent::HandleTradeSuccess(GameCharacter* otherCharacter, const AttackCollisionHit& attackHit, const std::vector<std::string>& hitReactionFlags)
+{
+}
 
 CharacterEventComponent::CharacterEventComponent(GameCharacter* owner, ServiceManager* serviceManager)
 	: GameCharacterComponent(owner, serviceManager)
 {
+
 }

@@ -311,14 +311,25 @@ void ScriptManager::HandleScriptCharacterBindings(GameCharacter& character, Scri
 	script->BindFunction("character_util_runCharacterScriptFunction",
 		[&character](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
 	{
-		if(args.size() <= 1)
-		{
-			return nullptr;
-		}
-
 		GET_ARG_STRING_CHECKED(args, 0, functionName);
 		ScriptArgumentCollection parentFunctionArgs = ScriptArgumentCollection(args.begin() + 1, args.end());
 		character._characterScript->ExecuteFunction(functionName, parentFunctionArgs);
+		return nullptr;
+	});	
+
+	script->BindFunction("character_util_getCharacterVar",
+		[&character](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
+	{
+		GET_ARG_STRING_CHECKED(args, 0, varName);
+		return character._characterScript->GetVariable(varName);
+	});
+
+	script->BindFunction("character_util_setCharacterVar",
+		[&character](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
+	{
+		GET_ARG_STRING_CHECKED(args, 0, varName);
+		GET_ARG_VAR_CHECKED(args, 1, value);
+		character._characterScript->AddVariable(varName, value, true);
 		return nullptr;
 	});
 

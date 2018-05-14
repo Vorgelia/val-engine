@@ -220,16 +220,24 @@ std::shared_ptr<BaseScriptVariable> ScriptBlock::RunFunction(std::string name, s
 	return _parent->RunFunction(name, variables);
 }
 
-void ScriptBlock::AddVariable(std::string name, std::shared_ptr<BaseScriptVariable> variable)
+void ScriptBlock::AddVariable(std::string name, std::shared_ptr<BaseScriptVariable> variable, bool allowReplace)
 {
-	if(_variables.find(name) != _variables.end())
-	{
-		throw ScriptError("Attempting to add variable with duplicate name " + name);
-	}
-
 	//TODO: Check if name is a keyword
 
-	_variables.emplace(name, variable);
+	auto& iter = _variables.find(name);
+	if(iter != _variables.end())
+	{
+		if(!allowReplace)
+		{
+			throw ScriptError("Attempting to add variable with duplicate name " + name);
+		}
+
+		iter->second = variable;
+	}
+	else
+	{
+		_variables.emplace(name, variable);
+	}
 }
 
 std::shared_ptr<BaseScriptVariable> ScriptBlock::GetVariable(std::string name)

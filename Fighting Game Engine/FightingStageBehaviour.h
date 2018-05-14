@@ -21,6 +21,8 @@ protected:
 	typedef std::map <GameCharacter*, std::vector<CharacterCollisionResult>, CharacterSortingPredicate> CharacterCollisionResultMap;
 	virtual CharacterCollisionResultMap GenerateCharacterCollisionResults() const;
 
+	virtual void HandleAttackHit(GameCharacter* attacker, GameCharacter* attackReceiver, const AttackCollisionHit& hit, bool wasTrade = false);
+
 public:
 	VE_BEHAVIOUR_NAME(FightingStageBehaviour);
 

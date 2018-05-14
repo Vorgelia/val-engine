@@ -68,7 +68,7 @@ public:
 	std::vector<std::string> GetPragmaDirectives(const std::string& id);
 	std::shared_ptr<BaseScriptVariable> GetVariable(const std::string& name) const;
 
-	void AddVariable(const std::string& name, std::shared_ptr<BaseScriptVariable> variable);
+	void AddVariable(const std::string& name, std::shared_ptr<BaseScriptVariable> variable, bool allowReplace = false);
 
 	void RaiseControlFlag(ScriptControlFlag flag);
 	void ConsumeControlFlag();

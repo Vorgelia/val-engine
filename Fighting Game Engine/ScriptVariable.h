@@ -48,7 +48,7 @@ std::shared_ptr<BaseScriptVariable> ScriptVariable<T>::Clone() const
 }
 
 template<typename T>
-inline void ScriptVariable<T>::assign(const ScriptVariable<T>& value)
+void ScriptVariable<T>::assign(const ScriptVariable<T>& value)
 {
 	if(_const)
 	{
@@ -58,7 +58,7 @@ inline void ScriptVariable<T>::assign(const ScriptVariable<T>& value)
 }
 
 template<typename T>
-inline ScriptVariable<T>::ScriptVariable(T value, bool isConst)
+ScriptVariable<T>::ScriptVariable(T value, bool isConst)
 {
 	_value = value;
 	_initialized = true;
