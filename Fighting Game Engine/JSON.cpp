@@ -4,7 +4,7 @@
 template <>
 FixedPoint64 JSON::Get<FixedPoint64>(const json_t& j)
 {
-	return FixedPoint64(j.get<double>());
+	return FixedPoint64::FromString(j.dump());
 }
 
 template<>

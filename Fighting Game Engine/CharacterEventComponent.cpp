@@ -16,10 +16,12 @@ void CharacterEventComponent::HandleAttackHit(GameCharacter* otherCharacter, con
 
 std::vector<std::string> CharacterEventComponent::HandleAttackReceived(GameCharacter* otherCharacter, const AttackCollisionHit& collisionResult)
 {
+	return std::vector<std::string>();
 }
 
 bool CharacterEventComponent::ResolveTrade(GameCharacter* otherCharacter, const AttackCollisionHit& attackHit, const AttackCollisionHit& attackReceived)
 {
+	return false;
 }
 
 void CharacterEventComponent::HandleTradeUnresolved(GameCharacter* otherCharacter, const AttackCollisionHit& attackHit, const AttackCollisionHit& attackReceived)

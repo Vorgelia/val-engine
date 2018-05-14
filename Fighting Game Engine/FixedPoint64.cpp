@@ -282,29 +282,69 @@ FixedPoint64 FixedPoint64::FromRawBits(std::int64_t bits)
 	return fixed;
 }
 
-//TODO: Slow. Come up with something better.
+//TODO: Slow and bad bad bad. Come up with something better.
 FixedPoint64 FixedPoint64::FromString(const std::string & str)
 {
-	std::int32_t preDecimalNumber;
-	std::int32_t postDecimalNumber;
+	std::int32_t preDecimalNumber = 0;
+	std::int32_t postDecimalNumber = 0;
+
+	int integerBase = 1;
+	int decimalBase = 1;
 
 	bool isPreDecimal = true;
+	bool isNegative = false;
 
-	for(int i = str.length() - 1; i >= 0; ++i)
+	for(int i = str.length() - 1; i >= 0; --i)
 	{
 		const unsigned char number = str[i];
 		if(number == '-')
 		{
-			
+			isNegative = true;
+			break;
 		}
-		else if(number < '0' || number > '9')
+
+		if(number == '.')
+		{
+			isPreDecimal = false;
+			continue;
+		}
+		
+		if(number < '0' || number > '9')
 		{
 			break;
 		}
 
-
+		if(isPreDecimal)
+		{
+			preDecimalNumber += decimalBase * (number - '0');
+			decimalBase *= 10;
+		}
+		else
+		{
+			postDecimalNumber += integerBase * (number - '0');
+			integerBase *= 10;
+		}
 	}
-	return FixedPoint64();
+
+	if(isPreDecimal)
+	{
+		postDecimalNumber = preDecimalNumber;
+		preDecimalNumber = 0;
+	}
+
+	if(isNegative)
+	{
+		postDecimalNumber = -postDecimalNumber;
+		preDecimalNumber = -preDecimalNumber;
+	}
+
+	FixedPoint64 fixedNum = FixedPoint64(postDecimalNumber);
+	if(preDecimalNumber != 0)
+	{
+		fixedNum += FixedPoint64(preDecimalNumber) / FixedPoint64(decimalBase);
+	}
+
+	return fixedNum;
 }
 
 FixedPoint64::FixedPoint64(int value)

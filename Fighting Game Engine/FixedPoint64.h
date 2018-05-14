@@ -97,5 +97,5 @@ public:
 namespace std
 {
 	template<>
-	class numeric_limits<FixedPoint64> : public numeric_limits<std::int64_t>{};
+	class numeric_limits<FixedPoint64> : public numeric_limits<double>{};
 }

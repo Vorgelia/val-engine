@@ -71,6 +71,8 @@ int main()
 
 	Screen* screen = serviceManager.Screen();
 
+	FixedPoint64 f64 = FixedPoint64::FromString("-5.142555");
+
 	while(!glfwWindowShouldClose(screen->window))
 	{
 		serviceManager.UpdateServices();
