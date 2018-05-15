@@ -2,7 +2,10 @@
 #include "ScriptOperator.h"
 #include "ScriptError.h"
 #include "ScriptVariable.h"
+#include "ScriptArray.h"
+#include "ScriptMap.h"
 #include <fmt/format.h>
+
 namespace ScriptVariableUtils
 {
 	template<typename T>
@@ -62,6 +65,51 @@ namespace ScriptVariableUtils
 	std::shared_ptr<T> OperatorBitwiseInvert(const std::shared_ptr<T>& rhs);
 	template<typename T>
 	std::shared_ptr<T> OperatorLogicalNot(const std::shared_ptr<T>& rhs);
+}
+
+json ScriptVariableUtils::ToJson(std::shared_ptr<BaseScriptVariable> var)
+{
+	switch(var->type())
+	{
+	case ScriptVariableType::Invalid:
+	case ScriptVariableType::Null:
+	default:
+		return json();
+	case ScriptVariableType::Bool:
+		return std::static_pointer_cast<ScriptBool>(var)->ToJSON();
+	case ScriptVariableType::Dec:
+		return std::static_pointer_cast<ScriptDec>(var)->ToJSON();
+	case ScriptVariableType::String:
+		return std::static_pointer_cast<ScriptString>(var)->ToJSON();
+	case ScriptVariableType::Map:
+		return std::static_pointer_cast<ScriptMap>(var)->ToJSON();
+	case ScriptVariableType::Array:
+		return std::static_pointer_cast<ScriptArray>(var)->ToJSON();
+	}
+}
+
+std::shared_ptr<BaseScriptVariable> ScriptVariableUtils::FromJson(const json& j)
+{
+	int varType = int(ScriptVariableType::Invalid);
+	JSON::TryGetMember(j, "type", varType);
+
+	switch(ScriptVariableType(varType))
+	{
+	case ScriptVariableType::Invalid:
+	case ScriptVariableType::Null:
+	default:
+		return std::make_shared<BaseScriptVariable>(j);
+	case ScriptVariableType::Bool:
+		return std::make_shared<ScriptBool>(j);
+	case ScriptVariableType::Dec:
+		return std::make_shared<ScriptDec>(j);
+	case ScriptVariableType::String:
+		return std::make_shared<ScriptString>(j);
+	case ScriptVariableType::Map:
+		return std::make_shared<ScriptMap>(j);
+	case ScriptVariableType::Array:
+		return std::make_shared<ScriptArray>(j);
+	}
 }
 
 std::shared_ptr<BaseScriptVariable> ScriptVariableUtils::Operate(std::shared_ptr<BaseScriptVariable>& lhs, std::shared_ptr<BaseScriptVariable>& rhs, ScriptOperatorType operation)
@@ -321,13 +369,13 @@ std::shared_ptr<ScriptBool> ScriptVariableUtils::OperatorSmallerEquals(const std
 template<typename T>
 std::shared_ptr<T> ScriptVariableUtils::OperatorLogicalAnd(const std::shared_ptr<T>& lhs, const std::shared_ptr<T>& rhs)
 {
-	return std::make_shared<T>(lhs->value() && rhs->value());
+	return std::make_shared<T>(T::value_type(bool(lhs->value()) && bool(rhs->value())));
 }
 
 template<typename T>
 std::shared_ptr<T> ScriptVariableUtils::OperatorLogicalOr(const std::shared_ptr<T>& lhs, const std::shared_ptr<T>& rhs)
 {
-	return std::make_shared<T>(lhs->value() || rhs->value());
+	return std::make_shared<T>(T::value_type(bool(lhs->value()) || bool(rhs->value())));
 }
 
 template<typename T>
@@ -357,7 +405,7 @@ std::shared_ptr<T> ScriptVariableUtils::OperatorSubtract(const std::shared_ptr<T
 template<typename T>
 std::shared_ptr<T> ScriptVariableUtils::OperatorLogicalNot(const std::shared_ptr<T>& rhs)
 {
-	return std::make_shared<T>(!rhs->value());
+	return std::make_shared<T>(T::value_type(!bool(rhs->value())));
 }
 
 template<typename T>

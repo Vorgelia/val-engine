@@ -18,6 +18,11 @@ FightingStageBehaviour::CharacterCollisionResultMap FightingStageBehaviour::Gene
 	{
 		for(GameCharacter* otherCharacter : _gameManager->characters())
 		{
+			if(otherCharacter == thisCharacter)
+			{
+				continue;
+			}
+
 			if(handledCharacters.find(otherCharacter) != handledCharacters.end())
 			{
 				continue;

@@ -4,11 +4,16 @@
 template <>
 FixedPoint64 JSON::Get<FixedPoint64>(const json_t& j)
 {
-	if(j.is_number())
+	if(!j.is_number())
 	{
-		return FixedPoint64::FromString(j.dump());
+		return {};
 	}
-	return {};
+
+	FixedPoint64 fp64 = FixedPoint64::FromString(j.dump());
+	FixedPoint64 fp64d = FixedPoint64(j.get<double>());
+	assert(FixedPoint64::Abs(fp64 - fp64d) < FixedPoint64(0.001));
+
+	return fp64;
 }
 
 template<>

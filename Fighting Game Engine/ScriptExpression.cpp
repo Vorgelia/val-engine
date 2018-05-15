@@ -60,7 +60,7 @@ std::shared_ptr<BaseScriptVariable> ScriptExpression::Evaluate()
 
 			break;
 		case ScriptTokenType::Keyword:
-			if(BaseScriptVariable::GetVariableType(token.token) != ScriptVariableType::Invalid)
+			if(BaseScriptVariable::GetVariableTypeFromToken(token.token) != ScriptVariableType::Invalid)
 			{
 				state = ScriptExpression::State::VariableDeclaration;
 				break;
@@ -130,7 +130,7 @@ std::shared_ptr<BaseScriptVariable> ScriptExpression::Evaluate()
 				throw ScriptError("Unexpected token " + nameToken.token);
 			}
 
-			ScriptVariableType variableType = BaseScriptVariable::GetVariableType(token.token);
+			ScriptVariableType variableType = BaseScriptVariable::GetVariableTypeFromToken(token.token);
 			std::shared_ptr<BaseScriptVariable> newVariable;
 
 			switch(variableType)

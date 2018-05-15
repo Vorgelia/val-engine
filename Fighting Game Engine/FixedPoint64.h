@@ -22,6 +22,8 @@ public:
 	static const FixedPoint64 minValue;
 	static const FixedPoint64 maxValue;
 
+	std::int64_t bits() const;
+
 	FixedPoint64 operator+(const FixedPoint64& rhs) const;
 	FixedPoint64 operator-(const FixedPoint64& rhs) const;
 	FixedPoint64 operator*(const FixedPoint64& rhs) const;

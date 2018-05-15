@@ -12,6 +12,11 @@ const FixedPoint64 FixedPoint64::e = FromRawBits(Fixed64::E);
 const FixedPoint64 FixedPoint64::minValue = FromRawBits(Fixed64::MinValue);
 const FixedPoint64 FixedPoint64::maxValue = FromRawBits(Fixed64::MaxValue);
 
+std::int64_t FixedPoint64::bits() const
+{
+	return _bits;
+}
+
 FixedPoint64 FixedPoint64::operator+(const FixedPoint64& rhs) const
 {
 	return FromRawBits(_bits) += rhs;

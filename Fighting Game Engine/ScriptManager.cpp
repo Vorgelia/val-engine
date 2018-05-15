@@ -19,7 +19,7 @@
 #define GET_ARG_VALUE_CHECKED(collection, index, storage, varType, conversionType)\
 		if(((index) == 0 ? (collection).empty() : (collection).size() <= (index)) || (collection)[index]->type() != ScriptVariableType::varType)\
 			return nullptr;\
-		conversionType::ValueType storage = std::static_pointer_cast<conversionType>((collection)[index])->value();
+		conversionType::value_type storage = std::static_pointer_cast<conversionType>((collection)[index])->value();
 
 #define GET_ARG_CHECKED(collection, index, storage, varType, conversionType)\
 		if(((index) == 0 ? (collection).empty() : (collection).size() <= (index)) || (collection)[index]->type() != ScriptVariableType::varType)\
@@ -121,13 +121,13 @@ void ScriptManager::HandleScriptBindings(Script* script)
 			script->BindFunction("ve_time_frameCount",
 				[this](const Script*, ScriptArgumentCollection&)->std::shared_ptr<BaseScriptVariable>
 			{
-				return std::make_shared<ScriptDec>(_time->frameCount);
+				return std::make_shared<ScriptDec>(ve::dec_t(_time->frameCount));
 			});
 
 			script->BindFunction("ve_time_frameCountSinceLoad",
 				[this](const Script*, ScriptArgumentCollection&)->std::shared_ptr<BaseScriptVariable>
 			{
-				return std::make_shared<ScriptDec>(long(_time->frameCountSinceLoad));
+				return std::make_shared<ScriptDec>(ve::dec_t(_time->frameCountSinceLoad));
 			});
 		}
 		else if(directive == "Map")
@@ -165,7 +165,7 @@ void ScriptManager::HandleScriptBindings(Script* script)
 			{
 
 				GET_ARG_ARRAY_CHECKED(args, 0, collection);
-				for(int i = 1 ; i < args.size(); ++i)
+				for(size_t i = 1 ; i < args.size(); ++i)
 				{
 					collection->Push(args[i]);
 				}
@@ -295,10 +295,10 @@ void ScriptManager::HandleScriptBindings(Script* script)
 
 void ScriptManager::CacheGlobalVariables()
 {
-	_globalVariables.emplace(std::make_pair("VE_STATE_FLAG_GENERIC", std::make_shared<ScriptDec>((int)CharacterStateFlagType::Generic)));
-	_globalVariables.emplace(std::make_pair("VE_STATE_FLAG_INVULN", std::make_shared<ScriptDec>((int)CharacterStateFlagType::Invuln)));
-	_globalVariables.emplace(std::make_pair("VE_STATE_FLAG_CANCEL_TARGET", std::make_shared<ScriptDec>((int)CharacterStateFlagType::CancelTargets)));
-	_globalVariables.emplace(std::make_pair("VE_STATE_FLAG_CANCEL_REQUIREMENT", std::make_shared<ScriptDec>((int)CharacterStateFlagType::CancelRequirements)));
+	_globalVariables.emplace(std::make_pair("VE_STATE_FLAG_GENERIC", std::make_shared<ScriptDec>(ve::dec_t((int)CharacterStateFlagType::Generic))));
+	_globalVariables.emplace(std::make_pair("VE_STATE_FLAG_INVULN", std::make_shared<ScriptDec>(ve::dec_t((int)CharacterStateFlagType::Invuln))));
+	_globalVariables.emplace(std::make_pair("VE_STATE_FLAG_CANCEL_TARGET", std::make_shared<ScriptDec>(ve::dec_t((int)CharacterStateFlagType::CancelTargets))));
+	_globalVariables.emplace(std::make_pair("VE_STATE_FLAG_CANCEL_REQUIREMENT", std::make_shared<ScriptDec>(ve::dec_t((int)CharacterStateFlagType::CancelRequirements))));
 }
 
 void ScriptManager::AddVariable(const std::string& name, const std::shared_ptr<BaseScriptVariable>& variable)

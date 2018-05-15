@@ -8,21 +8,21 @@ void ScriptArray::EnsureIndexInRange(int index) const
 	}
 }
 
-ScriptArray::value_type ScriptArray::GetMember(const key_type& key)
+std::shared_ptr<ScriptArray::value_type> ScriptArray::GetMember(const std::shared_ptr<key_type>& key)
 {
 	const int intValue(key->value());
 	EnsureIndexInRange(intValue);
 	return _storage[intValue];
 }
 
-void ScriptArray::RemoveMember(const key_type& key)
+void ScriptArray::RemoveMember(const std::shared_ptr<key_type>& key)
 {
 	const int intValue(key->value());
 	EnsureIndexInRange(intValue);
 	_storage.erase(_storage.begin() + intValue);
 }
 
-BaseScriptCollection<ScriptVariable<FixedPoint64>, BaseScriptVariable>::value_type ScriptArray::Back()
+std::shared_ptr<ScriptArray::value_type> ScriptArray::Back()
 {
 	if(_storage.empty())
 	{
@@ -38,20 +38,33 @@ void ScriptArray::Clear()
 
 std::shared_ptr<ScriptDec> ScriptArray::Size() const
 {
-	return std::make_shared<ScriptDec>(int(_storage.size()));
+	return std::make_shared<ScriptDec>(FixedPoint64(int(_storage.size())));
 }
 
-ScriptArray::value_type ScriptArray::Push(const value_type& value)
+std::shared_ptr<ScriptArray::value_type> ScriptArray::Push(const std::shared_ptr<value_type>& value)
 {
 	_storage.push_back(value->Clone());
 	return _storage.back();
 }
 
-ScriptArray::value_type ScriptArray::Pop()
+std::shared_ptr<ScriptArray::value_type> ScriptArray::Pop()
 {
-	value_type poppedElement = std::make_shared<value_type::element_type>(*_storage.back());
+	std::shared_ptr<value_type> poppedElement = std::make_shared<value_type>(*_storage.back());
 	_storage.pop_back();
 	return poppedElement;
+}
+
+json ScriptArray::ToJSON() const
+{
+	json parentJson = Super::ToJSON();
+	/*
+	json& arrayJson = (parentJson["collection"] = json{});
+	for(auto& iter : _storage)
+	{
+		arrayJson.emplace(iter->ToJSON());
+	}
+	*/
+	return parentJson;
 }
 
 std::shared_ptr<BaseScriptVariable> ScriptArray::Clone() const
@@ -59,16 +72,34 @@ std::shared_ptr<BaseScriptVariable> ScriptArray::Clone() const
 	return std::make_shared<ScriptArray>(*this);
 }
 
-ScriptArray::ScriptArray(bool isConst) : BaseScriptCollection<ScriptDec, BaseScriptVariable>(ScriptVariableType::Array, isConst)
+ScriptArray::ScriptArray(bool isConst) 
+	: Super(isConst)
 {
+	_initialized = true;
 }
 
-ScriptArray::ScriptArray(const ScriptArray& scriptArray) : BaseScriptCollection<ScriptDec, BaseScriptVariable>(ScriptVariableType::Array, scriptArray.isConst())
+ScriptArray::ScriptArray(const json& j)
+{
+	json keyList;
+	if(!JSON::TryGetMember(j, "collection", keyList))
+	{
+		return;
+	}
+
+	for(const json& iter : keyList)
+	{
+		_storage.push_back(std::make_shared<value_type>(iter));
+	}
+}
+
+ScriptArray::ScriptArray(const ScriptArray& scriptArray) 
+	: Super(scriptArray.isConst())
 {
 	for(auto& iter : scriptArray._storage)
 	{
 		_storage.push_back(iter->Clone());
 	}
 
+	_initialized = true;
 	_const = false;
 }

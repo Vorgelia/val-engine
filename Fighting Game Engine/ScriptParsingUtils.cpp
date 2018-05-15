@@ -400,7 +400,7 @@ ScriptFunctionSignature ScriptParsingUtils::ParseFunctionSignature(const ScriptL
 		throw ScriptError("Parser Error - Invalid return type specifier.");
 	}
 
-	if(declLineTokens[4].type != ScriptTokenType::Keyword || (signature.returnType = BaseScriptVariable::GetVariableType(declLineTokens[4].token)) == ScriptVariableType::Invalid)
+	if(declLineTokens[4].type != ScriptTokenType::Keyword || (signature.returnType = BaseScriptVariable::GetVariableTypeFromToken(declLineTokens[4].token)) == ScriptVariableType::Invalid)
 	{
 		throw ScriptError("Parser Error - Invalid function return type.");
 	}
@@ -429,7 +429,7 @@ void ScriptParsingUtils::ParseFunctionArgumentSignatures(const std::string & tok
 		const ScriptToken& typeToken = parenthesisTokens[i];
 
 		ScriptVariableType variableType;
-		if(typeToken.type != ScriptTokenType::Keyword || (variableType = BaseScriptVariable::GetVariableType(typeToken.token)) == ScriptVariableType::Invalid)
+		if(typeToken.type != ScriptTokenType::Keyword || (variableType = BaseScriptVariable::GetVariableTypeFromToken(typeToken.token)) == ScriptVariableType::Invalid)
 		{
 			throw ScriptError("Invalid variable type declaration " + typeToken.token);
 		}

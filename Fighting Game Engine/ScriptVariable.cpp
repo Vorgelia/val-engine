@@ -1,50 +1,26 @@
 #include "ScriptVariable.h"
-#include <utility>
 
 template<>
-std::string ScriptDec::ToString()
-{
-	return std::to_string(double(_value));
-}
-
-template<>
-std::string ScriptBool::ToString()
-{
-	return std::to_string(_value);
-}
-
-template<>
-std::string ScriptString::ToString()
+std::string ScriptString::ToString() const
 {
 	return _value;
 }
 
 template<>
-ScriptDec::ScriptVariable(ve::dec_t value, bool isConst) : BaseScriptVariable(ScriptVariableType::Dec, isConst)
+std::string ScriptDec::ToString() const
 {
-	_value = value;
-	_initialized = true;
-}
-
-template <typename T>
-ScriptVariable<T>::ScriptVariable(const ScriptVariable& other)
-{
-	_value = other._value;
-	_initialized = other._initialized;
-	_type = other._type;
-	_const = false;
+	return std::to_string(double(_value));
 }
 
 template<>
-ScriptBool::ScriptVariable(bool value, bool isConst) : BaseScriptVariable(ScriptVariableType::Bool, isConst)
+json ScriptDec::ToJSON() const
 {
-	_value = value;
-	_initialized = true;
+	//TODO: oh no
+	return json(_value.bits());
 }
 
 template<>
-ScriptString::ScriptVariable(std::string value, bool isConst) : BaseScriptVariable(ScriptVariableType::String, isConst)
+ScriptDec::ScriptVariable(const json& j)
 {
-	_value = std::move(value);
-	_initialized = true;
+	_value = value_type::FromRawBits(j.get<std::int64_t>());
 }

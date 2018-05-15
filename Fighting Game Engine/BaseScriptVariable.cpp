@@ -13,7 +13,7 @@ const std::unordered_map<std::string, ScriptVariableType> BaseScriptVariable::va
 	{ ScriptToken::type_void, ScriptVariableType::Null },
 };
 
-ScriptVariableType BaseScriptVariable::GetVariableType(const std::string & token)
+ScriptVariableType BaseScriptVariable::GetVariableTypeFromToken(const std::string & token)
 {
 	auto& iter = variableTypeLookup.find(token);
 	if(iter == variableTypeLookup.end())
@@ -22,11 +22,6 @@ ScriptVariableType BaseScriptVariable::GetVariableType(const std::string & token
 	}
 
 	return iter->second;
-}
-
-ScriptVariableType BaseScriptVariable::type() const
-{
-	return _type;
 }
 
 bool BaseScriptVariable::isConst() const
@@ -39,29 +34,34 @@ bool BaseScriptVariable::isInitialized() const
 	return _initialized;
 }
 
-std::string BaseScriptVariable::ToString()
+std::string BaseScriptVariable::ToString() const
 {
 	return ScriptToken::value_null;
 }
 
+json BaseScriptVariable::ToJSON() const
+{
+	return json
+	{
+		{ "type", int(type()) },
+		{ "const", _const },
+		{ "initialized", _initialized },
+	};
+}
+
 std::shared_ptr<BaseScriptVariable> BaseScriptVariable::Clone() const
 {
-	return std::make_shared<BaseScriptVariable>(_type, false);
+	return std::make_shared<BaseScriptVariable>(false);
 }
 
-BaseScriptVariable::BaseScriptVariable(ScriptVariableType type, bool isConst)
-	: _type(type)
-	, _const(isConst)
+BaseScriptVariable::BaseScriptVariable(bool isConst)
+	: _const(isConst)
 	, _initialized(false)
 {
 }
 
-BaseScriptVariable::BaseScriptVariable()
-	: _type(ScriptVariableType::Null)
-	, _const(false)
-	, _initialized(false)
+BaseScriptVariable::BaseScriptVariable(const json & j)
 {
+	JSON::TryGetMember(j, "const", _const);
+	JSON::TryGetMember(j, "initialized", _initialized);
 }
-
-BaseScriptVariable::~BaseScriptVariable()
-= default;

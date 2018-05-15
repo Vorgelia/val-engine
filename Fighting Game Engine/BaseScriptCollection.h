@@ -2,25 +2,26 @@
 #include "BaseScriptVariable.h"
 #include <memory>
 
-template<typename KeyT, typename ValueT>
-class BaseScriptCollection : public BaseScriptVariable
+template<typename KeyT, typename ValueT, ScriptVariableType VariableT>
+class BaseScriptCollection : public BaseTypedScriptVariable<VariableT>
 {
 public:
-	typedef std::shared_ptr<KeyT> key_type;
-	typedef std::shared_ptr<ValueT> value_type;
-
-	virtual value_type GetMember(const key_type& key) = 0;
-	virtual void RemoveMember(const key_type& key) = 0;
+	typedef KeyT key_type;
+	typedef ValueT value_type;
+	
+	virtual std::shared_ptr<value_type> GetMember(const std::shared_ptr<key_type>& key) = 0;
+	virtual void RemoveMember(const std::shared_ptr<key_type>& key) = 0;
 
 	virtual void Clear() = 0;
+	std::string ToString() const override { return "Collection"; }
 
-	BaseScriptCollection(ScriptVariableType type, bool isConst = false);
+	BaseScriptCollection(bool isConst = false);
 	virtual ~BaseScriptCollection() = default;
 };
 
-template <typename KeyT, typename ValueT>
-BaseScriptCollection<KeyT, ValueT>::BaseScriptCollection(ScriptVariableType type, bool isConst)
-	: BaseScriptVariable(type, isConst)
+template <typename KeyT, typename ValueT, ScriptVariableType VariableT>
+BaseScriptCollection<KeyT, ValueT, VariableT>::BaseScriptCollection(bool isConst)
+	: BaseTypedScriptVariable<VariableT>(isConst)
 {
 	_initialized = true;
 }

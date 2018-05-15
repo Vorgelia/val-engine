@@ -34,6 +34,7 @@ TODO: Service for managing the type of the current build [debug, release]
 --Code Cleanup
 TODO: Replace some defines with service members [*].
 TODO: ValScript is a horrible mess. Do something about it.
+	---For starters, remove the std::shared_ptr madness.
 
 ----Important defines----
 --Engine--
