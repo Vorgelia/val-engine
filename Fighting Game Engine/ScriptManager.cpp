@@ -2,6 +2,7 @@
 #include "Script.h"
 #include "ServiceManager.h"
 #include "BaseScriptVariable.h"
+#include "ScriptVariableUtils.h."
 #include "ScriptVariable.h"
 #include "ScriptMap.h"
 #include "ScriptArray.h"
@@ -16,26 +17,30 @@
 #include <memory>
 #include <boost/algorithm/string.hpp>
 
-#define GET_ARG_VALUE_CHECKED(collection, index, storage, varType, conversionType)\
-		if(((index) == 0 ? (collection).empty() : (collection).size() <= (index)) || (collection)[index]->type() != ScriptVariableType::varType)\
-			return nullptr;\
-		conversionType::value_type storage = std::static_pointer_cast<conversionType>((collection)[index])->value();
+#define GET_ARG_VALUE_CHECKED(collection, index, storage, conversionType)\
+		conversionType::value_type storage;\
+		{\
+			GET_ARG_CHECKED(collection, index, ptr, conversionType);\
+			storage = ptr->value();\
+		}
 
-#define GET_ARG_CHECKED(collection, index, storage, varType, conversionType)\
-		if(((index) == 0 ? (collection).empty() : (collection).size() <= (index)) || (collection)[index]->type() != ScriptVariableType::varType)\
+#define GET_ARG_CHECKED(collection, index, storage, conversionType)\
+		if((collection).size() <= (index))\
 			return nullptr;\
-		std::shared_ptr<conversionType> storage = std::static_pointer_cast<conversionType>((collection)[index]);
+		std::shared_ptr<conversionType> storage = ScriptVariableUtils::Cast<conversionType>(collection[index]);\
+		if(storage == nullptr)\
+			return nullptr;
 	
 #define GET_ARG_VAR_CHECKED(collection, index, storage)\
 		if((index) == 0 ? (collection).empty() : (collection).size() <= (index))\
 			return nullptr;\
 		std::shared_ptr<BaseScriptVariable> (storage) = (collection)[index];
 
-#define GET_ARG_DEC_CHECKED(collection, index, storage) GET_ARG_VALUE_CHECKED(collection, index, storage, Dec, ScriptDec)
-#define GET_ARG_STRING_CHECKED(collection, index, storage) GET_ARG_VALUE_CHECKED(collection, index, storage, String, ScriptString)
-#define GET_ARG_BOOL_CHECKED(collection, index, storage) GET_ARG_VALUE_CHECKED(collection, index, storage, Bool, ScriptBool)
-#define GET_ARG_MAP_CHECKED(collection, index, storage) GET_ARG_CHECKED(collection, index, storage, Map, ScriptMap)
-#define GET_ARG_ARRAY_CHECKED(collection, index, storage) GET_ARG_CHECKED(collection, index, storage, Array, ScriptArray)
+#define GET_ARG_DEC_CHECKED(collection, index, storage) GET_ARG_VALUE_CHECKED(collection, index, storage, ScriptDec)
+#define GET_ARG_STRING_CHECKED(collection, index, storage) GET_ARG_VALUE_CHECKED(collection, index, storage, ScriptString)
+#define GET_ARG_BOOL_CHECKED(collection, index, storage) GET_ARG_VALUE_CHECKED(collection, index, storage, ScriptBool)
+#define GET_ARG_MAP_CHECKED(collection, index, storage) GET_ARG_CHECKED(collection, index, storage, ScriptMap)
+#define GET_ARG_ARRAY_CHECKED(collection, index, storage) GET_ARG_CHECKED(collection, index, storage, ScriptArray)
 
 void ScriptManager::Init()
 {
@@ -136,7 +141,7 @@ void ScriptManager::HandleScriptBindings(Script* script)
 				[](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
 			{
 				GET_ARG_MAP_CHECKED(args, 0, collection);
-				GET_ARG_CHECKED(args, 1, name, String, ScriptString);
+				GET_ARG_CHECKED(args, 1, name, ScriptString);
 				GET_ARG_VAR_CHECKED(args, 2, variable);
 				return collection->AddMember(name, variable);
 			});
@@ -145,7 +150,7 @@ void ScriptManager::HandleScriptBindings(Script* script)
 				[](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
 			{
 				GET_ARG_MAP_CHECKED(args, 0, collection);
-				GET_ARG_CHECKED(args, 1, name, String, ScriptString);
+				GET_ARG_CHECKED(args, 1, name, ScriptString);
 				collection->RemoveMember(name);
 				return nullptr;
 			});
@@ -184,7 +189,7 @@ void ScriptManager::HandleScriptBindings(Script* script)
 				[](const Script*, ScriptArgumentCollection& args)->std::shared_ptr<BaseScriptVariable>
 			{
 				GET_ARG_ARRAY_CHECKED(args, 0, collection);
-				GET_ARG_CHECKED(args, 1, index, Dec, ScriptDec);
+				GET_ARG_CHECKED(args, 1, index, ScriptDec);
 				collection->RemoveMember(index);
 				return nullptr;
 			});

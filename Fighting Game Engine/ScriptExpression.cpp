@@ -199,7 +199,7 @@ std::shared_ptr<BaseScriptVariable> ScriptExpression::Evaluate()
 					std::vector<ScriptToken> squareBracketTokens;
 					ScriptParsingUtils::ParseLineTokens(_tokens[i + 1].token, squareBracketTokens);
 
-					std::shared_ptr<BaseScriptVariable> squareBracketResult = std::make_unique<ScriptExpression>(_parent, squareBracketTokens)->Evaluate();
+					const std::shared_ptr<BaseScriptVariable> squareBracketResult = std::make_unique<ScriptExpression>(_parent, squareBracketTokens)->Evaluate();
 
 					evaluatedVar = _parent->GetVariable(token.token);
 					switch (evaluatedVar->type()) { 
@@ -211,22 +211,10 @@ std::shared_ptr<BaseScriptVariable> ScriptExpression::Evaluate()
 					default:
 						throw ScriptError("Attempting to index member of a variable that isn't a collection.");
 					case ScriptVariableType::Map:
-						if(squareBracketResult->type() != ScriptVariableType::String)
-						{
-							throw ScriptError("Attempting to reference collection member with an invalid variable type.");
-						}
-
-						evaluatedVar = std::static_pointer_cast<ScriptMap>(evaluatedVar)->GetMember(
-							std::static_pointer_cast<ScriptString>(squareBracketResult));
+						evaluatedVar = ScriptVariableUtils::Cast<ScriptMap>(evaluatedVar)->GetMember(ScriptVariableUtils::Cast<ScriptMap::key_type>(squareBracketResult));
 						break;
 					case ScriptVariableType::Array:
-						if(squareBracketResult->type() != ScriptVariableType::Dec)
-						{
-							throw ScriptError("Attempting to reference collection member with an invalid variable type.");
-						}
-
-						evaluatedVar = std::static_pointer_cast<ScriptArray>(evaluatedVar)->GetMember(
-						std::static_pointer_cast<ScriptDec>(squareBracketResult));
+						evaluatedVar = ScriptVariableUtils::Cast<ScriptArray>(evaluatedVar)->GetMember(ScriptVariableUtils::Cast<ScriptArray::key_type>(squareBracketResult));
 						break;
 					}
 
