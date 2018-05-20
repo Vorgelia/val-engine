@@ -14,6 +14,9 @@ namespace ScriptVariableUtils
 	template<typename T>
 	std::shared_ptr<T> Cast(const std::shared_ptr<BaseScriptVariable>& var);
 
+	template<typename ObjectT>
+	std::shared_ptr<BaseScriptVariable> ToScriptVariable(ObjectT object);
+
 	std::shared_ptr<BaseScriptVariable> Operate(std::shared_ptr<BaseScriptVariable>& lhs, std::shared_ptr<BaseScriptVariable>& rhs, ScriptOperatorType operation);
 	std::shared_ptr<BaseScriptVariable> Operate(std::shared_ptr<BaseScriptVariable>& rhs, ScriptOperatorType operation);
 }

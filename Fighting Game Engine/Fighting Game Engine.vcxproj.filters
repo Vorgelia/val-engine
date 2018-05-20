@@ -125,6 +125,9 @@
     <Filter Include="Val Engine\Game\Characters\Behaviours\Scenes">
       <UniqueIdentifier>{d9d2eee2-a311-4516-bde6-88c61acca0c6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Val Engine\Engine\Utilities\Data\Reflection">
+      <UniqueIdentifier>{0be87904-a54d-4800-99b4-d8e64af3caee}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameScene.cpp">
@@ -678,9 +681,6 @@
     <ClInclude Include="ResourceContainer.h">
       <Filter>Val Engine\Engine\Utilities\Data\Containers</Filter>
     </ClInclude>
-    <ClInclude Include="BaseResource.h">
-      <Filter>Val Engine\Engine\Utilities\Data</Filter>
-    </ClInclude>
     <ClInclude Include="GameCharacterData.h">
       <Filter>Val Engine\Game\Characters</Filter>
     </ClInclude>
@@ -725,6 +725,18 @@
     </ClInclude>
     <ClInclude Include="FixedPoint64.h">
       <Filter>Val Engine\Engine\Utilities\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="TemplateUtils.h">
+      <Filter>Val Engine\Engine\Utilities\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="IReflectable.h">
+      <Filter>Val Engine\Engine\Utilities\Data\Reflection</Filter>
+    </ClInclude>
+    <ClInclude Include="ReflectionField.h">
+      <Filter>Val Engine\Engine\Utilities\Data\Reflection</Filter>
+    </ClInclude>
+    <ClInclude Include="ReflectionTraits.h">
+      <Filter>Val Engine\Engine\Utilities\Data\Reflection</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

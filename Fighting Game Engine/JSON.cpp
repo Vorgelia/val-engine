@@ -1,5 +1,6 @@
 #include "JSON.h"
 #include "GameCharacterData.h"
+#include "IReflectable.h"
 
 template <>
 FixedPoint64 JSON::Get<FixedPoint64>(const json_t& j)

@@ -180,7 +180,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AttackData.h" />
-    <ClInclude Include="BaseResource.h" />
     <ClInclude Include="BaseScriptCollection.h" />
     <ClInclude Include="BaseService.h" />
     <ClInclude Include="BaseShader.h" />
@@ -233,6 +232,7 @@
     <ClInclude Include="InputMotionComponent.h" />
     <ClInclude Include="InputMotion.h" />
     <ClInclude Include="IntroBehaviour.h" />
+    <ClInclude Include="IReflectable.h" />
     <ClInclude Include="JSON.h" />
     <ClInclude Include="LogItem.h" />
     <ClInclude Include="Material.h" />
@@ -246,6 +246,8 @@
     <ClInclude Include="PlayerManager.h" />
     <ClInclude Include="PostEffect.h" />
     <ClInclude Include="Profiler.h" />
+    <ClInclude Include="ReflectionField.h" />
+    <ClInclude Include="ReflectionTraits.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="RenderingDataBuffer.h" />
     <ClInclude Include="RenderingGL.h" />
@@ -278,6 +280,7 @@
     <ClInclude Include="ScriptVariableUtils.h" />
     <ClInclude Include="ServiceManager.h" />
     <ClInclude Include="SurfaceShader.h" />
+    <ClInclude Include="TemplateUtils.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Time.h" />
     <ClInclude Include="SystemIncludes.hpp" />

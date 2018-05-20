@@ -24,6 +24,9 @@ public:
 	json ToJSON() const override;
 	std::shared_ptr<BaseScriptVariable> Clone() const override;
 
+	template<typename ObjectT>
+	std::shared_ptr<ScriptMap> FromObject();
+
 	explicit ScriptMap(bool isConst = false);
 	ScriptMap(const json& j);
 	ScriptMap(const ScriptMap& map);

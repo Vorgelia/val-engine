@@ -60,6 +60,7 @@ PlayerManager.cpp:      VE_MAX_PLAYERS
 #include "GLIncludes.hpp"
 #include "ServiceManager.h"
 #include "Screen.h"
+#include "IReflectable.h"
 
 int main()
 {
@@ -71,8 +72,6 @@ int main()
 	serviceManager.InitializeServices();
 
 	Screen* screen = serviceManager.Screen();
-
-	FixedPoint64 f64 = FixedPoint64::FromString("-5.142555");
 
 	while(!glfwWindowShouldClose(screen->window))
 	{
