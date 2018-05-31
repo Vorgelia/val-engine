@@ -75,7 +75,7 @@ public:
 
 	void Init();
 	void Execute();
-	void ExecuteFunction(const std::string& name, std::vector<std::shared_ptr<BaseScriptVariable>> &variables = std::vector<std::shared_ptr<BaseScriptVariable>>());
+	std::shared_ptr<BaseScriptVariable> ExecuteFunction(const std::string& name, std::vector<std::shared_ptr<BaseScriptVariable>> &variables = std::vector<std::shared_ptr<BaseScriptVariable>>());
 
 	Script(const std::string& name, std::vector<std::string> lines, ServiceManager* serviceManager);
 	~Script();

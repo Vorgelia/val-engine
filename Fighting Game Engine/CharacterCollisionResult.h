@@ -1,6 +1,5 @@
 ﻿#pragma once
-#include "AttackData.h"
-#include "DefenceData.h"
+#include "CharacterHitData.h"
 #include <boost/optional/optional.hpp>
 
 class GameCharacter;
@@ -8,10 +7,10 @@ class GameCharacter;
 struct AttackCollisionHit
 {
 public:
-	AttackData hitbox;
-	DefenceData hurtbox;
+	CharacterHitData hitbox;
+	CharacterHitData hurtbox;
 
-	AttackCollisionHit(const AttackData& hitbox, const DefenceData& hurtbox);
+	AttackCollisionHit(const CharacterHitData& hitbox, const CharacterHitData& hurtbox);
 };
 
 struct CollisionHit
@@ -39,6 +38,7 @@ struct CharacterCollisionResult
 	boost::optional<AttackCollisionHit> attackReceived;
 	boost::optional<AttackCollisionHit> attackHit;
 
+	//TODO: +Arbitrary named hit data box hits
 	std::vector<CollisionHit> collisionHits;
 
 	CharacterAttackResultFlags attackResultFlags() const;

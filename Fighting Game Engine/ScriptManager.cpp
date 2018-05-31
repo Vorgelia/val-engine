@@ -318,8 +318,7 @@ void ScriptManager::HandleScriptCharacterBindings(GameCharacter& character, Scri
 	{
 		GET_ARG_STRING_CHECKED(args, 0, functionName);
 		ScriptArgumentCollection parentFunctionArgs = ScriptArgumentCollection(args.begin() + 1, args.end());
-		character._characterScript->ExecuteFunction(functionName, parentFunctionArgs);
-		return nullptr;
+		return character._characterScript->ExecuteFunction(functionName, parentFunctionArgs);
 	});	
 
 	script->BindFunction("character_util_getCharacterVar",

@@ -1,6 +1,5 @@
 #include "CharacterFrame.h"
-#include "AttackData.h"
-#include "DefenceData.h"
+#include "CharacterHitData.h"
 #include "CollisionBox.h"
 #include "CharacterSprite.h"
 

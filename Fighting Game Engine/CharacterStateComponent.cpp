@@ -163,6 +163,8 @@ bool CharacterStateComponent::StartState(std::string name)
 		_currentStateId = name;
 		_currentStateFrame = -1;
 
+		_usedHitboxSequenceIDs.clear();
+
 		_stateEnded = false;
 
 		ClearFlags();

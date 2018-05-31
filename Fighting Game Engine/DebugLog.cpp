@@ -91,7 +91,7 @@ void Debug::Log(const std::string& data, LogItem::Type type)
 #ifdef VE_DEBUG_ERRORTHROW
 	if(type == LogItem::Type::Error)
 	{
-		throw std::runtime_error(data);
+		__debugbreak();
 	}
 #endif
 }

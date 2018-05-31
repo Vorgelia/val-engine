@@ -151,15 +151,6 @@
     <ClCompile Include="CharacterState.cpp">
       <Filter>Val Engine\Game\Characters\State</Filter>
     </ClCompile>
-    <ClCompile Include="AttackData.cpp">
-      <Filter>Val Engine\Game\Characters\Hit Data</Filter>
-    </ClCompile>
-    <ClCompile Include="CharacterHitData.cpp">
-      <Filter>Val Engine\Game\Characters\Hit Data</Filter>
-    </ClCompile>
-    <ClCompile Include="DefenceData.cpp">
-      <Filter>Val Engine\Game\Characters\Hit Data</Filter>
-    </ClCompile>
     <ClCompile Include="CharacterSprite.cpp">
       <Filter>Val Engine\Game\Characters\Frame</Filter>
     </ClCompile>
@@ -409,6 +400,15 @@
     <ClCompile Include="FixedPoint64.cpp">
       <Filter>Val Engine\Engine\Utilities\Math</Filter>
     </ClCompile>
+    <ClCompile Include="Math.cpp">
+      <Filter>Val Engine\Engine\Utilities\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="CharacterCollisionData.cpp">
+      <Filter>Val Engine\Game\Characters\Hit Data</Filter>
+    </ClCompile>
+    <ClCompile Include="CharacterHitData.cpp">
+      <Filter>Val Engine\Game\Characters\Hit Data</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FGIncludes.hpp">
@@ -476,15 +476,6 @@
     </ClInclude>
     <ClInclude Include="MathIncludes.hpp">
       <Filter>Val Engine\IncludeLists</Filter>
-    </ClInclude>
-    <ClInclude Include="AttackData.h">
-      <Filter>Val Engine\Game\Characters\Hit Data</Filter>
-    </ClInclude>
-    <ClInclude Include="CharacterHitData.h">
-      <Filter>Val Engine\Game\Characters\Hit Data</Filter>
-    </ClInclude>
-    <ClInclude Include="DefenceData.h">
-      <Filter>Val Engine\Game\Characters\Hit Data</Filter>
     </ClInclude>
     <ClInclude Include="CharacterFrame.h">
       <Filter>Val Engine\Game\Characters\Frame</Filter>
@@ -737,6 +728,15 @@
     </ClInclude>
     <ClInclude Include="ReflectionTraits.h">
       <Filter>Val Engine\Engine\Utilities\Data\Reflection</Filter>
+    </ClInclude>
+    <ClInclude Include="Math.h">
+      <Filter>Val Engine\Engine\Utilities\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterCollisionData.h">
+      <Filter>Val Engine\Game\Characters\Hit Data</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterHitData.h">
+      <Filter>Val Engine\Game\Characters\Hit Data</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

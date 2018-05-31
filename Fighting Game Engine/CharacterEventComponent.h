@@ -13,7 +13,7 @@ protected:
 	void Update() override;
 
 public:
-	void HandleAttackHit(GameCharacter* otherCharacter, const AttackCollisionHit& collisionResult, const std::vector<std::string>& hitReactionFlags);
+	void HandleAttackHit(GameCharacter* otherCharacter, const AttackCollisionHit& attackHit, const std::vector<std::string>& hitReactionFlags);
 	//return: Generated hit flags.
 	std::vector<std::string> HandleAttackReceived(GameCharacter* otherCharacter, const AttackCollisionHit& collisionResult);
 
@@ -24,4 +24,3 @@ public:
 	CharacterEventComponent(GameCharacter* owner, ServiceManager* serviceManager);
 	~CharacterEventComponent() = default;
 };
-

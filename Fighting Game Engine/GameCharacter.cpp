@@ -47,13 +47,19 @@ CharacterCollisionResult GameCharacter::GenerateCollisions(const GameCharacter* 
 	CharacterCollisionResult collisionResult;
 	collisionResult.otherCharacter = const_cast<GameCharacter*>(other);
 
-	auto& hitResultPicker = [&](const GameCharacter* attacker, const GameCharacter* defender, const std::vector<AttackData>& hitboxes, const std::vector<DefenceData>& hurtboxes)
+	auto& hitResultPicker = [&](const GameCharacter* attacker, const GameCharacter* defender, const std::vector<CharacterHitData>& hitboxes, const std::vector<CharacterHitData>& hurtboxes)
 	-> boost::optional<AttackCollisionHit>
 	{
 		for(auto& hitbox : hitboxes)
 		{
 			for(auto& hurtbox : hurtboxes)
 			{
+				if(attacker->stateComponent()->_usedHitboxSequenceIDs.count(hitbox.sequenceID()) > 0 
+					|| !hitbox.CanCollideWith(hurtbox))
+				{
+					continue;
+				}
+
 				for(auto& hitCollision : hitbox.collision())
 				{
 					for(auto& hurtCollision : hurtbox.collision())

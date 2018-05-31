@@ -17,15 +17,19 @@ protected:
 	template<typename T>
 	void AddReflectionField(const std::string& name, const T& field);
 	template<typename ValueT>
-	void AddReflectionField(const std::string& name, const std::vector<ValueT>& field);
+	void AddReflectionArray(const std::string& name, const std::vector<ValueT>& field);
 	template<typename KeyT, typename ValueT>
-	void AddReflectionField(const std::string& name, const std::unordered_map<KeyT, ValueT>& field);
+	void AddReflectionMap(const std::string& name, const std::unordered_map<KeyT, ValueT>& field);
 
 public:
-	json Serialize() const;
-	void Deserialize(const json& j);
+	virtual json Serialize() const;
+	virtual void Deserialize(const json& j);
+
+	bool TrySerializeField(const std::string& name, json& out_json) const;
+	bool TryDeserializeField(const std::string& name, const json& j);
 
 	IReflectable() = default;
+	virtual ~IReflectable() = default;
 };
 
 template <typename T>
@@ -35,13 +39,13 @@ void IReflectable::AddReflectionField(const std::string& name, const T& field)
 }
 
 template <typename ValueT>
-void IReflectable::AddReflectionField(const std::string& name, const std::vector<ValueT>& field)
+void IReflectable::AddReflectionArray(const std::string& name, const std::vector<ValueT>& field)
 {
 	_storedFields.insert_or_assign(name, std::make_unique<ArrayReflectionField<ValueT>>(name, const_cast<std::vector<ValueT>*>(&field)));
 }
 
 template <typename KeyT, typename ValueT>
-void IReflectable::AddReflectionField(const std::string& name, const std::unordered_map<KeyT, ValueT>& field)
+void IReflectable::AddReflectionMap(const std::string& name, const std::unordered_map<KeyT, ValueT>& field)
 {
 	_storedFields.insert_or_assign(name, std::make_unique<MapReflectionField<KeyT, ValueT>>(name, const_cast<std::unordered_map<KeyT, ValueT>*>(&field)));
 }
@@ -69,4 +73,28 @@ inline void IReflectable::Deserialize(const json& j)
 			iter.second->Deserialize(fieldJson);
 		}
 	}
+}
+
+inline bool IReflectable::TrySerializeField(const std::string& name, json& out_json) const
+{
+	auto& iter = _storedFields.find(name);
+	if(iter == _storedFields.end())
+	{
+		return false;
+	}
+
+	out_json = iter->second->Serialize();
+	return true;
+}
+
+inline bool IReflectable::TryDeserializeField(const std::string& name, const json& j)
+{
+	auto& iter = _storedFields.find(name);
+	if(iter == _storedFields.end())
+	{
+		return false;
+	}
+
+	iter->second->Deserialize(j);
+	return true;
 }

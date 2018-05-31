@@ -1,4 +1,5 @@
 #include "ScriptArray.h"
+#include "ScriptVariableUtils.h"
 
 void ScriptArray::EnsureIndexInRange(int index) const
 {
@@ -57,13 +58,12 @@ std::shared_ptr<ScriptArray::value_type> ScriptArray::Pop()
 json ScriptArray::ToJSON() const
 {
 	json parentJson = Super::ToJSON();
-	/*
 	json& arrayJson = (parentJson["collection"] = json{});
 	for(auto& iter : _storage)
 	{
-		arrayJson.emplace(iter->ToJSON());
+		arrayJson.emplace_back(iter->ToJSON());
 	}
-	*/
+	
 	return parentJson;
 }
 
@@ -88,7 +88,7 @@ ScriptArray::ScriptArray(const json& j)
 
 	for(const json& iter : keyList)
 	{
-		_storage.push_back(std::make_shared<value_type>(iter));
+		_storage.push_back(ScriptVariableUtils::FromJson(iter));
 	}
 }
 

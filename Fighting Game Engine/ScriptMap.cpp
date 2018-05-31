@@ -1,5 +1,6 @@
 #include "ScriptMap.h"
 #include "ScriptError.h"
+#include "ScriptVariableUtils.h"
 
 
 std::shared_ptr<ScriptMap::value_type> ScriptMap::AddMember(const std::shared_ptr<key_type>& key, const std::shared_ptr<value_type>& value)
@@ -71,8 +72,8 @@ ScriptMap::ScriptMap(const json& j)
 		{
 			continue;
 		}
-
-		_storage.emplace(key, std::make_shared<value_type>(valueJson));
+		
+		_storage.emplace(key, ScriptVariableUtils::FromJson(valueJson));
 	}
 }
 

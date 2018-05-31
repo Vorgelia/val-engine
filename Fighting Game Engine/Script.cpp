@@ -156,17 +156,17 @@ void Script::Execute()
 	ExecuteFunction("Main", std::vector<std::shared_ptr<BaseScriptVariable>>());
 }
 
-void Script::ExecuteFunction(const std::string& name, std::vector<std::shared_ptr<BaseScriptVariable>> &variables)
+std::shared_ptr<BaseScriptVariable> Script::ExecuteFunction(const std::string& name, std::vector<std::shared_ptr<BaseScriptVariable>> &variables)
 {
-	size_t blockStackSize = _blockStack.size();
+	const size_t blockStackSize = _blockStack.size();
 
 	try
 	{
-		_parentBlock->RunFunction(name, variables);
+		return _parentBlock->RunFunction(name, variables);
 	}
 	catch(ScriptError& error)
 	{
-		int blockCursor = _blockStack.empty() ? _parentBlock->cursor() : _blockStack.top()->cursor();
+		const int blockCursor = _blockStack.empty() ? _parentBlock->cursor() : _blockStack.top()->cursor();
 
 		_debug->VE_LOG("(" + _name + " : line " + std::to_string(_lines[blockCursor].index) + ") " + std::string(error.what()), LogItem::Type::Warning);
 		_valid = false;
@@ -185,6 +185,8 @@ void Script::ExecuteFunction(const std::string& name, std::vector<std::shared_pt
 			_blockStack.pop();
 		}
 	}
+
+	return nullptr;
 }
 
 Script::Script(const std::string& name, std::vector<std::string> lines, ServiceManager* serviceManager)

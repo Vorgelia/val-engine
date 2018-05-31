@@ -1,6 +1,6 @@
 ﻿#include "CharacterCollisionResult.h"
 
-AttackCollisionHit::AttackCollisionHit(const AttackData& hitbox, const DefenceData& hurtbox)
+AttackCollisionHit::AttackCollisionHit(const CharacterHitData& hitbox, const CharacterHitData& hurtbox)
 	: hitbox(hitbox)
 	, hurtbox(hurtbox)
 {

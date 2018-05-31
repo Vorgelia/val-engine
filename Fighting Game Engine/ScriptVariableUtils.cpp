@@ -91,7 +91,21 @@ json ScriptVariableUtils::ToJson(std::shared_ptr<BaseScriptVariable> var)
 std::shared_ptr<BaseScriptVariable> ScriptVariableUtils::FromJson(const json& j)
 {
 	int varType = int(ScriptVariableType::Invalid);
-	JSON::TryGetMember(j, "type", varType);
+	if(!JSON::TryGetMember(j, "type", varType))
+	{
+		if(j.is_boolean())
+		{
+			varType = int(ScriptVariableType::Bool);
+		}
+		else if(j.is_number())
+		{
+			varType = int(ScriptVariableType::Dec);
+		}
+		else if(j.is_string())
+		{
+			varType = int(ScriptVariableType::String);
+		}
+	}
 
 	switch(ScriptVariableType(varType))
 	{

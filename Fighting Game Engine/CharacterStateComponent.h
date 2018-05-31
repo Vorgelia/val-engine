@@ -26,6 +26,7 @@ class CharacterStateComponent : public GameCharacterComponent
 	friend class GameCharacter;
 	friend class ScriptManager;
 	friend class CharacterRenderer;
+	friend class CharacterEventComponent;
 
 private:
 	InputManager* _input;
@@ -48,6 +49,7 @@ private:
 	std::unordered_map<std::string, std::unique_ptr<CharacterFrame>> _frameLookup;
 
 	std::unordered_map<CharacterStateFlagType, std::unordered_set<std::string>> _flags;
+	std::unordered_set<int> _usedHitboxSequenceIDs;
 
 	void EvaluateNextState();
 

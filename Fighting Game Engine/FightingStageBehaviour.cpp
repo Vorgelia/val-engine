@@ -122,18 +122,17 @@ void FightingStageBehaviour::LateGameUpdate()
 					character->eventComponent()->HandleTradeUnresolved(result.otherCharacter, result.attackHit.get(), result.attackReceived.get());
 					result.otherCharacter->eventComponent()->HandleTradeUnresolved(character, result.attackReceived.get(), result.attackHit.get());
 				}
-				else if(thisCharacterTradePriorityFlag)
+				else 
 				{
-					HandleAttackHit(character, result.otherCharacter, result.attackHit.get(), true);
-				}
-				else if(!otherCharacterTradePriorityFlag)
-				{
-					HandleAttackHit(result.otherCharacter, character, result.attackHit.get(), true);
-				}
-				else
-				{
-					HandleAttackHit(character, result.otherCharacter, result.attackHit.get());
-					HandleAttackHit(result.otherCharacter, character, result.attackReceived.get());
+					if(thisCharacterTradePriorityFlag)
+					{
+						HandleAttackHit(character, result.otherCharacter, result.attackHit.get(), !otherCharacterTradePriorityFlag);
+					}
+					
+					if(otherCharacterTradePriorityFlag)
+					{
+						HandleAttackHit(result.otherCharacter, character, result.attackHit.get(), !thisCharacterTradePriorityFlag);
+					}
 				}
 
 				tradeResolutionMap.insert_or_assign(result.otherCharacter, std::unordered_set<GameCharacter*>()).first->second.emplace(character);

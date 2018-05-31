@@ -84,7 +84,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="AttackData.cpp" />
+    <ClCompile Include="CharacterHitData.cpp" />
     <ClCompile Include="BaseScriptCollection.cpp" />
     <ClCompile Include="BaseService.cpp" />
     <ClCompile Include="BaseShader.cpp" />
@@ -95,7 +95,7 @@
     <ClCompile Include="CharacterCollisionResult.cpp" />
     <ClCompile Include="CharacterEventComponent.cpp" />
     <ClCompile Include="CharacterFrame.cpp" />
-    <ClCompile Include="CharacterHitData.cpp" />
+    <ClCompile Include="CharacterCollisionData.cpp" />
     <ClCompile Include="CharacterPhysicsComponent.cpp" />
     <ClCompile Include="CharacterRenderer.cpp" />
     <ClCompile Include="CharacterSprite.cpp" />
@@ -105,7 +105,6 @@
     <ClCompile Include="ComputeShaderEffect.cpp" />
     <ClCompile Include="ConnectionSocket.cpp" />
     <ClCompile Include="DebugLog.cpp" />
-    <ClCompile Include="DefenceData.cpp" />
     <ClCompile Include="Delegate.cpp" />
     <ClCompile Include="FightingGameManager.cpp" />
     <ClCompile Include="FightingStageBehaviour.cpp" />
@@ -132,6 +131,7 @@
     <ClCompile Include="LogItem.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Material.cpp" />
+    <ClCompile Include="Math.cpp" />
     <ClCompile Include="MenuBehaviour.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="NetworkEntity.cpp" />
@@ -179,7 +179,7 @@
     <ClCompile Include="Vec4Buffer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AttackData.h" />
+    <ClInclude Include="CharacterHitData.h" />
     <ClInclude Include="BaseScriptCollection.h" />
     <ClInclude Include="BaseService.h" />
     <ClInclude Include="BaseShader.h" />
@@ -190,7 +190,7 @@
     <ClInclude Include="CharacterCollisionResult.h" />
     <ClInclude Include="CharacterEventComponent.h" />
     <ClInclude Include="CharacterFrame.h" />
-    <ClInclude Include="CharacterHitData.h" />
+    <ClInclude Include="CharacterCollisionData.h" />
     <ClInclude Include="CharacterPhysicsComponent.h" />
     <ClInclude Include="CharacterRenderer.h" />
     <ClInclude Include="CharacterSprite.h" />
@@ -202,7 +202,6 @@
     <ClInclude Include="ComputeShaderEffect.h" />
     <ClInclude Include="ConnectionSocket.h" />
     <ClInclude Include="DebugLog.h" />
-    <ClInclude Include="DefenceData.h" />
     <ClInclude Include="Delegate.h" />
     <ClInclude Include="FGIncludes.hpp" />
     <ClInclude Include="FightingGameManager.h" />
@@ -236,6 +235,7 @@
     <ClInclude Include="JSON.h" />
     <ClInclude Include="LogItem.h" />
     <ClInclude Include="Material.h" />
+    <ClInclude Include="Math.h" />
     <ClInclude Include="MathIncludes.hpp" />
     <ClInclude Include="MenuBehaviour.h" />
     <ClInclude Include="Mesh.h" />
