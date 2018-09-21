@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include "JSON.h"
+#include "IReflectable.h"
 #include "ReflectionTraits.h"
 
 class IReflectable;
@@ -30,7 +31,7 @@ protected:
 public:
 	virtual void Deserialize(const json& j) override
 	{
-		if(std::is_base_of_v<IReflectable, ValueT>)
+		if constexpr(std::is_base_of_v<IReflectable, ValueT>)
 		{
 			reinterpret_cast<IReflectable*>(_data)->Deserialize(j);
 		}
@@ -97,21 +98,21 @@ public:
 		_data->clear();
 		for(auto iter = j.begin() ; iter != j.end() ; ++iter)
 		{
-			_data->emplace_back(JSON::Get<KeyT>(iter.key()), JSON::Get<ValueT>(iter.value()));
+			_data->emplace(JSON::Get<KeyT>(iter.key()), JSON::Get<ValueT>(iter.value()));
 		}
 	}
 	virtual json Serialize() override
 	{
-		json j = json::array();
+		json j = {};
 		for(auto& iter : *_data)
 		{
 			j.emplace(JSON::ToJson<KeyT>(iter.first), JSON::ToJson<ValueT>(iter.second));
 		}
-
+		
 		return j;
 	}
 
-	MapReflectionField(std::string name, std::map<KeyT, ValueT>* data)
+	MapReflectionField(std::string name, std::unordered_map<KeyT, ValueT>* data)
 		: BaseReflectionField(std::move(name), ReflectionFieldType::Map)
 		, _data(data)
 	{

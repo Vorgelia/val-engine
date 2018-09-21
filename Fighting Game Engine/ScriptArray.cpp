@@ -79,14 +79,10 @@ ScriptArray::ScriptArray(bool isConst)
 }
 
 ScriptArray::ScriptArray(const json& j)
+	: Super(j)
 {
-	json keyList;
-	if(!JSON::TryGetMember(j, "collection", keyList))
-	{
-		return;
-	}
-
-	for(const json& iter : keyList)
+	const json& containerJson = ScriptVariableUtils::JsonIsScriptVariableObject(j) ? j["ve_value"] : j;
+	for(const json& iter : containerJson)
 	{
 		_storage.push_back(ScriptVariableUtils::FromJson(iter));
 	}

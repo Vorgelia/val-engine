@@ -1,8 +1,6 @@
 #pragma once
 #include <vector>
 #include "CharacterCollisionData.h"
-#include "ScriptArray.h"
-#include "ScriptMap.h"
 #include <unordered_set>
 
 class CharacterHitData :

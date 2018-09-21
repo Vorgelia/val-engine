@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "CharacterHitData.h"
+#include "CollisionBox.h"
 #include <boost/optional/optional.hpp>
 
 class GameCharacter;

@@ -90,20 +90,35 @@ json ScriptVariableUtils::ToJson(std::shared_ptr<BaseScriptVariable> var)
 
 std::shared_ptr<BaseScriptVariable> ScriptVariableUtils::FromJson(const json& j)
 {
-	int varType = int(ScriptVariableType::Invalid);
-	if(!JSON::TryGetMember(j, "type", varType))
+	ScriptVariableType varType = ScriptVariableType::Invalid;
+
+	if(j.is_boolean())
 	{
-		if(j.is_boolean())
+		varType = ScriptVariableType::Bool;
+	}
+	else if(j.is_number())
+	{
+		varType = ScriptVariableType::Dec;
+	}
+	else if(j.is_string())
+	{
+		varType = ScriptVariableType::String;
+	}
+	else if(j.is_array())
+	{
+		varType = ScriptVariableType::Array;
+	}
+	else if(j.is_object())
+	{
+		if(JsonIsScriptVariableObject(j))
 		{
-			varType = int(ScriptVariableType::Bool);
+			int storedType = 0;
+			JSON::TryGetMember(j, "ve_type", storedType);
+			varType = ScriptVariableType{ storedType };
 		}
-		else if(j.is_number())
+		else
 		{
-			varType = int(ScriptVariableType::Dec);
-		}
-		else if(j.is_string())
-		{
-			varType = int(ScriptVariableType::String);
+			varType = ScriptVariableType::Map;
 		}
 	}
 
@@ -124,6 +139,11 @@ std::shared_ptr<BaseScriptVariable> ScriptVariableUtils::FromJson(const json& j)
 	case ScriptVariableType::Array:
 		return std::make_shared<ScriptArray>(j);
 	}
+}
+
+bool ScriptVariableUtils::JsonIsScriptVariableObject(const json & j)
+{
+	return j.is_object() && JSON::HasMember(j, "ve_type") && JSON::HasMember(j, "ve_initialized");
 }
 
 std::shared_ptr<BaseScriptVariable> ScriptVariableUtils::Operate(std::shared_ptr<BaseScriptVariable>& lhs, std::shared_ptr<BaseScriptVariable>& rhs, ScriptOperatorType operation)

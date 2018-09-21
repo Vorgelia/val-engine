@@ -1,7 +1,7 @@
 #include "ScriptMap.h"
 #include "ScriptError.h"
+#include "IReflectable.h"
 #include "ScriptVariableUtils.h"
-
 
 std::shared_ptr<ScriptMap::value_type> ScriptMap::AddMember(const std::shared_ptr<key_type>& key, const std::shared_ptr<value_type>& value)
 {
@@ -46,34 +46,19 @@ std::shared_ptr<BaseScriptVariable> ScriptMap::Clone() const
 	return std::make_shared<ScriptMap>(*this);
 }
 
-ScriptMap::ScriptMap(bool isConst) : Super(isConst)
+ScriptMap::ScriptMap(bool isConst) 
+	: Super(isConst)
 {
 
 }
 
 ScriptMap::ScriptMap(const json& j)
+	: Super(j)
 {
-	json keyList;
-	if(!JSON::TryGetMember(j, "collection", keyList))
+	const json& containerJson = ScriptVariableUtils::JsonIsScriptVariableObject(j) ? j["ve_value"] : j;
+	for(auto& iter = containerJson.begin(); iter != containerJson.end(); ++iter)
 	{
-		return;
-	}
-
-	for(const json& iter : keyList)
-	{
-		key_type::value_type key;
-		if(!JSON::TryGetMember(iter, "key", key))
-		{
-			continue;
-		}
-
-		json valueJson; 
-		if(!JSON::TryGetMember(iter, "value", valueJson))
-		{
-			continue;
-		}
-		
-		_storage.emplace(key, ScriptVariableUtils::FromJson(valueJson));
+		_storage.emplace(iter.key(), ScriptVariableUtils::FromJson(iter.value()));
 	}
 }
 

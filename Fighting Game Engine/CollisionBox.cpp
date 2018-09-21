@@ -62,3 +62,10 @@ CollisionBox::CollisionBox(const ve::vec2& center, const ve::vec2& extents, cons
 	, pivotOffset(pivotOffset)
 {
 }
+
+CollisionBox::CollisionBox(const json& j)
+{
+	JSON::TryGetMember(j, "center", center);
+	JSON::TryGetMember(j, "extents", extents);
+	JSON::TryGetMember(j, "pivotOffset", pivotOffset);
+}

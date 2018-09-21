@@ -154,11 +154,15 @@ void CharacterStateComponent::EvaluateNextState()
 	}
 }
 
-bool CharacterStateComponent::StartState(std::string name)
+bool CharacterStateComponent::StartState(const std::string& name)
 {
 	auto iter = _stateLookup.find(name);
 	if(iter != _stateLookup.end())
 	{
+		if(_currentState != nullptr && _currentState->script()->HasFunction("StateExit"))
+		{
+			_currentState->script()->ExecuteFunction("StateExit");
+		}
 		_currentState = iter->second.get();
 		_currentStateId = name;
 		_currentStateFrame = -1;
@@ -176,7 +180,7 @@ bool CharacterStateComponent::StartState(std::string name)
 	return false;
 }
 
-bool CharacterStateComponent::SetFrame(std::string name)
+bool CharacterStateComponent::SetFrame(const std::string& name)
 {
 	auto iter = _frameLookup.find(name);
 	if(iter != _frameLookup.end())
@@ -215,7 +219,7 @@ void CharacterStateComponent::Unfreeze()
 	_freezeFrameCount = 0;
 }
 
-bool CharacterStateComponent::AddFlag(CharacterStateFlagType type, std::string flag)
+bool CharacterStateComponent::AddFlag(CharacterStateFlagType type, const std::string& flag)
 {
 	auto iter = _flags.find(type);
 	if(iter == _flags.end())
@@ -226,7 +230,7 @@ bool CharacterStateComponent::AddFlag(CharacterStateFlagType type, std::string f
 	return iter->second.emplace(flag).second;
 }
 
-bool CharacterStateComponent::RemoveFlag(CharacterStateFlagType type, std::string flag)
+bool CharacterStateComponent::RemoveFlag(CharacterStateFlagType type, const std::string& flag)
 {
 	auto iter = _flags.find(type);
 	if(iter == _flags.end())

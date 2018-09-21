@@ -2,6 +2,7 @@
 #include "ScriptError.h"
 #include "ScriptOperator.h"
 #include "ScriptToken.h"
+#include "IReflectable.h"
 
 const std::unordered_map<std::string, ScriptVariableType> BaseScriptVariable::variableTypeLookup =
 {
@@ -43,9 +44,9 @@ json BaseScriptVariable::ToJSON() const
 {
 	return json
 	{
-		{ "type", int(type()) },
-		{ "const", _const },
-		{ "initialized", _initialized },
+		{ "ve_type", int(type()) },
+		{ "ve_const", _const },
+		{ "ve_initialized", _initialized },
 	};
 }
 
@@ -62,6 +63,12 @@ BaseScriptVariable::BaseScriptVariable(bool isConst)
 
 BaseScriptVariable::BaseScriptVariable(const json & j)
 {
-	JSON::TryGetMember(j, "const", _const);
-	JSON::TryGetMember(j, "initialized", _initialized);
+	JSON::TryGetMember(j, "ve_const", _const);
+	JSON::TryGetMember(j, "ve_initialized", _initialized);
+}
+
+BaseScriptVariable::BaseScriptVariable(const IReflectable& reflectable)
+	: BaseScriptVariable(reflectable.Serialize())
+{
+	
 }

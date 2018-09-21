@@ -53,8 +53,8 @@ private:
 
 	void EvaluateNextState();
 
-	bool StartState(std::string name);
-	bool SetFrame(std::string name);
+	bool StartState(const std::string& name);
+	bool SetFrame(const std::string& name);
 	bool ModifyCurrentStateFrame(int newFrame);
 	bool RestartState();
 	void MarkStateEnded();
@@ -62,8 +62,8 @@ private:
 	void Freeze(int duration);
 	void Unfreeze();
 
-	bool AddFlag(CharacterStateFlagType type, std::string flag);
-	bool RemoveFlag(CharacterStateFlagType type, std::string flag);
+	bool AddFlag(CharacterStateFlagType type, const std::string& flag);
+	bool RemoveFlag(CharacterStateFlagType type, const std::string& flag);
 	void ClearFlags();
 	const std::unordered_set<std::string>& GetFlags(CharacterStateFlagType type);
 

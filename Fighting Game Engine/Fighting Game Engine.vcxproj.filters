@@ -128,6 +128,9 @@
     <Filter Include="Val Engine\Engine\Utilities\Data\Reflection">
       <UniqueIdentifier>{0be87904-a54d-4800-99b4-d8e64af3caee}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Val Engine\Misc">
+      <UniqueIdentifier>{4cd4adc7-750a-4322-9f20-0ccb97aa13c1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameScene.cpp">
@@ -742,6 +745,9 @@
   <ItemGroup>
     <Natvis Include="FixedPoint64.natvis">
       <Filter>Val Engine\Engine\Utilities\Math</Filter>
+    </Natvis>
+    <Natvis Include="nljson.natvis">
+      <Filter>Val Engine\Misc</Filter>
     </Natvis>
   </ItemGroup>
 </Project>

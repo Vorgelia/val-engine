@@ -15,12 +15,28 @@ std::string ScriptDec::ToString() const
 template<>
 json ScriptDec::ToJSON() const
 {
-	//TODO: oh no
-	return json(_value.bits());
+	json parentJson = Super::ToJSON();
+	parentJson.emplace("ve_value", _value.bits());
+	return parentJson;
 }
 
 template<>
 ScriptDec::ScriptVariable(const json& j)
+	: Super(j)
 {
-	_value = value_type::FromRawBits(j.get<std::int64_t>());
+	if(!ScriptVariableUtils::JsonIsScriptVariableObject(j))
+	{
+
+		_value = JSON::Get<value_type>(j);
+		_initialized = true;
+	}
+	else
+	{
+		std::int64_t rawBits = 0;
+		if(JSON::TryGetMember(j, "ve_value", rawBits))
+		{
+			_value = value_type::FromRawBits(rawBits);
+			_initialized = true;
+		}
+	}
 }

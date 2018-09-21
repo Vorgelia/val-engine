@@ -1,6 +1,4 @@
 #include "JSON.h"
-#include "GameCharacterData.h"
-#include "IReflectable.h"
 
 template <>
 FixedPoint64 JSON::Get<FixedPoint64>(const json_t& j)
@@ -11,7 +9,8 @@ FixedPoint64 JSON::Get<FixedPoint64>(const json_t& j)
 	}
 
 	FixedPoint64 fp64 = FixedPoint64::FromString(j.dump());
-	FixedPoint64 fp64d = FixedPoint64(j.get<double>());
+
+	const FixedPoint64 fp64d{ j.get<double>() };
 	assert(FixedPoint64::Abs(fp64 - fp64d) < FixedPoint64(0.001));
 
 	return fp64;
@@ -32,19 +31,6 @@ template<>
 unsigned char JSON::Get(const json_t& j)
 {
 	return unsigned char(j.get<int>());
-}
-
-template <>
-CollisionBox JSON::Get<CollisionBox>(const json_t& j)
-{
-	ve::vec2 center;
-	JSON::TryGetMember(j, "center", center);
-	ve::vec2 extents;
-	JSON::TryGetMember(j, "extents", extents);
-	ve::vec2 pivotOffset;
-	JSON::TryGetMember(j, "pivotOffset", pivotOffset);
-
-	return CollisionBox(center, extents);
 }
 
 template <>
@@ -78,41 +64,36 @@ ve::vec4 JSON::Get<ve::vec4>(const json_t& j)
 }
 
 template <>
-glm::vec2 JSON::Get<glm::vec2>(const json_t& j)
+ve::ivec2 JSON::Get<ve::ivec2>(const json_t& j)
 {
-	return glm::vec2(
-		j["x"].get<glm::vec2::value_type>(),
-		j["y"].get<glm::vec2::value_type>()
+	return ve::ivec2(
+		j["x"].get<ve::ivec2::value_type>(),
+		j["y"].get<ve::ivec2::value_type>()
 	);
 }
 
 template <>
-glm::ivec2 JSON::Get<glm::ivec2>(const json_t& j)
+ve::ivec3 JSON::Get<ve::ivec3>(const json_t& j)
 {
-	return glm::ivec2(
-		j["x"].get<glm::ivec2::value_type>(),
-		j["y"].get<glm::ivec2::value_type>()
+	return ve::ivec3(
+		j["x"].get<ve::ivec4::value_type>(),
+		j["y"].get<ve::ivec4::value_type>(),
+		j["z"].get<ve::ivec4::value_type>()
 	);
 }
 
 template <>
-glm::vec4 JSON::Get<glm::vec4>(const json_t& j)
+ve::ivec4 JSON::Get<ve::ivec4>(const json_t& j)
 {
-	return glm::vec4(
-		j["x"].get<glm::vec4::value_type>(),
-		j["y"].get<glm::vec4::value_type>(),
-		j["z"].get<glm::vec4::value_type>(),
-		j["w"].get<glm::vec4::value_type>()
+	return ve::ivec4(
+		j["x"].get<ve::ivec4::value_type>(),
+		j["y"].get<ve::ivec4::value_type>(),
+		j["z"].get<ve::ivec4::value_type>(),
+		j["w"].get<ve::ivec4::value_type>()
 	);
 }
 
-template <>
-glm::ivec4 JSON::Get<glm::ivec4>(const json_t& j)
+bool JSON::HasMember(const json_t& j, const std::string& name)
 {
-	return glm::ivec4(
-		j["x"].get<glm::ivec4::value_type>(),
-		j["y"].get<glm::ivec4::value_type>(),
-		j["z"].get<glm::ivec4::value_type>(),
-		j["w"].get<glm::ivec4::value_type>()
-	);
+	return j.find(name) != j.end();
 }

@@ -1,6 +1,7 @@
 #pragma once
 #include "ValEngine.h"
 #include "MathIncludes.hpp"
+#include "JSON.h"
 
 
 struct CollisionBox
@@ -22,5 +23,6 @@ struct CollisionBox
 	static CollisionBox FromTopLeft(const ve::vec2& topLeft, const ve::vec2& size);
 
 	CollisionBox(const ve::vec2& center, const ve::vec2& extents, const ve::vec2& pivotOffset = ve::vec2(0,0));
+	CollisionBox(const json& j);
 	~CollisionBox() = default;
 };

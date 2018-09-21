@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include "JSON.h"
+#include "CollisionBox.h"
 
 struct CollisionBox;
 

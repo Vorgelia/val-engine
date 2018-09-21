@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+  <!-- support for nlohmann modern cpp json libary-->
+  <Type Name="nlohmann::basic_json&lt;*,*&gt;">
+    <!-- null -->
+    <DisplayString Condition="m_type == 0">Null</DisplayString>
+    <!-- Object -->
+    <DisplayString Condition="m_type == 1">Object</DisplayString>
+    <!-- Array -->
+    <DisplayString Condition="m_type == 2">Array</DisplayString>
+    <!-- String -->
+    <DisplayString Condition="m_type == 3">{*m_value.string}</DisplayString>
+    <!-- Boolean -->
+    <DisplayString Condition="m_type == 4">{m_value.boolean}</DisplayString>
+    <!-- Integer -->
+    <DisplayString Condition="m_type == 5">{m_value.number_integer}</DisplayString>
+    <!-- Unsigned -->
+    <DisplayString Condition="m_type == 6">{m_value.number_unsigned}</DisplayString>
+    <!-- Float -->
+    <DisplayString Condition="m_type == 7">{m_value.number_float}</DisplayString>
+    <!-- Discarded -->
+    <DisplayString Condition="m_type == 8">Discarded</DisplayString>
+    <!-- Uninitialised -->
+    <DisplayString Condition="m_type > 8">Uninitialised</DisplayString>
+    <!-- Display Objects and Arrays as children -->
+    <Expand>
+      <ExpandedItem Condition="m_type == 1">*(m_value.object)</ExpandedItem>
+      <ExpandedItem Condition="m_type == 2">*(m_value.array)</ExpandedItem>
+    </Expand>
+  </Type>
+
+  <!-- Object -->
+  <!-- VC 2013 -->
+  <Type Name="std::map&lt;*,nlohmann::basic_json&lt;*&gt;,*&gt;" Priority="MediumLow">
+      <DisplayString>{{ size={_Mysize} }}</DisplayString>
+      <Expand>
+          <TreeItems>
+              <Size>_Mysize</Size>
+              <HeadPointer>_Myhead-&gt;_Parent</HeadPointer>
+              <LeftPointer>_Left</LeftPointer>
+              <RightPointer>_Right</RightPointer>
+              <ValueNode Condition="_Isnil == 0">_Myval</ValueNode>
+          </TreeItems>
+      </Expand>
+  </Type>
+  <!-- VS 2015+ -->
+  <Type Name="std::map&lt;*,nlohmann::basic_json&lt;*&gt;,*&gt;">
+    <DisplayString>{{ size={_Mypair._Myval2._Myval2._Mysize} }}</DisplayString>
+    <Expand>
+      <TreeItems>
+        <Size>_Mypair._Myval2._Myval2._Mysize</Size>
+        <HeadPointer>_Mypair._Myval2._Myval2._Myhead-&gt;_Parent</HeadPointer>
+        <LeftPointer>_Left</LeftPointer>
+        <RightPointer>_Right</RightPointer>
+        <ValueNode Condition="_Isnil == 0" Name="{_Myval.first}">_Myval</ValueNode>
+      </TreeItems>
+    </Expand>
+  </Type>
+
+  <!-- Array -->
+  <!-- VC 2013 -->
+  <Type Name="std::vector&lt;*&gt;" Priority="MediumLow">
+      <DisplayString>{{ size={_Mylast - _Myfirst} }}</DisplayString>
+      <Expand>
+          <ArrayItems>
+              <Size>_Mylast - _Myfirst</Size>
+              <ValuePointer>_Myfirst</ValuePointer>
+          </ArrayItems>
+      </Expand>
+  </Type>
+  <!-- VS 2015+ -->
+  <Type Name="std::vector&lt;nlohmann::basic_json&lt;*&gt;,*&gt;">
+    <Intrinsic Name="size" Expression="_Mypair._Myval2._Mylast - _Mypair._Myval2._Myfirst" />
+    <DisplayString>{{ size={size()} }}</DisplayString>
+    <Expand>
+      <ArrayItems>
+        <Size>size()</Size>
+        <ValuePointer>_Mypair._Myval2._Myfirst</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+
+  <!-- Object key value pair -->
+  <Type Name="std::pair&lt;*,nlohmann::basic_json&lt;*&gt;&gt;">
+    <DisplayString>{second}</DisplayString>
+    <Expand>
+      <ExpandedItem>second</ExpandedItem>
+    </Expand>
+  </Type>
+</AutoVisualizer>

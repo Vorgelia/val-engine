@@ -6,6 +6,7 @@
 #include "ScriptError.h"
 
 enum class ScriptOperatorType;
+class IReflectable;
 
 enum class ScriptVariableType
 {
@@ -43,6 +44,7 @@ public:
 
 	BaseScriptVariable(bool isConst = false);
 	explicit BaseScriptVariable(const json& j);
+	explicit BaseScriptVariable(const IReflectable& reflectable);
 	virtual ~BaseScriptVariable() = default;
 };
 
@@ -64,7 +66,7 @@ template <ScriptVariableType VariableType>
 json BaseTypedScriptVariable<VariableType>::ToJSON() const
 {
 	json parentJson = BaseScriptVariable::ToJSON();
-	parentJson.emplace("type", int(variable_type));
+	parentJson.emplace("ve_type", int(variable_type));
 	return parentJson;
 }
 
@@ -73,7 +75,7 @@ BaseTypedScriptVariable<VariableType>::BaseTypedScriptVariable(const json& j)
 	: BaseScriptVariable(j)
 {
 	int variableType;
-	if(!JSON::TryGetMember(j, "type", variableType) || ScriptVariableType(variableType) != variable_type)
+	if(JSON::TryGetMember(j, "ve_type", variableType) && ScriptVariableType{ variableType } != variable_type)
 	{
 		throw ScriptError("Attempting to construct a variable with a JSON describing an invalid type.");
 	}

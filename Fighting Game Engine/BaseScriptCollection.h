@@ -16,6 +16,7 @@ public:
 	std::string ToString() const override { return "Collection"; }
 
 	BaseScriptCollection(bool isConst = false);
+	explicit BaseScriptCollection(const json& j);
 	virtual ~BaseScriptCollection() = default;
 };
 
@@ -24,4 +25,11 @@ BaseScriptCollection<KeyT, ValueT, VariableT>::BaseScriptCollection(bool isConst
 	: BaseTypedScriptVariable<VariableT>(isConst)
 {
 	_initialized = true;
+}
+
+template <typename KeyT, typename ValueT, ScriptVariableType VariableT>
+BaseScriptCollection<KeyT, ValueT, VariableT>::BaseScriptCollection(const json& j)
+	: BaseTypedScriptVariable<VariableT>(j)
+{
+	
 }

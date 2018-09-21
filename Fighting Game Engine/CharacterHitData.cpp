@@ -26,7 +26,9 @@ bool CharacterHitData::CanCollideWith(const CharacterHitData & other) const
 	return CanCollideWith_Impl(other) && other.CanCollideWith_Impl(*this);
 }
 
-CharacterHitData::CharacterHitData(const json& j) : CharacterCollisionData(j)
+CharacterHitData::CharacterHitData(const json& j) 
+	: CharacterCollisionData(j)
+	, _sequenceID(0)
 {
 	JSON::TryGetMember(j, "data", _data);
 	JSON::TryGetMember(j, "sequenceID", _sequenceID);

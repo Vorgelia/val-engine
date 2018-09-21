@@ -4,12 +4,14 @@
 #include "ValEngine.h"
 #include "BaseScriptVariable.h"
 #include "ScriptError.h"
+#include "ScriptVariableUtils.h"
 
 template<typename T, ScriptVariableType VariableType>
 class ScriptVariable : public BaseTypedScriptVariable<VariableType>
 {
 public:
 	typedef T value_type;
+	typedef BaseTypedScriptVariable<VariableType> Super;
 
 protected:
 	T _value;
@@ -48,7 +50,7 @@ template<typename T, ScriptVariableType VariableType>
 inline json ScriptVariable<T, VariableType>::ToJSON() const
 {
 	json parentJson = BaseTypedScriptVariable<VariableType>::ToJSON();
-	parentJson.emplace("value", _value);
+	parentJson.emplace("ve_value", _value);
 	return parentJson;
 }
 
@@ -73,7 +75,12 @@ template <typename T, ScriptVariableType VariableType>
 ScriptVariable<T, VariableType>::ScriptVariable(const json& j)
 	: BaseTypedScriptVariable<VariableType>(j)
 {
-	if(JSON::TryGetMember(j, "value", _value))
+	if(!ScriptVariableUtils::JsonIsScriptVariableObject(j))
+	{
+		_value = JSON::Get<value_type>(j);
+		_initialized = true;
+	}
+	else if(JSON::TryGetMember(j, "ve_value", _value))
 	{
 		_initialized = true;
 	}

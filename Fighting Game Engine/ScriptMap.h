@@ -6,6 +6,8 @@
 #include "ScriptVariable.h"
 #include "BaseScriptCollection.h"
 
+class IReflectable;
+
 class ScriptMap : public BaseScriptCollection<ScriptString, BaseScriptVariable, ScriptVariableType::Map>
 {
 private:
@@ -24,11 +26,8 @@ public:
 	json ToJSON() const override;
 	std::shared_ptr<BaseScriptVariable> Clone() const override;
 
-	template<typename ObjectT>
-	std::shared_ptr<ScriptMap> FromObject();
-
 	explicit ScriptMap(bool isConst = false);
-	ScriptMap(const json& j);
-	ScriptMap(const ScriptMap& map);
+	explicit ScriptMap(const json& j);
+	explicit ScriptMap(const ScriptMap& map);
 	~ScriptMap() = default;
 };
