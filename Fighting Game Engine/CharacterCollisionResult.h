@@ -1,15 +1,18 @@
 ﻿#pragma once
+#include "IReflectable.h"
 #include "CharacterHitData.h"
 #include "CollisionBox.h"
 #include <boost/optional/optional.hpp>
 
 class GameCharacter;
 
-struct AttackCollisionHit
+struct AttackCollisionHit : public IReflectable
 {
 public:
 	CharacterHitData hitbox;
 	CharacterHitData hurtbox;
+
+	virtual void RegisterReflectionFields() const override;
 
 	AttackCollisionHit(const CharacterHitData& hitbox, const CharacterHitData& hurtbox);
 };
@@ -32,7 +35,7 @@ enum class CharacterAttackResultFlags : unsigned char
 	AttacksTraded = 0b11
 };
 
-struct CharacterCollisionResult
+struct CharacterCollisionResult 
 {
 	GameCharacter* otherCharacter;
 

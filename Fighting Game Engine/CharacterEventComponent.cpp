@@ -5,6 +5,8 @@
 #include "CharacterState.h"
 #include "Script.h"
 #include "ScriptMap.h"
+#include "ServiceManager.h"
+#include "FightingGameManager.h"
 
 
 void CharacterEventComponent::Init()
@@ -19,18 +21,18 @@ void CharacterEventComponent::HandleAttackHit(GameCharacter* otherCharacter, con
 {
 	_owner->stateComponent()->_usedHitboxSequenceIDs.emplace(attackHit.hitbox.sequenceID());
 	_owner->stateComponent()->currentState()->script()->CallBoundFunction("HandleAttackHit"
-		, ScriptArgumentCollection{ 
-			std::make_shared<ScriptMap>(attackHit.hitbox.data()),
-			std::make_shared<ScriptMap>(attackHit.hurtbox.data())
+		, ScriptArgumentCollection
+		{
+			ScriptVariableUtils::FromReflectable(attackHit),
+			
 		});
 }
 
-std::vector<std::string> CharacterEventComponent::HandleAttackReceived(GameCharacter* otherCharacter, const AttackCollisionHit& collisionResult)
+std::vector<std::string> CharacterEventComponent::HandleAttackReceived(GameCharacter* otherCharacter, const AttackCollisionHit& attackReceived)
 {
 	_owner->stateComponent()->currentState()->script()->CallBoundFunction("HandleAttackReceived"
 		, ScriptArgumentCollection{
-			std::make_shared<ScriptMap>(collisionResult.hitbox.data()),
-			std::make_shared<ScriptMap>(collisionResult.hurtbox.data())
+			ScriptVariableUtils::FromReflectable(attackReceived),
 		});
 	return std::vector<std::string>();
 }

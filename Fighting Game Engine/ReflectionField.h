@@ -53,6 +53,29 @@ public:
 	}
 };
 
+class JsonReflectionField : public BaseReflectionField
+{
+protected:
+	json* const _data;
+
+public:
+	virtual void Deserialize(const JSON::json_t& j) override
+	{
+		*_data = j;
+	}
+
+	virtual json Serialize() override
+	{
+		return *_data;
+	}
+
+	JsonReflectionField(std::string name, json* data)
+		: BaseReflectionField(std::move(name), ReflectionFieldType::Json)
+		, _data(data)
+	{
+	}
+};
+
 template<typename ValueT>
 class ArrayReflectionField : public BaseReflectionField
 {

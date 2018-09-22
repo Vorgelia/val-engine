@@ -5,6 +5,7 @@
 #include "ScriptArray.h"
 #include "ScriptMap.h"
 #include <fmt/format.h>
+#include "IReflectable.h"
 
 namespace ScriptVariableUtils
 {
@@ -139,6 +140,11 @@ std::shared_ptr<BaseScriptVariable> ScriptVariableUtils::FromJson(const json& j)
 	case ScriptVariableType::Array:
 		return std::make_shared<ScriptArray>(j);
 	}
+}
+
+std::shared_ptr<BaseScriptVariable> ScriptVariableUtils::FromReflectable(const IReflectable& reflectable)
+{
+	return FromJson(reflectable.Serialize());
 }
 
 bool ScriptVariableUtils::JsonIsScriptVariableObject(const json & j)

@@ -5,11 +5,14 @@
 
 class BaseScriptVariable;
 enum class ScriptOperatorType;
+class IReflectable;
 
 namespace ScriptVariableUtils
 {
 	json ToJson(std::shared_ptr<BaseScriptVariable> var);
+
 	std::shared_ptr<BaseScriptVariable> FromJson(const json& j);
+	std::shared_ptr<BaseScriptVariable> FromReflectable(const IReflectable& reflectable);
 
 	template<typename T>
 	std::shared_ptr<T> Cast(const std::shared_ptr<BaseScriptVariable>& var);

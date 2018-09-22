@@ -19,6 +19,7 @@ enum class ReflectionFieldType
 	Ivec2 = 12,
 	Ivec3 = 13,
 	Ivec4 = 14,
+	Json = 15,
 };
 
 template<typename VariableT>

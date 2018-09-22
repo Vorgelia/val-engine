@@ -21,6 +21,11 @@ bool CharacterHitData::CanCollideWith_Impl(const CharacterHitData& other) const
 	return true;
 }
 
+void CharacterHitData::RegisterReflectionFields() const
+{
+	AddReflectionJsonField("data", _data);
+}
+
 bool CharacterHitData::CanCollideWith(const CharacterHitData & other) const
 {
 	return CanCollideWith_Impl(other) && other.CanCollideWith_Impl(*this);

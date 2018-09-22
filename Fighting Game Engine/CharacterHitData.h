@@ -2,9 +2,10 @@
 #include <vector>
 #include "CharacterCollisionData.h"
 #include <unordered_set>
+#include "IReflectable.h"
 
 class CharacterHitData :
-	public CharacterCollisionData
+	public CharacterCollisionData, public IReflectable
 {
 protected:
 	//hitstun, blockstun, chip damage, pushback
@@ -20,6 +21,8 @@ protected:
 	//mask for ignoring collision
 
 	bool CanCollideWith_Impl(const CharacterHitData& other) const;
+
+	virtual void RegisterReflectionFields() const override;
 
 public:
 	const json& data() const { return _data; }

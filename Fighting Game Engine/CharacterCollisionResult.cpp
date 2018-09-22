@@ -1,5 +1,11 @@
 ﻿#include "CharacterCollisionResult.h"
 
+void AttackCollisionHit::RegisterReflectionFields() const
+{
+	AddReflectionField(VE_REFLECTION_ARG(hitbox));
+	AddReflectionField(VE_REFLECTION_ARG(hurtbox));
+}
+
 AttackCollisionHit::AttackCollisionHit(const CharacterHitData& hitbox, const CharacterHitData& hurtbox)
 	: hitbox(hitbox)
 	, hurtbox(hurtbox)
