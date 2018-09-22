@@ -41,6 +41,22 @@ namespace JSON
 
 	template<typename ValueT>
 	json_t ToJson(const ValueT& value);
+
+	template<>
+	json_t ToJson(const FixedPoint64& value);
+
+	template<>
+	json_t ToJson(const ve::vec2& value);
+	template<>
+	json_t ToJson(const ve::vec3& value);
+	template<>
+	json_t ToJson(const ve::vec4& value);
+	template<>
+	json_t ToJson(const ve::ivec2& value);
+	template<>
+	json_t ToJson(const ve::ivec3& value);
+	template<>
+	json_t ToJson(const ve::ivec4& value);
 }
 
 using json = JSON::json_t;

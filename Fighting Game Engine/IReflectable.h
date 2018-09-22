@@ -8,7 +8,6 @@
 #include "ReflectionField.h"
 
 
-//TODO: Cleanup all of this with if constexpr
 class IReflectable
 {
 private:

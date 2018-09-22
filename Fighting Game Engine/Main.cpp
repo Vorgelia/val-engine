@@ -61,8 +61,6 @@ PlayerManager.cpp:      VE_MAX_PLAYERS
 #include "GLIncludes.hpp"
 #include "ServiceManager.h"
 #include "Screen.h"
-#include "IReflectable.h"
-#include "ScriptMap.h"
 
 int main()
 {

@@ -50,7 +50,7 @@ template<typename T, ScriptVariableType VariableType>
 inline json ScriptVariable<T, VariableType>::ToJSON() const
 {
 	json parentJson = BaseTypedScriptVariable<VariableType>::ToJSON();
-	parentJson.emplace("ve_value", _value);
+	parentJson.emplace("ve_value", JSON::ToJson(_value));
 	return parentJson;
 }
 
@@ -104,10 +104,5 @@ ScriptVariable<T, VariableType>::ScriptVariable(const ScriptVariable<T, Variable
 
 template<>
 std::string ScriptString::ToString() const;
-
 template<>
 std::string ScriptDec::ToString() const;
-template<>
-json ScriptDec::ToJSON() const;
-template<>
-ScriptDec::ScriptVariable(const json& j);
