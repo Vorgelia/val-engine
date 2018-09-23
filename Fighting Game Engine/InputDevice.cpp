@@ -7,7 +7,8 @@
 #include "InputEvent.h"
 #include "InputMotion.h"
 #include "InputMotionComponent.h"
-#include <GLM\glm.hpp>
+#include <GLM/glm.hpp>
+#include "InputDeviceId.h"
 
 //Default input leniency. We want the first input of every move to only count if it's the latest one by default.
 #define INPUT_BUFFER_INIT 1
@@ -25,7 +26,7 @@ const InputBuffer* InputDevice::inputBuffer() const
 	return _inputBuffer.get();
 }
 
-const int InputDevice::deviceID() const
+int InputDevice::deviceID() const
 {
 	return _deviceID;
 }
@@ -71,8 +72,7 @@ InputDevice::InputDevice(int deviceID, ServiceManager* serviceManager)
 }
 
 InputDevice::~InputDevice()
-{
-}
+= default;
 
 //Helper function for evaluating whether a specific input event is occuring.
 //Needed to abstract checking for buttons and axes to a single function with boolean output.
@@ -182,7 +182,7 @@ int InputDevice::InputMotionDistance(int currentIndex, InputMotionComponent moti
 	return -1;//-1 is used for invalid results.
 }
 
-bool InputDevice::InputMotionFrameCheck(const InputMotionComponent& motionComp, int index)
+bool InputDevice::InputMotionFrameCheck(const InputMotionComponent& motionComp, int index) const
 {
 	InputFrame& inputFrame = _inputBuffer->at(index);//Current checked frame
 	InputFrame& inputFramePrevious = _inputBuffer->at(index - 1);//Current checked frame -1, to check for button events
@@ -230,9 +230,9 @@ void InputDevice::UpdateJoyInputs()
 
 void InputDevice::PollInput()
 {
-	if(_cachedInputFrames.size() == 0 || _time->lastUpdateTime + VE_FRAME_TIME * _cachedInputFrames.size() < glfwGetTime())
+	if(_cachedInputFrames.empty() || _time->lastUpdateTime + VE_FRAME_TIME * _cachedInputFrames.size() < glfwGetTime())
 	{
-		_cachedInputFrames.push_back(InputFrame(0, 0));
+		_cachedInputFrames.emplace_back(0, 0);
 	}
 
 	if(_deviceID >= (int)InputDeviceId::JoystickFirst && !glfwJoystickPresent(_deviceID))

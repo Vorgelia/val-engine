@@ -7,7 +7,7 @@
 
 VE_BEHAVIOUR_REGISTER_TYPE(ScriptBehaviour);
 
-inline void ScriptBehaviour::RunScriptFunction(std::string name)
+inline void ScriptBehaviour::RunScriptFunction(const std::string& name) const
 {
 	if(_script != nullptr && _script->HasFunction(name))
 	{
@@ -20,7 +20,7 @@ void ScriptBehaviour::Init()
 	RunScriptFunction("Init");
 }
 
-void ScriptBehaviour::Update()
+void ScriptBehaviour::EngineUpdate()
 {
 	RunScriptFunction("Update");
 }
@@ -30,7 +30,7 @@ void ScriptBehaviour::GameUpdate()
 	RunScriptFunction("GameUpdate");
 }
 
-void ScriptBehaviour::LateUpdate()
+void ScriptBehaviour::LateEngineUpdate()
 {
 	RunScriptFunction("LateUpdate");
 }
@@ -72,5 +72,4 @@ ScriptBehaviour::ScriptBehaviour(Object* owner, ServiceManager* serviceManager, 
 
 
 ScriptBehaviour::~ScriptBehaviour()
-{
-}
+= default;

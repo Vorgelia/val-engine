@@ -5,7 +5,6 @@
 #include <memory>
 #include <queue>
 #include <mutex>
-#include <iostream>
 #include <fstream>
 #include <atomic>
 #include <thread>
@@ -42,7 +41,7 @@ public:
 
 	void Log(const std::string& data, std::string fileName, int fileLine, LogItem::Type type = LogItem::Type::Log);
 	void WriteThread();
-	void GetStackTrace(std::vector<std::string>* storage, unsigned int stackSize);
+	void GetStackTrace(std::vector<std::string>* storage, unsigned int stackSize) const;
 
 #pragma region Scripting Bindings
 	std::shared_ptr<BaseScriptVariable> Log(const Script* script, std::vector<std::shared_ptr<BaseScriptVariable>>&);

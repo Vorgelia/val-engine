@@ -1,69 +1,88 @@
 #pragma Bind Debug
 #pragma Bind Time
+#pragma Bind Array
+#pragma Bind Map
+#pragma Bind Math
 
 //This function runs every frame
-function GameUpdate() : int
-	int frameCount = time_frameCount()
+function GameUpdate() : void
 	
-	if((frameCount % 80) == 0)
-		ve_log("FrameCount: ",frameCount)
-	end
-	
-	return 0
+end
+
+function EpsilonEquals(dec lhs, dec rhs) : bool
+	return ve_math_abs(lhs - rhs) < 0.000005
 end
 
 //This function runs once when the script is loaded
-function Init() : int
+function Init() : void
+	ve_assert(ve_math_abs(-100) == 100, "math abs")
+	ve_assert(ve_math_floor(10.1252516) == 10, "math floor")
+	ve_assert(ve_math_ceil(10.000001) == 11, "math ceil")
+	ve_assert(ve_math_round(10.66666666666666) == 11, "math round")
+	
+	ve_assert(EpsilonEquals(ve_math_sin(0), 0), "math sin")
+	ve_assert(EpsilonEquals(ve_math_cos(0), 1), "math cos")
+	
+	ve_assert(EpsilonEquals(ve_math_pow(10, 2), 100), "math pow")
+	ve_assert(EpsilonEquals(ve_math_pow(100, 0.5), 10), "math pow < 1")
+	ve_assert(EpsilonEquals(ve_math_sqrt(100), 10), "math sqrt")
+	ve_assert(EpsilonEquals(ve_math_rsqrt(100), 1/10), "math rsqrt")
+	
+	map testCollection
+	ve_map_add(testCollection, "test", 333)
+	ve_assert(testCollection["test"] == 333, "map insert")
 	testCollection["test"] = 999
-	ve_log(testCollection["test"])
+	ve_assert(testCollection["test"] == 999, "map edit")
 
-	bool correctOperationOrder
-	int i=2*2+3
-	if(i==7)
-		correctOperationOrder = true
-	end
-	else
-		correctOperationOrder = false
-	end
+	array arrrrr
+	ve_array_push(arrrrr, 100.23492)
+	ve_assert(ve_array_size(arrrrr) == 1 && arrrrr[0] == 100.23492, "array insert")
+	ve_assert((arrrrr[0] = 2) == 2, "array edit")
+	ve_array_pop(arrrrr)
+	ve_assert(ve_array_size(arrrrr) == 0, "array pop")
 	
-	bool logicOperators = !(i!=7)
+	ve_assert((2*2+3) == 7, "operation order")
+	ve_assert(!(7 != 7) && (!(!true)), "logical operators")
 	
-	if(logicOperators && correctOperationOrder)
-		i = JustReturn666()
-	end
+	ve_assert(JustReturn666() == 666, "function return values")
 	
+	ve_assert((1.25+1.25+1.25+1.25) == 5, "chained addition precition")
+	
+	bool switchRangeSuccessful = false
+	bool switchFallthroughSuccessful = false
 	switch(4)
 		case (-5)->(5)
-		  ve_log("Wow, ",4," is between -5 and 5")
+		  switchRangeSuccessful = true
 		case 0->666
-		  ve_log("Whoops someone forgot a break statement")
+		  switchFallthroughSuccessful = true
 	end
 	
-	switch(4)
-		case 4
-		  ve_log("Wow, ",4," is also exactly 4")
+	ve_assert(switchRangeSuccessful, "ranged switch")
+	ve_assert(switchFallthroughSuccessful, "switch fallthrough")
+	
+	bool switchValueSuccessful = false
+	switch(4.23)
+		case 4.23
+		  switchValueSuccessful = true
 		  break
-		case (JustReturn666())
-		  ve_log("Oh no")
 	end
 	
-	ve_log(i=i/2)
+	ve_assert(switchFallthroughSuccessful, "exact switch case")
 	
-	int j=0
-	int k=0
+	dec k=0
 	while(k<5)
-		j = j+5
 		k = k+1
 		continue
 		j=666666
 	end
 	
-	ve_log(j)
-	ve_log("returning ",i/2)
+	ve_assert(k == 5, "control flow")
 	
-	return i/2
+	return
+	
+	ve_assert(false, "control flow part 2")
 end
 
-function JustReturn666():int
+function JustReturn666() : dec
 	return 666
 end

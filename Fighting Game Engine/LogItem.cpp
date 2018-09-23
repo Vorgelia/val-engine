@@ -1,11 +1,11 @@
 #include "LogItem.h"
 
-std::string LogItem::message()
+std::string LogItem::message() const
 {
 	return _message;
 }
 
-LogItem::Type LogItem::type()
+LogItem::Type LogItem::type() const
 {
 	return _type;
 }

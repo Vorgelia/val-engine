@@ -5,65 +5,81 @@
 
 layout (local_size_x = 1024) in;
 
-void main() 
-{		
-	uint index = gl_GlobalInvocationID.x;
-	
-	vec4 data = ve_commonVec4Data[index];
-	if(dot(data.zw,data.zw) < 0.01f)
-	{
-		data.zw = 
-			vec2(
-				ve_rand(index * ve_worldTime.y*100) * 2 - 1,
-				ve_rand(ve_worldTime.y*25.2+index)
-			)*300;
-	}
-	else
-	{
-		bool collision = false;
-		
-		if((data.y < 0 && data.w < 0)
-		 ||(data.y > ve_screen.y && data.w > 0))
-		{
-			data.w = -data.w;
-			collision = true;
-		}
-		
-		if((data.x < 0 && data.z < 0)
-		 ||(data.x > ve_screen.x && data.z > 0))
-		{
-			data.z = -data.z;
-			collision = true;
-		}
-		
-		if(collision)
-		{
-			data.zw *= 0.15 + ve_rand(sin(ve_worldTime.x+index));
-		}
-		
-		data.w -= 100.0f * VE_FRAME_TIME;
-	}
+uniform vec2 uvOffset;
 
-	data.xy += data.zw * VE_FRAME_TIME;
+void UpdateParticle(uint index)
+{
+	if(index > ve_commonVec4Data.length())
+		return;
+		
+	vec4 data = ve_commonVec4Data[index];
+	data.xy -= uvOffset*6.5;
 	
-	data += vec4(
-			 ve_rand(vec2(index, 0))
-			,ve_rand(vec2(index*2, 0))
-			,0
-			,0) 
-		*100 * VE_FRAME_TIME;
+	if(fract(ve_worldTime.x * 0.1f) < 0.5f)
+	{
+		if(dot(data.zw,data.zw) < 1.0f)
+		{
+			data.zw = 
+				vec2(
+					ve_rand(index * ve_worldTime.x*0.1) * 2 - 1,
+					ve_rand(ve_worldTime.x*25.2+index)
+				)*300;
+		}
+		else
+		{
+			bool collision = false;
+			
+			if((data.y < 0 && data.w < 0)
+			 ||(data.y > ve_screen.y && data.w > 0))
+			{
+				data.w = -data.w;
+				collision = true;
+			}
+			
+			if((data.x < 0 && data.z < 0)
+			 ||(data.x > ve_screen.x && data.z > 0))
+			{
+				data.z = -data.z;
+				collision = true;
+			}
+			
+			if(collision)
+			{
+				data.zw *= ve_rand(sin(ve_worldTime.x+index));
+			}
+			else if(data.y > 0)
+			{
+				data.w -= 100.0f * ve_worldTime.y;
+			}
+		}
+		
+		data.x = clamp(data.x, 0, ve_screen.x);
+		data.y = clamp(data.y, 0, ve_screen.y);
+		data.xy += data.zw * ve_worldTime.y;
+	}
 	
 	ve_commonVec4Data[index] = data;
 	
 	ivec2 pos = ivec2(data.xy);
 	
-	vec4 tex = vec4(1, 1, 1, 1);
-	for(int i = -1 ; i < 1; ++i)
-		for(int j = 0 ; j < 3; ++j)
+	vec4 tex = vec4(ve_rand(index), ve_rand(index + 1), ve_rand(index + 2), 1);
+	for(int i = -2 ; i < 2; ++i)
+		for(int j = 0 ; j < 5; ++j)
 		{
 			ivec2 mpos = pos + ivec2(i,j);
 			mpos.x = clamp(mpos.x, 0, 1920);
 			mpos.y = clamp(mpos.y, 0, 1080);
-			imageStore(mainBuf_tex0, pos+ivec2(i,j), tex);
+			imageStore(mainBuf_tex0, pos+ivec2(i,j), mix(tex,vec4(1,1,1,1), 0.3));
 		}
+}
+
+void main() 
+{		
+	uint index = gl_GlobalInvocationID.x;
+	
+	uint particlesPerInvocation = uint(ceil(ve_commonVec4Data.length()/gl_WorkGroupSize.x));
+	for(uint i=0;i<particlesPerInvocation;++i)
+	{
+		UpdateParticle(index*particlesPerInvocation + i);
+	}
 }

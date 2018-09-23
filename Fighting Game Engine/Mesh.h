@@ -20,9 +20,8 @@ private:
 public:
 	const std::string name;
 
-	GLuint elementAmount();
+	GLuint elementAmount() const;
 
-	Mesh(const std::string& name, CachedMesh* meshData);
+	Mesh(std::string name, CachedMesh* meshData);
 	~Mesh();
 };
-

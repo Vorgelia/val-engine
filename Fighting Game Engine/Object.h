@@ -2,7 +2,6 @@
 #include <string>
 #include <memory>
 #include <map>
-#include <GLM\glm.hpp>
 #include <functional>
 #include "JSON.h"
 #include "BehaviourFactory.h"
@@ -16,6 +15,7 @@ class Behaviour;
 class Object
 {
 	friend class GameScene;
+
 private:
 	std::string _name;
 	unsigned int _id;
@@ -29,6 +29,7 @@ private:
 
 public:
 	bool enabled;
+	int updatePriority;
 
 	std::string name() const;
 	int id() const;
@@ -45,17 +46,17 @@ public:
 	T* GetBehaviour(std::string name);
 
 	Object(const std::string& name, ServiceManager* serviceManager, int id = 0);
-	Object(const json& j, ServiceManager* serviceManager);
+	Object(const json& j, ServiceManager* serviceManager, int id = 0);
 	~Object() = default;
 };
 
 template<typename ... Types>
-Behaviour* Object::AddBehaviour(std::string behaviourName, Types ... args)
+Behaviour* Object::AddBehaviour(std::string name, Types ... args)
 {
 	Behaviour* behaviour = _behaviours.emplace(
 		std::make_pair(
-			behaviourName,
-			BehaviourFactory::Create(behaviourName, this, _serviceManager, args...))
+			name,
+			BehaviourFactory::Create(name, this, _serviceManager, args...))
 	).first->second.get();
 
 	if(behaviour->usingInit())
@@ -63,11 +64,11 @@ Behaviour* Object::AddBehaviour(std::string behaviourName, Types ... args)
 		behaviour->Init();
 	}
 
-	if(behaviourName == "Transform")
+	if(name == "Transform")
 	{
 		_transform = static_cast<Transform*>(behaviour);
 	}
-	else if(behaviourName == "Renderer")
+	else if(name == "Renderer")
 	{
 		_renderer = static_cast<Renderer*>(behaviour);
 	}
@@ -78,7 +79,7 @@ Behaviour* Object::AddBehaviour(std::string behaviourName, Types ... args)
 template<typename T>
 inline T* Object::GetBehaviour(std::string name)
 {
-	auto& iter = _behaviours.find(name);
+	auto iter = _behaviours.find(name);
 	if(iter == _behaviours.end())
 	{
 		return nullptr;

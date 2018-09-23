@@ -33,12 +33,12 @@ public:
 
 	std::string data;
 
-	NetworkMessageType type();
-	std::string Serialize();
+	NetworkMessageType type() const;
+	std::string Serialize() const;
 	void Append_Raw(std::string str);
 	bool Append(std::string str);
-	NetworkMessageState State();
-	int MissingDataSize();
+	NetworkMessageState State() const;
+	int MissingDataSize() const;
 
 	NetworkMessage(std::string dat);
 	NetworkMessage(NetworkMessageType type, std::string data = "");

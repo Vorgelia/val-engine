@@ -1,6 +1,3 @@
-#define VE_FRAME_RATE 60
-#define VE_FRAME_TIME (1.0/VE_FRAME_RATE)
-
 float ve_rand(float n)
 {
     return fract(sin(mod(dot(n ,12.9898),3.14))*43758.5453);

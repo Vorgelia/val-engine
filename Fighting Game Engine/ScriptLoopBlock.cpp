@@ -14,6 +14,9 @@ bool ScriptLoopBlock::HandleControlFlag()
 		_owner->ConsumeControlFlag();
 	case ScriptControlFlag::Return:
 		return true;
+	case ScriptControlFlag::None:
+	default:
+		break;
 	}
 	return false;
 }
@@ -24,5 +27,4 @@ ScriptLoopBlock::ScriptLoopBlock(std::vector<ScriptToken>& conditionTokens, Scri
 }
 
 ScriptLoopBlock::~ScriptLoopBlock()
-{
-}
+= default;

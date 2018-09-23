@@ -11,5 +11,4 @@ GraphicsBuffer::GraphicsBuffer()
 }
 
 GraphicsBuffer::~GraphicsBuffer()
-{
-}
+= default;

@@ -11,7 +11,7 @@ class InputMotion
 
 public:
 	InputMotion(const json& j);
-	InputMotion(const std::vector<InputMotionComponent>& components);
+	InputMotion(std::vector<InputMotionComponent> components);
 	~InputMotion();
 };
 

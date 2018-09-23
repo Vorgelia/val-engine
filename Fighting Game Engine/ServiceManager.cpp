@@ -12,7 +12,7 @@
 #include "FightingGameManager.h"
 #include "FilesystemManager.h"
 
-#define ve_named_service_getter(name, type)\
+#define VE_NAMED_SERVICE_GETTER(name, type)\
 	::##type* ServiceManager::name()\
 	{\
 		if(_s##type == nullptr)\
@@ -24,25 +24,25 @@
 		return static_cast<::##type*>(_s##type.get());\
 	}
 
-#define ve_service_getter(type) ve_named_service_getter(type, type)
+#define VE_SERVICE_GETTER(type) VE_NAMED_SERVICE_GETTER(type, type)
 
-ve_service_getter(Debug);
-ve_service_getter(GameSceneManager);
-ve_service_getter(ResourceManager);
-ve_service_getter(ScriptManager);
-ve_service_getter(Time);
-ve_service_getter(Screen);
-ve_service_getter(PlayerManager);
-ve_service_getter(FightingGameManager);
+VE_SERVICE_GETTER(Debug);
+VE_SERVICE_GETTER(GameSceneManager);
+VE_SERVICE_GETTER(ResourceManager);
+VE_SERVICE_GETTER(ScriptManager);
+VE_SERVICE_GETTER(Time);
+VE_SERVICE_GETTER(Screen);
+VE_SERVICE_GETTER(PlayerManager);
+VE_SERVICE_GETTER(FightingGameManager);
 
-ve_named_service_getter(Input, InputManager);
-ve_named_service_getter(Filesystem, FilesystemManager);
-ve_named_service_getter(Graphics, GraphicsGL);
-ve_named_service_getter(Rendering, RenderingGL);
+VE_NAMED_SERVICE_GETTER(Input, InputManager);
+VE_NAMED_SERVICE_GETTER(Filesystem, FilesystemManager);
+VE_NAMED_SERVICE_GETTER(Graphics, GraphicsGL);
+VE_NAMED_SERVICE_GETTER(Rendering, RenderingGL);
 
 void ServiceManager::InitializeServices()
 {
-	if(_activeServices.size() > 0)
+	if(!_activeServices.empty())
 	{
 		CleanupServices();
 	}
@@ -113,5 +113,4 @@ ServiceManager::ServiceManager()
 }
 
 ServiceManager::~ServiceManager()
-{
-}
+= default;

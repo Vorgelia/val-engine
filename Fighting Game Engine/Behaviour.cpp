@@ -1,5 +1,14 @@
 #include "Behaviour.h"
 
+void Behaviour::TryInit()
+{
+	if(!_initialized)
+	{
+		VE_BEHAVIOUR_FUNCTION_CALLER(Init)(this);
+		_initialized = true;
+	}
+}
+
 void Behaviour::Init()
 {
 
@@ -10,7 +19,7 @@ void Behaviour::OnSceneInit()
 
 }
 
-void Behaviour::Update()
+void Behaviour::EngineUpdate()
 {
 
 }
@@ -25,7 +34,7 @@ void Behaviour::LateGameUpdate()
 
 }
 
-void Behaviour::LateUpdate()
+void Behaviour::LateEngineUpdate()
 {
 
 }
@@ -61,15 +70,18 @@ Behaviour::Behaviour(Object* owner, ServiceManager* serviceManager, const json& 
 {
 	assert(owner != nullptr);
 	_owner = owner;
-
+	_initialized = false;
 	_serviceManager = serviceManager;
 	
 	JSON::TryGetMember<bool>(j, "enabled", enabled);
-
-	VE_BEHAVIOUR_FUNCTION_CALLER(Init)(this);
 }
 
 Behaviour::~Behaviour()
 {
 	VE_BEHAVIOUR_FUNCTION_CALLER(Cleanup)(this);
+}
+
+Object* Behaviour::object() const
+{
+	return _owner;
 }

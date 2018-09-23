@@ -2,8 +2,8 @@
 #include <vector>
 #include <functional>
 
-#define VE_DELEGATE_FUNC(type, name, argType) \
-	type::func_t([this](##argType arg){ name(##arg); })
+#define VE_DELEGATE_FUNC(type, name) \
+	type::func_t([this](auto ...args){ name(args...); })
 
 template<typename... argTypes>
 class Delegate
@@ -48,7 +48,7 @@ inline void Delegate<argTypes...>::operator-=(func_t& listener)
 {
 	for(auto& iter = _listeners.begin(); iter != _listeners.end(); ++iter)
 	{
-		if(iter->target<void(argTypes...)>() == listener.target<void(argTypes...)>())
+		if(iter->template target<void(argTypes...)>() == listener.template target<void(argTypes...)>())
 		{
 			_listeners.erase(iter);
 			break;

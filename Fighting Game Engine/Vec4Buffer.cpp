@@ -12,10 +12,8 @@ void Vec4Buffer::SetupData(int size, float value)
 }
 
 Vec4Buffer::Vec4Buffer()
-{
-}
+= default;
 
 
 Vec4Buffer::~Vec4Buffer()
-{
-}
+= default;

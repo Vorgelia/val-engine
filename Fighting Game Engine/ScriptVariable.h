@@ -1,64 +1,108 @@
 #pragma once
-#include <memory>
 #include <string>
+#include <cstdint>
+#include "ValEngine.h"
 #include "BaseScriptVariable.h"
+#include "ScriptError.h"
+#include "ScriptVariableUtils.h"
 
-template<typename T>
-class ScriptVariable :
-	public BaseScriptVariable
+template<typename T, ScriptVariableType VariableType>
+class ScriptVariable : public BaseTypedScriptVariable<VariableType>
 {
+public:
+	typedef T value_type;
+	typedef BaseTypedScriptVariable<VariableType> Super;
+
+protected:
 	T _value;
+
 public:
 	T value() const;
-	std::string ToString() override;
 
-	void assign(const ScriptVariable<T>& value);
+	std::string ToString() const override; 
+	json ToJSON() const override;
+	std::shared_ptr<BaseScriptVariable> Clone() const override;
+
+	void assign(const ScriptVariable<T, VariableType>& value);
+
+	ScriptVariable(const ScriptVariable<T, VariableType>& other);
+	explicit ScriptVariable(const json& j);
 	ScriptVariable(T value = T(), bool isConst = false);
 };
 
-typedef ScriptVariable<long> ScriptInt;
-typedef ScriptVariable<bool> ScriptBool;
-typedef ScriptVariable<std::string> ScriptString;
+typedef ScriptVariable<ve::dec_t, ScriptVariableType::Dec> ScriptDec;
+typedef ScriptVariable<bool, ScriptVariableType::Bool> ScriptBool;
+typedef ScriptVariable<std::string, ScriptVariableType::String> ScriptString;
 
-template<typename T>
-inline T ScriptVariable<T>::value() const
+template<typename T, ScriptVariableType VariableType>
+T ScriptVariable<T, VariableType>::value() const
 {
 	return _value;
 }
 
-template<typename T>
-std::string ScriptVariable<T>::ToString()
+template<typename T, ScriptVariableType VariableType>
+std::string ScriptVariable<T, VariableType>::ToString() const
 {
 	return std::to_string(_value);
 }
 
-template<typename T>
-inline void ScriptVariable<T>::assign(const ScriptVariable<T>& value)
+template<typename T, ScriptVariableType VariableType>
+inline json ScriptVariable<T, VariableType>::ToJSON() const
+{
+	json parentJson = BaseTypedScriptVariable<VariableType>::ToJSON();
+	parentJson.emplace("ve_value", JSON::ToJson(_value));
+	return parentJson;
+}
+
+template <typename T, ScriptVariableType VariableType>
+std::shared_ptr<BaseScriptVariable> ScriptVariable<T, VariableType>::Clone() const
+{
+	return std::make_shared<ScriptVariable<T, VariableType>>(*this);
+}
+
+template<typename T, ScriptVariableType VariableType>
+void ScriptVariable<T, VariableType>::assign(const ScriptVariable<T, VariableType>& value)
 {
 	if(_const)
 	{
 		throw ScriptError("Attempting to modify const variable.");
 	}
 	_value = value.value();
+	_initialized = true;
 }
 
-template<typename T>
-inline ScriptVariable<T>::ScriptVariable(T value, bool isConst)
+template <typename T, ScriptVariableType VariableType>
+ScriptVariable<T, VariableType>::ScriptVariable(const json& j)
+	: BaseTypedScriptVariable<VariableType>(j)
 {
-	_value = value;
+	if(!ScriptVariableUtils::JsonIsScriptVariableObject(j))
+	{
+		_value = JSON::Get<value_type>(j);
+		_initialized = true;
+	}
+	else if(JSON::TryGetMember(j, "ve_value", _value))
+	{
+		_initialized = true;
+	}
+}
+
+template<typename T, ScriptVariableType VariableType>
+ScriptVariable<T, VariableType>::ScriptVariable(T value, bool isConst)
+	: BaseTypedScriptVariable<VariableType>(isConst)
+	, _value(value)
+{
+	_initialized = true;
+}
+
+template <typename T, ScriptVariableType VariableType>
+ScriptVariable<T, VariableType>::ScriptVariable(const ScriptVariable<T, VariableType>& other)
+	: _value(other.value())
+{
+	_const = false;
 	_initialized = true;
 }
 
 template<>
-std::string ScriptInt::ToString();
+std::string ScriptString::ToString() const;
 template<>
-std::string ScriptBool::ToString();
-template<>
-std::string ScriptString::ToString();
-
-template<>
-ScriptInt::ScriptVariable(long value, bool isConst);
-template<>
-ScriptBool::ScriptVariable(bool value, bool isConst);
-template<>
-ScriptString::ScriptVariable(std::string value, bool isConst);
+std::string ScriptDec::ToString() const;

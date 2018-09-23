@@ -1,4 +1,5 @@
 #include "Font.h"
+#include <utility>
 #include "Texture.h"
 #include "DebugLog.h"
 
@@ -11,8 +12,8 @@ FontCharacter::FontCharacter(GLuint atlasIndex, glm::vec4 textureParams, glm::iv
 	this->atlasIndex = atlasIndex;
 }
 
-Font::Font(const std::string& name, unsigned int textSize, unsigned int atlasSize, unsigned int atlasPadding) :
-	name(name),
+Font::Font(std::string name, unsigned int textSize, unsigned int atlasSize, unsigned int atlasPadding) :
+	name(std::move(name)),
 	textSize(textSize),
 	atlasSize(atlasSize),
 	atlasPadding(atlasPadding)
@@ -20,12 +21,12 @@ Font::Font(const std::string& name, unsigned int textSize, unsigned int atlasSiz
 
 }
 
-const GLuint Font::height()
+const GLuint Font::height() const
 {
 	return _height;
 }
 
-const GLuint Font::topBearing()
+const GLuint Font::topBearing() const
 {
 	return _topBearing;
 }
@@ -37,7 +38,7 @@ Texture* Font::GetAtlas(int index)
 
 const FontCharacter* Font::GetCharacter(GLubyte ch)
 {
-	auto& iter = _characters.find(ch);
+	auto iter = _characters.find(ch);
 	if(iter == _characters.end())
 	{
 		return nullptr;

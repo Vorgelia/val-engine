@@ -19,12 +19,13 @@ private:
 
 private:
 	const GameCharacter* _character;
+	std::unique_ptr<Material> _renderingMaterialCopy;
 	std::unique_ptr<Transform> _renderingTransform;
 
 	glm::vec2 _pixelsToWorldUnits;
 
-	void HandleRenderingMaterial(const CharacterSprite* spriteData, Texture* texture, bool flipped);
-	void HandleRenderingTransform(const CharacterSprite* spriteData, Texture* texture);
+	void HandleRenderingMaterial(const CharacterSprite* spriteData, Texture* texture, bool flipped) const;
+	void HandleRenderingTransform(const CharacterSprite* spriteData, Texture* texture) const;
 
 public:
 	VE_BEHAVIOUR_NAME(CharacterRenderer);

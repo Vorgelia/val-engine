@@ -1,0 +1,6 @@
+#pragma Bind Debug
+#pragma Bind Time
+
+function SayHello() : void
+	ve_log("Hello")
+end

@@ -16,6 +16,19 @@ bool BaseShader::valid() const
 	return _id > 0;
 }
 
+GLint BaseShader::UniformLocation(const std::string& str) const
+{
+	auto iter = _uniformLocations.find(str);
+	if(iter != _uniformLocations.end())
+	{
+		return iter->second;
+	}
+
+	return _uniformLocations.insert(
+		std::make_pair(str
+			, glGetUniformLocation(_id, str.c_str())
+		)).first->second;
+}
 
 BaseShader::BaseShader(const std::string& name, GLuint id, ShaderProgramType type)
 {
@@ -25,5 +38,4 @@ BaseShader::BaseShader(const std::string& name, GLuint id, ShaderProgramType typ
 
 
 BaseShader::~BaseShader()
-{
-}
+= default;

@@ -1,7 +1,7 @@
 #include "MenuBehaviour.h"
+#include "Texture.h"
 #include "RenderingGL.h"
 #include "ResourceManager.h"
-#include "Texture.h"
 #include "Material.h"
 #include "ServiceManager.h"
 #include "Screen.h"
@@ -10,8 +10,6 @@
 #include "InputManager.h"
 #include "InputFrame.h"
 #include "InputDevice.h"
-#include "InputMotion.h"
-#include "InputMotionComponent.h"
 #include "CircularBuffer.h"
 #include "Camera.h"
 #include "BehaviourFactory.h"
@@ -33,7 +31,7 @@ void MenuBehaviour::OnRenderUI()
 	}
 }
 
-void MenuBehaviour::Update()
+void MenuBehaviour::EngineUpdate()
 {
 	if(glfwGetKey(_screen->window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 	{
@@ -43,7 +41,7 @@ void MenuBehaviour::Update()
 
 void MenuBehaviour::GameUpdate()
 {
-	_rendering->cameras.at(0).position += _input->GetInputDevice(-1)->inputBuffer()->back().ToVector() * 500.0f * (float)VE_FRAME_TIME;
+	_rendering->cameras.at(0).position += _input->GetInputDevice(-1)->inputBuffer()->back().ToVector() * 30.0f * float(VE_FRAME_TIME);
 }
 
 MenuBehaviour::MenuBehaviour(Object* owner, ServiceManager* serviceManager, const json& j) : Behaviour(owner, serviceManager, j)
@@ -58,5 +56,4 @@ MenuBehaviour::MenuBehaviour(Object* owner, ServiceManager* serviceManager, cons
 }
 
 MenuBehaviour::~MenuBehaviour()
-{
-}
+= default;

@@ -6,14 +6,14 @@
 
 GamePlayer* PlayerManager::AddPlayer(int id, int inputDeviceId)
 {
-	_players[id] = std::move(std::make_unique<GamePlayer>(id, inputDeviceId, _serviceManager));
+	_players[id] = std::make_unique<GamePlayer>(id, inputDeviceId, _serviceManager);
 	PlayerAdded(_players[id].get());
 	return _players[id].get();
 }
 
 GamePlayer* PlayerManager::AddNetworkPlayer(int id)
 {
-	_players[id] = std::move(std::make_unique<NetworkGamePlayer>(id, _serviceManager));
+	_players[id] = std::make_unique<NetworkGamePlayer>(id, _serviceManager);
 	PlayerAdded(_players[id].get());
 	return _players[id].get();
 }
@@ -64,5 +64,4 @@ PlayerManager::PlayerManager(ServiceManager* serviceManager) : BaseService(servi
 }
 
 PlayerManager::~PlayerManager()
-{
-}
+= default;

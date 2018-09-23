@@ -13,7 +13,7 @@ int CharacterState::priority() const
 	return _priority;
 }
 
-Script * CharacterState::script()
+Script * CharacterState::script() const
 {
 	return _script;
 }
@@ -29,8 +29,8 @@ const InputMotion& CharacterState::associatedMotion() const
 }
 
 CharacterState::CharacterState(const json& j, Script* script):
-	_associatedMotion(j["motion"]),
-	_script(script)
+	_script(script),
+	_associatedMotion(j["motion"])
 {
 	JSON::TryGetMember<std::string>(j, "name", _name);
 	JSON::TryGetMember<int>(j, "priority", _priority);
@@ -43,6 +43,4 @@ CharacterState::CharacterState(const json& j, Script* script):
 }
 
 CharacterState::~CharacterState()
-{
-
-}
+= default;

@@ -1,5 +1,6 @@
 #pragma once
 #include "GamePlayer.h"
+
 class NetworkGamePlayer :
 	public GamePlayer
 {

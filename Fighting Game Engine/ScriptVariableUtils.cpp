@@ -2,7 +2,11 @@
 #include "ScriptOperator.h"
 #include "ScriptError.h"
 #include "ScriptVariable.h"
-#include <fmt\format.h>
+#include "ScriptArray.h"
+#include "ScriptMap.h"
+#include <fmt/format.h>
+#include "IReflectable.h"
+
 namespace ScriptVariableUtils
 {
 	template<typename T>
@@ -64,6 +68,90 @@ namespace ScriptVariableUtils
 	std::shared_ptr<T> OperatorLogicalNot(const std::shared_ptr<T>& rhs);
 }
 
+json ScriptVariableUtils::ToJson(std::shared_ptr<BaseScriptVariable> var)
+{
+	switch(var->type())
+	{
+	case ScriptVariableType::Invalid:
+	case ScriptVariableType::Null:
+	default:
+		return json();
+	case ScriptVariableType::Bool:
+		return std::static_pointer_cast<ScriptBool>(var)->ToJSON();
+	case ScriptVariableType::Dec:
+		return std::static_pointer_cast<ScriptDec>(var)->ToJSON();
+	case ScriptVariableType::String:
+		return std::static_pointer_cast<ScriptString>(var)->ToJSON();
+	case ScriptVariableType::Map:
+		return std::static_pointer_cast<ScriptMap>(var)->ToJSON();
+	case ScriptVariableType::Array:
+		return std::static_pointer_cast<ScriptArray>(var)->ToJSON();
+	}
+}
+
+std::shared_ptr<BaseScriptVariable> ScriptVariableUtils::FromJson(const json& j)
+{
+	ScriptVariableType varType = ScriptVariableType::Invalid;
+
+	if(j.is_boolean())
+	{
+		varType = ScriptVariableType::Bool;
+	}
+	else if(j.is_number())
+	{
+		varType = ScriptVariableType::Dec;
+	}
+	else if(j.is_string())
+	{
+		varType = ScriptVariableType::String;
+	}
+	else if(j.is_array())
+	{
+		varType = ScriptVariableType::Array;
+	}
+	else if(j.is_object())
+	{
+		if(JsonIsScriptVariableObject(j))
+		{
+			int storedType = 0;
+			JSON::TryGetMember(j, "ve_type", storedType);
+			varType = ScriptVariableType{ storedType };
+		}
+		else
+		{
+			varType = ScriptVariableType::Map;
+		}
+	}
+
+	switch(ScriptVariableType(varType))
+	{
+	case ScriptVariableType::Invalid:
+	case ScriptVariableType::Null:
+	default:
+		return std::make_shared<BaseScriptVariable>(j);
+	case ScriptVariableType::Bool:
+		return std::make_shared<ScriptBool>(j);
+	case ScriptVariableType::Dec:
+		return std::make_shared<ScriptDec>(j);
+	case ScriptVariableType::String:
+		return std::make_shared<ScriptString>(j);
+	case ScriptVariableType::Map:
+		return std::make_shared<ScriptMap>(j);
+	case ScriptVariableType::Array:
+		return std::make_shared<ScriptArray>(j);
+	}
+}
+
+std::shared_ptr<BaseScriptVariable> ScriptVariableUtils::FromReflectable(const IReflectable& reflectable)
+{
+	return FromJson(reflectable.Serialize());
+}
+
+bool ScriptVariableUtils::JsonIsScriptVariableObject(const json & j)
+{
+	return j.is_object() && JSON::HasMember(j, "ve_type") && JSON::HasMember(j, "ve_initialized");
+}
+
 std::shared_ptr<BaseScriptVariable> ScriptVariableUtils::Operate(std::shared_ptr<BaseScriptVariable>& lhs, std::shared_ptr<BaseScriptVariable>& rhs, ScriptOperatorType operation)
 {
 	if(lhs == nullptr || rhs == nullptr)
@@ -85,18 +173,13 @@ std::shared_ptr<BaseScriptVariable> ScriptVariableUtils::Operate(std::shared_ptr
 	{
 	case ScriptVariableType::Bool:
 		return ApplyOperation<ScriptBool>(std::static_pointer_cast<ScriptBool>(lhs), std::static_pointer_cast<ScriptBool>(rhs), operation);
-		break;
-	case ScriptVariableType::Int:
-		return ApplyOperation<ScriptInt>(std::static_pointer_cast<ScriptInt>(lhs), std::static_pointer_cast<ScriptInt>(rhs), operation);
-		break;
+	case ScriptVariableType::Dec:
+		return ApplyOperation<ScriptDec>(std::static_pointer_cast<ScriptDec>(lhs), std::static_pointer_cast<ScriptDec>(rhs), operation);
 	case ScriptVariableType::String:
 		return ApplyOperation<ScriptString>(std::static_pointer_cast<ScriptString>(lhs), std::static_pointer_cast<ScriptString>(rhs), operation);
-		break;
 	default:
 		throw ScriptError("Operation on variable of undefined type");//add stuff
 	}
-
-	return rhs;
 }
 
 std::shared_ptr<BaseScriptVariable> ScriptVariableUtils::Operate(std::shared_ptr<BaseScriptVariable>& rhs, ScriptOperatorType operation)
@@ -115,12 +198,10 @@ std::shared_ptr<BaseScriptVariable> ScriptVariableUtils::Operate(std::shared_ptr
 	{
 	case ScriptVariableType::Bool:
 		return ApplyOperation<ScriptBool>(std::static_pointer_cast<ScriptBool>(rhs), operation);
-		break;
-	case ScriptVariableType::Int:
-		return ApplyOperation<ScriptInt>(std::static_pointer_cast<ScriptInt>(rhs), operation);
+	case ScriptVariableType::Dec:
+		return ApplyOperation<ScriptDec>(std::static_pointer_cast<ScriptDec>(rhs), operation);
 	case ScriptVariableType::String:
 		return ApplyOperation<ScriptString>(std::static_pointer_cast<ScriptString>(rhs), operation);
-		break;
 	default:
 		throw ScriptError("Operation on variable of undefined type");//add stuff
 	}
@@ -328,13 +409,13 @@ std::shared_ptr<ScriptBool> ScriptVariableUtils::OperatorSmallerEquals(const std
 template<typename T>
 std::shared_ptr<T> ScriptVariableUtils::OperatorLogicalAnd(const std::shared_ptr<T>& lhs, const std::shared_ptr<T>& rhs)
 {
-	return std::make_shared<T>(lhs->value() && rhs->value());
+	return std::make_shared<T>(T::value_type(bool(lhs->value()) && bool(rhs->value())));
 }
 
 template<typename T>
 std::shared_ptr<T> ScriptVariableUtils::OperatorLogicalOr(const std::shared_ptr<T>& lhs, const std::shared_ptr<T>& rhs)
 {
-	return std::make_shared<T>(lhs->value() || rhs->value());
+	return std::make_shared<T>(T::value_type(bool(lhs->value()) || bool(rhs->value())));
 }
 
 template<typename T>
@@ -364,7 +445,7 @@ std::shared_ptr<T> ScriptVariableUtils::OperatorSubtract(const std::shared_ptr<T
 template<typename T>
 std::shared_ptr<T> ScriptVariableUtils::OperatorLogicalNot(const std::shared_ptr<T>& rhs)
 {
-	return std::make_shared<T>(!rhs->value());
+	return std::make_shared<T>(T::value_type(!bool(rhs->value())));
 }
 
 template<typename T>

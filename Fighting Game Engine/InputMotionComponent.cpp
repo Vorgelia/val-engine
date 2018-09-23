@@ -1,5 +1,5 @@
 #include "InputMotionComponent.h"
-#include <GLM\glm.hpp>
+#include <GLM/glm.hpp>
 
 InputMotionComponent::InputMotionComponent(std::vector<InputButtonEvent>& buttons, unsigned char direction, int minDuration, int leniency, bool strict)
 {
@@ -14,11 +14,10 @@ InputMotionComponent::InputMotionComponent(const json& j)
 {
 	for(auto& iter : j["buttons"])
 	{
-		buttons.push_back(
-		std::make_pair(
+		buttons.emplace_back(
 			JSON::Get<unsigned char>(iter["button"]),
 			(InputTypeMask)JSON::Get<unsigned char>(iter["type"])
-		));
+		);
 	}
 
 	direction = JSON::Get<unsigned char>(j["direction"]);

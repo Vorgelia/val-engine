@@ -2,7 +2,7 @@
 
 
 
-const glm::ivec3 & ComputeShader::ComputeGroupSize()
+const glm::ivec3 & ComputeShader::ComputeGroupSize() const
 {
 	return _computeGroupSize;
 }
@@ -14,5 +14,4 @@ ComputeShader::ComputeShader(const std::string& name, GLuint id)
 
 
 ComputeShader::~ComputeShader()
-{
-}
+= default;

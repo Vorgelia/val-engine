@@ -20,22 +20,22 @@ bool Script::valid() const
 	return _valid;
 }
 
-ScriptControlFlag Script::controlFlag()
+ScriptControlFlag Script::controlFlag() const
 {
 	return _controlFlag;
 }
 
-bool Script::HasFunction(std::string name)
+bool Script::HasFunction(const std::string& name) const
 {
 	return _parentBlock != nullptr && _parentBlock->HasFunction(name);
 }
 
-void Script::BindFunction(std::string name, std::function<std::shared_ptr<BaseScriptVariable>(const Script*, ScriptArgumentCollection&)> func)
+void Script::BindFunction(const std::string& name, std::function<std::shared_ptr<BaseScriptVariable>(const Script*, ScriptArgumentCollection&)> func)
 {
-	_boundFunctions[name] = func;
+	_boundFunctions.insert_or_assign(name, func);
 }
 
-std::shared_ptr<BaseScriptVariable> Script::CallBoundFunction(std::string name, std::vector<std::shared_ptr<BaseScriptVariable>> &variables)
+std::shared_ptr<BaseScriptVariable> Script::CallBoundFunction(const std::string& name, std::vector<std::shared_ptr<BaseScriptVariable>> &variables)
 {
 	auto iter = _boundFunctions.find(name);
 	if(iter == _boundFunctions.end() || iter->second == nullptr)
@@ -45,7 +45,7 @@ std::shared_ptr<BaseScriptVariable> Script::CallBoundFunction(std::string name, 
 	return iter->second(this, variables);
 }
 
-std::vector<std::string> Script::GetPragmaDirectives(std::string id)
+std::vector<std::string> Script::GetPragmaDirectives(const std::string& id)
 {
 	const auto& iter = _pragmaDirectives.find(id);
 	if(iter != _pragmaDirectives.end())
@@ -61,11 +61,16 @@ std::shared_ptr<BaseScriptVariable> Script::GetVariable(const std::string& name)
 	{
 		return _parentBlock->GetVariable(name);
 	}
-	catch(ScriptError error)
+	catch(ScriptError& error)
 	{
-		_debug->VE_LOG("Could not find variable " + name + " in script " + _name + ".", LogItem::Type::Warning);
+		_debug->VE_LOG("Could not find variable " + name + " in script " + _name + ".\n" + error.what(), LogItem::Type::Warning);
 		return nullptr;
 	}
+}
+
+void Script::AddVariable(const std::string& name, std::shared_ptr<BaseScriptVariable> variable, bool allowReplace)
+{
+	_parentBlock->AddVariable(name, variable, allowReplace);
 }
 
 void Script::PreProcess()
@@ -79,9 +84,9 @@ void Script::PreProcess()
 		std::vector<ScriptToken> tokens;
 		ScriptParsingUtils::ParseLineTokens(line, tokens);
 
-		if(indentation >= 0 && tokens.size() > 0 && tokens[0].type != ScriptTokenType::Preprocessor)
+		if(indentation >= 0 && !tokens.empty() && tokens[0].type != ScriptTokenType::Preprocessor)
 		{
-			_lines.push_back(ScriptLine(line, i, indentation, tokens));
+			_lines.emplace_back(ScriptLine(line, i, indentation, tokens));
 		}
 
 		if(indentation != 0 || tokens.size() < 3 || tokens[0].type != ScriptTokenType::Preprocessor || tokens[1].token != ScriptToken::preprocessor_pragma)
@@ -139,7 +144,7 @@ void Script::Init()
 	{
 		_parentBlock = std::make_shared<ScriptParentBlock>(ScriptLinesView(&_lines), 0, this);
 	}
-	catch(ScriptError error)
+	catch(ScriptError& error)
 	{
 		_debug->VE_LOG("(Preprocessing " + _name + ") " + std::string(error.what()), LogItem::Type::Warning);
 		_valid = false;
@@ -151,22 +156,22 @@ void Script::Execute()
 	ExecuteFunction("Main", std::vector<std::shared_ptr<BaseScriptVariable>>());
 }
 
-void Script::ExecuteFunction(std::string name, std::vector<std::shared_ptr<BaseScriptVariable>> &variables)
+std::shared_ptr<BaseScriptVariable> Script::ExecuteFunction(const std::string& name, std::vector<std::shared_ptr<BaseScriptVariable>> &variables)
 {
-	size_t blockStackSize = _blockStack.size();
+	const size_t blockStackSize = _blockStack.size();
 
 	try
 	{
-		_parentBlock->RunFunction(name, variables);
+		return _parentBlock->RunFunction(name, variables);
 	}
-	catch(ScriptError error)
+	catch(ScriptError& error)
 	{
-		int blockCursor = _blockStack.empty() ? _parentBlock->cursor() : _blockStack.top()->cursor();
+		const int blockCursor = _blockStack.empty() ? _parentBlock->cursor() : _blockStack.top()->cursor();
 
 		_debug->VE_LOG("(" + _name + " : line " + std::to_string(_lines[blockCursor].index) + ") " + std::string(error.what()), LogItem::Type::Warning);
 		_valid = false;
 	}
-	catch(std::exception error)
+	catch(std::exception& error)
 	{
 		_debug->VE_LOG("Unhandled exception on script[" + _name + "]:\n" + std::string(error.what()), LogItem::Type::Error);
 		_valid = false;
@@ -180,9 +185,11 @@ void Script::ExecuteFunction(std::string name, std::vector<std::shared_ptr<BaseS
 			_blockStack.pop();
 		}
 	}
+
+	return nullptr;
 }
 
-Script::Script(std::string name, std::vector<std::string> lines, ServiceManager* serviceManager)
+Script::Script(const std::string& name, std::vector<std::string> lines, ServiceManager* serviceManager)
 {
 	_serviceManager = serviceManager;
 	_debug = serviceManager->Debug();
@@ -196,5 +203,4 @@ Script::Script(std::string name, std::vector<std::string> lines, ServiceManager*
 }
 
 Script::~Script()
-{
-}
+= default;

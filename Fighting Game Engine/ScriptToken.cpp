@@ -21,8 +21,9 @@ const std::string ScriptToken::value_null = "null";
 const std::string ScriptToken::value_true = "true";
 const std::string ScriptToken::value_false = "false";
 
-const std::string ScriptToken::type_int = "int";
+const std::string ScriptToken::type_dec = "dec";
 const std::string ScriptToken::type_bool = "bool";
 const std::string ScriptToken::type_string = "string";
-const std::string ScriptToken::type_collection = "collection";
+const std::string ScriptToken::type_map = "map";
+const std::string ScriptToken::type_array = "array";
 const std::string ScriptToken::type_void = "void";

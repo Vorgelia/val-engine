@@ -4,7 +4,7 @@
         "priority":0,
         "script":"Characters/Fritz/Scripts/FRITZ_IDLE.vscript",
         "flags":[
-            "VE_GROUNDED"
+			"VE_GROUNDED"
         ],
         "motion":[
             {

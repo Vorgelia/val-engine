@@ -4,7 +4,7 @@
 
 int ConnectionSocket::GetLastSocketError()
 {
-	int err = WSAGetLastError();
+	const int err = WSAGetLastError();
 	//We're using sockets in non-blocking mode, so if a function like recv is called without something to receive it'll have an error of WSAEWOULDBLOCK
 	//Naturally, we don't want that to be treated as an actual error reported to the user.
 	if(err > 0 && err != WSAEWOULDBLOCK)
@@ -33,7 +33,7 @@ void ConnectionSocket::FlushSendQueue()
 }
 
 //Lower level Send Data, used when we need to bypass the behaviours in SendData, like putting messages that failed to send in the sendQueue.
-bool ConnectionSocket::_SendData(std::string data)
+bool ConnectionSocket::_SendData(std::string data) const
 {
 	if(send(sock, data.c_str(), data.length(), 0) != data.length())
 	{
@@ -201,7 +201,7 @@ bool ConnectionSocket::Initialize()
 	}
 }
 
-int ConnectionSocket::port()
+int ConnectionSocket::port() const
 {
 	return ntohs(saddr.sin_port);
 }

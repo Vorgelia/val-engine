@@ -1,13 +1,12 @@
 #pragma once
 #include "BaseService.h"
 #include "JSON.h"
-#include <boost\filesystem.hpp>
+#include <boost/filesystem.hpp>
 #include <string>
 #include <unordered_map>
 #include <vector>
 #include <memory>
 #include <functional>
-#include <iostream>
 
 namespace FS = boost::filesystem;
 
@@ -34,26 +33,21 @@ private:
 	ResourceManager* _resource;
 
 public:
-	std::string LoadTextResource(int id, const std::string& type = "TEXT");
-	std::vector<unsigned char> LoadBinaryResource(int id, const std::string& type);
+	std::string LoadTextResource(int id, const std::string& type = "TEXT") const;
+	std::vector<unsigned char> LoadBinaryResource(int id, const std::string& type) const;
 
-	std::string ReturnFile(const FS::path& dir);
-	std::vector<std::string> ReturnFileLines(const FS::path& dir, bool removeWhitespace);
+	std::string ReturnFile(const FS::path& dir) const;
+	std::vector<std::string> ReturnFileLines(const FS::path& dir, bool removeWhitespace = false) const;
 
-	void ApplyFunctionToFiles(const FS::path& dir, std::function<void(const FS::path&)> func);
+	template<typename ResourceT>
+	std::unique_ptr<ResourceT> LoadFileResource(const FS::path& path);
 
-	json LoadJsonResource(FS::path path);
+	void LoadTextureData(const FS::path & path, std::vector<unsigned char>& out_pixels, glm::ivec2& out_size) const;
+	void LoadControlSettings(const FS::path& path, std::unordered_map<InputDirection, InputEvent>& dir, std::unordered_map<InputButton, InputEvent>& bt) const;
 
-	std::unique_ptr<Object> LoadObject(const FS::path& path);
-	std::unique_ptr<CachedMesh> LoadMeshVM(const FS::path& path);
-	std::unique_ptr<Material> LoadMaterial(const FS::path& path);
-	std::unique_ptr<PostEffect> LoadPostEffect(const FS::path& path);
+	void ApplyFunctionToFiles(const FS::path& dir, std::function<void(const FS::path&)> func) const;
 
-	void LoadTextureData(const FS::path & path, std::vector<unsigned char>& out_pixels, glm::ivec2& out_size);
-	void LoadControlSettings(const FS::path& path, std::unordered_map<InputDirection, InputEvent>& dir, std::unordered_map<InputButton, InputEvent>& bt);
-	void LoadObjects(const FS::path& path, std::vector<std::unique_ptr<Object>>& objects);
-
-	bool SaveFile(const FS::path& dir, std::string& content, int flags = std::ios::out | std::ios::trunc);
+	bool SaveFile(const FS::path& dir, std::string& content, int flags = std::ios::out | std::ios::trunc) const;
 
 	void Init() override;
 	void Update() override;
@@ -62,3 +56,22 @@ public:
 	FilesystemManager(ServiceManager* serviceManager);
 	~FilesystemManager() = default;
 };
+
+template<>
+std::unique_ptr<json> FilesystemManager::LoadFileResource(const FS::path& path);
+template<>
+std::unique_ptr<CachedMesh> FilesystemManager::LoadFileResource(const FS::path& path);
+template<>
+std::unique_ptr<Material> FilesystemManager::LoadFileResource(const FS::path& path);
+template<>
+std::unique_ptr<PostEffect>	FilesystemManager::LoadFileResource(const FS::path& path);
+
+template<typename ResourceT>
+inline std::unique_ptr<ResourceT> FilesystemManager::LoadFileResource(const FS::path & path)
+{
+	if(!FS::exists(path))
+	{
+		return std::unique_ptr<ResourceT>(nullptr);
+	}
+	return std::make_unique<ResourceT>(ReturnFile(path));
+}

@@ -1,46 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
-    <Filter Include="Resource Files\Fonts">
-      <UniqueIdentifier>{a5dc5a84-6179-46bd-bc9e-c5cbdac91f76}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Resource Files\Materials">
-      <UniqueIdentifier>{80c6740c-692d-4d02-84da-6b413cc3ef7e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Resource Files\Materials\Base">
-      <UniqueIdentifier>{ff96a66e-a6bf-4273-9775-54da6a786253}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Resource Files\Meshes">
-      <UniqueIdentifier>{7089c340-7730-478f-9734-5cd48eb83b8c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Resource Files\Meshes\Base">
-      <UniqueIdentifier>{cf1c1028-4269-4df3-8b35-ff0163e863ec}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Resource Files\PostEffects">
-      <UniqueIdentifier>{1b94fd97-217c-4fdc-b254-1ed40274f379}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Resource Files\Settings">
-      <UniqueIdentifier>{aee7876e-ea2d-4c2e-a033-e062568aceda}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Resource Files\Settings\Input">
-      <UniqueIdentifier>{1bb3ad5b-5759-4f96-9ceb-2db3ce72c65e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Resource Files\Materials\Intro">
-      <UniqueIdentifier>{7d3ca6a1-d9af-4326-9fb0-c7e73ca91d7b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Resource Files\Shaders">
-      <UniqueIdentifier>{c52735ba-4dad-4c2b-a79b-47f36050f8c7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Resource Files\Textures">
-      <UniqueIdentifier>{bbc25830-7f45-45a9-a275-81a7f36431d1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Resource Files\Textures\Intro">
-      <UniqueIdentifier>{cce49813-dc4b-40c6-af73-21484adb3cd7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Val Engine">
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
@@ -138,17 +98,11 @@
     <Filter Include="Val Engine\Game\Characters\Frame">
       <UniqueIdentifier>{615b4344-ec17-4486-9a90-d76d50e310d4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Val Engine\Game\Behaviours">
-      <UniqueIdentifier>{d9d2eee2-a311-4516-bde6-88c61acca0c6}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Val Engine\Game\Services">
       <UniqueIdentifier>{6490bb19-f282-4a97-9f02-c55c6f72f33d}</UniqueIdentifier>
     </Filter>
     <Filter Include="Val Engine\Game\Data">
       <UniqueIdentifier>{39769fba-2aff-4488-9c3d-c855a283bde9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Val Engine\Game\Data\Game">
-      <UniqueIdentifier>{f9a8a99f-e95f-41c2-8460-80b42addd5e9}</UniqueIdentifier>
     </Filter>
     <Filter Include="Val Engine\Engine\Data\Rendering\Native">
       <UniqueIdentifier>{05dbbc0b-57e1-4759-a8cd-a52e63d7f376}</UniqueIdentifier>
@@ -158,6 +112,24 @@
     </Filter>
     <Filter Include="Val Engine\Engine\Data\Rendering\Native\Shaders">
       <UniqueIdentifier>{beb03040-8953-40ae-9594-74d3a69b23f9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Val Engine\Engine\Utilities\Data\Containers">
+      <UniqueIdentifier>{d204695e-b0c4-46da-90d8-da35c8a827b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Val Engine\Game\Characters\Components">
+      <UniqueIdentifier>{69db688c-aa3d-4238-ab4a-ecb0e126d791}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Val Engine\Game\Characters\Behaviours">
+      <UniqueIdentifier>{b16cfb7b-dad4-44b3-8c6d-c848776ff547}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Val Engine\Game\Characters\Behaviours\Scenes">
+      <UniqueIdentifier>{d9d2eee2-a311-4516-bde6-88c61acca0c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Val Engine\Engine\Utilities\Data\Reflection">
+      <UniqueIdentifier>{0be87904-a54d-4800-99b4-d8e64af3caee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Val Engine\Misc">
+      <UniqueIdentifier>{4cd4adc7-750a-4322-9f20-0ccb97aa13c1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -173,32 +145,14 @@
     <ClCompile Include="Main.cpp">
       <Filter>Val Engine</Filter>
     </ClCompile>
-    <ClCompile Include="CharacterRenderer.cpp">
-      <Filter>Val Engine\Game\Behaviours</Filter>
-    </ClCompile>
-    <ClCompile Include="GameCharacter.cpp">
-      <Filter>Val Engine\Game\Behaviours</Filter>
-    </ClCompile>
     <ClCompile Include="IntroBehaviour.cpp">
-      <Filter>Val Engine\Game\Behaviours</Filter>
+      <Filter>Val Engine\Game\Characters\Behaviours\Scenes</Filter>
     </ClCompile>
     <ClCompile Include="MenuBehaviour.cpp">
-      <Filter>Val Engine\Game\Behaviours</Filter>
+      <Filter>Val Engine\Game\Characters\Behaviours\Scenes</Filter>
     </ClCompile>
     <ClCompile Include="CharacterState.cpp">
       <Filter>Val Engine\Game\Characters\State</Filter>
-    </ClCompile>
-    <ClCompile Include="CharacterStateManager.cpp">
-      <Filter>Val Engine\Game\Characters\State</Filter>
-    </ClCompile>
-    <ClCompile Include="AttackData.cpp">
-      <Filter>Val Engine\Game\Characters\Hit Data</Filter>
-    </ClCompile>
-    <ClCompile Include="CharacterHitData.cpp">
-      <Filter>Val Engine\Game\Characters\Hit Data</Filter>
-    </ClCompile>
-    <ClCompile Include="DefenceData.cpp">
-      <Filter>Val Engine\Game\Characters\Hit Data</Filter>
     </ClCompile>
     <ClCompile Include="CharacterSprite.cpp">
       <Filter>Val Engine\Game\Characters\Frame</Filter>
@@ -276,9 +230,6 @@
       <Filter>Val Engine\Engine\Objects\Scripting</Filter>
     </ClCompile>
     <ClCompile Include="BaseScriptVariable.cpp">
-      <Filter>Val Engine\Engine\Objects\Scripting\Variables</Filter>
-    </ClCompile>
-    <ClCompile Include="ScriptCollection.cpp">
       <Filter>Val Engine\Engine\Objects\Scripting\Variables</Filter>
     </ClCompile>
     <ClCompile Include="ScriptVariable.cpp">
@@ -413,6 +364,54 @@
     <ClCompile Include="ComputeShader.cpp">
       <Filter>Val Engine\Engine\Data\Rendering\Native\Shaders</Filter>
     </ClCompile>
+    <ClCompile Include="GameCharacterData.cpp">
+      <Filter>Val Engine\Game\Characters</Filter>
+    </ClCompile>
+    <ClCompile Include="FightingStageBehaviour.cpp">
+      <Filter>Val Engine\Game\Characters\Behaviours\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="GameCharacter.cpp">
+      <Filter>Val Engine\Game\Characters\Behaviours</Filter>
+    </ClCompile>
+    <ClCompile Include="CharacterRenderer.cpp">
+      <Filter>Val Engine\Game\Characters\Behaviours</Filter>
+    </ClCompile>
+    <ClCompile Include="CharacterPhysicsComponent.cpp">
+      <Filter>Val Engine\Game\Characters\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="CharacterStateComponent.cpp">
+      <Filter>Val Engine\Game\Characters\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="CharacterEventComponent.cpp">
+      <Filter>Val Engine\Game\Characters\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="GameCharacterComponent.cpp">
+      <Filter>Val Engine\Game\Characters\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="CharacterCollisionResult.cpp">
+      <Filter>Val Engine\Game\Characters\Hit Data</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptMap.cpp">
+      <Filter>Val Engine\Engine\Objects\Scripting\Variables</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseScriptCollection.cpp">
+      <Filter>Val Engine\Engine\Objects\Scripting\Variables</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptArray.cpp">
+      <Filter>Val Engine\Engine\Objects\Scripting\Variables</Filter>
+    </ClCompile>
+    <ClCompile Include="FixedPoint64.cpp">
+      <Filter>Val Engine\Engine\Utilities\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Math.cpp">
+      <Filter>Val Engine\Engine\Utilities\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="CharacterCollisionData.cpp">
+      <Filter>Val Engine\Game\Characters\Hit Data</Filter>
+    </ClCompile>
+    <ClCompile Include="CharacterHitData.cpp">
+      <Filter>Val Engine\Game\Characters\Hit Data</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FGIncludes.hpp">
@@ -463,9 +462,6 @@
     <ClInclude Include="GLIncludes.hpp">
       <Filter>Val Engine\IncludeLists</Filter>
     </ClInclude>
-    <ClInclude Include="ScriptCollection.h">
-      <Filter>Val Engine\Engine\Objects\Scripting\Variables</Filter>
-    </ClInclude>
     <ClInclude Include="Renderer.h">
       <Filter>Val Engine\Engine\Objects\Behaviours</Filter>
     </ClInclude>
@@ -473,25 +469,16 @@
       <Filter>Val Engine\Engine\Objects\Behaviours</Filter>
     </ClInclude>
     <ClInclude Include="IntroBehaviour.h">
-      <Filter>Val Engine\Game\Behaviours</Filter>
+      <Filter>Val Engine\Game\Characters\Behaviours\Scenes</Filter>
     </ClInclude>
     <ClInclude Include="MenuBehaviour.h">
-      <Filter>Val Engine\Game\Behaviours</Filter>
+      <Filter>Val Engine\Game\Characters\Behaviours\Scenes</Filter>
     </ClInclude>
     <ClInclude Include="ScriptBehaviour.h">
       <Filter>Val Engine\Engine\Objects\Behaviours</Filter>
     </ClInclude>
     <ClInclude Include="MathIncludes.hpp">
       <Filter>Val Engine\IncludeLists</Filter>
-    </ClInclude>
-    <ClInclude Include="AttackData.h">
-      <Filter>Val Engine\Game\Characters\Hit Data</Filter>
-    </ClInclude>
-    <ClInclude Include="CharacterHitData.h">
-      <Filter>Val Engine\Game\Characters\Hit Data</Filter>
-    </ClInclude>
-    <ClInclude Include="DefenceData.h">
-      <Filter>Val Engine\Game\Characters\Hit Data</Filter>
     </ClInclude>
     <ClInclude Include="CharacterFrame.h">
       <Filter>Val Engine\Game\Characters\Frame</Filter>
@@ -500,15 +487,6 @@
       <Filter>Val Engine\Game\Characters\Frame</Filter>
     </ClInclude>
     <ClInclude Include="CharacterState.h">
-      <Filter>Val Engine\Game\Characters\State</Filter>
-    </ClInclude>
-    <ClInclude Include="CharacterRenderer.h">
-      <Filter>Val Engine\Game\Behaviours</Filter>
-    </ClInclude>
-    <ClInclude Include="GameCharacter.h">
-      <Filter>Val Engine\Game\Behaviours</Filter>
-    </ClInclude>
-    <ClInclude Include="CharacterStateManager.h">
       <Filter>Val Engine\Game\Characters\State</Filter>
     </ClInclude>
     <ClInclude Include="GamePlayer.h">
@@ -553,17 +531,11 @@
     <ClInclude Include="CollisionBox.h">
       <Filter>Val Engine\Engine\Utilities\Math</Filter>
     </ClInclude>
-    <ClInclude Include="CircularBuffer.h">
-      <Filter>Val Engine\Engine\Utilities\Data</Filter>
-    </ClInclude>
     <ClInclude Include="BaseService.h">
       <Filter>Val Engine\Engine\Services</Filter>
     </ClInclude>
     <ClInclude Include="NetworkGamePlayer.h">
       <Filter>Val Engine\Engine\Objects\Players</Filter>
-    </ClInclude>
-    <ClInclude Include="resource.h">
-      <Filter>Val Engine</Filter>
     </ClInclude>
     <ClInclude Include="Delegate.h">
       <Filter>Val Engine\Engine\Utilities\Data</Filter>
@@ -661,9 +633,6 @@
     <ClInclude Include="FightingGameManager.h">
       <Filter>Val Engine\Game\Services</Filter>
     </ClInclude>
-    <ClInclude Include="FightingGameState.h">
-      <Filter>Val Engine\Game\Data\Game</Filter>
-    </ClInclude>
     <ClInclude Include="Texture.h">
       <Filter>Val Engine\Engine\Data\Rendering\Native</Filter>
     </ClInclude>
@@ -700,85 +669,85 @@
     <ClInclude Include="GraphicsBindingData.h">
       <Filter>Val Engine\Engine\Data\Rendering</Filter>
     </ClInclude>
+    <ClInclude Include="CircularBuffer.h">
+      <Filter>Val Engine\Engine\Utilities\Data\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceContainer.h">
+      <Filter>Val Engine\Engine\Utilities\Data\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="GameCharacterData.h">
+      <Filter>Val Engine\Game\Characters</Filter>
+    </ClInclude>
+    <ClInclude Include="FightingStageBehaviour.h">
+      <Filter>Val Engine\Game\Characters\Behaviours\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="GameCharacter.h">
+      <Filter>Val Engine\Game\Characters\Behaviours</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterRenderer.h">
+      <Filter>Val Engine\Game\Characters\Behaviours</Filter>
+    </ClInclude>
+    <ClInclude Include="FightingGameState.h">
+      <Filter>Val Engine\Game\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterPhysicsComponent.h">
+      <Filter>Val Engine\Game\Characters\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterStateComponent.h">
+      <Filter>Val Engine\Game\Characters\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterEventComponent.h">
+      <Filter>Val Engine\Game\Characters\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="GameCharacterComponent.h">
+      <Filter>Val Engine\Game\Characters\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterCollisionResult.h">
+      <Filter>Val Engine\Game\Characters\Hit Data</Filter>
+    </ClInclude>
+    <ClInclude Include="ValEngine.h">
+      <Filter>Val Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptMap.h">
+      <Filter>Val Engine\Engine\Objects\Scripting\Variables</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseScriptCollection.h">
+      <Filter>Val Engine\Engine\Objects\Scripting\Variables</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptArray.h">
+      <Filter>Val Engine\Engine\Objects\Scripting\Variables</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedPoint64.h">
+      <Filter>Val Engine\Engine\Utilities\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="TemplateUtils.h">
+      <Filter>Val Engine\Engine\Utilities\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="IReflectable.h">
+      <Filter>Val Engine\Engine\Utilities\Data\Reflection</Filter>
+    </ClInclude>
+    <ClInclude Include="ReflectionField.h">
+      <Filter>Val Engine\Engine\Utilities\Data\Reflection</Filter>
+    </ClInclude>
+    <ClInclude Include="ReflectionTraits.h">
+      <Filter>Val Engine\Engine\Utilities\Data\Reflection</Filter>
+    </ClInclude>
+    <ClInclude Include="Math.h">
+      <Filter>Val Engine\Engine\Utilities\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterCollisionData.h">
+      <Filter>Val Engine\Game\Characters\Hit Data</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterHitData.h">
+      <Filter>Val Engine\Game\Characters\Hit Data</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="Fighting Game Engine.rc">
-      <Filter>Resource Files</Filter>
-    </ResourceCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Materials\Base\Screen.vmat">
-      <Filter>Resource Files\Materials\Base</Filter>
-    </None>
-    <None Include="Resources\Materials\Base\Screen_BasePostFX.vmat">
-      <Filter>Resource Files\Materials\Base</Filter>
-    </None>
-    <None Include="Resources\Materials\Base\Screen_FB.vmat">
-      <Filter>Resource Files\Materials\Base</Filter>
-    </None>
-    <None Include="Resources\Materials\Base\Screen_Text.vmat">
-      <Filter>Resource Files\Materials\Base</Filter>
-    </None>
-    <None Include="Resources\Meshes\Base\quad.vm">
-      <Filter>Resource Files\Meshes\Base</Filter>
-    </None>
-    <None Include="Resources\Meshes\Base\screenQuad.vm">
-      <Filter>Resource Files\Meshes\Base</Filter>
-    </None>
-    <None Include="Resources\Materials\Base\Object2D.vmat">
-      <Filter>Resource Files\Materials\Base</Filter>
-    </None>
-    <None Include="Resources\PostEffects\BasePostFX.vfx">
-      <Filter>Resource Files\PostEffects</Filter>
-    </None>
-    <None Include="Resources\Settings\Input\Keyboard.vi">
-      <Filter>Resource Files\Settings\Input</Filter>
-    </None>
-    <None Include="Resources\Settings\Input\Default.vi">
-      <Filter>Resource Files\Settings\Input</Filter>
-    </None>
-    <None Include="Resources\Materials\Intro\Intro_Screen.vmat">
-      <Filter>Resource Files\Materials\Intro</Filter>
-    </None>
-    <None Include="Resources\Shaders\Base\2D.frag">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="Resources\Shaders\Base\2D.vert">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="Resources\Shaders\Base\BasePostProcessing.frag">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="Resources\Shaders\Base\BasePostProcessing.vert">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="Resources\Shaders\Base\Screen.frag">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="Resources\Shaders\Base\Screen.vert">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="Resources\Shaders\Base\Screen_Text.frag">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="Resources\Shaders\Base\Screen_Text.vert">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Font Include="Resources\Fonts\Amble.ttf">
-      <Filter>Resource Files\Fonts</Filter>
-    </Font>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="Resources\Textures\tex.png">
-      <Filter>Resource Files\Textures</Filter>
-    </Image>
-    <Image Include="Resources\Textures\Intro\Intro.png">
-      <Filter>Resource Files\Textures\Intro</Filter>
-    </Image>
-    <Image Include="Resources\fritz.ico">
-      <Filter>Resource Files</Filter>
-    </Image>
+    <Natvis Include="FixedPoint64.natvis">
+      <Filter>Val Engine\Engine\Utilities\Math</Filter>
+    </Natvis>
+    <Natvis Include="nljson.natvis">
+      <Filter>Val Engine\Misc</Filter>
+    </Natvis>
   </ItemGroup>
 </Project>

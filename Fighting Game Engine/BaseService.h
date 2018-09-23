@@ -24,6 +24,6 @@ public:
 	BaseService(BaseService&& service) = delete;
 
 	BaseService(ServiceManager* serviceManager, int sortingOrder = 0);
-	~BaseService();
+	virtual ~BaseService();
 };
 

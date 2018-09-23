@@ -6,7 +6,7 @@
 #include "ScriptError.h"
 #include "Script.h"
 
-#include <boost\lexical_cast.hpp>
+#include <boost/lexical_cast.hpp>
 
 bool ScriptRangedSwitchBlock::HandleControlFlag()
 {
@@ -52,8 +52,8 @@ void ScriptRangedSwitchBlock::ParseLine(ScriptLine & line)
 	{
 		if(line.tokens[0].token == ScriptToken::switch_case)
 		{
-			if(_handledCaseLabel
-				|| (_handledCaseLabel = (line.tokens[1].token == ScriptToken::switch_default && line.tokens.size() == 2)))
+			_handledCaseLabel |= (line.tokens[1].token == ScriptToken::switch_default && line.tokens.size() == 2);
+			if(_handledCaseLabel)
 			{
 				return;
 			}
@@ -64,7 +64,7 @@ void ScriptRangedSwitchBlock::ParseLine(ScriptLine & line)
 			{
 			case 2:
 				lowerBound = ScriptExpression(this, std::vector<ScriptToken>{line.tokens[1]}).Evaluate();
-				_handledCaseLabel = _conditionResult->value() == std::static_pointer_cast<ScriptInt>(lowerBound)->value();
+				_handledCaseLabel = _conditionResult->value() == std::static_pointer_cast<ScriptDec>(lowerBound)->value();
 				return;
 			case 4:
 				if(line.tokens[2].token != "->")
@@ -75,7 +75,7 @@ void ScriptRangedSwitchBlock::ParseLine(ScriptLine & line)
 				lowerBound = ScriptExpression(this, std::vector<ScriptToken>{line.tokens[1]}).Evaluate();
 				upperBound = ScriptExpression(this, std::vector<ScriptToken>{line.tokens[3]}).Evaluate();
 
-				if(lowerBound->type() != ScriptVariableType::Int || upperBound->type() != ScriptVariableType::Int)
+				if(lowerBound->type() != ScriptVariableType::Dec || upperBound->type() != ScriptVariableType::Dec)
 				{
 					break;
 				}
@@ -98,12 +98,12 @@ void ScriptRangedSwitchBlock::ParseLine(ScriptLine & line)
 
 bool ScriptRangedSwitchBlock::HandleConditionResult(std::shared_ptr<BaseScriptVariable> result)
 {
-	if(result->type() != ScriptVariableType::Int)
+	if(result->type() != ScriptVariableType::Dec)
 	{
 		throw ScriptError("Invalid result type in ranged switch expression.");
 	}
 
-	_conditionResult = std::static_pointer_cast<ScriptInt>(result);
+	_conditionResult = std::static_pointer_cast<ScriptDec>(result);
 
 	Run();
 	return true;
@@ -116,5 +116,4 @@ ScriptRangedSwitchBlock::ScriptRangedSwitchBlock(std::vector<ScriptToken>& condi
 }
 
 ScriptRangedSwitchBlock::~ScriptRangedSwitchBlock()
-{
-}
+= default;

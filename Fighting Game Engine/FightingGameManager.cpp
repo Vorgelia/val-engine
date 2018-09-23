@@ -4,20 +4,21 @@
 #include "Object.h"
 #include "PlayerManager.h"
 #include "GameScene.h"
-#include "GamePlayer.h"
 #include "GameCharacter.h"
-#include "ServiceManager.h"
 #include "Screen.h"
-
+#include "GameCharacter.h"
 #include "GLIncludes.hpp"
+#include "FightingStageBehaviour.h"
 
 
 void FightingGameManager::HandleSceneLoaded(const GameScene* scene)
 {
+	//PLACEHOLDER
 	switch(_currentState)
 	{
 	case FightingGameState::None:
-		ChangeState(FightingGameState::InGame);
+		if(scene->name() == "Menu")
+			ChangeState(FightingGameState::InGame);
 		break;
 	case FightingGameState::InputDeviceSelection:
 		break;
@@ -34,9 +35,15 @@ void FightingGameManager::HandleSceneLoaded(const GameScene* scene)
 
 void FightingGameManager::ChangeState(FightingGameState state)
 {
+	if(state == _currentState)
+	{
+		return;
+	}
+
 	switch(state)
 	{
 	case FightingGameState::None:
+		CleanupCharacters();
 		_playerManager->ClearPlayers();
 		break;
 	case FightingGameState::InputDeviceSelection:
@@ -47,29 +54,27 @@ void FightingGameManager::ChangeState(FightingGameState state)
 		break;
 	case FightingGameState::InGame:
 	{
-		Object* char1 = _gameSceneManager->currentScene()->FindObject("Char_1");
-		if(char1 == nullptr)
-		{
-			return;
-		}
-		GameCharacter* char1CharacterBehaviour = char1->GetBehaviour<GameCharacter>("GameCharacter");
+		//PLACEHOLDER
+		GameCharacter* char1CharacterBehaviour = AddCharacter("Characters/Fritz/Prefab.json");
 		char1CharacterBehaviour->SetOwner(_playerManager->AddPlayer(0, -1));
+
+		_stageBehaviour = dynamic_cast<FightingStageBehaviour*>(_gameSceneManager->currentScene()->FindBehaviour("FightingStageBehaviour"));
 		break;
 	}
 	default:
 		break;
 	}
 	_currentState = state;
+	FightingGameStateChanged(state);
 }
 
 void FightingGameManager::Init()
 {
 	_playerManager = _serviceManager->PlayerManager();
-
 	_gameSceneManager = _serviceManager->GameSceneManager();
-	_gameSceneManager->SceneLoaded += GameSceneManager::GameSceneEventHandler::func_t([this](const GameScene* scene) { HandleSceneLoaded(scene); });
+	_gameSceneManager->SceneLoaded += VE_DELEGATE_FUNC(GameSceneManager::GameSceneEventHandler, HandleSceneLoaded);
 
-	_currentState = FightingGameState::None;
+	ChangeState(FightingGameState::None);
 }
 
 void FightingGameManager::Update()
@@ -87,11 +92,62 @@ void FightingGameManager::Cleanup()
 	ChangeState(FightingGameState::None);
 }
 
-FightingGameManager::FightingGameManager(ServiceManager* serviceManager) : BaseService(serviceManager)
+GameCharacter* FightingGameManager::AddCharacter(const std::string& path)
 {
-	_allowServiceUpdate = true;
+	Object* object = _gameSceneManager->currentScene()->LoadObject(path);
+	if(object == nullptr)
+	{
+		return nullptr;
+	}
+
+	GameCharacter* characterBehaviour = object->GetBehaviour<GameCharacter>("GameCharacter");
+	if(characterBehaviour != nullptr)
+	{
+		_characters.emplace(characterBehaviour);
+	}
+
+	return characterBehaviour;
 }
 
-FightingGameManager::~FightingGameManager()
+void FightingGameManager::RemoveCharacter(int id)
 {
+	Object* object = _gameSceneManager->currentScene()->FindObject(id);
+	if(object == nullptr)
+	{
+		return;
+	}
+
+	GameCharacter* character = object->GetBehaviour<GameCharacter>("GameCharacter");
+	_characters.erase(character);
+	_gameSceneManager->currentScene()->DestroyObject(object);
+}
+
+void FightingGameManager::CleanupCharacters()
+{
+	for(auto& iter : _characters)
+	{
+		_gameSceneManager->currentScene()->DestroyObject(iter->object());
+	}
+
+	_characters.clear();
+}
+
+FightingGameState FightingGameManager::currentState() const
+{
+	return _currentState;
+}
+
+FightingStageBehaviour* FightingGameManager::stageBehaviour() const
+{
+	return _stageBehaviour;
+}
+
+const std::unordered_set<GameCharacter*>& FightingGameManager::characters() const
+{
+	return _characters;
+}
+
+FightingGameManager::FightingGameManager(ServiceManager* serviceManager) : BaseService(serviceManager, 500)
+{
+	_allowServiceUpdate = true;
 }

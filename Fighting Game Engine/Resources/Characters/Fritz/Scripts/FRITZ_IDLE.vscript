@@ -1,26 +1,28 @@
 #pragma Bind Debug
 #pragma Bind Time
+#pragma include Characters/Fritz/Fritz_Common.vscript
 
-function StateInit() : int
-	character_addFlag(VE_STATE_FLAG_CANCEL_TARGET, "VE_NORMAL")
+function StateInit() : void
+	character_state_addFlag(VE_STATE_FLAG_CANCEL_TARGET, "VE_NORMAL")
+	character_state_addFlag(VE_STATE_FLAG_CANCEL_REQUIREMENT, "VE_GROUNDED")
 end
 
 //This function runs every frame
-function StateUpdate(int frame) : void
+function StateUpdate(dec frame) : void
 	switch(frame)
 		case 0->4
-		  character_setFrame("fritz_idle_01")
+		  character_state_setFrame("fritz_idle_01")
 		  break
 		case 5->10
-		  character_setFrame("fritz_idle_02")
+		  character_state_setFrame("fritz_idle_02")
 		  break
 		case 11->15
-		  character_setFrame("fritz_idle_03")
+		  character_state_setFrame("fritz_idle_03")
 		  break
 		case 20
-		  character_markStateEnded()
+		  character_state_markStateEnded()
 		case 16->20
-		  character_setFrame("fritz_idle_04")
+		  character_state_setFrame("fritz_idle_04")
 		  break
 	end
 end

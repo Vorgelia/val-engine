@@ -1,26 +1,71 @@
 #include "CollisionBox.h"
+#include <GLM/detail/type_mat.hpp>
 
-bool CollisionBox::Overlaps(CollisionBox* hitbox)
+ve::vec2 CollisionBox::pivotedCenter() const
 {
-	return (abs(rect.x - hitbox->rect.x) < rect.z + hitbox->rect.z) && (abs(rect.y - hitbox->rect.y) < rect.w + hitbox->rect.w);
+	return center + pivotOffset;
 }
 
-CollisionBox CollisionBox::flipped()
+void CollisionBox::AxisMinMax(ve::vec2& out_minMaxX, ve::vec2& out_minMaxY) const
 {
-	return CollisionBox(glm::ivec4(-rect.x, rect.y, rect.z, rect.w));
+	out_minMaxX = ve::vec2(center.x - extents.x, center.x + extents.x);
+	out_minMaxY = ve::vec2(center.y - extents.y, center.y + extents.y);
 }
 
-CollisionBox CollisionBox::FromTopLeft(glm::ivec4 rect)
+bool CollisionBox::Overlaps(const CollisionBox& other) const
 {
-	return CollisionBox(glm::ivec4(rect.x + rect.z*0.5, rect.y + rect.w*0.5, rect.z*0.5, rect.w*0.5));
+	return (ve::dec_t::Abs(center.x - other.center.x) < extents.y + other.extents.y) && (ve::dec_t::Abs(center.y - other.center.y) < extents.y + other.extents.y);
 }
 
-CollisionBox CollisionBox::operator+(const glm::ivec2& rhs)
+ve::vec2 CollisionBox::DepenetrationDistance(const CollisionBox& other) const
 {
-	return CollisionBox(glm::ivec4(rect.x + rhs.x, rect.y + rhs.y, rect.z, rect.w));
+	if(!Overlaps(other))
+	{
+		return ve::vec2(0, 0);
+	}
+
+	const ve::vec2 displacementSign = glm::nonZeroSign(pivotedCenter() - other.pivotedCenter());
+	const ve::vec2 desiredLocation = other.center + (other.extents + extents) * displacementSign;
+
+	return desiredLocation - center;
 }
 
-CollisionBox::CollisionBox(glm::ivec4 rect)
+CollisionBox CollisionBox::RelativeTo(const ve::vec2& position, bool flipped) const
 {
-	this->rect = rect;
+	ve::vec2 newPosition = position;
+	ve::vec2 newPivotOffset = pivotOffset;
+
+	if(flipped)
+	{
+		newPosition.x = -newPosition.x;
+		newPivotOffset.x = -newPivotOffset.x;
+	}
+
+	return CollisionBox(center + newPosition, extents, newPivotOffset);
+}
+
+CollisionBox CollisionBox::FromTopLeft(const ve::vec2& topLeft, const ve::vec2& size)
+{
+	return CollisionBox(
+		topLeft + size / ve::dec_t(2),
+		size / ve::dec_t(2));
+};
+
+CollisionBox CollisionBox::operator+(const ve::vec2& rhs) const
+{
+	return CollisionBox(center + rhs, extents);
+}
+
+CollisionBox::CollisionBox(const ve::vec2& center, const ve::vec2& extents, const ve::vec2& pivotOffset)
+	: center(center)
+	, extents(glm::abs(extents))
+	, pivotOffset(pivotOffset)
+{
+}
+
+CollisionBox::CollisionBox(const json& j)
+{
+	JSON::TryGetMember(j, "center", center);
+	JSON::TryGetMember(j, "extents", extents);
+	JSON::TryGetMember(j, "pivotOffset", pivotOffset);
 }

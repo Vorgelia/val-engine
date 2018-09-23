@@ -25,10 +25,10 @@ protected:
 	void HandleDeviceRemoved(InputDevice* device);
 
 public:
-	InputDevice* inputDevice();
+	InputDevice* inputDevice() const;
 
 	void SetDevice(int deviceId);
 
 	GamePlayer(int id, int deviceId, ServiceManager* serviceManager);
-	~GamePlayer();
+	virtual ~GamePlayer();
 };

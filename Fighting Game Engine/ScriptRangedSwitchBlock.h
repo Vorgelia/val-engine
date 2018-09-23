@@ -5,7 +5,7 @@
 class ScriptRangedSwitchBlock : public ScriptConditionalBlock
 {
 	bool _handledCaseLabel;
-	std::shared_ptr<ScriptInt> _conditionResult;
+	std::shared_ptr<ScriptDec> _conditionResult;
 public:
 
 	void Run() override;

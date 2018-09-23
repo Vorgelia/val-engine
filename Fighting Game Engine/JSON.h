@@ -1,47 +1,87 @@
 #pragma once
-#include <json.hpp>
-#include <GLM\glm.hpp>
-#include <GLM\gtc\quaternion.hpp>
+#include <nlohmann/json.hpp>
+#include "ValEngine.h"
+#include "MathIncludes.hpp"
+#include "TemplateUtils.h"
 #include "DebugLog.h"
 
-#define VE_JSON_T(type)\
-	typedef type json_t
+class IReflectable;
 
 namespace JSON
 {
-	VE_JSON_T(nlohmann::json);
+	using json_t = nlohmann::json;
+
+	template<typename T>
+	bool TryGetMember(const json_t& j, const std::string& name, T& out_result);
+	bool HasMember(const json_t& j, const std::string& name);
+
 	template<typename T>
 	T Get(const json_t& j);
 
-	template<typename T>
-	bool TryGetMember(const json_t& j, std::string name, T& out_result);
+	template<>
+	FixedPoint64 Get(const json_t& j);
+	template<>
+	unsigned char Get(const json_t& j);
+
+	template<>
+	ve::vec2 Get(const json_t& j);
+	template<>
+	ve::ivec2 Get(const json_t& j);
+	template<>
+	ve::vec3 Get(const json_t& j);
+	template<>
+	ve::ivec3 Get(const json_t& j);
+	template<>
+	ve::vec4 Get(const json_t& j);
+	template<>
+	ve::ivec4 Get(const json_t& j);
 
 	template<>
 	glm::quat Get(const json_t& j);
+
+	template<typename ValueT>
+	json_t ToJson(const ValueT& value);
+
 	template<>
-	glm::ivec4 Get(const json_t& j);
+	json_t ToJson(const FixedPoint64& value);
+
 	template<>
-	glm::vec4 Get(const json_t& j);
+	json_t ToJson(const ve::vec2& value);
 	template<>
-	glm::ivec2 Get(const json_t& j);
+	json_t ToJson(const ve::vec3& value);
 	template<>
-	glm::vec2 Get(const json_t& j);
+	json_t ToJson(const ve::vec4& value);
 	template<>
-	unsigned char Get(const json_t& j);
+	json_t ToJson(const ve::ivec2& value);
+	template<>
+	json_t ToJson(const ve::ivec3& value);
+	template<>
+	json_t ToJson(const ve::ivec4& value);
 }
 
 using json = JSON::json_t;
 
-#undef VE_JSON_T
-
 template<typename T>
-T JSON::Get(const json & j)
+T JSON::Get(const json_t & j)
 {
-	return j.get<T>();
+	if constexpr(std::is_constructible_v<T, const json&>)
+	{
+		return T(j);
+	}
+	else if constexpr(std::is_base_of_v<IReflectable, T>)
+	{
+		T val;
+		val.Deserialize(j);
+		return val;
+	}
+	else
+	{
+		return j.get<T>();
+	}
 }
 
 template<typename T>
-bool JSON::TryGetMember(const json_t & j, std::string name, T& out_result)
+bool JSON::TryGetMember(const json_t & j, const std::string& name, T& out_result)
 {
 	auto& iter = j.find(name);
 	if(iter == j.end())
@@ -51,4 +91,17 @@ bool JSON::TryGetMember(const json_t & j, std::string name, T& out_result)
 
 	out_result = JSON::Get<T>(iter.value());
 	return true;
+}
+
+template <typename ValueT>
+JSON::json_t JSON::ToJson(const ValueT& value)
+{
+	if constexpr(std::is_base_of_v<IReflectable, ValueT>)
+	{
+		return value.Serialize();
+	}
+	else
+	{
+		return json_t(value);
+	}
 }

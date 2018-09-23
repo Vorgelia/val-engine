@@ -54,6 +54,8 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <AdditionalOptions>-D_SCL_SECURE_NO_WARNINGS %(AdditionalOptions)</AdditionalOptions>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
@@ -71,6 +73,8 @@
       <SDLCheck>true</SDLCheck>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -80,29 +84,36 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="AttackData.cpp" />
+    <ClCompile Include="CharacterHitData.cpp" />
+    <ClCompile Include="BaseScriptCollection.cpp" />
     <ClCompile Include="BaseService.cpp" />
     <ClCompile Include="BaseShader.cpp" />
     <ClCompile Include="Behaviour.cpp" />
     <ClCompile Include="BehaviourFactory.cpp" />
     <ClCompile Include="CachedMesh.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="CharacterCollisionResult.cpp" />
+    <ClCompile Include="CharacterEventComponent.cpp" />
     <ClCompile Include="CharacterFrame.cpp" />
-    <ClCompile Include="CharacterHitData.cpp" />
+    <ClCompile Include="CharacterCollisionData.cpp" />
+    <ClCompile Include="CharacterPhysicsComponent.cpp" />
     <ClCompile Include="CharacterRenderer.cpp" />
     <ClCompile Include="CharacterSprite.cpp" />
     <ClCompile Include="CharacterState.cpp" />
-    <ClCompile Include="CharacterStateManager.cpp" />
+    <ClCompile Include="CharacterStateComponent.cpp" />
     <ClCompile Include="ComputeShader.cpp" />
     <ClCompile Include="ComputeShaderEffect.cpp" />
     <ClCompile Include="ConnectionSocket.cpp" />
     <ClCompile Include="DebugLog.cpp" />
-    <ClCompile Include="DefenceData.cpp" />
     <ClCompile Include="Delegate.cpp" />
     <ClCompile Include="FightingGameManager.cpp" />
+    <ClCompile Include="FightingStageBehaviour.cpp" />
+    <ClCompile Include="FixedPoint64.cpp" />
     <ClCompile Include="Font.cpp" />
     <ClCompile Include="FrameBuffer.cpp" />
     <ClCompile Include="GameCharacter.cpp" />
+    <ClCompile Include="GameCharacterComponent.cpp" />
+    <ClCompile Include="GameCharacterData.cpp" />
     <ClCompile Include="GamePlayer.cpp" />
     <ClCompile Include="GameScene.cpp" />
     <ClCompile Include="GameSceneManager.cpp" />
@@ -120,6 +131,7 @@
     <ClCompile Include="LogItem.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Material.cpp" />
+    <ClCompile Include="Math.cpp" />
     <ClCompile Include="MenuBehaviour.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="NetworkEntity.cpp" />
@@ -129,8 +141,9 @@
     <ClCompile Include="PlayerManager.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="RenderingDataBuffer.cpp" />
+    <ClCompile Include="ScriptArray.cpp" />
     <ClCompile Include="ScriptBehaviour.cpp" />
-    <ClCompile Include="ScriptCollection.cpp" />
+    <ClCompile Include="ScriptMap.cpp" />
     <ClCompile Include="ScriptExpression.cpp" />
     <ClCompile Include="ScriptLine.cpp" />
     <ClCompile Include="ScriptLoopBlock.cpp" />
@@ -166,33 +179,40 @@
     <ClCompile Include="Vec4Buffer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AttackData.h" />
+    <ClInclude Include="CharacterHitData.h" />
+    <ClInclude Include="BaseScriptCollection.h" />
     <ClInclude Include="BaseService.h" />
     <ClInclude Include="BaseShader.h" />
     <ClInclude Include="Behaviour.h" />
     <ClInclude Include="BehaviourFactory.h" />
     <ClInclude Include="CachedMesh.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="CharacterCollisionResult.h" />
+    <ClInclude Include="CharacterEventComponent.h" />
     <ClInclude Include="CharacterFrame.h" />
-    <ClInclude Include="CharacterHitData.h" />
+    <ClInclude Include="CharacterCollisionData.h" />
+    <ClInclude Include="CharacterPhysicsComponent.h" />
     <ClInclude Include="CharacterRenderer.h" />
     <ClInclude Include="CharacterSprite.h" />
     <ClInclude Include="CharacterState.h" />
-    <ClInclude Include="CharacterStateManager.h" />
+    <ClInclude Include="CharacterStateComponent.h" />
     <ClInclude Include="CircularBuffer.h" />
     <ClInclude Include="CommonUtilIncludes.hpp" />
     <ClInclude Include="ComputeShader.h" />
     <ClInclude Include="ComputeShaderEffect.h" />
     <ClInclude Include="ConnectionSocket.h" />
     <ClInclude Include="DebugLog.h" />
-    <ClInclude Include="DefenceData.h" />
     <ClInclude Include="Delegate.h" />
     <ClInclude Include="FGIncludes.hpp" />
     <ClInclude Include="FightingGameManager.h" />
     <ClInclude Include="FightingGameState.h" />
+    <ClInclude Include="FightingStageBehaviour.h" />
+    <ClInclude Include="FixedPoint64.h" />
     <ClInclude Include="Font.h" />
     <ClInclude Include="FrameBuffer.h" />
     <ClInclude Include="GameCharacter.h" />
+    <ClInclude Include="GameCharacterComponent.h" />
+    <ClInclude Include="GameCharacterData.h" />
     <ClInclude Include="GamePlayer.h" />
     <ClInclude Include="GameScene.h" />
     <ClInclude Include="GameSceneManager.h" />
@@ -211,9 +231,11 @@
     <ClInclude Include="InputMotionComponent.h" />
     <ClInclude Include="InputMotion.h" />
     <ClInclude Include="IntroBehaviour.h" />
+    <ClInclude Include="IReflectable.h" />
     <ClInclude Include="JSON.h" />
     <ClInclude Include="LogItem.h" />
     <ClInclude Include="Material.h" />
+    <ClInclude Include="Math.h" />
     <ClInclude Include="MathIncludes.hpp" />
     <ClInclude Include="MenuBehaviour.h" />
     <ClInclude Include="Mesh.h" />
@@ -224,18 +246,21 @@
     <ClInclude Include="PlayerManager.h" />
     <ClInclude Include="PostEffect.h" />
     <ClInclude Include="Profiler.h" />
+    <ClInclude Include="ReflectionField.h" />
+    <ClInclude Include="ReflectionTraits.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="RenderingDataBuffer.h" />
     <ClInclude Include="RenderingGL.h" />
+    <ClInclude Include="ResourceContainer.h" />
     <ClInclude Include="ResourceManager.h" />
-    <ClInclude Include="resource.h" />
     <ClInclude Include="ResourceInitializer.h" />
     <ClInclude Include="FilesystemManager.h" />
     <ClInclude Include="Screen.h" />
     <ClInclude Include="Script.h" />
+    <ClInclude Include="ScriptArray.h" />
     <ClInclude Include="ScriptBehaviour.h" />
     <ClInclude Include="ScriptBlock.h" />
-    <ClInclude Include="ScriptCollection.h" />
+    <ClInclude Include="ScriptMap.h" />
     <ClInclude Include="ScriptConditionalBlock.h" />
     <ClInclude Include="ScriptError.h" />
     <ClInclude Include="ScriptExpression.h" />
@@ -255,44 +280,18 @@
     <ClInclude Include="ScriptVariableUtils.h" />
     <ClInclude Include="ServiceManager.h" />
     <ClInclude Include="SurfaceShader.h" />
+    <ClInclude Include="TemplateUtils.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Time.h" />
     <ClInclude Include="SystemIncludes.hpp" />
     <ClInclude Include="TimeDataBuffer.h" />
     <ClInclude Include="Transform.h" />
+    <ClInclude Include="ValEngine.h" />
     <ClInclude Include="Vec4Buffer.h" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="Fighting Game Engine.rc" />
-  </ItemGroup>
-  <ItemGroup>
-    <Font Include="Resources\Fonts\Amble.ttf" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Materials\Base\Object2D.vmat" />
-    <None Include="Resources\Materials\Base\Screen.vmat" />
-    <None Include="Resources\Materials\Base\Screen_BasePostFX.vmat" />
-    <None Include="Resources\Materials\Base\Screen_FB.vmat" />
-    <None Include="Resources\Materials\Base\Screen_Text.vmat" />
-    <None Include="Resources\Materials\Intro\Intro_Screen.vmat" />
-    <None Include="Resources\Meshes\Base\quad.vm" />
-    <None Include="Resources\Meshes\Base\screenQuad.vm" />
-    <None Include="Resources\PostEffects\BasePostFX.vfx" />
-    <None Include="Resources\Settings\Input\Default.vi" />
-    <None Include="Resources\Settings\Input\Keyboard.vi" />
-    <None Include="Resources\Shaders\Base\2D.frag" />
-    <None Include="Resources\Shaders\Base\2D.vert" />
-    <None Include="Resources\Shaders\Base\BasePostProcessing.frag" />
-    <None Include="Resources\Shaders\Base\BasePostProcessing.vert" />
-    <None Include="Resources\Shaders\Base\Screen.frag" />
-    <None Include="Resources\Shaders\Base\Screen.vert" />
-    <None Include="Resources\Shaders\Base\Screen_Text.frag" />
-    <None Include="Resources\Shaders\Base\Screen_Text.vert" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="Resources\fritz.ico" />
-    <Image Include="Resources\Textures\Intro\Intro.png" />
-    <Image Include="Resources\Textures\tex.png" />
+    <Natvis Include="FixedPoint64.natvis" />
+    <Natvis Include="nljson.natvis" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

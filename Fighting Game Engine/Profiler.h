@@ -1,7 +1,7 @@
 #pragma once
 #include <unordered_map>
 #include <string>
-#include <GLM\glm.hpp>
+#include <GLM/glm.hpp>
 
 namespace Profiler
 {

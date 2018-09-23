@@ -6,13 +6,13 @@
 class CharacterSprite
 {
 	std::string _sprite;
-	glm::ivec4 _pixelRect;
-	glm::ivec2 _originOffset;
+	ve::ivec4 _pixelRect;
+	ve::ivec2 _originOffset;
 
 public:
 	std::string sprite() const;
-	glm::ivec4 pixelRect() const;
-	glm::ivec2 originOffset() const;
+	ve::ivec4 pixelRect() const;
+	ve::ivec2 originOffset() const;
 
 	CharacterSprite(const json& j);
 	~CharacterSprite();

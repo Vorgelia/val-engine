@@ -1,13 +1,12 @@
 #include "NetworkEntity.h"
 #include "DebugLog.h"
-#include "Time.h"
-#include <chrono>
+#include <WS2tcpip.h>
 
-bool NetworkEntity::ConnectTo(std::string ip, int port)
+bool NetworkEntity::ConnectTo(const std::string& ip, int port)
 {
 	in_addr addr;
 	InetPton(AF_INET, ip.c_str(), &addr);
-	connections.push_back(ConnectionSocket(addr, port));
+	connections.emplace_back(addr, port);
 	return connections.back().Connect();
 }
 
@@ -16,13 +15,13 @@ bool NetworkEntity::HostServer(int port)
 	in_addr addr;
 	addr.S_un.S_addr = INADDR_ANY;
 
-	connections.push_back(ConnectionSocket(addr, port));
+	connections.emplace_back(addr, port);
 	return connections.back().BindAsServer();
 }
 
 void NetworkEntity::Disconnect(unsigned int index)
 {
-	if(index > -1 && index < connections.size())
+	if(index < connections.size())
 	{
 		connections[index].Disconnect();
 		connections.erase(connections.begin() + index);
@@ -59,7 +58,7 @@ void NetworkEntity::PopulateFDs()
 
 void NetworkEntity::AcceptConnections(unsigned int index)
 {
-	if(index < 0 || index >= connections.size())
+	if(index >= connections.size())
 		return;
 	if(connections[index].mode == SocketMode::Server&&FD_ISSET(connections[index].sock, &_readFDs))
 	{//Server sockets are read-valid if they have pending connections.
@@ -87,7 +86,7 @@ void NetworkEntity::SelectFDs()
 //These are self-explanatory. The specifics of sending and receiving will be explained in the ConnectionSocket class
 bool NetworkEntity::SendDataTo(unsigned int index, NetworkMessage msg)
 {
-	if(index < 0 || index >= connections.size() || connections[index].mode == SocketMode::Server)
+	if(index >= connections.size() || connections[index].mode == SocketMode::Server)
 		return false;
 
 	if(FD_ISSET(connections[index].sock, &_writeFDs))
@@ -110,7 +109,7 @@ bool NetworkEntity::SendDataTo(unsigned int index, NetworkMessage msg)
 
 bool NetworkEntity::ReceiveDataFrom(unsigned int index)
 {
-	if(index < 0 || index >= connections.size())
+	if(index >= connections.size())
 		return false;
 	if(FD_ISSET(connections[index].sock, &_readFDs))
 	{
@@ -200,7 +199,7 @@ void NetworkEntity::EndFrame()
 	}
 }
 
-double NetworkEntity::ping()
+double NetworkEntity::ping() const
 {
 	if(_pingOutTime > _pingInTime)
 		return _lastPing;

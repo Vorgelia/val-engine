@@ -11,7 +11,7 @@ private:
 	glm::ivec3 _computeGroupSize;
 
 public:
-	const glm::ivec3& ComputeGroupSize();
+	const glm::ivec3& ComputeGroupSize() const;
 
 	ComputeShader(const std::string& name, GLuint id);
 	~ComputeShader();

@@ -20,6 +20,4 @@ BaseService::BaseService(ServiceManager* serviceManager, int sortingOrder) :
 }
 
 BaseService::~BaseService()
-{
-	
-}
+= default;

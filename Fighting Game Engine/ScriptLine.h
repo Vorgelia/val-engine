@@ -11,6 +11,6 @@ struct ScriptLine
 
 	std::vector<ScriptToken> tokens;
 
-	ScriptLine(const std::string& line, int index, int indentationLevel, std::vector<ScriptToken>& tokens);
+	ScriptLine(std::string line, int index, int indentationLevel, std::vector<ScriptToken>& tokens);
 	~ScriptLine();
 };

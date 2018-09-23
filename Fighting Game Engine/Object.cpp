@@ -1,10 +1,6 @@
 #include "Object.h"
 #include "Transform.h"
-#include "Mesh.h"
-#include "Material.h"
-#include "IntroBehaviour.h"
 #include "ResourceManager.h"
-#include "RenderingGL.h"
 #include "Behaviour.h"
 #include "Renderer.h"
 
@@ -37,7 +33,7 @@ void Object::RunFunctionOnBehaviours(std::function<void(Behaviour*)> func)
 
 	for(auto& iter : _behaviours)
 	{
-		if(iter.second != nullptr)
+		if(iter.second != nullptr && iter.second->enabled)
 		{
 			func(iter.second.get());
 		}
@@ -50,17 +46,18 @@ Object::Object(const std::string& name, ServiceManager* serviceManager, int id)
 	this->_id = id;
 }
 
-Object::Object(const json & j, ServiceManager* serviceManager)
+Object::Object(const json & j, ServiceManager* serviceManager, int id)
 {
 	_serviceManager = serviceManager;
+	_id = id;
 
 	JSON::TryGetMember<bool>(j, "enabled", enabled);
-	JSON::TryGetMember(j, "name", _name);
-	JSON::TryGetMember<unsigned int>(j, "id", _id);
+	JSON::TryGetMember<std::string>(j, "name", _name);
+	JSON::TryGetMember<int>(j, "updatePriority", updatePriority);
 
 	for(auto& iter : j["behaviours"])
 	{
-		std::string& behaviourName = iter["name"].get<std::string>();
-		Behaviour* addedBehaviour = AddBehaviour(behaviourName, iter);
+		const std::string behaviourName = iter["name"].get<std::string>();
+		AddBehaviour(behaviourName, iter);
 	}
 }

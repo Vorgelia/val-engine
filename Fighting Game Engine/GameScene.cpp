@@ -5,11 +5,9 @@
 #include "FilesystemManager.h"
 #include "RenderingGL.h"
 #include "ResourceManager.h"
-#include "Time.h"
 #include "Screen.h"
 #include "Behaviour.h"
 #include "DebugLog.h"
-#include "Object.h"
 
 //GameScene variables are this engine's equivalent to levels. Why they were not named levels, who knows.
 //The Unity style callbacks sort of betray my Unity background 
@@ -27,50 +25,64 @@ void GameScene::LoadResources()
 	try
 	{
 		rfl = _filesystem->ReturnFileLines(_dataPath.string() + "/MaterialResources.txt", true);
-		for(unsigned int i = 0; i < rfl.size(); ++i)
-			if(rfl[i].substr(0, 2) != "//" && rfl[i] != "")
-				_resource->GetMaterial(rfl[i]);//Materials also load their associated textures with them.
+		for (auto& i : rfl)
+			if(!i.empty() && i.substr(0, 2) != "//")
+				_resource->GetMaterial(i);//Materials also load their associated textures with them.
 
 		rfl = _filesystem->ReturnFileLines(_dataPath.string() + "/MeshResources.txt", true);
-		for(unsigned int i = 0; i < rfl.size(); ++i)
-			if(rfl[i].substr(0, 2) != "//" && rfl[i] != "")
-				_resource->GetMesh(rfl[i]);
+		for (auto& i : rfl)
+			if(!i.empty() && i.substr(0, 2) != "//")
+				_resource->GetMesh(i);
 
 		rfl = _filesystem->ReturnFileLines(_dataPath.string() + "/TextureResources.txt", true);
-		for(unsigned int i = 0; i < rfl.size(); ++i)
-			if(rfl[i].substr(0, 2) != "//" && rfl[i] != "")
-				_resource->GetTexture(rfl[i]);
+		for (auto& i : rfl)
+			if(!i.empty() && i.substr(0, 2) != "//")
+				_resource->GetTexture(i);
 
-		_filesystem->LoadObjects(_dataPath.string() + "/SceneObjects.txt", _objects);
-		for(auto& iter : _objects)
+		json& j = *_resource->GetJsonData(_dataPath.string() + "/SceneObjects.txt");
+		for(const json& objData : j)
 		{
-			RegisterObject(iter.get());
+			std::string prefabPath;
+			if(objData.size() == 1 && JSON::TryGetMember<std::string>(objData, "prefabPath", prefabPath))
+			{
+				AddObject(*_resource->GetJsonData(prefabPath));
+			}
+			else
+			{
+				AddObject(objData);
+			}
+			RegisterObject(_objects.back().get());
 		}
 
 		_postEffectsOrder = _filesystem->ReturnFileLines(_dataPath.string() + "/PostEffectsOrder.txt", true);
-		for(unsigned int i = 0; i < _postEffectsOrder.size(); ++i)
-			if(_postEffectsOrder[i].substr(0, 2) != "//" && _postEffectsOrder[i] != "")
-				_resource->GetPostEffect(_postEffectsOrder[i]);
+		for (auto& i : _postEffectsOrder)
+			if(i.substr(0, 2) != "//" && !i.empty())
+				_resource->GetPostEffect(i);
 	}
-	catch(std::runtime_error err)
+	catch(std::runtime_error& err)
 	{
 		_debug->VE_LOG(err.what());
 	}
 	_loaded = true;
 }
 
-bool GameScene::loaded()
+bool GameScene::loaded() const
 {
 	return _loaded;
 }
 
-const std::vector<std::string>& GameScene::postEffectsOrder()
+const std::vector<std::string>& GameScene::postEffectsOrder() const
 {
 	return _postEffectsOrder;
 }
 
 void GameScene::RunFunctionOnObjectBehaviours(std::function<void(Behaviour*)> func)
 {
+	if(_shouldSortObjects)
+	{
+		SortObjects();
+	}
+
 	for(auto& iter : _objects)
 	{
 		if(iter != nullptr && iter->enabled)
@@ -92,12 +104,23 @@ void GameScene::UnregisterObject(Object* obj)
 	_objectLookup.erase(obj->id());
 }
 
-std::string GameScene::name()
+void GameScene::SortObjects()
+{
+	const auto sortingPredicate = [](const std::unique_ptr<Object>& lhs, const std::unique_ptr<Object>& rhs)->bool
+	{
+		return lhs->updatePriority > rhs->updatePriority;
+	};
+
+	std::sort(_objects.begin(), _objects.end(), sortingPredicate);
+	_shouldSortObjects = false;
+}
+
+const std::string& GameScene::name() const
 {
 	return _name;
 }
 
-bool GameScene::initialized()
+bool GameScene::initialized() const
 {
 	return _initialized;
 }
@@ -108,9 +131,10 @@ void GameScene::Init()
 	RunFunctionOnObjectBehaviours(VE_BEHAVIOUR_FUNCTION_CALLER(OnSceneInit));
 }
 
-void GameScene::Update()
+void GameScene::EngineUpdate()
 {
-
+	RunFunctionOnObjectBehaviours([](Behaviour* behaviour) { behaviour->TryInit(); });
+	RunFunctionOnObjectBehaviours(VE_BEHAVIOUR_FUNCTION_CALLER(EngineUpdate));
 }
 
 void GameScene::GameUpdate()
@@ -123,9 +147,9 @@ void GameScene::LateGameUpdate()
 	RunFunctionOnObjectBehaviours(VE_BEHAVIOUR_FUNCTION_CALLER(LateGameUpdate));
 }
 
-void GameScene::LateUpdate()
+void GameScene::LateEngineUpdate()
 {
-	RunFunctionOnObjectBehaviours(VE_BEHAVIOUR_FUNCTION_CALLER(LateUpdate));
+	RunFunctionOnObjectBehaviours(VE_BEHAVIOUR_FUNCTION_CALLER(LateEngineUpdate));
 }
 
 void GameScene::RenderUI()
@@ -166,30 +190,90 @@ void GameScene::Cleanup()
 	_initialized = false;
 }
 
-Object* GameScene::AddObject(const std::string& prefabPath)
+Object* GameScene::LoadObject(const std::string & prefabPath)
 {
-	_objects.emplace_back(_filesystem->LoadObject(prefabPath));
-	Object* result = _objects.back().get();
+	const json* data = _resource->GetJsonData(prefabPath);
+	if(data == nullptr)
+	{
+		return nullptr;
+	}
 
-	int nearestAvailableId = _objects.back()->_id + 1;
+	return AddObject(*data);
+}
+
+Object* GameScene::AddObject(const json & jsonData)
+{
+	int nearestAvailableId = _objects.empty() ? 0 : _objects.back()->_id + 1;
 	while(_objectLookup.count(nearestAvailableId) > 0)
 	{
 		nearestAvailableId += 1;
 	}
 
-	result->_id = nearestAvailableId;
+	_objects.emplace_back(
+		std::make_unique<Object>(jsonData, _serviceManager, nearestAvailableId));
+	Object* result = _objects.back().get();
 
 	RegisterObject(result);
+	_shouldSortObjects = true;
 
 	return result;
 }
 
+void GameScene::DestroyObject(Object* object)
+{
+	for(auto& iter = _objects.begin();iter !=_objects.end();++iter)
+	{
+		if(iter->get() == object)
+		{
+			UnregisterObject(object);
+			_objects.erase(iter);
+			_shouldSortObjects = true;
+			return;
+		}
+	}
+}
+
+void GameScene::DestroyObject(int objectId)
+{
+	auto iter = _objectLookup.find(objectId);
+	if(iter == _objectLookup.end())
+	{
+		return;
+	}
+
+	DestroyObject(iter->second);
+}
+
 Object* GameScene::FindObject(const std::string& name)
 {
-	auto& iter = _objectNameLookup.find(name);
+	auto iter = _objectNameLookup.find(name);
 	if(iter != _objectNameLookup.end())
 	{
 		return iter->second;
+	}
+
+	return nullptr;
+}
+
+Object* GameScene::FindObject(int id)
+{
+	auto iter = _objectLookup.find(id);
+	if(iter != _objectLookup.end())
+	{
+		return iter->second;
+	}
+	return nullptr;
+}
+
+Behaviour* GameScene::FindBehaviour(const std::string& name)
+{
+	for(auto& obj : _objects)
+	{
+		Behaviour* behaviour = obj->GetBehaviour<Behaviour>(name);
+		if(behaviour != nullptr)
+		{
+			return behaviour;
+		}
 	}
 
 	return nullptr;
@@ -205,11 +289,13 @@ GameScene::GameScene(const FS::path& path, ServiceManager* serviceManager)
 
 	_initialized = false;
 	_loaded = false;
-	this->_dataPath = path;
+	_dataPath = path;
+	_name = path.leaf().string();
+
 	_postEffectsOrder.clear();
 }
 
 GameScene::~GameScene()
 {
-	Cleanup();
+	GameScene::Cleanup();
 }

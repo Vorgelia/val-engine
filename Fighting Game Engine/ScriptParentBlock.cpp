@@ -62,10 +62,9 @@ std::shared_ptr<BaseScriptVariable> ScriptParentBlock::RunFunction(std::string n
 
 ScriptParentBlock::ScriptParentBlock(ScriptLinesView lines, int depth, Script* owner) :ScriptBlock(lines, depth, nullptr, owner)
 {
-	Run();
+	ScriptBlock::Run();
 }
 
 
 ScriptParentBlock::~ScriptParentBlock()
-{
-}
+= default;

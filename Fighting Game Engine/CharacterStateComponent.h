@@ -4,12 +4,14 @@
 #include <unordered_set>
 #include <memory>
 #include "JSON.h"
+#include "GameCharacterComponent.h"
 
 class CharacterState;
 class CharacterFrame;
 class ServiceManager;
 class InputManager;
 class FilesystemManager;
+class ResourceManager;
 
 enum class CharacterStateFlagType
 {
@@ -19,20 +21,20 @@ enum class CharacterStateFlagType
 	CancelRequirements = 3,
 };
 
-class CharacterStateManager
+class CharacterStateComponent : public GameCharacterComponent
 {
 	friend class GameCharacter;
 	friend class ScriptManager;
 	friend class CharacterRenderer;
-private:
+	friend class CharacterEventComponent;
 
+private:
 	InputManager* _input;
 	ScriptManager* _scriptManager;
 	FilesystemManager* _filesystem;
+	ResourceManager* _resource;
 
 private:
-	GameCharacter* _owner;
-
 	std::string _currentStateId;
 	CharacterState* _currentState;
 	CharacterFrame* _currentFrame;
@@ -46,15 +48,13 @@ private:
 	std::unordered_map<std::string, std::unique_ptr<CharacterState>> _stateLookup;
 	std::unordered_map<std::string, std::unique_ptr<CharacterFrame>> _frameLookup;
 
-	//Throw invuln, air invuln, etc
 	std::unordered_map<CharacterStateFlagType, std::unordered_set<std::string>> _flags;
+	std::unordered_set<int> _usedHitboxSequenceIDs;
 
 	void EvaluateNextState();
 
-	void StateUpdate();
-
-	bool StartState(std::string name);
-	bool SetFrame(std::string name);
+	bool StartState(const std::string& name);
+	bool SetFrame(const std::string& name);
 	bool ModifyCurrentStateFrame(int newFrame);
 	bool RestartState();
 	void MarkStateEnded();
@@ -62,13 +62,20 @@ private:
 	void Freeze(int duration);
 	void Unfreeze();
 
-	bool AddFlag(CharacterStateFlagType type, std::string flag);
-	bool RemoveFlag(CharacterStateFlagType type, std::string flag);
+	bool AddFlag(CharacterStateFlagType type, const std::string& flag);
+	bool RemoveFlag(CharacterStateFlagType type, const std::string& flag);
 	void ClearFlags();
 	const std::unordered_set<std::string>& GetFlags(CharacterStateFlagType type);
 
+protected:
+	void Init() override;
+	void Update() override;
+
 public:
-	CharacterStateManager(GameCharacter* owner, ServiceManager* serviceManager, const json& states, const json& frames);
-	~CharacterStateManager();
+	const CharacterState* currentState() const { return _currentState; }
+	const CharacterFrame* currentFrame() const { return _currentFrame; }
+
+	CharacterStateComponent(GameCharacter* owner, ServiceManager* serviceManager);
+	~CharacterStateComponent() = default;
 };
 

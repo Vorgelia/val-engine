@@ -1,14 +1,6 @@
 [
     {
-        "id":0,
-        "name":"Manager",
-        "enabled":true,
-        "behaviours":[
-            {
-                "name":"MenuBehaviour",
-                "enabled":true
-            }
-        ]
+        "prefabPath" : "Prefabs/MenuManager.json"
     },
     {
         "id":1,
@@ -23,8 +15,8 @@
                     "y":0
                 },
                 "scale":{
-                    "x":6000,
-                    "y":4800
+                    "x":240,
+                    "y":180
                 },
                 "rotation":{
                     "x":0,
@@ -51,12 +43,12 @@
                 "name":"Transform",
                 "enabled":true,
                 "position":{
-                    "x":500,
-                    "y":200
+                    "x":5,
+                    "y":-36
                 },
                 "scale":{
-                    "x":3400,
-                    "y":2500
+                    "x":145,
+                    "y":145
                 },
                 "rotation":{
                     "x":0,
@@ -64,50 +56,13 @@
                     "z":0,
                     "w":1
                 },
-                "depth":4
+                "depth":0.5
             },
             {
                 "name":"Renderer",
                 "enabled":true,
                 "mesh":"Meshes/Base/quad_sprite.vm",
                 "material":"Materials/Menu/Menu_BG_Distant.vmat"
-            }
-        ]
-    },
-    {
-        "id":100,
-        "name":"Char_1",
-        "enabled":true,
-        "behaviours":[
-            {
-                "name":"Transform",
-                "enabled":true,
-                "position":{
-                    "x":-600,
-                    "y":100
-                },
-                "scale":{
-                    "x":0,
-                    "y":0
-                },
-                "rotation":{
-                    "x":0,
-                    "y":0,
-                    "z":0,
-                    "w":1
-                },
-                "depth":0
-            },
-            {
-                "name":"GameCharacter",
-                "enabled":true,
-                "dataPath":"Characters/Fritz/CharacterData.json"
-            },
-            {
-                "name":"CharacterRenderer",
-                "enabled":true,
-                "mesh":"Meshes/Base/quad_sprite_character.vm",
-                "material":"Materials/Menu/Menu_Test.vmat"
             }
         ]
     }

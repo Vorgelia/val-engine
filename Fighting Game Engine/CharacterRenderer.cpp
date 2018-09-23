@@ -1,9 +1,9 @@
 #include "CharacterRenderer.h"
-#include <GLM\glm.hpp>
+#include <GLM/glm.hpp>
 #include "GameCharacter.h"
 #include "CharacterFrame.h"
 #include "CharacterSprite.h"
-#include "CharacterStateManager.h"
+#include "CharacterStateComponent.h"
 #include "ServiceManager.h"
 #include "Object.h"
 #include "Material.h"
@@ -11,6 +11,7 @@
 #include "Transform.h"
 #include "RenderingGL.h"
 #include "ResourceManager.h"
+#include "GameCharacterData.h"
 
 VE_BEHAVIOUR_REGISTER_TYPE(CharacterRenderer);
 
@@ -32,13 +33,13 @@ void CharacterRenderer::OnRenderObjects()
 		}
 	}
 
-	if(_character->_stateManager->_currentFrame == nullptr)
+	if(_character->_stateComponent->_currentFrame == nullptr)
 	{
 		Renderer::OnRenderObjects();
 		return;
 	}
 
-	const CharacterSprite* spriteData = _character->_stateManager->_currentFrame->spriteData();
+	const CharacterSprite* spriteData = _character->_stateComponent->_currentFrame->spriteData();
 	Texture* frameTex = _resource->GetTexture(spriteData->sprite());
 
 	HandleRenderingMaterial(spriteData, frameTex, _character->_flipped);
@@ -47,14 +48,14 @@ void CharacterRenderer::OnRenderObjects()
 	_rendering->DrawMesh(_renderingTransform.get(), _mesh, _material);
 }
 
-void CharacterRenderer::HandleRenderingMaterial(const CharacterSprite* spriteData, Texture* texture, bool flipped)
+void CharacterRenderer::HandleRenderingMaterial(const CharacterSprite* spriteData, Texture* texture, bool flipped) const
 {
 	if(texture == nullptr)
 	{
 		return;
 	}
 
-	glm::ivec4 pixelRect = spriteData->pixelRect();
+	ve::ivec4 pixelRect = spriteData->pixelRect();
 	glm::vec4 textureSize = texture->size();
 
 	glm::vec4 params(
@@ -67,22 +68,22 @@ void CharacterRenderer::HandleRenderingMaterial(const CharacterSprite* spriteDat
 	_material->uniformTextures.insert_or_assign("tex0", MaterialTexture(texture, params));
 }
 
-void CharacterRenderer::HandleRenderingTransform(const CharacterSprite* spriteData, Texture* texture)
+void CharacterRenderer::HandleRenderingTransform(const CharacterSprite* spriteData, Texture* texture) const
 {
-	glm::ivec2 originOffset = spriteData->originOffset();
-	glm::vec2 sizeMultiplier = _character->_sizeMultiplier;
-	glm::ivec4 pixelRect = spriteData->pixelRect();
+	ve::ivec2 originOffset = spriteData->originOffset();
+	ve::vec2 sizeMultiplier = _character->characterData()->_sizeMultiplier;
+	ve::ivec4 pixelRect = spriteData->pixelRect();
 
 	_renderingTransform->SnapTo(*_owner->transform());
 
-	_renderingTransform->position += glm::ivec2(
-		glm::round(originOffset.x * sizeMultiplier.x),
-		glm::round(originOffset.y * sizeMultiplier.y)
+	_renderingTransform->position += ve::vec2(
+		ve::dec_t(originOffset.x) * sizeMultiplier.x,
+		ve::dec_t(originOffset.y) * sizeMultiplier.y
 	);
 
-	_renderingTransform->scale = glm::vec2(
-		pixelRect.z * sizeMultiplier.x,
-		pixelRect.w * sizeMultiplier.y);
+	_renderingTransform->scale = ve::vec2(
+		ve::dec_t(pixelRect.z) * sizeMultiplier.x,
+		ve::dec_t(pixelRect.w) * sizeMultiplier.y);
 }
 
 CharacterRenderer::CharacterRenderer(Object* owner, ServiceManager* serviceManager, const json& j) : Renderer(owner, serviceManager, j)
@@ -96,10 +97,10 @@ CharacterRenderer::CharacterRenderer(Object* owner, ServiceManager* serviceManag
 	_resource = _serviceManager->ResourceManager();
 	_rendering = _serviceManager->Rendering();
 
-	_material = _resource->CopyMaterial(_material);
+	_renderingMaterialCopy = std::make_unique<Material>(*_material);
+	_material = _renderingMaterialCopy.get();
 	_renderingTransform = std::make_unique<Transform>(_owner, serviceManager);
 }
 
 CharacterRenderer::~CharacterRenderer()
-{
-}
+= default;

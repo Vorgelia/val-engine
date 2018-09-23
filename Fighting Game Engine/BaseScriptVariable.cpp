@@ -1,19 +1,20 @@
 #include "BaseScriptVariable.h"
-#include "ScriptParsingUtils.h"
 #include "ScriptError.h"
 #include "ScriptOperator.h"
 #include "ScriptToken.h"
+#include "IReflectable.h"
 
 const std::unordered_map<std::string, ScriptVariableType> BaseScriptVariable::variableTypeLookup =
 {
-	{ ScriptToken::type_int, ScriptVariableType::Int },
+	{ ScriptToken::type_dec, ScriptVariableType::Dec },
 	{ ScriptToken::type_bool, ScriptVariableType::Bool },
 	{ ScriptToken::type_string, ScriptVariableType::String },
-	{ ScriptToken::type_collection, ScriptVariableType::Collection },
+	{ ScriptToken::type_map, ScriptVariableType::Map },
+	{ ScriptToken::type_array, ScriptVariableType::Array },
 	{ ScriptToken::type_void, ScriptVariableType::Null },
 };
 
-ScriptVariableType BaseScriptVariable::GetVariableType(const std::string & token)
+ScriptVariableType BaseScriptVariable::GetVariableTypeFromToken(const std::string & token)
 {
 	auto& iter = variableTypeLookup.find(token);
 	if(iter == variableTypeLookup.end())
@@ -24,40 +25,50 @@ ScriptVariableType BaseScriptVariable::GetVariableType(const std::string & token
 	return iter->second;
 }
 
-ScriptVariableType BaseScriptVariable::type() const
-{
-	return _type;
-}
-
 bool BaseScriptVariable::isConst() const
 {
 	return _const;
 }
 
-bool BaseScriptVariable::isInitialized()
+bool BaseScriptVariable::isInitialized() const
 {
 	return _initialized;
 }
 
-std::string BaseScriptVariable::ToString()
+std::string BaseScriptVariable::ToString() const
 {
 	return ScriptToken::value_null;
 }
 
-BaseScriptVariable::BaseScriptVariable(ScriptVariableType type, bool isConst)
+json BaseScriptVariable::ToJSON() const
 {
-	_type = type;
-	_const = isConst;
-	_initialized = false;
+	return json
+	{
+		{ "ve_type", int(type()) },
+		{ "ve_const", _const },
+		{ "ve_initialized", _initialized },
+	};
 }
 
-BaseScriptVariable::BaseScriptVariable()
+std::shared_ptr<BaseScriptVariable> BaseScriptVariable::Clone() const
 {
-	_type = ScriptVariableType::Null;
-	_const = false;
-	_initialized = false;
+	return std::make_shared<BaseScriptVariable>(false);
 }
 
-BaseScriptVariable::~BaseScriptVariable()
+BaseScriptVariable::BaseScriptVariable(bool isConst)
+	: _const(isConst)
+	, _initialized(false)
 {
+}
+
+BaseScriptVariable::BaseScriptVariable(const json & j)
+{
+	JSON::TryGetMember(j, "ve_const", _const);
+	JSON::TryGetMember(j, "ve_initialized", _initialized);
+}
+
+BaseScriptVariable::BaseScriptVariable(const IReflectable& reflectable)
+	: BaseScriptVariable(reflectable.Serialize())
+{
+	
 }

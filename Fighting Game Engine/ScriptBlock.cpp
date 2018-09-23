@@ -8,7 +8,7 @@
 #include "ScriptExpression.h"
 #include "ScriptLine.h"
 
-size_t ScriptBlock::cursor(bool absolute)
+size_t ScriptBlock::cursor(bool absolute) const
 {
 	return _cursor + (absolute ? _lines.front() : 0);
 }
@@ -45,7 +45,7 @@ void ScriptBlock::ParseLine(ScriptLine &line)
 
 void ScriptBlock::HandleExpressionLine(std::vector<ScriptToken>& tokens)
 {
-	if(tokens.size() < 1)
+	if(tokens.empty())
 	{
 		return;
 	}
@@ -61,7 +61,10 @@ void ScriptBlock::HandleExpressionLine(std::vector<ScriptToken>& tokens)
 	else if(tokens[0].token == ScriptToken::block_return)
 	{
 		_owner->RaiseControlFlag(ScriptControlFlag::Return);
-		_variables[VE_SCRIPT_RETURN_VARIABLE_ID] = EvaluateExpression(std::vector<ScriptToken>(tokens.begin() + 1, tokens.end()));
+		if(tokens.size() > 1)
+		{
+			_variables[VE_SCRIPT_RETURN_VARIABLE_ID] = EvaluateExpression(std::vector<ScriptToken>(tokens.begin() + 1, tokens.end()));
+		}
 		return;
 	}
 	else
@@ -110,7 +113,7 @@ void ScriptBlock::HandleConditionalDeclarationLine(std::vector<ScriptToken>& tok
 	int nextBlockBegin = _cursor;
 	out_blockEnd = nextBlockBegin;
 
-	while(tokens.size() > 0)
+	while(!tokens.empty())
 	{
 		if(tokens[0].token == ScriptToken::conditional_else)
 		{
@@ -217,16 +220,24 @@ std::shared_ptr<BaseScriptVariable> ScriptBlock::RunFunction(std::string name, s
 	return _parent->RunFunction(name, variables);
 }
 
-void ScriptBlock::AddVariable(std::string name, std::shared_ptr<BaseScriptVariable> variable)
+void ScriptBlock::AddVariable(std::string name, std::shared_ptr<BaseScriptVariable> variable, bool allowReplace)
 {
-	if(_variables.find(name) != _variables.end())
-	{
-		throw ScriptError("Attempting to add variable with duplicate name " + name);
-	}
-
 	//TODO: Check if name is a keyword
 
-	_variables.emplace(name, variable);
+	auto& iter = _variables.find(name);
+	if(iter != _variables.end())
+	{
+		if(!allowReplace)
+		{
+			throw ScriptError("Attempting to add variable with duplicate name " + name);
+		}
+
+		iter->second = variable;
+	}
+	else
+	{
+		_variables.emplace(name, variable);
+	}
 }
 
 std::shared_ptr<BaseScriptVariable> ScriptBlock::GetVariable(std::string name)
@@ -265,6 +276,4 @@ ScriptBlock::ScriptBlock(ScriptLinesView lines, int depth, ScriptBlock* parent, 
 }
 
 ScriptBlock::~ScriptBlock()
-{
-
-}
+= default;

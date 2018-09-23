@@ -1,8 +1,8 @@
 #pragma once
 #include <string>
 #include <vector>
-#include <unordered_map>
 #include "GLIncludes.hpp"
+#include <unordered_map>
 
 enum class ShaderProgramType
 {
@@ -30,9 +30,13 @@ protected:
 	GLuint _id;
 	ShaderProgramType _type;
 
+	mutable std::unordered_map<std::string, GLint> _uniformLocations;
+
 public:
 	const std::string& name() const;
 	bool valid() const;
+
+	GLint UniformLocation(const std::string& str) const;
 
 	BaseShader(const std::string& name, GLuint id, ShaderProgramType type);
 	virtual ~BaseShader();

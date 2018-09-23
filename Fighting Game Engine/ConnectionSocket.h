@@ -18,7 +18,7 @@ enum class SocketMode
 
 class ConnectionSocket
 {
-	bool _SendData(std::string data);
+	bool _SendData(std::string data) const;
 public:
 	std::string id;
 	SocketMode mode;
@@ -31,7 +31,7 @@ public:
 	std::queue<NetworkMessage> sendQueue;
 	std::queue<NetworkMessage> receiveQueue;
 
-	int port();
+	int port() const;
 
 	static int GetLastSocketError();
 	void Disconnect();

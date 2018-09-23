@@ -1,4 +1,4 @@
-#include "CharacterStateManager.h"
+#include "CharacterStateComponent.h"
 #include "ServiceManager.h"
 #include "CharacterFrame.h"
 #include "CharacterState.h"
@@ -7,14 +7,71 @@
 #include "Script.h"
 #include "ScriptVariable.h"
 #include "ScriptManager.h"
-#include "InputManager.h"
 #include "InputDevice.h"
-#include "InputMotion.h"
 #include "FilesystemManager.h"
 #include "ResourceManager.h"
 #include "GamePlayer.h"
+#include "GameCharacterData.h"
 
-void CharacterStateManager::StateUpdate()
+void CharacterStateComponent::Init()
+{
+	GameCharacterData* characterData = _owner->_characterData.get();
+	for(const std::string& path : characterData->_statePaths)
+	{
+		_filesystem->ApplyFunctionToFiles(path, [this](const FS::path path)
+		{
+			if(path.extension().string() != ".json")
+			{
+				return;
+			}
+
+			const json* stateJson = _resource->GetJsonData(path.string());
+			if(stateJson == nullptr)
+			{
+				return;
+			}
+
+			for(auto& iter : *stateJson)
+			{
+				auto result = this->_stateLookup.insert(std::make_pair(
+					JSON::Get<std::string>(iter["name"]),
+					std::make_unique<CharacterState>(iter, _scriptManager->AddScript(JSON::Get<std::string>(iter["script"])))));
+				_scriptManager->HandleScriptCharacterBindings(*_owner, result.first->second->script());
+			}
+		});
+	}
+
+	for(const std::string& path : characterData->_frameDataPaths)
+	{
+		_filesystem->ApplyFunctionToFiles(path, [this](const FS::path path)
+		{
+			if(path.extension().string() != ".json")
+			{
+				return;
+			}
+
+			const json* frameJson = _resource->GetJsonData(path.string());
+			if(frameJson == nullptr)
+			{
+				return;
+			}
+
+			for(auto& iter : *frameJson)
+			{
+				this->_frameLookup.insert(std::make_pair(
+					JSON::Get<std::string>(iter["id"]),
+					std::make_unique<CharacterFrame>(iter)));
+			}
+		});
+	}
+
+	for(auto& iter : _frameLookup)
+	{
+		_owner->_resource->GetTexture(iter.second->spriteData()->sprite());
+	}
+}
+
+void CharacterStateComponent::Update()
 {
 	if(_freezeFrameCount > 0)
 	{
@@ -33,11 +90,11 @@ void CharacterStateManager::StateUpdate()
 
 		_currentState->script()->ExecuteFunction("StateUpdate",
 			std::vector<std::shared_ptr<BaseScriptVariable>>{
-			std::make_shared<ScriptInt>(_currentStateFrame)});
+			std::make_shared<ScriptDec>(ve::dec_t(_currentStateFrame))});
 	}
 }
 
-void CharacterStateManager::EvaluateNextState()
+void CharacterStateComponent::EvaluateNextState()
 {
 	if(_owner->_playerOwner == nullptr || _owner->_playerOwner->inputDevice() == nullptr)
 	{
@@ -53,7 +110,6 @@ void CharacterStateManager::EvaluateNextState()
 			continue;
 		}
 
-		//TODO: Evaluate motion on input device of owner
 		if(_owner->_playerOwner->inputDevice()->EvaluateMotion(i.second->associatedMotion()))
 		{
 			if(nextState == nullptr || nextState->priority() < i.second->priority())
@@ -61,7 +117,7 @@ void CharacterStateManager::EvaluateNextState()
 				const std::unordered_set<std::string>& stateTypeFlags = i.second->stateTypeFlags();
 
 				const std::unordered_set<std::string>& cancelFlags = GetFlags(CharacterStateFlagType::CancelTargets);
-				bool validCancel = _stateEnded;
+				bool validCancel = _stateEnded || _currentState == nullptr;
 				for(auto& iter : stateTypeFlags)
 				{
 					if(cancelFlags.find(iter) != cancelFlags.end())
@@ -92,26 +148,31 @@ void CharacterStateManager::EvaluateNextState()
 		}
 	}
 
-	//TODO: Add cancelling rules
 	if(nextState != nullptr)
 	{
 		StartState(nextState->name());
 	}
 }
 
-bool CharacterStateManager::StartState(std::string name)
+bool CharacterStateComponent::StartState(const std::string& name)
 {
-	auto& iter = _stateLookup.find(name);
+	auto iter = _stateLookup.find(name);
 	if(iter != _stateLookup.end())
 	{
+		if(_currentState != nullptr && _currentState->script()->HasFunction("StateExit"))
+		{
+			_currentState->script()->ExecuteFunction("StateExit");
+		}
 		_currentState = iter->second.get();
 		_currentStateId = name;
 		_currentStateFrame = -1;
 
+		_usedHitboxSequenceIDs.clear();
+
 		_stateEnded = false;
 
 		ClearFlags();
-		StateUpdate();
+		Update();
 
 		return true;
 	}
@@ -119,9 +180,9 @@ bool CharacterStateManager::StartState(std::string name)
 	return false;
 }
 
-bool CharacterStateManager::SetFrame(std::string name)
+bool CharacterStateComponent::SetFrame(const std::string& name)
 {
-	auto& iter = _frameLookup.find(name);
+	auto iter = _frameLookup.find(name);
 	if(iter != _frameLookup.end())
 	{
 		_currentFrame = iter->second.get();
@@ -131,36 +192,36 @@ bool CharacterStateManager::SetFrame(std::string name)
 	return false;
 }
 
-bool CharacterStateManager::ModifyCurrentStateFrame(int newFrame)
+bool CharacterStateComponent::ModifyCurrentStateFrame(int newFrame)
 {
 	_currentStateFrame = newFrame;
 	_stateEnded = false;
 	return true;
 }
 
-bool CharacterStateManager::RestartState()
+bool CharacterStateComponent::RestartState()
 {
 	return StartState(_currentStateId);
 }
 
-void CharacterStateManager::MarkStateEnded()
+void CharacterStateComponent::MarkStateEnded()
 {
 	_stateEnded = true;
 }
 
-void CharacterStateManager::Freeze(int duration)
+void CharacterStateComponent::Freeze(int duration)
 {
 	_freezeFrameCount = duration;
 }
 
-void CharacterStateManager::Unfreeze()
+void CharacterStateComponent::Unfreeze()
 {
 	_freezeFrameCount = 0;
 }
 
-bool CharacterStateManager::AddFlag(CharacterStateFlagType type, std::string flag)
+bool CharacterStateComponent::AddFlag(CharacterStateFlagType type, const std::string& flag)
 {
-	auto& iter = _flags.find(type);
+	auto iter = _flags.find(type);
 	if(iter == _flags.end())
 	{
 		iter = _flags.emplace(type, std::unordered_set<std::string>()).first;
@@ -169,9 +230,9 @@ bool CharacterStateManager::AddFlag(CharacterStateFlagType type, std::string fla
 	return iter->second.emplace(flag).second;
 }
 
-bool CharacterStateManager::RemoveFlag(CharacterStateFlagType type, std::string flag)
+bool CharacterStateComponent::RemoveFlag(CharacterStateFlagType type, const std::string& flag)
 {
-	auto& iter = _flags.find(type);
+	auto iter = _flags.find(type);
 	if(iter == _flags.end())
 	{
 		return false;
@@ -180,14 +241,14 @@ bool CharacterStateManager::RemoveFlag(CharacterStateFlagType type, std::string 
 	return iter->second.erase(flag) != 0;
 }
 
-void CharacterStateManager::ClearFlags()
+void CharacterStateComponent::ClearFlags()
 {
 	_flags.clear();
 }
 
-const std::unordered_set<std::string>& CharacterStateManager::GetFlags(CharacterStateFlagType type)
+const std::unordered_set<std::string>& CharacterStateComponent::GetFlags(CharacterStateFlagType type)
 {
-	auto& iter = _flags.find(type);
+	auto iter = _flags.find(type);
 	if(iter == _flags.end())
 	{
 		iter = _flags.emplace(type, std::unordered_set<std::string>()).first;
@@ -196,58 +257,11 @@ const std::unordered_set<std::string>& CharacterStateManager::GetFlags(Character
 	return iter->second;
 }
 
-CharacterStateManager::CharacterStateManager(GameCharacter* owner, ServiceManager* serviceManager, const json& states, const json& frames) :
-	_owner(owner)
+CharacterStateComponent::CharacterStateComponent(GameCharacter* owner, ServiceManager* serviceManager) 
+	: GameCharacterComponent(owner, serviceManager)
 {
 	_input = serviceManager->Input();
 	_scriptManager = serviceManager->ScriptManager();
 	_filesystem = serviceManager->Filesystem();
-
-	for(auto& iter : states)
-	{
-		std::string path = JSON::Get<std::string>(iter);
-		_filesystem->ApplyFunctionToFiles(path, [this](const FS::path path)
-		{
-			if(path.extension().string() != ".json")
-			{
-				return;
-			}
-			const json& stateJson = _filesystem->LoadJsonResource(path);
-			for(auto& iter : stateJson)
-			{
-				auto& result = this->_stateLookup.insert(std::make_pair(
-					JSON::Get<std::string>(iter["name"]),
-					std::make_unique<CharacterState>(iter,  _scriptManager->AddScript(JSON::Get<std::string>(iter["script"])))));
-				_scriptManager->HandleScriptCharacterBindings(*_owner, result.first->second->script());
-			}
-		});
-	}
-
-	for(auto& iter : frames)
-	{
-		std::string path = JSON::Get<std::string>(iter);
-		_filesystem->ApplyFunctionToFiles(path, [this](const FS::path path)
-		{
-			if(path.extension().string() != ".json")
-			{
-				return;
-			}
-			const json& frameJson = _filesystem->LoadJsonResource(path);
-			for(auto& iter : frameJson)
-			{
-				this->_frameLookup.insert(std::make_pair(
-					JSON::Get<std::string>(iter["id"]),
-					std::make_unique<CharacterFrame>(iter)));
-			}
-		});
-	}
-
-	for(auto& iter : _frameLookup)
-	{
-		_owner->_resource->GetTexture(iter.second->spriteData()->sprite());
-	}
-}
-
-CharacterStateManager::~CharacterStateManager()
-{
+	_resource = serviceManager->ResourceManager();
 }

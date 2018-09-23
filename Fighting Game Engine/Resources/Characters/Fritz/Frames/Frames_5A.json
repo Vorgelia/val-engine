@@ -1,0 +1,216 @@
+[
+	{
+        "id":"fritz_5a_01",
+        "hitboxes":[
+		
+		],
+        "hurtboxes":[
+		
+		],
+        "collision":[
+            { "center":{"x":0, "y":0}, "extents":{"x":1000, "y":6000} }
+        ],
+        "spriteData":{
+            "sprite":"Characters/Fritz/Sprites/_Sheet_01.png",
+            "pixelRect":{
+                "x":1729,
+                "y":802,
+                "z":119,
+                "w":208
+            },
+            "originOffset":{
+                "x":-48,
+                "y":0
+            }
+        }
+    },
+	{
+        "id":"fritz_5a_02",
+        "hitboxes":[
+		
+		],
+        "hurtboxes":[
+		
+		],
+        "collision":[
+            { "center":{"x":0, "y":0}, "extents":{"x":1000, "y":6000} }
+        ],
+        "spriteData":{
+            "sprite":"Characters/Fritz/Sprites/_Sheet_01.png",
+            "pixelRect":{
+                "x":1764,
+                "y":372,
+                "z":128,
+                "w":207
+            },
+            "originOffset":{
+                "x":-58,
+                "y":0
+            }
+        }
+    },
+	{
+        "id":"fritz_5a_03",
+        "hitboxes":[
+		
+		],
+        "hurtboxes":[
+		
+		],
+        "collision":[
+            { "center":{"x":0, "y":0}, "extents":{"x":1000, "y":6000} }
+        ],
+        "spriteData":{
+            "sprite":"Characters/Fritz/Sprites/_Sheet_01.png",
+            "pixelRect":{
+                "x":658,
+                "y":679,
+                "z":177,
+                "w":206
+            },
+            "originOffset":{
+                "x":-107,
+                "y":0
+            }
+        }
+    },
+	{
+        "id":"fritz_5a_04",
+        "hitboxes":[
+		
+		],
+        "hurtboxes":[
+		
+		],
+        "collision":[
+            { "center":{"x":0, "y":0}, "extents":{"x":1000, "y":6000} }
+        ],
+        "spriteData":{
+            "sprite":"Characters/Fritz/Sprites/_Sheet_01.png",
+            "pixelRect":{
+                "x":0,
+                "y":0,
+                "z":290,
+                "w":205
+            },
+            "originOffset":{
+                "x":-64,
+                "y":0
+            }
+        }
+    },
+	{
+        "id":"fritz_5a_05",
+        "hitboxes":[
+            {
+                "collision":[
+					{ "center":{"x":0, "y":0}, "extents":{"x":10, "y":60} }
+                ],
+				"data":{
+					"damage":20,
+					"hitstun":20,
+					"blockstun":5
+				}
+            }
+        ],
+        "hurtboxes":[
+            {
+                "collision":[
+				   { "center":{"x":0, "y":0}, "extents":{"x":10, "y":60} }
+                ],
+                "damageMultiplier":1.2
+            }
+        ],
+        "collision":[
+           { "center":{"x":0, "y":0}, "extents":{"x":1000, "y":6000} }
+        ],
+        "spriteData":{
+            "sprite":"Characters/Fritz/Sprites/_Sheet_01.png",
+            "pixelRect":{
+                "x":292,
+                "y":0,
+                "z":274,
+                "w":202
+            },
+            "originOffset":{
+                "x":-60,
+                "y":0
+            }
+        }
+    },
+	{
+        "id":"fritz_5a_06",
+        "hitboxes":[
+		
+		],
+        "hurtboxes":[
+		
+		],
+        "collision":[
+            { "center":{"x":0, "y":0}, "extents":{"x":1000, "y":6000} }
+        ],
+        "spriteData":{
+            "sprite":"Characters/Fritz/Sprites/_Sheet_01.png",
+            "pixelRect":{
+                "x":1015,
+                "y":0,
+                "z":170,
+                "w":208
+            },
+            "originOffset":{
+                "x":-79,
+                "y":0
+            }
+        }
+    },
+	{
+        "id":"fritz_5a_07",
+        "hitboxes":[
+		
+		],
+        "hurtboxes":[
+		
+		],
+        "collision":[
+            { "center":{"x":0, "y":0}, "extents":{"x":1000, "y":6000} }
+        ],
+        "spriteData":{
+            "sprite":"Characters/Fritz/Sprites/_Sheet_01.png",
+            "pixelRect":{
+                "x":789,
+                "y":209,
+                "z":198,
+                "w":206
+            },
+            "originOffset":{
+                "x":-86,
+                "y":0
+            }
+        }
+    },
+	{
+        "id":"fritz_5a_08",
+        "hitboxes":[
+		
+		],
+        "hurtboxes":[
+		
+		],
+        "collision":[
+            { "center":{"x":0, "y":0}, "extents":{"x":1000, "y":6000} }
+        ],
+        "spriteData":{
+            "sprite":"Characters/Fritz/Sprites/_Sheet_01.png",
+            "pixelRect":{
+                "x":1621,
+                "y":221,
+                "z":141,
+                "w":209
+            },
+            "originOffset":{
+                "x":-71,
+                "y":0
+            }
+        }
+    }
+]

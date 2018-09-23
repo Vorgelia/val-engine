@@ -7,7 +7,7 @@ layout(rgba16, binding = 5) restrict uniform image2D auxBuf2_tex2;
 
 layout(std140) buffer CommonVec4Buffer
 {
-	vec4 ve_commonVec4Data[1024];
+	vec4 ve_commonVec4Data[];
 };
 
 void drawDebugSquare(uint index = 0)

@@ -4,7 +4,7 @@
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
-#include<boost\filesystem.hpp>
+#include <boost/filesystem.hpp>
 
 namespace FS = boost::filesystem;
 
@@ -14,19 +14,21 @@ class GameCharacter;
 class Debug;
 class Time;
 class FilesystemManager;
+class ResourceManager;
 
 class ScriptManager : public BaseService
 {
 	Debug* _debug;
 	Time* _time;
 	FilesystemManager* _filesystem;
+	ResourceManager* _resource;
 
 private:
 	std::unordered_map<std::string, std::shared_ptr<BaseScriptVariable>> _globalVariables;
 	std::unordered_set<std::shared_ptr<Script>> _scripts;
 	
 	void HandleScriptBindings(Script* script);
-	void HandleCharacterStateVariables();
+	void CacheGlobalVariables();
 
 public:
 	void Init() override;
@@ -37,7 +39,7 @@ public:
 	Script* AddScript(const FS::path& path);
 	void AddVariable(const std::string& name, const std::shared_ptr<BaseScriptVariable>& variable);
 
-	void HandleScriptCharacterBindings(GameCharacter& character, Script* script);
+	void HandleScriptCharacterBindings(GameCharacter& character, Script* script) const;
 
 	void RemoveScript(Script* script);
 

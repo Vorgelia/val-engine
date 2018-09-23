@@ -1,14 +1,28 @@
 {
-	"states":[
-		"Characters/Fritz/States"
-	],
-	"frames":[
-		"Characters/Fritz/Frames"
-	],
+	"name":"Fritz!",
+	"characterScript":"Characters/Fritz/Fritz.vscript",
 	"sizeMultiplier":
 	{
-		"x":5,
-		"y":5
+		"x":0.18,
+		"y":0.18
 	},
-	"characterScript":"Characters/Fritz/Fritz.vscript"
+	"physicsParams":
+	{
+		"gravity":0.09,
+		"baseGroundFriction":0.1,
+		"baseAirFriction":0.005,
+		"mass":10
+	},
+	"flags":
+	[
+		"whatever"
+	],
+	"statePaths":
+	[
+		"Characters/Fritz/States"
+	],
+	"frameDataPaths":
+	[
+		"Characters/Fritz/Frames"
+	]
 }

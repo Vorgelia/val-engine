@@ -1,9 +1,9 @@
 #include "InputManager.h"
 #include <unordered_set>
 #include "InputDevice.h"
-#include "InputFrame.h"
+#include "GLIncludes.hpp"
 #include "FilesystemManager.h"
-#include "Screen.h"
+#include "InputDeviceId.h"
 
 //Update list of valid input devices and have them poll for inputs
 void InputManager::FrameUpdate()
@@ -53,7 +53,7 @@ void InputManager::Cleanup()
 	_temporaryNetworkDevices.clear();
 }
 
-const std::unordered_map<int, std::shared_ptr<InputDevice>>& InputManager::inputDevices()
+const std::unordered_map<int, std::shared_ptr<InputDevice>>& InputManager::inputDevices() const
 {
 	return _inputDevices;
 }
@@ -99,5 +99,4 @@ InputManager::InputManager(ServiceManager* serviceManager) : BaseService(service
 }
 
 InputManager::~InputManager()
-{
-}
+= default;

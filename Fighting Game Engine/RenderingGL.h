@@ -1,7 +1,7 @@
 #pragma once
 #include "BaseService.h"
 #include <vector>
-#include <GLM\glm.hpp>
+#include <GLM/glm.hpp>
 #include "Font.h"
 
 class Mesh;
@@ -33,11 +33,11 @@ class RenderingGL : public BaseService
 {
 	friend class GameSceneManager;
 private:
-	Debug* _debug;
-	GraphicsGL* _graphics;
-	ResourceManager* _resourceManager;
-	Screen* _screen;
-	Time* _time;
+	Debug* _debug{};
+	GraphicsGL* _graphics{};
+	ResourceManager* _resourceManager{};
+	Screen* _screen{};
+	Time* _time{};
 
 private:
 	std::unique_ptr<FrameBuffer> _mainBuffer;
@@ -50,13 +50,13 @@ private:
 	std::unique_ptr<Vec4Buffer> _commonComputeVec4Buffer;
 
 	void InitTextDrawing();
-	void DrawTextCharacter(glm::vec4 rect, glm::vec4 params, Texture* tex);
+	void DrawTextCharacter(glm::vec4 rect, glm::vec4 params, Texture* tex) const;
 
-	void BindMaterialUniforms(const Material& material, int& out_texturesBound);
-	void BindShaderTextures(SurfaceShader* shader, const std::vector<MaterialTexture>& textures, int& out_textureUnitOffset);
+	void BindMaterialUniforms(const Material& material, int& out_texturesBound) const;
+	void BindShaderTextures(SurfaceShader* shader, const std::vector<MaterialTexture>& textures, int& out_textureUnitOffset) const;
 	void BindBufferUniforms(SurfaceShader* shad, int& index);
 
-	void BindFrameBufferImages(const FrameBuffer* buffer, GLuint bindingPoint);
+	void BindFrameBufferImages(const FrameBuffer* buffer, GLuint bindingPoint) const;
 
 	void OnScreenResize();
 	
@@ -71,7 +71,7 @@ public:
 
 	void DrawScreenMesh(glm::vec4 rect, Mesh* mesh, Material* mat);
 	void DrawScreenMesh(glm::vec4 rect, Mesh* mesh, const std::vector<MaterialTexture>& textures, Material* mat);
-	void DrawScreenMesh(glm::vec4 rect, Mesh* mesh, FrameBuffer* textures, Material* mat, glm::vec4 params = glm::vec4(0, 0, 1, 1));
+	void DrawScreenMesh(glm::vec4 rect, Mesh* mesh, FrameBuffer* frameBuffer, Material* mat, glm::vec4 params = glm::vec4(0, 0, 1, 1));
 
 	void DrawPostEffect(PostEffect* pf);
 	void DrawScreenText(glm::vec4 rect, GLuint size, std::string text, Font* font, TextAlignment alignment = TextAlignment::Left);

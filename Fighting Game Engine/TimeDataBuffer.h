@@ -1,6 +1,6 @@
 #pragma once
 #include "GraphicsBuffer.h"
-#include "MathIncludes.hpp"
+
 class TimeDataBuffer :
 	public GraphicsBuffer
 {

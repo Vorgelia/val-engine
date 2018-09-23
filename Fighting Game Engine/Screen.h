@@ -1,12 +1,11 @@
 #pragma once
 #include "BaseService.h"
-#include <vector>
 #include "GLIncludes.hpp"
-#include <GLM\glm.hpp>
+#include <GLM/glm.hpp>
 #include "Delegate.h"
 
 //Controls whether a single render buffer should be used
-#define VE_USE_SINGLE_BUFFER
+//#define VE_USE_SINGLE_BUFFER
 
 class Screen : public BaseService
 {
@@ -34,7 +33,7 @@ public:
 	void Update() override;
 	void Cleanup() override;
 
-	void HandleResized(GLFWwindow* wnd, int width, int height);
+	void HandleResized(GLFWwindow* wnd, int sizeX, int sizeY);
 
 	void SetActiveWindow(GLFWwindow* window);
 

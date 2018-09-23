@@ -270,7 +270,7 @@ ScriptTokenType ScriptParsingUtils::GetNextTokenType(const std::string& line, si
 	case ScriptTokenType::NumericLiteral:
 		for(size_t i = startIndex; i < line.length(); ++i)
 		{
-			if(isdigit(line[i]))
+			if(isdigit(line[i]) || line[i] == '.')
 			{
 				out_endIndex = i;
 			}
@@ -400,7 +400,7 @@ ScriptFunctionSignature ScriptParsingUtils::ParseFunctionSignature(const ScriptL
 		throw ScriptError("Parser Error - Invalid return type specifier.");
 	}
 
-	if(declLineTokens[4].type != ScriptTokenType::Keyword || (signature.returnType = BaseScriptVariable::GetVariableType(declLineTokens[4].token)) == ScriptVariableType::Invalid)
+	if(declLineTokens[4].type != ScriptTokenType::Keyword || (signature.returnType = BaseScriptVariable::GetVariableTypeFromToken(declLineTokens[4].token)) == ScriptVariableType::Invalid)
 	{
 		throw ScriptError("Parser Error - Invalid function return type.");
 	}
@@ -429,7 +429,7 @@ void ScriptParsingUtils::ParseFunctionArgumentSignatures(const std::string & tok
 		const ScriptToken& typeToken = parenthesisTokens[i];
 
 		ScriptVariableType variableType;
-		if(typeToken.type != ScriptTokenType::Keyword || (variableType = BaseScriptVariable::GetVariableType(typeToken.token)) == ScriptVariableType::Invalid)
+		if(typeToken.type != ScriptTokenType::Keyword || (variableType = BaseScriptVariable::GetVariableTypeFromToken(typeToken.token)) == ScriptVariableType::Invalid)
 		{
 			throw ScriptError("Invalid variable type declaration " + typeToken.token);
 		}
@@ -445,7 +445,7 @@ void ScriptParsingUtils::ParseFunctionArgumentSignatures(const std::string & tok
 			throw ScriptError("Unexpected token " + parenthesisTokens[i + 2].token);
 		}
 
-		out_signatures.push_back(ScriptVariableSignature(variableType, nameToken.token));
+		out_signatures.emplace_back(variableType, nameToken.token);
 	}
 }
 
