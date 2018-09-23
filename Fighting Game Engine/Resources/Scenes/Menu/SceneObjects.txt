@@ -15,8 +15,8 @@
                     "y":0
                 },
                 "scale":{
-                    "x":200,
-                    "y":160
+                    "x":240,
+                    "y":180
                 },
                 "rotation":{
                     "x":0,
@@ -43,12 +43,12 @@
                 "name":"Transform",
                 "enabled":true,
                 "position":{
-                    "x":0,
-                    "y":0
+                    "x":5,
+                    "y":-36
                 },
                 "scale":{
-                    "x":113,
-                    "y":83
+                    "x":145,
+                    "y":145
                 },
                 "rotation":{
                     "x":0,
@@ -56,7 +56,7 @@
                     "z":0,
                     "w":1
                 },
-                "depth":4
+                "depth":0.5
             },
             {
                 "name":"Renderer",

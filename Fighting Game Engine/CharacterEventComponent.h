@@ -13,13 +13,13 @@ protected:
 	void Update() override;
 
 public:
-	void HandleAttackHit(GameCharacter* otherCharacter, const AttackCollisionHit& attackHit, const std::vector<std::string>& hitReactionFlags);
-	//return: Generated hit flags.
-	std::vector<std::string> HandleAttackReceived(GameCharacter* otherCharacter, const AttackCollisionHit& collisionResult);
+	void HandleAttackHit(GameCharacter* otherCharacter, const AttackCollisionHit& attackHit, std::shared_ptr<BaseScriptVariable> hitReactionData);
+	//return: Generated hit reaction data.
+	std::shared_ptr<BaseScriptVariable> HandleAttackReceived(GameCharacter* otherCharacter, const AttackCollisionHit& collisionResult);
 
 	bool ResolveTrade(GameCharacter* otherCharacter, const AttackCollisionHit& attackHit, const AttackCollisionHit& attackReceived);
 	void HandleTradeUnresolved(GameCharacter* otherCharacter, const AttackCollisionHit& attackHit, const AttackCollisionHit& attackReceived);
-	void HandleTradeSuccess(GameCharacter* otherCharacter, const AttackCollisionHit& attackHit, const std::vector<std::string>& hitReactionFlags);
+	void HandleTradeSuccess(GameCharacter* otherCharacter, const AttackCollisionHit& attackHit, std::shared_ptr<BaseScriptVariable> hitReactionFlags);
 
 	CharacterEventComponent(GameCharacter* owner, ServiceManager* serviceManager);
 	~CharacterEventComponent() = default;

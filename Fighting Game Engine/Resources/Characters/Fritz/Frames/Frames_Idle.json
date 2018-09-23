@@ -1,0 +1,96 @@
+[
+    {
+        "id":"fritz_idle_01",
+        "hitboxes":[],
+        "hurtboxes":[],
+        "collision":[],
+        "spriteData":{
+            "sprite":"Characters/Fritz/Sprites/_Sheet_01.png",
+            "pixelRect":{
+                "x":897,
+                "y":871,
+                "z":102,
+                "w":221
+            },
+            "originOffset":{
+                "x":-51,
+                "y":0
+            }
+        }
+    },
+	{
+        "id":"fritz_idle_02",
+        "hitboxes":[
+        
+		],
+        "hurtboxes":[
+
+        ],
+        "collision":[
+            { "center":{"x":0, "y":0}, "extents":{"x":10, "y":60} }
+        ],
+        "spriteData":{
+            "sprite":"Characters/Fritz/Sprites/_Sheet_01.png",
+            "pixelRect":{
+                "x":793,
+                "y":887,
+                "z":102,
+                "w":222
+            },
+            "originOffset":{
+                "x":-51,
+                "y":0
+            }
+        }
+    },
+	{
+        "id":"fritz_idle_03",
+        "hitboxes":[
+        
+		],
+        "hurtboxes":[
+
+        ],
+        "collision":[
+            { "center":{"x":0, "y":0}, "extents":{"x":10, "y":60} }
+        ],
+        "spriteData":{
+            "sprite":"Characters/Fritz/Sprites/_Sheet_01.png",
+            "pixelRect":{
+                "x":578,
+                "y":893,
+                "z":106,
+                "w":221
+            },
+            "originOffset":{
+                "x":-55,
+                "y":0
+            }
+        }
+    },
+	{
+        "id":"fritz_idle_04",
+        "hitboxes":[
+        
+		],
+        "hurtboxes":[
+
+        ],
+        "collision":[
+            { "center":{"x":0, "y":0}, "extents":{"x":10, "y":60} }
+        ],
+        "spriteData":{
+            "sprite":"Characters/Fritz/Sprites/_Sheet_01.png",
+            "pixelRect":{
+                "x":238,
+                "y":919,
+                "z":112,
+                "w":221
+            },
+            "originOffset":{
+                "x":-61,
+                "y":0
+            }
+        }
+    }
+]

@@ -5,7 +5,8 @@
 #include "IReflectable.h"
 
 class CharacterHitData :
-	public CharacterCollisionData, public IReflectable
+	public CharacterCollisionData, 
+	public IReflectable
 {
 protected:
 	//hitstun, blockstun, chip damage, pushback

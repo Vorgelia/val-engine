@@ -46,6 +46,8 @@ function Init() : void
 	
 	ve_assert(JustReturn666() == 666, "function return values")
 	
+	ve_assert((1.25+1.25+1.25+1.25) == 5, "chained addition precition")
+	
 	bool switchRangeSuccessful = false
 	bool switchFallthroughSuccessful = false
 	switch(4)

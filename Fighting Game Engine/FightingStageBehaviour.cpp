@@ -66,12 +66,12 @@ FightingStageBehaviour::CharacterCollisionResultMap FightingStageBehaviour::Gene
 
 void FightingStageBehaviour::HandleAttackHit(GameCharacter* attacker, GameCharacter* attackReceiver, const AttackCollisionHit& hit, bool wasTrade)
 {
-	const std::vector<std::string>& flags = attackReceiver->eventComponent()->HandleAttackReceived(attacker, hit);
+	std::shared_ptr<BaseScriptVariable> eventData = attackReceiver->eventComponent()->HandleAttackReceived(attacker, hit);
 	if(wasTrade)
 	{
-		attacker->eventComponent()->HandleTradeSuccess(attackReceiver, hit, flags);
+		attacker->eventComponent()->HandleTradeSuccess(attackReceiver, hit, eventData);
 	}
-	attacker->eventComponent()->HandleAttackHit(attackReceiver, hit, flags);
+	attacker->eventComponent()->HandleAttackHit(attackReceiver, hit, eventData);
 }
 
 const ve::vec4& FightingStageBehaviour::stageBounds() const

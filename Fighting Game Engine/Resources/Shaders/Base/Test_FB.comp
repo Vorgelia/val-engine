@@ -5,49 +5,58 @@
 
 layout (local_size_x = 1024) in;
 
+uniform vec2 uvOffset;
+
 void UpdateParticle(uint index)
 {
 	if(index > ve_commonVec4Data.length())
 		return;
 		
 	vec4 data = ve_commonVec4Data[index];
-	if(dot(data.zw,data.zw) < 1.0f)
+	data.xy -= uvOffset*6.5;
+	
+	if(fract(ve_worldTime.x * 0.1f) < 0.5f)
 	{
-		data.zw = 
-			vec2(
-				ve_rand(index * ve_worldTime.x*0.1) * 2 - 1,
-				ve_rand(ve_worldTime.x*25.2+index)
-			)*500;
+		if(dot(data.zw,data.zw) < 1.0f)
+		{
+			data.zw = 
+				vec2(
+					ve_rand(index * ve_worldTime.x*0.1) * 2 - 1,
+					ve_rand(ve_worldTime.x*25.2+index)
+				)*300;
+		}
+		else
+		{
+			bool collision = false;
+			
+			if((data.y < 0 && data.w < 0)
+			 ||(data.y > ve_screen.y && data.w > 0))
+			{
+				data.w = -data.w;
+				collision = true;
+			}
+			
+			if((data.x < 0 && data.z < 0)
+			 ||(data.x > ve_screen.x && data.z > 0))
+			{
+				data.z = -data.z;
+				collision = true;
+			}
+			
+			if(collision)
+			{
+				data.zw *= ve_rand(sin(ve_worldTime.x+index));
+			}
+			else if(data.y > 0)
+			{
+				data.w -= 100.0f * ve_worldTime.y;
+			}
+		}
+		
+		data.x = clamp(data.x, 0, ve_screen.x);
+		data.y = clamp(data.y, 0, ve_screen.y);
+		data.xy += data.zw * ve_worldTime.y;
 	}
-	else
-	{
-		bool collision = false;
-		
-		if((data.y < 0 && data.w < 0)
-		 ||(data.y > ve_screen.y && data.w > 0))
-		{
-			data.w = -data.w;
-			collision = true;
-		}
-		
-		if((data.x < 0 && data.z < 0)
-		 ||(data.x > ve_screen.x && data.z > 0))
-		{
-			data.z = -data.z;
-			collision = true;
-		}
-		
-		if(collision)
-		{
-			data.zw *= ve_rand(sin(ve_worldTime.x+index));
-		}
-		else if(data.y > 0)
-		{
-			data.w -= 100.0f * ve_worldTime.y;
-		}
-	}
-
-	data.xy += data.zw * ve_worldTime.y;
 	
 	ve_commonVec4Data[index] = data;
 	

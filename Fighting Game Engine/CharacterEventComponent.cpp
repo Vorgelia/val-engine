@@ -17,38 +17,74 @@ void CharacterEventComponent::Update()
 {
 }
 
-void CharacterEventComponent::HandleAttackHit(GameCharacter* otherCharacter, const AttackCollisionHit& attackHit, const std::vector<std::string>& hitReactionFlags)
+void CharacterEventComponent::HandleAttackHit(GameCharacter* otherCharacter, const AttackCollisionHit& attackHit, std::shared_ptr<BaseScriptVariable> hitReactionFlags)
 {
 	_owner->stateComponent()->_usedHitboxSequenceIDs.emplace(attackHit.hitbox.sequenceID());
-	_owner->stateComponent()->currentState()->script()->CallBoundFunction("HandleAttackHit"
-		, ScriptArgumentCollection
+	_owner->stateComponent()->currentState()->script()->CallBoundFunction(
+		"HandleAttackHit", 
+		ScriptArgumentCollection
 		{
 			ScriptVariableUtils::FromReflectable(attackHit),
-			
-		});
+			hitReactionFlags
+		}
+	);
 }
 
-std::vector<std::string> CharacterEventComponent::HandleAttackReceived(GameCharacter* otherCharacter, const AttackCollisionHit& attackReceived)
+std::shared_ptr<BaseScriptVariable> CharacterEventComponent::HandleAttackReceived(GameCharacter* otherCharacter, const AttackCollisionHit& attackReceived)
 {
-	_owner->stateComponent()->currentState()->script()->CallBoundFunction("HandleAttackReceived"
-		, ScriptArgumentCollection{
-			ScriptVariableUtils::FromReflectable(attackReceived),
-		});
-	return std::vector<std::string>();
+	return _owner->stateComponent()->currentState()->script()->CallBoundFunction(
+		"HandleAttackReceived"
+		, ScriptArgumentCollection
+		{
+			ScriptVariableUtils::FromReflectable(attackReceived)
+		}
+	);
 }
 
 bool CharacterEventComponent::ResolveTrade(GameCharacter* otherCharacter, const AttackCollisionHit& attackHit, const AttackCollisionHit& attackReceived)
 {
+	const std::shared_ptr<BaseScriptVariable> result = _owner->stateComponent()->currentState()->script()->CallBoundFunction(
+		"ResolveTrade"
+		, ScriptArgumentCollection
+		{
+			ScriptVariableUtils::FromReflectable(attackHit), 
+			ScriptVariableUtils::FromReflectable(attackReceived)
+		}
+	);
 
-	return false;
+	const std::shared_ptr<ScriptBool> resultAsBool = ScriptVariableUtils::Cast<ScriptBool>(result);
+	if(resultAsBool == nullptr)
+	{
+		return false;
+	}
+
+	return resultAsBool->value();
 }
 
 void CharacterEventComponent::HandleTradeUnresolved(GameCharacter* otherCharacter, const AttackCollisionHit& attackHit, const AttackCollisionHit& attackReceived)
 {
+	_owner->stateComponent()->_usedHitboxSequenceIDs.emplace(attackHit.hitbox.sequenceID());
+	_owner->stateComponent()->currentState()->script()->CallBoundFunction(
+		"HandleTradeUnresolved"
+		, ScriptArgumentCollection
+			{
+				ScriptVariableUtils::FromReflectable(attackHit),
+				ScriptVariableUtils::FromReflectable(attackReceived)
+			}
+	);
 }
 
-void CharacterEventComponent::HandleTradeSuccess(GameCharacter* otherCharacter, const AttackCollisionHit& attackHit, const std::vector<std::string>& hitReactionFlags)
+void CharacterEventComponent::HandleTradeSuccess(GameCharacter* otherCharacter, const AttackCollisionHit& attackHit, std::shared_ptr<BaseScriptVariable> hitReactionFlags)
 {
+	_owner->stateComponent()->_usedHitboxSequenceIDs.emplace(attackHit.hitbox.sequenceID());
+	_owner->stateComponent()->currentState()->script()->CallBoundFunction(
+		"HandleTradeSuccess", 
+		ScriptArgumentCollection
+			{
+				ScriptVariableUtils::FromReflectable(attackHit),
+				hitReactionFlags
+			}
+	);
 }
 
 CharacterEventComponent::CharacterEventComponent(GameCharacter* owner, ServiceManager* serviceManager)
