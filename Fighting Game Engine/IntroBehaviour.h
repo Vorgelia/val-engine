@@ -28,8 +28,8 @@ public:
 	VE_BEHAVIOUR_REGISTER_FUNCTION(OnRenderUI);
 	VE_BEHAVIOUR_REGISTER_FUNCTION(GameUpdate);
 
-	IntroBehaviour(Object* owner, ServiceManager* serviceManager);
-	IntroBehaviour(Object* owner, ServiceManager* serviceManager, const json& j);
+	IntroBehaviour(Object* owner, GameInstance* serviceManager);
+	IntroBehaviour(Object* owner, GameInstance* serviceManager, const json& j);
 	~IntroBehaviour() = default;
 };
 

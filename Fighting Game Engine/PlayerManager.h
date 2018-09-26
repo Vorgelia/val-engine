@@ -27,6 +27,6 @@ public:
 	void Update() override;
 	void Cleanup() override;
 
-	PlayerManager(ServiceManager* serviceManager);
+	PlayerManager(GameInstance* serviceManager);
 	~PlayerManager();
 };

@@ -10,7 +10,7 @@
 #include "BaseScriptVariable.h"
 #include "Script.h"
 
-#include "ServiceManager.h"
+#include "GameInstance.h"
 
 void Debug::Update() {}
 
@@ -157,7 +157,7 @@ std::shared_ptr<BaseScriptVariable> Debug::Log(const Script* script, std::vector
 	return nullptr;
 }
 
-Debug::Debug(ServiceManager* serviceManager) : BaseService(serviceManager)
+Debug::Debug(GameInstance* serviceManager) : BaseService(serviceManager)
 {
 	_endWrite.store(false);
 	_writeStream = std::ofstream("log_output.txt", std::ios::trunc);

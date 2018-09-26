@@ -1,7 +1,7 @@
 #include "ScriptBehaviour.h"
 #include "BehaviourFactory.h"
 #include "ScriptManager.h"
-#include "ServiceManager.h"
+#include "GameInstance.h"
 #include "Script.h"
 
 
@@ -60,7 +60,7 @@ void ScriptBehaviour::Cleanup()
 	}
 }
 
-ScriptBehaviour::ScriptBehaviour(Object* owner, ServiceManager* serviceManager, const json& j) : Behaviour(owner, serviceManager, j)
+ScriptBehaviour::ScriptBehaviour(Object* owner, GameInstance* serviceManager, const json& j) : Behaviour(owner, serviceManager, j)
 {
 	_scriptManager = serviceManager->ScriptManager();
 	std::string path;

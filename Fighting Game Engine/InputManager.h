@@ -32,6 +32,6 @@ public:
 	InputDevice* GetTemporaryNetworkDevice();
 	void ReleaseTemporaryNetworkDevice(InputDevice* device);
 
-	InputManager(ServiceManager* serviceManager);
+	InputManager(GameInstance* serviceManager);
 	~InputManager();
 };

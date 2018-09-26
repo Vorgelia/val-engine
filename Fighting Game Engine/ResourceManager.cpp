@@ -1,5 +1,5 @@
 #include "ResourceManager.h"
-#include "ServiceManager.h"
+#include "GameInstance.h"
 #include "ComputeShader.h"
 #include "FilesystemManager.h"
 #include "GraphicsGL.h"
@@ -176,7 +176,7 @@ void ResourceManager::Unload(bool includePersistent)
 	_cachedTexture.Cleanup(includePersistent);
 }
 
-ResourceManager::ResourceManager(ServiceManager* serviceManager) : BaseService(serviceManager)
+ResourceManager::ResourceManager(GameInstance* serviceManager) : BaseService(serviceManager)
 {
 
 }

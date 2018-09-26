@@ -45,6 +45,6 @@ public:
 
 	std::shared_ptr<BaseScriptVariable> GetVariable(const std::string& name);
 
-	ScriptManager(ServiceManager* serviceManager);
+	ScriptManager(GameInstance* serviceManager);
 	~ScriptManager();
 };

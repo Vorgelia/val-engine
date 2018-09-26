@@ -1,7 +1,7 @@
 #include "GameScene.h"
 #include "Object.h"
 #include "GameSceneManager.h"
-#include "ServiceManager.h"
+#include "GameInstance.h"
 #include "FilesystemManager.h"
 #include "RenderingGL.h"
 #include "ResourceManager.h"
@@ -279,7 +279,7 @@ Behaviour* GameScene::FindBehaviour(const std::string& name)
 	return nullptr;
 }
 
-GameScene::GameScene(const FS::path& path, ServiceManager* serviceManager)
+GameScene::GameScene(const FS::path& path, GameInstance* serviceManager)
 {
 	_serviceManager = serviceManager;
 	_debug = _serviceManager->Debug();

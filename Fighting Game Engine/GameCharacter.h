@@ -68,7 +68,7 @@ public:
 
 	CharacterCollisionResult GenerateCollisions(const GameCharacter* other) const;
 
-	GameCharacter(Object* owner, ServiceManager* serviceManager, const json& j);
+	GameCharacter(Object* owner, GameInstance* serviceManager, const json& j);
 	~GameCharacter() = default;
 };
 

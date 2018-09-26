@@ -40,7 +40,7 @@ void Time::HandleSceneLoaded()
 	smoothUpdateRate = 0;
 }
 
-Time::Time(ServiceManager* serviceManager) : BaseService(serviceManager, -100)
+Time::Time(GameInstance* serviceManager) : BaseService(serviceManager, -100)
 {
 	_allowServiceUpdate = true;
 }

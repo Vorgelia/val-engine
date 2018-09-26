@@ -1,6 +1,6 @@
 #include "FightingGameManager.h"
 #include "GameSceneManager.h"
-#include "ServiceManager.h"
+#include "GameInstance.h"
 #include "Object.h"
 #include "PlayerManager.h"
 #include "GameScene.h"
@@ -147,7 +147,7 @@ const std::unordered_set<GameCharacter*>& FightingGameManager::characters() cons
 	return _characters;
 }
 
-FightingGameManager::FightingGameManager(ServiceManager* serviceManager) : BaseService(serviceManager, 500)
+FightingGameManager::FightingGameManager(GameInstance* serviceManager) : BaseService(serviceManager, 500)
 {
 	_allowServiceUpdate = true;
 }

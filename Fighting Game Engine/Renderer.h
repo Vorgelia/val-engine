@@ -21,8 +21,8 @@ public:
 
 	VE_BEHAVIOUR_REGISTER_FUNCTION(OnRenderObjects);
 
-	Renderer(Object* owner, ServiceManager* serviceManager, Mesh* mesh = nullptr, Material* material = nullptr);
-	Renderer(Object* owner, ServiceManager* serviceManager, const json& j);
+	Renderer(Object* owner, GameInstance* serviceManager, Mesh* mesh = nullptr, Material* material = nullptr);
+	Renderer(Object* owner, GameInstance* serviceManager, const json& j);
 	~Renderer() = default;
 };
 

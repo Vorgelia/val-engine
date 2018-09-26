@@ -172,9 +172,6 @@
     <ClCompile Include="Delegate.cpp">
       <Filter>Val Engine\Engine\Utilities\Data</Filter>
     </ClCompile>
-    <ClCompile Include="ServiceManager.cpp">
-      <Filter>Val Engine\Engine\Services</Filter>
-    </ClCompile>
     <ClCompile Include="BaseService.cpp">
       <Filter>Val Engine\Engine\Services</Filter>
     </ClCompile>
@@ -412,6 +409,12 @@
     <ClCompile Include="CharacterHitData.cpp">
       <Filter>Val Engine\Game\Characters\Hit Data</Filter>
     </ClCompile>
+    <ClCompile Include="BaseObject.cpp">
+      <Filter>Val Engine\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="GameInstance.cpp">
+      <Filter>Val Engine\Engine\Services</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FGIncludes.hpp">
@@ -515,9 +518,6 @@
     </ClInclude>
     <ClInclude Include="ScriptManager.h">
       <Filter>Val Engine\Engine\Services\Resources</Filter>
-    </ClInclude>
-    <ClInclude Include="ServiceManager.h">
-      <Filter>Val Engine\Engine\Services</Filter>
     </ClInclude>
     <ClInclude Include="DebugLog.h">
       <Filter>Val Engine\Engine\Services\Utilities</Filter>
@@ -740,6 +740,12 @@
     </ClInclude>
     <ClInclude Include="CharacterHitData.h">
       <Filter>Val Engine\Game\Characters\Hit Data</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseObject.h">
+      <Filter>Val Engine\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="GameInstance.h">
+      <Filter>Val Engine\Engine\Services</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

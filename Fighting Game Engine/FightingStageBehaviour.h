@@ -31,6 +31,6 @@ public:
 	VE_BEHAVIOUR_REGISTER_FUNCTION(GameUpdate);
 	VE_BEHAVIOUR_REGISTER_FUNCTION(LateGameUpdate);
 
-	FightingStageBehaviour(Object* owner, ServiceManager* serviceManager, const json& j);
+	FightingStageBehaviour(Object* owner, GameInstance* serviceManager, const json& j);
 	~FightingStageBehaviour() = default;
 };

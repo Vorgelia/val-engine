@@ -1,5 +1,5 @@
 #include "CharacterStateComponent.h"
-#include "ServiceManager.h"
+#include "GameInstance.h"
 #include "CharacterFrame.h"
 #include "CharacterState.h"
 #include "CharacterSprite.h"
@@ -257,7 +257,7 @@ const std::unordered_set<std::string>& CharacterStateComponent::GetFlags(Charact
 	return iter->second;
 }
 
-CharacterStateComponent::CharacterStateComponent(GameCharacter* owner, ServiceManager* serviceManager) 
+CharacterStateComponent::CharacterStateComponent(GameCharacter* owner, GameInstance* serviceManager) 
 	: GameCharacterComponent(owner, serviceManager)
 {
 	_input = serviceManager->Input();

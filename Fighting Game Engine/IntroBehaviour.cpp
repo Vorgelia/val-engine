@@ -1,5 +1,5 @@
 #include "IntroBehaviour.h"
-#include "ServiceManager.h"
+#include "GameInstance.h"
 #include "Time.h"
 #include "ResourceManager.h"
 #include "RenderingGL.h"
@@ -53,7 +53,7 @@ void IntroBehaviour::GameUpdate()
 		_gameSceneManager->LoadScene("Menu");
 }
 
-IntroBehaviour::IntroBehaviour(Object * owner, ServiceManager* serviceManager) : Behaviour(owner, serviceManager)
+IntroBehaviour::IntroBehaviour(Object * owner, GameInstance* serviceManager) : Behaviour(owner, serviceManager)
 {
 	_debug = serviceManager->Debug();
 	_input = serviceManager->Input();
@@ -65,7 +65,7 @@ IntroBehaviour::IntroBehaviour(Object * owner, ServiceManager* serviceManager) :
 	enabled = true;
 }
 
-IntroBehaviour::IntroBehaviour(Object * owner, ServiceManager* serviceManager, const json & j) : Behaviour(owner, serviceManager, j)
+IntroBehaviour::IntroBehaviour(Object * owner, GameInstance* serviceManager, const json & j) : Behaviour(owner, serviceManager, j)
 {
 	_debug = serviceManager->Debug();
 	_input = serviceManager->Input();

@@ -21,6 +21,6 @@ public:
 	void HandleTradeUnresolved(GameCharacter* otherCharacter, const AttackCollisionHit& attackHit, const AttackCollisionHit& attackReceived);
 	void HandleTradeSuccess(GameCharacter* otherCharacter, const AttackCollisionHit& attackHit, std::shared_ptr<BaseScriptVariable> hitReactionFlags);
 
-	CharacterEventComponent(GameCharacter* owner, ServiceManager* serviceManager);
+	CharacterEventComponent(GameCharacter* owner, GameInstance* serviceManager);
 	~CharacterEventComponent() = default;
 };

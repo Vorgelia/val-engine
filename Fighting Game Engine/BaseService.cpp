@@ -11,7 +11,7 @@ int BaseService::serviceUpdateSortingOrder() const
 	return _serviceUpdateSortingOrder;
 }
 
-BaseService::BaseService(ServiceManager* serviceManager, int sortingOrder) :
+BaseService::BaseService(GameInstance* serviceManager, int sortingOrder) :
 	_serviceUpdateSortingOrder(sortingOrder)
 {
 	assert(serviceManager != nullptr);

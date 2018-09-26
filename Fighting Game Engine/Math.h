@@ -14,4 +14,6 @@ namespace ValEngine
 	typedef glm::tvec2<int_t> ivec2;
 	typedef glm::tvec3<int_t> ivec3;
 	typedef glm::tvec4<int_t> ivec4;
+
+	typedef glm::quat quat;
 }

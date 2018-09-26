@@ -61,7 +61,7 @@ void Screen::SetActiveWindow(GLFWwindow* window)
 	glfwSwapInterval(0);
 }
 
-Screen::Screen(ServiceManager* serviceManager) :
+Screen::Screen(GameInstance* serviceManager) :
 	BaseService(serviceManager, -50),
 	targetAspect(16.0 / 9.0),
 	targetAspectInv(9.0 / 16.0)

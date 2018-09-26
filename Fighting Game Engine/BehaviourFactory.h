@@ -10,9 +10,9 @@
 
 class Object;
 class Behaviour;
-class ServiceManager;
+class GameInstance;
 
-typedef std::function<std::unique_ptr<Behaviour>(Object*, ServiceManager*, const json&)> BehaviourGenerator;
+typedef std::function<std::unique_ptr<Behaviour>(Object*, GameInstance*, const json&)> BehaviourGenerator;
 typedef std::unordered_map<std::string, BehaviourGenerator> BehaviourGeneratorMap;
 
 class BehaviourFactory
@@ -21,7 +21,7 @@ class BehaviourFactory
 public:
 	template<typename T>
 	static bool RegisterType(std::string name);
-	static std::unique_ptr<Behaviour> Create(std::string name, Object* owner, ServiceManager* serviceManager, const json& j);
+	static std::unique_ptr<Behaviour> Create(std::string name, Object* owner, GameInstance* serviceManager, const json& j);
 };
 
 template<typename T>
@@ -31,7 +31,7 @@ inline bool BehaviourFactory::RegisterType(std::string name)
 	if(iter == _objectGenerators()->end())
 	{
 		_objectGenerators()->emplace(name, 
-			[](Object* owner, ServiceManager* serviceManager, const json& j)->std::unique_ptr<T> { return std::make_unique<T>(owner, serviceManager, j); });
+			[](Object* owner, GameInstance* serviceManager, const json& j)->std::unique_ptr<T> { return std::make_unique<T>(owner, serviceManager, j); });
 		return true;
 	}
 

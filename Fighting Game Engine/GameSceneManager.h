@@ -6,7 +6,7 @@
 #include <unordered_map>
 
 class GameScene;
-class ServiceManager;
+class GameInstance;
 
 class Debug;
 class RenderingGL;
@@ -53,6 +53,6 @@ public:
 	void ReloadScene();
 	void RenderScene();
 
-	GameSceneManager(ServiceManager* serviceManager);
+	GameSceneManager(GameInstance* serviceManager);
 	virtual ~GameSceneManager();
 };

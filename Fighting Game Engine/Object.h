@@ -25,7 +25,7 @@ private:
 
 	std::map<std::string, std::unique_ptr<Behaviour>> _behaviours;
 
-	ServiceManager* _serviceManager;
+	GameInstance* _serviceManager;
 
 public:
 	bool enabled;
@@ -45,8 +45,8 @@ public:
 	template<typename T>
 	T* GetBehaviour(std::string name);
 
-	Object(const std::string& name, ServiceManager* serviceManager, int id = 0);
-	Object(const json& j, ServiceManager* serviceManager, int id = 0);
+	Object(const std::string& name, GameInstance* serviceManager, int id = 0);
+	Object(const json& j, GameInstance* serviceManager, int id = 0);
 	~Object() = default;
 };
 

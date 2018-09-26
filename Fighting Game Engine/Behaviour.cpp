@@ -4,7 +4,7 @@ void Behaviour::TryInit()
 {
 	if(!_initialized)
 	{
-		VE_BEHAVIOUR_FUNCTION_CALLER(Init)(this);
+		Init();
 		_initialized = true;
 	}
 }
@@ -59,14 +59,14 @@ void Behaviour::Cleanup()
 
 }
 
-Behaviour::Behaviour(Object* owner, ServiceManager* serviceManager)
+Behaviour::Behaviour(Object* owner, GameInstance* serviceManager)
 {
 	assert(owner != nullptr);
 	_owner = owner;
 	enabled = false;
 }
 
-Behaviour::Behaviour(Object* owner, ServiceManager* serviceManager, const json& j)
+Behaviour::Behaviour(Object* owner, GameInstance* serviceManager, const json& j)
 {
 	assert(owner != nullptr);
 	_owner = owner;
@@ -78,7 +78,7 @@ Behaviour::Behaviour(Object* owner, ServiceManager* serviceManager, const json& 
 
 Behaviour::~Behaviour()
 {
-	VE_BEHAVIOUR_FUNCTION_CALLER(Cleanup)(this);
+	Cleanup();
 }
 
 Object* Behaviour::object() const

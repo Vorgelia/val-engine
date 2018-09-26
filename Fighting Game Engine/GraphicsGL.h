@@ -104,7 +104,7 @@ public:
 
 	void DispatchCompute(const ComputeShader& shader, unsigned int workGroupSizeX = 1, unsigned int workGroupSizeY = 1, unsigned int workGroupSizeZ = 1);
 
-	GraphicsGL(ServiceManager* serviceManager);
+	GraphicsGL(GameInstance* serviceManager);
 	~GraphicsGL();
 };
 

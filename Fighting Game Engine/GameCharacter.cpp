@@ -8,7 +8,7 @@
 #include "CharacterState.h"
 #include "CharacterFrame.h"
 #include "GameCharacterData.h"
-#include "ServiceManager.h"
+#include "GameInstance.h"
 #include "CharacterEventComponent.h"
 #include "Transform.h"
 
@@ -133,7 +133,7 @@ void GameCharacter::UpdateSystemFlags()
 	_systemFlags.clear();
 }
 
-GameCharacter::GameCharacter(Object* owner, ServiceManager* serviceManager, const json& j) : Behaviour(owner, serviceManager, j)
+GameCharacter::GameCharacter(Object* owner, GameInstance* serviceManager, const json& j) : Behaviour(owner, serviceManager, j)
 {
 	_filesystem = serviceManager->Filesystem();
 	_scriptManager = serviceManager->ScriptManager();

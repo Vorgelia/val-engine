@@ -32,6 +32,6 @@ public:
 
 	VE_BEHAVIOUR_REGISTER_FUNCTION(OnRenderObjects);
 
-	CharacterRenderer(Object* owner, ServiceManager* serviceManager, const json& j);
+	CharacterRenderer(Object* owner, GameInstance* serviceManager, const json& j);
 	virtual ~CharacterRenderer();
 };

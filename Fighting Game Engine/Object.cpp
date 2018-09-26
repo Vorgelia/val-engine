@@ -40,13 +40,13 @@ void Object::RunFunctionOnBehaviours(std::function<void(Behaviour*)> func)
 	}
 }
 
-Object::Object(const std::string& name, ServiceManager* serviceManager, int id)
+Object::Object(const std::string& name, GameInstance* serviceManager, int id)
 {
 	this->_name = name;
 	this->_id = id;
 }
 
-Object::Object(const json & j, ServiceManager* serviceManager, int id)
+Object::Object(const json & j, GameInstance* serviceManager, int id)
 {
 	_serviceManager = serviceManager;
 	_id = id;

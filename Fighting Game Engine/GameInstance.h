@@ -24,7 +24,7 @@ class FilesystemManager;
 class PlayerManager;
 class FightingGameManager;
 
-class ServiceManager
+class GameInstance
 {
 private:
 	VE_SERVICE(Debug);
@@ -41,6 +41,7 @@ private:
 	VE_NAMED_SERVICE(Graphics, GraphicsGL);
 	VE_NAMED_SERVICE(Rendering, RenderingGL);
 
+private:
 	bool _servicesUpdated;
 	std::vector<std::unique_ptr<BaseService>*> _activeServices;
 
@@ -49,14 +50,14 @@ public:
 	void CleanupServices();
 	void UpdateServices();
 
-	ServiceManager& operator=(ServiceManager& sm) = delete;
-	ServiceManager& operator=(ServiceManager&& sm) = delete;
+	GameInstance& operator=(GameInstance& sm) = delete;
+	GameInstance& operator=(GameInstance&& sm) = delete;
 
-	ServiceManager(ServiceManager& sm) = delete;
-	ServiceManager(ServiceManager&& sm) = delete;
+	GameInstance(GameInstance& sm) = delete;
+	GameInstance(GameInstance&& sm) = delete;
 
-	ServiceManager();
-	~ServiceManager();
+	GameInstance();
+	~GameInstance();
 };
 
 #undef VE_NAMED_SERVICE

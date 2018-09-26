@@ -1,5 +1,5 @@
 #include "GraphicsGL.h"
-#include "ServiceManager.h"
+#include "GameInstance.h"
 #include "BaseShader.h"
 #include "ComputeShader.h"
 #include "Texture.h"
@@ -575,7 +575,7 @@ bool GraphicsGL::BindTexture(const Texture& texture, GLuint pos)
 	return false;
 }
 
-GraphicsGL::GraphicsGL(ServiceManager* serviceManager) : BaseService(serviceManager)
+GraphicsGL::GraphicsGL(GameInstance* serviceManager) : BaseService(serviceManager)
 {
 	glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &_maxTextureUnits);
 	_boundTextures.resize(_maxTextureUnits, (GLuint)0);

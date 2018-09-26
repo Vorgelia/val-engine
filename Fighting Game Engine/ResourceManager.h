@@ -82,7 +82,7 @@ public:
 
 	void Unload(bool includePersistent = false);
 
-	ResourceManager(ServiceManager* serviceManager);
+	ResourceManager(GameInstance* serviceManager);
 	~ResourceManager();
 };
 

@@ -1,6 +1,6 @@
 #pragma once
 
-class ServiceManager;
+class GameInstance;
 class GameCharacter;
 
 class GameCharacterComponent
@@ -8,7 +8,7 @@ class GameCharacterComponent
 	friend class GameCharacter;
 
 protected:
-	ServiceManager* _serviceManager;
+	GameInstance* _serviceManager;
 	GameCharacter* _owner;
 
 protected:
@@ -17,7 +17,7 @@ protected:
 	virtual void LateUpdate() {}
 
 public:
-	GameCharacterComponent(GameCharacter* owner, ServiceManager* serviceManager);
+	GameCharacterComponent(GameCharacter* owner, GameInstance* serviceManager);
 	virtual ~GameCharacterComponent() = default;
 };
 

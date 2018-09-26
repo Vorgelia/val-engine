@@ -10,7 +10,7 @@
 #include "Delegate.h"
 
 class FilesystemManager;
-class ServiceManager;
+class GameInstance;
 class InputMotion;
 class InputMotionComponent;
 class Time;
@@ -57,6 +57,6 @@ public:
 	bool EvaluateMotion(const InputMotion& motion);
 	bool InputMotionFrameCheck(const InputMotionComponent& motionComp, int index) const;
 
-	InputDevice(int deviceID, ServiceManager* serviceManager);
+	InputDevice(int deviceID, GameInstance* serviceManager);
 	~InputDevice();
 };

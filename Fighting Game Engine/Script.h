@@ -12,7 +12,7 @@ struct ScriptLine;
 class ScriptBlock;
 class ScriptParentBlock;
 class BaseScriptVariable;
-class ServiceManager;
+class GameInstance;
 class Debug;
 class ScriptManager;
 
@@ -25,7 +25,7 @@ class Script
 	friend class ScriptParentBlock;
 
 private:
-	ServiceManager* _serviceManager;
+	GameInstance* _serviceManager;
 
 	Debug* _debug;
 	ScriptManager* _scriptManager;
@@ -77,6 +77,6 @@ public:
 	void Execute();
 	std::shared_ptr<BaseScriptVariable> ExecuteFunction(const std::string& name, std::vector<std::shared_ptr<BaseScriptVariable>> &variables = std::vector<std::shared_ptr<BaseScriptVariable>>());
 
-	Script(const std::string& name, std::vector<std::string> lines, ServiceManager* serviceManager);
+	Script(const std::string& name, std::vector<std::string> lines, GameInstance* serviceManager);
 	~Script();
 };

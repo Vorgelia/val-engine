@@ -8,7 +8,7 @@
 #include <boost/assign/list_of.hpp>
 #include <boost/algorithm/string.hpp>
 
-#include "ServiceManager.h"
+#include "GameInstance.h"
 #include "FilesystemManager.h"
 #include "CachedMesh.h"
 #include "Material.h"
@@ -462,6 +462,6 @@ void FilesystemManager::LoadTextureData(const FS::path& path, std::vector<unsign
 }
 
 
-FilesystemManager::FilesystemManager(ServiceManager* serviceManager) : BaseService(serviceManager)
+FilesystemManager::FilesystemManager(GameInstance* serviceManager) : BaseService(serviceManager)
 {
 }

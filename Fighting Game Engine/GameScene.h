@@ -5,6 +5,7 @@
 #include <memory>
 #include <functional>
 #include <boost/filesystem.hpp>
+#include "BaseObject.h"
 
 #include "ResourceManager.h"
 #include "FilesystemManager.h"
@@ -13,15 +14,15 @@ namespace FS = boost::filesystem;
 
 class Object;
 class Behaviour;
-class ServiceManager;
+class GameInstance;
 class RenderingGL;
 class ResourceManager;
 class Debug;
 
-class GameScene
+class GameScene : public BaseObject
 {
 protected:
-	ServiceManager* _serviceManager;
+	GameInstance* _serviceManager;
 	
 	Debug* _debug;
 	RenderingGL* _rendering;
@@ -83,6 +84,6 @@ public:
 	Object* FindObject(int id);
 	Behaviour* FindBehaviour(const std::string& name);
 
-	GameScene(const FS::path& path, ServiceManager* serviceManager);
+	GameScene(const FS::path& path, GameInstance* serviceManager);
 	virtual ~GameScene();
 };

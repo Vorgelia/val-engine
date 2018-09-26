@@ -8,7 +8,7 @@
 #include "DebugLog.h"
 #include "ScriptLine.h"
 #include "ScriptToken.h"
-#include "ServiceManager.h"
+#include "GameInstance.h"
 
 std::string Script::name() const
 {
@@ -189,7 +189,7 @@ std::shared_ptr<BaseScriptVariable> Script::ExecuteFunction(const std::string& n
 	return nullptr;
 }
 
-Script::Script(const std::string& name, std::vector<std::string> lines, ServiceManager* serviceManager)
+Script::Script(const std::string& name, std::vector<std::string> lines, GameInstance* serviceManager)
 {
 	_serviceManager = serviceManager;
 	_debug = serviceManager->Debug();

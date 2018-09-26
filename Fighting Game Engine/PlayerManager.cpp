@@ -57,7 +57,7 @@ void PlayerManager::Cleanup()
 	ClearPlayers();
 }
 
-PlayerManager::PlayerManager(ServiceManager* serviceManager) : BaseService(serviceManager)
+PlayerManager::PlayerManager(GameInstance* serviceManager) : BaseService(serviceManager)
 {
 	_allowServiceUpdate = true;
 	_players.resize(VE_MAX_PLAYERS);

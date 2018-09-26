@@ -82,6 +82,6 @@ public:
 	void Update() override;
 	void Cleanup() override;
 
-	RenderingGL(ServiceManager* serviceManager);
+	RenderingGL(GameInstance* serviceManager);
 	~RenderingGL();
 };

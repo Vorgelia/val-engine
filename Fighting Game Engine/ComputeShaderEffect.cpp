@@ -1,5 +1,5 @@
 #include "ComputeShaderEffect.h"
-#include "ServiceManager.h"
+#include "GameInstance.h"
 #include "GraphicsGL.h"
 #include "Screen.h"
 #include "ResourceManager.h"
@@ -26,7 +26,7 @@ void ComputeShaderEffect::OnApplyPostEffects()
 	_graphics->DispatchCompute(*_computeShader, 1, 1);
 }
 
-ComputeShaderEffect::ComputeShaderEffect(Object* owner, ServiceManager* serviceManager, const json& j)
+ComputeShaderEffect::ComputeShaderEffect(Object* owner, GameInstance* serviceManager, const json& j)
 	: Behaviour(owner, serviceManager, j)
 {
 	_resource = serviceManager->ResourceManager();

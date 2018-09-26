@@ -5,7 +5,7 @@
 #include "CharacterState.h"
 #include "Script.h"
 #include "ScriptMap.h"
-#include "ServiceManager.h"
+#include "GameInstance.h"
 #include "FightingGameManager.h"
 
 
@@ -87,7 +87,7 @@ void CharacterEventComponent::HandleTradeSuccess(GameCharacter* otherCharacter, 
 	);
 }
 
-CharacterEventComponent::CharacterEventComponent(GameCharacter* owner, ServiceManager* serviceManager)
+CharacterEventComponent::CharacterEventComponent(GameCharacter* owner, GameInstance* serviceManager)
 	: GameCharacterComponent(owner, serviceManager)
 {
 

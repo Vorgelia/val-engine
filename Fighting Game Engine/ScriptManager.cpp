@@ -1,6 +1,6 @@
 #include "ScriptManager.h"
 #include "Script.h"
-#include "ServiceManager.h"
+#include "GameInstance.h"
 #include "BaseScriptVariable.h"
 #include "ScriptVariableUtils.h."
 #include "ScriptVariable.h"
@@ -524,7 +524,7 @@ std::shared_ptr<BaseScriptVariable> ScriptManager::GetVariable(const std::string
 	return iter->second;
 }
 
-ScriptManager::ScriptManager(ServiceManager* serviceManager) : BaseService(serviceManager)
+ScriptManager::ScriptManager(GameInstance* serviceManager) : BaseService(serviceManager)
 {
 
 }

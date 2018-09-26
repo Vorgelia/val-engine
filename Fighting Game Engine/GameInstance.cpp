@@ -1,4 +1,4 @@
-#include "ServiceManager.h"
+#include "GameInstance.h"
 #include "DebugLog.h"
 #include "GameSceneManager.h"
 #include "PlayerManager.h"
@@ -40,7 +40,7 @@ VE_NAMED_SERVICE_GETTER(Filesystem, FilesystemManager);
 VE_NAMED_SERVICE_GETTER(Graphics, GraphicsGL);
 VE_NAMED_SERVICE_GETTER(Rendering, RenderingGL);
 
-void ServiceManager::InitializeServices()
+void GameInstance::InitializeServices()
 {
 	if(!_activeServices.empty())
 	{
@@ -73,7 +73,7 @@ void ServiceManager::InitializeServices()
 	}
 }
 
-void ServiceManager::CleanupServices()
+void GameInstance::CleanupServices()
 {
 	for(auto& iter : _activeServices)
 	{
@@ -87,7 +87,7 @@ void ServiceManager::CleanupServices()
 	}
 }
 
-void ServiceManager::UpdateServices()
+void GameInstance::UpdateServices()
 {
 	if(_servicesUpdated)
 	{
@@ -107,10 +107,10 @@ void ServiceManager::UpdateServices()
 	}
 }
 
-ServiceManager::ServiceManager()
+GameInstance::GameInstance()
 {
 	_servicesUpdated = true;
 }
 
-ServiceManager::~ServiceManager()
+GameInstance::~GameInstance()
 = default;

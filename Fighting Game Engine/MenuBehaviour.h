@@ -3,7 +3,7 @@
 
 struct MaterialTexture;
 
-class ServiceManager;
+class GameInstance;
 class Time;
 class RenderingGL;
 class InputManager;
@@ -31,7 +31,7 @@ public:
 	VE_BEHAVIOUR_REGISTER_FUNCTION(GameUpdate);
 	VE_BEHAVIOUR_REGISTER_FUNCTION(OnRenderUI);
 
-	MenuBehaviour(Object* owner, ServiceManager* serviceManager, const json& j);
+	MenuBehaviour(Object* owner, GameInstance* serviceManager, const json& j);
 	~MenuBehaviour();
 };
 

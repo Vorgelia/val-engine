@@ -47,6 +47,6 @@ public:
 	std::shared_ptr<BaseScriptVariable> Log(const Script* script, std::vector<std::shared_ptr<BaseScriptVariable>>&);
 #pragma endregion
 
-	Debug(ServiceManager* serviceManager);
+	Debug(GameInstance* serviceManager);
 	virtual ~Debug();
 };

@@ -37,6 +37,6 @@ public:
 
 	void SetActiveWindow(GLFWwindow* window);
 
-	Screen(ServiceManager* serviceManager);
+	Screen(GameInstance* serviceManager);
 	~Screen();
 };

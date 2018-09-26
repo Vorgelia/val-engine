@@ -8,7 +8,7 @@
 
 class CharacterState;
 class CharacterFrame;
-class ServiceManager;
+class GameInstance;
 class InputManager;
 class FilesystemManager;
 class ResourceManager;
@@ -75,7 +75,7 @@ public:
 	const CharacterState* currentState() const { return _currentState; }
 	const CharacterFrame* currentFrame() const { return _currentFrame; }
 
-	CharacterStateComponent(GameCharacter* owner, ServiceManager* serviceManager);
+	CharacterStateComponent(GameCharacter* owner, GameInstance* serviceManager);
 	~CharacterStateComponent() = default;
 };
 

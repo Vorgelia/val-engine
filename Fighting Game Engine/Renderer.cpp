@@ -1,7 +1,7 @@
 #include "Renderer.h"
 #include "RenderingGL.h"
 #include "ResourceManager.h"
-#include "ServiceManager.h"
+#include "GameInstance.h"
 #include <string>
 #include "BehaviourFactory.h"
 
@@ -16,7 +16,7 @@ void Renderer::OnRenderObjects()
 	_rendering->DrawMesh(_owner->transform(), _mesh, _material);
 }
 
-Renderer::Renderer(Object* owner, ServiceManager* serviceManager, Mesh* mesh, Material* material) : Behaviour(owner, serviceManager)
+Renderer::Renderer(Object* owner, GameInstance* serviceManager, Mesh* mesh, Material* material) : Behaviour(owner, serviceManager)
 {
 	_resource = serviceManager->ResourceManager();
 	_rendering = serviceManager->Rendering();
@@ -34,7 +34,7 @@ Renderer::Renderer(Object* owner, ServiceManager* serviceManager, Mesh* mesh, Ma
 	}
 }
 
-Renderer::Renderer(Object* owner, ServiceManager* serviceManager, const json& j) : Behaviour(owner, serviceManager, j)
+Renderer::Renderer(Object* owner, GameInstance* serviceManager, const json& j) : Behaviour(owner, serviceManager, j)
 {
 	_resource = serviceManager->ResourceManager();
 	_rendering = serviceManager->Rendering();

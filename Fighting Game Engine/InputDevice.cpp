@@ -1,5 +1,5 @@
 #include "InputDevice.h"
-#include "ServiceManager.h"
+#include "GameInstance.h"
 #include "FilesystemManager.h"
 #include "Time.h"
 #include "Screen.h"
@@ -31,7 +31,7 @@ int InputDevice::deviceID() const
 	return _deviceID;
 }
 
-InputDevice::InputDevice(int deviceID, ServiceManager* serviceManager)
+InputDevice::InputDevice(int deviceID, GameInstance* serviceManager)
 {
 	_time = serviceManager->Time();
 	_screen = serviceManager->Screen();

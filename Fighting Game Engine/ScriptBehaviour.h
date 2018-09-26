@@ -25,7 +25,7 @@ public:
 	VE_BEHAVIOUR_REGISTER_FUNCTION(OnRenderUI);
 	VE_BEHAVIOUR_REGISTER_FUNCTION(Cleanup);
 
-	ScriptBehaviour(Object* owner, ServiceManager* serviceManager, const json& j);
+	ScriptBehaviour(Object* owner, GameInstance* serviceManager, const json& j);
 	~ScriptBehaviour();
 };
 

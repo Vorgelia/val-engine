@@ -26,7 +26,7 @@ public:
 	VE_BEHAVIOUR_REGISTER_FUNCTION(LateGameUpdate);
 	VE_BEHAVIOUR_REGISTER_FUNCTION(OnApplyPostEffects);
 
-	ComputeShaderEffect(Object* owner, ServiceManager* serviceManager, const json& j);
+	ComputeShaderEffect(Object* owner, GameInstance* serviceManager, const json& j);
 	~ComputeShaderEffect();
 };
 

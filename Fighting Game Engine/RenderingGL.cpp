@@ -1,5 +1,5 @@
 #include "RenderingGL.h"
-#include "ServiceManager.h"
+#include "GameInstance.h"
 #include "Screen.h"
 #include "FrameBuffer.h"
 #include "Mesh.h"
@@ -541,7 +541,7 @@ void RenderingGL::DrawTextCharacter(glm::vec4 rect, glm::vec4 params, Texture* t
 	glDrawElements(GL_TRIANGLES, cMesh->elementAmount(), GL_UNSIGNED_INT, nullptr);
 }
 
-RenderingGL::RenderingGL(ServiceManager* serviceManager) : BaseService(serviceManager)
+RenderingGL::RenderingGL(GameInstance* serviceManager) : BaseService(serviceManager)
 {
 
 }

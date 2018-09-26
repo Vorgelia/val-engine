@@ -53,7 +53,7 @@ public:
 	void Update() override;
 	void Cleanup() override;
 
-	FilesystemManager(ServiceManager* serviceManager);
+	FilesystemManager(GameInstance* serviceManager);
 	~FilesystemManager() = default;
 };
 

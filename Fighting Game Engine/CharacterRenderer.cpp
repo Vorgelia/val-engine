@@ -4,7 +4,7 @@
 #include "CharacterFrame.h"
 #include "CharacterSprite.h"
 #include "CharacterStateComponent.h"
-#include "ServiceManager.h"
+#include "GameInstance.h"
 #include "Object.h"
 #include "Material.h"
 #include "Texture.h"
@@ -86,7 +86,7 @@ void CharacterRenderer::HandleRenderingTransform(const CharacterSprite* spriteDa
 		ve::dec_t(pixelRect.w) * sizeMultiplier.y);
 }
 
-CharacterRenderer::CharacterRenderer(Object* owner, ServiceManager* serviceManager, const json& j) : Renderer(owner, serviceManager, j)
+CharacterRenderer::CharacterRenderer(Object* owner, GameInstance* serviceManager, const json& j) : Renderer(owner, serviceManager, j)
 {
 	if(_material == nullptr)
 	{

@@ -28,6 +28,6 @@ public:
 	void FrameUpdate();
 	void HandleSceneLoaded();
 
-	Time(ServiceManager* serviceManager);
+	Time(GameInstance* serviceManager);
 	~Time() = default;
 };

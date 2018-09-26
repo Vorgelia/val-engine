@@ -1,5 +1,5 @@
 #include "FightingStageBehaviour.h"
-#include "ServiceManager.h"
+#include "GameInstance.h"
 #include "FightingGameManager.h"
 #include "GameCharacter.h"
 #include "CharacterStateComponent.h"
@@ -161,7 +161,7 @@ void FightingStageBehaviour::LateGameUpdate()
 	}
 }
 
-FightingStageBehaviour::FightingStageBehaviour(Object* owner, ServiceManager* serviceManager, const json& j)
+FightingStageBehaviour::FightingStageBehaviour(Object* owner, GameInstance* serviceManager, const json& j)
 	: Behaviour(owner, serviceManager, j)
 {
 	JSON::TryGetMember(j, "stageBounds", _stageBounds);

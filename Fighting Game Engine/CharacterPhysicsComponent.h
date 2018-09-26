@@ -4,7 +4,7 @@
 #include <vector>
 #include "CharacterCollisionResult.h"
 
-class ServiceManager;
+class GameInstance;
 class FightingGameManager;
 
 class CharacterPhysicsComponent : public GameCharacterComponent
@@ -61,6 +61,6 @@ public:
 
 	void HandleCharacterCollision(const GameCharacter* other, const CollisionHit collision);
 
-	CharacterPhysicsComponent(GameCharacter* owner, ServiceManager* serviceManager);
+	CharacterPhysicsComponent(GameCharacter* owner, GameInstance* serviceManager);
 	~CharacterPhysicsComponent() = default;
 };

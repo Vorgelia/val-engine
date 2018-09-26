@@ -4,27 +4,15 @@
 #include "JSON.h"
 
 #define VE_BEHAVIOUR_NAME(nameStr)\
-	const std::string name() const override{ return std::string(#nameStr); }
+	constexpr std::string name() const override{ return std::string(#nameStr); }
 
-#define VE_BEHAVIOUR_FUNCTION(name)\
-	virtual void name(); \
-	inline virtual bool using##name() const{ return false; }
-
-#define VE_BEHAVIOUR_REGISTER_FUNCTION(name)\
-	void name() override;\
-	inline virtual bool using##name() const override{ return true; }
-
-#define VE_BEHAVIOUR_FUNCTION_CALLER(name)\
-	[](Behaviour* behaviour)\
-		{ if (behaviour->using##name()) behaviour->name(); }
-
-class ServiceManager;
+class GameInstance;
 
 class Behaviour
 {
 protected:
 	Object* _owner;
-	ServiceManager* _serviceManager;
+	GameInstance* _serviceManager;
 
 private:
 	bool _initialized;
@@ -37,18 +25,18 @@ public:
 	virtual const std::string name() const = 0;
 
 	void TryInit();
-	VE_BEHAVIOUR_FUNCTION(Init);
-	VE_BEHAVIOUR_FUNCTION(OnSceneInit);
-	VE_BEHAVIOUR_FUNCTION(EngineUpdate);
-	VE_BEHAVIOUR_FUNCTION(GameUpdate);
-	VE_BEHAVIOUR_FUNCTION(LateGameUpdate);
-	VE_BEHAVIOUR_FUNCTION(LateEngineUpdate);
-	VE_BEHAVIOUR_FUNCTION(OnRenderObjects);
-	VE_BEHAVIOUR_FUNCTION(OnApplyPostEffects);
-	VE_BEHAVIOUR_FUNCTION(OnRenderUI);
-	VE_BEHAVIOUR_FUNCTION(Cleanup);
+	virtual void Init();
+	virtual void OnSceneInit();
+	virtual void EngineUpdate();
+	virtual void GameUpdate();
+	virtual void LateGameUpdate();
+	virtual void LateEngineUpdate();
+	virtual void OnRenderObjects();
+	virtual void OnApplyPostEffects();
+	virtual void OnRenderUI();
+	virtual void Cleanup();
 
-	Behaviour(Object* owner, ServiceManager* serviceManager);
-	Behaviour(Object* owner, ServiceManager* serviceManager, const json& j);
+	Behaviour(Object* owner, GameInstance* serviceManager);
+	Behaviour(Object* owner, GameInstance* serviceManager, const json& j);
 	virtual ~Behaviour();
 };

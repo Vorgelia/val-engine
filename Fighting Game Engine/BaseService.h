@@ -1,10 +1,10 @@
 #pragma once
-class ServiceManager;
+class GameInstance;
 
 class BaseService
 {
 protected:
-	ServiceManager* _serviceManager;
+	GameInstance* _serviceManager;
 
 	bool _allowServiceUpdate;
 	const int _serviceUpdateSortingOrder;
@@ -23,7 +23,7 @@ public:
 	BaseService(BaseService& service) = delete;
 	BaseService(BaseService&& service) = delete;
 
-	BaseService(ServiceManager* serviceManager, int sortingOrder = 0);
+	BaseService(GameInstance* serviceManager, int sortingOrder = 0);
 	virtual ~BaseService();
 };
 

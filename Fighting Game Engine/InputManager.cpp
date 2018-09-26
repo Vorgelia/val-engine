@@ -94,7 +94,7 @@ void InputManager::ReleaseTemporaryNetworkDevice(InputDevice* device)
 	}
 }
 
-InputManager::InputManager(ServiceManager* serviceManager) : BaseService(serviceManager)
+InputManager::InputManager(GameInstance* serviceManager) : BaseService(serviceManager)
 {
 }
 

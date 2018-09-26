@@ -84,6 +84,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BaseObject.cpp" />
     <ClCompile Include="CharacterHitData.cpp" />
     <ClCompile Include="BaseScriptCollection.cpp" />
     <ClCompile Include="BaseService.cpp" />
@@ -170,7 +171,7 @@
     <ClCompile Include="ScriptToken.cpp" />
     <ClCompile Include="BaseScriptVariable.cpp" />
     <ClCompile Include="ScriptVariableUtils.cpp" />
-    <ClCompile Include="ServiceManager.cpp" />
+    <ClCompile Include="GameInstance.cpp" />
     <ClCompile Include="SurfaceShader.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Time.cpp" />
@@ -179,6 +180,7 @@
     <ClCompile Include="Vec4Buffer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BaseObject.h" />
     <ClInclude Include="CharacterHitData.h" />
     <ClInclude Include="BaseScriptCollection.h" />
     <ClInclude Include="BaseService.h" />
@@ -278,7 +280,7 @@
     <ClInclude Include="ScriptToken.h" />
     <ClInclude Include="BaseScriptVariable.h" />
     <ClInclude Include="ScriptVariableUtils.h" />
-    <ClInclude Include="ServiceManager.h" />
+    <ClInclude Include="GameInstance.h" />
     <ClInclude Include="SurfaceShader.h" />
     <ClInclude Include="TemplateUtils.h" />
     <ClInclude Include="Texture.h" />

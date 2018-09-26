@@ -59,7 +59,7 @@ PlayerManager.cpp:      VE_MAX_PLAYERS
 #include <clocale>
 #include "ValEngine.h"
 #include "GLIncludes.hpp"
-#include "ServiceManager.h"
+#include "GameInstance.h"
 #include "Screen.h"
 
 int main()
@@ -68,7 +68,7 @@ int main()
 	//This just makes it so that decimal point is always a dot, on both input and output.
 	std::setlocale(LC_NUMERIC, "C");
 
-	ServiceManager serviceManager;
+	GameInstance serviceManager;
 	serviceManager.InitializeServices();
 
 	Screen* screen = serviceManager.Screen();

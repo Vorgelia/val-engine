@@ -48,6 +48,6 @@ public:
 
 	void ChackCharacterCollisions(GameCharacter* other);
 
-	FightingGameManager(ServiceManager* serviceManager);
+	FightingGameManager(GameInstance* serviceManager);
 	~FightingGameManager() = default;
 };

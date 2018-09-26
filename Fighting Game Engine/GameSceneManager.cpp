@@ -5,7 +5,7 @@
 #include "RenderingGL.h"
 #include "GameScene.h"
 #include "DebugLog.h"
-#include "ServiceManager.h"
+#include "GameInstance.h"
 #include "Time.h"
 
 #define VE_SCENE_FUNCTION_CALL(fnName, ...)\
@@ -152,7 +152,7 @@ void GameSceneManager::ApplyFunctionToCurrentScene(std::function<void(GameScene*
 	func(_currentScene);
 }
 
-GameSceneManager::GameSceneManager(ServiceManager* serviceManager) :
+GameSceneManager::GameSceneManager(GameInstance* serviceManager) :
 	BaseService(serviceManager, 100)
 {
 	_allowServiceUpdate = true;

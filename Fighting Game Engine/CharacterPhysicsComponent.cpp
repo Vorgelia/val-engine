@@ -2,7 +2,7 @@
 #include "GameCharacter.h"
 #include "GameCharacterData.h"
 #include "Transform.h"
-#include "ServiceManager.h"
+#include "GameInstance.h"
 #include "FightingStageBehaviour.h"
 #include "FightingGameManager.h"
 
@@ -138,7 +138,7 @@ void CharacterPhysicsComponent::HandleCharacterCollision(const GameCharacter* ot
 	 _accumulatedOffset.x += collision.depenetrationDistance.x * displacementPercentage;
 }
 
-CharacterPhysicsComponent::CharacterPhysicsComponent(GameCharacter * owner, ServiceManager * serviceManager)
+CharacterPhysicsComponent::CharacterPhysicsComponent(GameCharacter * owner, GameInstance * serviceManager)
 	: GameCharacterComponent(owner, serviceManager)
 	, _grounded(true)
 {

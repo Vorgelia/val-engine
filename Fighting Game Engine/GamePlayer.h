@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 
-class ServiceManager;
+class GameInstance;
 class InputManager;
 class InputDevice;
 enum class InputDeviceId;
@@ -29,6 +29,6 @@ public:
 
 	void SetDevice(int deviceId);
 
-	GamePlayer(int id, int deviceId, ServiceManager* serviceManager);
+	GamePlayer(int id, int deviceId, GameInstance* serviceManager);
 	virtual ~GamePlayer();
 };
