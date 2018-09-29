@@ -19,10 +19,19 @@ class RenderingGL;
 class ResourceManager;
 class Debug;
 
+//GameInstance::tick dispatcher
+	//manage game/engine update timing
+	//send ticks with enum IDs
+	//GSM translates that to scene updates.
+
+
+//TODO: Put time in here too aaa
+//scene caches its last update type and returns the right delta time 
+
 class GameScene : public BaseObject
 {
 protected:
-	GameInstance* _serviceManager;
+	GameInstance* _gameInstance;
 	
 	Debug* _debug;
 	RenderingGL* _rendering;
@@ -60,6 +69,9 @@ public:
 	bool loaded() const;
 
 	const std::vector<std::string>& postEffectsOrder() const;
+
+	virtual GameScene* GetOwningScene() const override;
+	virtual GameInstance* GetOwningInstance() const override;
 
 	virtual void LoadResources();
 	virtual void OnLoaded();

@@ -1,55 +1,68 @@
 #include "Transform.h"
 #include "JSON.h"
-#include <GLM/gtc/matrix_transform.hpp>
-#include <GLM/gtc/type_ptr.hpp>
 #include "BehaviourFactory.h"
 
-VE_BEHAVIOUR_REGISTER_TYPE(Transform);
-
-glm::mat4 Transform::ModelMatrix() const
+ve::mat4 Transform::GetMatrix() const
 {
-	const glm::mat4 translationMat = glm::translate(glm::mat4(), glm::vec3(float(position.x), float(position.y), -1.0 + 1.0 / (1.0 + glm::abs(depth))));
-	const glm::mat4 rotationMat = glm::mat4_cast(rotation);
-	const glm::mat4 scaleMat = glm::scale(glm::mat4(), glm::vec3(this->scale.x, this->scale.y, 1));
-	return translationMat * rotationMat * scaleMat;
+	if(int(_updateFlags | UpdateFlags::Matrix) != 0)
+	{
+		_updateFlags &= ~UpdateFlags::Matrix;
+
+		const ve::mat4 translationMat = glm::translate(ve::mat4(), ve::vec3(float(_position.x), float(_position.y), -1.0 + 1.0 / (1.0 + glm::abs(float(_depth)))));
+		const ve::mat4 rotationMat = glm::mat4_cast(GetQuat());
+		const ve::mat4 scaleMat = glm::scale(ve::mat4(), ve::vec3(this->_scale.x, this->_scale.y, 1));
+		_matrix = translationMat * rotationMat * scaleMat;
+	}
+
+	return _matrix;
 }
 
-void Transform::SnapTo(const Transform& tr)
+ve::quat Transform::GetQuat() const
 {
-	position = tr.position;
-	rotation = tr.rotation;
-	depth = tr.depth;
-	scale = tr.scale;
+	if(int(_updateFlags | UpdateFlags::Quat) != 0)
+	{
+		_updateFlags &= ~UpdateFlags::Quat;
+		_quat = glm::quat(glm::radians(_rotation));
+	}
+
+	return _quat;
 }
 
-Transform::Transform(Object* owner, GameInstance* serviceManager, ve::vec2 position, ve::vec3 eulerRotation, ve::vec2 scale) : Behaviour(owner, serviceManager)
+void Transform::SetPosition(ve::vec3 position)
 {
-	this->position = position;
-	this->scale = scale;
-	this->rotation = glm::quat(eulerRotation);
-	this->depth = 0;
+	_position = std::move(position);
+	_updateFlags |= UpdateFlags::Matrix;
 }
 
-Transform::Transform(Object* owner, GameInstance* serviceManager, ve::vec2 position, ve::quat rotation, ve::vec2 scale) : Behaviour(owner, serviceManager)
+void Transform::SetScale(ve::vec3 scale)
 {
-	this->position = position;
-	this->scale = scale;
-	this->rotation = rotation;
-	this->depth = 0;
+	_scale = std::move(scale);
+	_updateFlags |= UpdateFlags::Matrix;
 }
 
-Transform::Transform(Object* owner, GameInstance* serviceManager, const json & j) : Behaviour(owner, serviceManager, j)
+void Transform::SetRotation(ve::vec3 rotation)
 {
-	position = JSON::Get<ve::vec2>(j["position"]);
-	rotation = JSON::Get<glm::quat>(j["rotation"]);
-	scale = JSON::Get<ve::vec2>(j["scale"]);
-	depth = j["depth"].get<float>();
+	_rotation = std::move(rotation);
+	_updateFlags |= UpdateFlags::Matrix | UpdateFlags::Quat;
+}
+void Transform::SetDepth(ve::dec_t depth)
+{
+	_depth = std::move(depth);
+	_updateFlags |= UpdateFlags::Matrix;
 }
 
-Transform::Transform(Object* owner, GameInstance* serviceManager) : Behaviour(owner, serviceManager)
+Transform Transform::operator*(const Transform& rhs) const
 {
-	this->position = ve::vec2(0, 0);
-	this->scale = glm::vec2(1, 1);
-	this->rotation = glm::quat();
-	this->depth = 0;
+	const ve::vec4 newPosition = rhs.GetQuat() * ve::vec4(rhs.GetScale() * GetPosition(), 1) + ve::vec4(rhs.GetPosition(), 1);
+	return Transform(newPosition, rhs.GetRotation() + GetRotation(), rhs.GetScale() * GetScale());
+}
+
+Transform::Transform(ve::vec3 position, ve::vec3 eulerRotation, ve::vec3 scale)
+	: _updateFlags(UpdateFlags::All)
+	, _position(position)
+	, _scale(scale)
+	, _rotation(eulerRotation)
+	, _depth(0.0f)
+{
+
 }

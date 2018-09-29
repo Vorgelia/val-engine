@@ -15,18 +15,18 @@ GameScene* BaseObject::GetOwningScene() const
 	return _owner->GetOwningScene();
 }
 
-GameInstance* BaseObject::GetGameInstance() const
+GameInstance* BaseObject::GetOwningInstance() const
 {
 	if(_owner == nullptr)
 	{
 		return nullptr;
 	}
 
-	return _owner->GetGameInstance();
+	return _owner->GetOwningInstance();
 }
 
-BaseObject::BaseObject(BaseObject* owner)
-	: _owner(owner)
+BaseObject::BaseObject()
+	: _owner(nullptr)
 {
 	
 }

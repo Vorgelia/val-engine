@@ -1,24 +1,48 @@
 #pragma once
 #include "MathIncludes.hpp"
-#include "Behaviour.h"
+#include "ValEngine.h"
+#include "EnumUtils.h"
 
-class Transform : public Behaviour
+struct Transform
 {
 public:
-	VE_BEHAVIOUR_NAME(Transform);
+	enum class UpdateFlags : std::uint8_t
+	{
+		VE_BITMASK_VALUE_NONE,
+		Matrix = 0b01,
+		Quat = 0b10,
+		VE_BITMASK_VALUE_ALL
+	};
 
-	ve::vec2 position;
-	ve::vec2 scale;
-	ve::quat rotation;
-	float depth;
+private:
+	mutable UpdateFlags _updateFlags;
 
-	glm::mat4 ModelMatrix() const;
+protected:
+	ve::vec3 _position;
+	ve::vec3 _scale;
+	ve::vec3 _rotation;
+	ve::dec_t _depth;
 
-	void SnapTo(const Transform& tr);
+	mutable ve::quat _quat;
+	mutable ve::mat4 _matrix;
 
-	Transform(Object* owner, GameInstance* serviceManager, ve::vec2 position, ve::vec3 eulerRotation, ve::vec2 scale);
-	Transform(Object* owner, GameInstance* serviceManager, ve::vec2 position, ve::quat rotation, ve::vec2 scale);
-	Transform(Object* owner, GameInstance* serviceManager, const json& j);
-	Transform(Object* owner, GameInstance* serviceManager);
+public:
+	const ve::vec3& GetPosition() const { return _position; }
+	const ve::vec3& GetScale() const { return _scale; }
+	const ve::vec3& GetRotation() const { return _rotation; }
+	ve::dec_t GetDepth() const { return _depth; }
+
+	ve::mat4 GetMatrix() const;
+	ve::quat GetQuat() const;
+
+	void SetPosition(ve::vec3 position);
+	void SetScale(ve::vec3 scale);
+	void SetRotation(ve::vec3 rotation);
+	void SetDepth(ve::dec_t depth);
+
+	Transform operator*(const Transform& rhs) const;
+
+	Transform(ve::vec3 position, ve::vec3 eulerRotation, ve::vec3 scale);
 };
 
+VE_DECLARE_BITMASK_ENUM(Transform::UpdateFlags)

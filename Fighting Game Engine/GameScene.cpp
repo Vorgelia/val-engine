@@ -9,8 +9,6 @@
 #include "Behaviour.h"
 #include "DebugLog.h"
 
-//GameScene variables are this engine's equivalent to levels. Why they were not named levels, who knows.
-//The Unity style callbacks sort of betray my Unity background 
 void GameScene::LoadResources()
 {
 	_loaded = false;
@@ -74,6 +72,16 @@ bool GameScene::loaded() const
 const std::vector<std::string>& GameScene::postEffectsOrder() const
 {
 	return _postEffectsOrder;
+}
+
+GameScene* GameScene::GetOwningScene() const
+{
+	return const_cast<GameScene*>(this);
+}
+
+GameInstance* GameScene::GetOwningInstance() const
+{
+	return _gameInstance;
 }
 
 void GameScene::RunFunctionOnObjectBehaviours(std::function<void(Behaviour*)> func)

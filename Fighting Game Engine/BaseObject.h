@@ -5,16 +5,16 @@ class GameInstance;
 
 class BaseObject
 {
+	friend class GameInstance;
+
 protected:
 	BaseObject* _owner;
 
 public:
-	BaseObject* GetOwner() const;
-	GameScene* GetOwningScene() const;
-	GameInstance* GetGameInstance() const;
+	virtual BaseObject* GetOwner() const;
+	virtual GameScene* GetOwningScene() const;
+	virtual GameInstance* GetOwningInstance() const;
 
-	void OnPostInit() {}
-
-	BaseObject(BaseObject* owner);
+	BaseObject();
 	virtual ~BaseObject() = default;
 };

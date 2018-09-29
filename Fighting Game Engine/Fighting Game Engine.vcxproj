@@ -38,15 +38,16 @@
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="PropertySheet.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <OutDir>..\Build\</OutDir>
     <CodeAnalysisRuleSet>AnalysisRules.ruleset</CodeAnalysisRuleSet>
+    <TargetName>ValEngine</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>..\Build\</OutDir>
+    <TargetName>ValEngine</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -115,6 +116,7 @@
     <ClCompile Include="GameCharacter.cpp" />
     <ClCompile Include="GameCharacterComponent.cpp" />
     <ClCompile Include="GameCharacterData.cpp" />
+    <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GamePlayer.cpp" />
     <ClCompile Include="GameScene.cpp" />
     <ClCompile Include="GameSceneManager.cpp" />
@@ -177,6 +179,7 @@
     <ClCompile Include="Time.cpp" />
     <ClCompile Include="TimeDataBuffer.cpp" />
     <ClCompile Include="Transform.cpp" />
+    <ClCompile Include="ServiceUpdateDispatcher.cpp" />
     <ClCompile Include="Vec4Buffer.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -205,6 +208,7 @@
     <ClInclude Include="ConnectionSocket.h" />
     <ClInclude Include="DebugLog.h" />
     <ClInclude Include="Delegate.h" />
+    <ClInclude Include="EnumUtils.h" />
     <ClInclude Include="FGIncludes.hpp" />
     <ClInclude Include="FightingGameManager.h" />
     <ClInclude Include="FightingGameState.h" />
@@ -215,6 +219,7 @@
     <ClInclude Include="GameCharacter.h" />
     <ClInclude Include="GameCharacterComponent.h" />
     <ClInclude Include="GameCharacterData.h" />
+    <ClInclude Include="GameObject.h" />
     <ClInclude Include="GamePlayer.h" />
     <ClInclude Include="GameScene.h" />
     <ClInclude Include="GameSceneManager.h" />
@@ -288,6 +293,7 @@
     <ClInclude Include="SystemIncludes.hpp" />
     <ClInclude Include="TimeDataBuffer.h" />
     <ClInclude Include="Transform.h" />
+    <ClInclude Include="ServiceUpdateDispatcher.h" />
     <ClInclude Include="ValEngine.h" />
     <ClInclude Include="Vec4Buffer.h" />
   </ItemGroup>
