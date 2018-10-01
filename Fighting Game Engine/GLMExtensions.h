@@ -39,6 +39,12 @@ namespace glm
 		return sgn;
 	}
 
+	template<typename T1>
+	bool almostZero(T1 lhs)
+	{
+		return glm::abs(lhs) < 1e-8;
+	}
+
 	typedef glm::tvec2<std::int64_t, glm::highp> lvec2;
 	typedef glm::tvec4<std::int64_t, glm::highp> lvec4;
 }

@@ -40,9 +40,20 @@ public:
 	void SetRotation(ve::vec3 rotation);
 	void SetDepth(ve::dec_t depth);
 
+	ve::vec3 GetScaleInverse() const;
+
+	ve::vec3 TransformLocation(const ve::vec3& location, bool applyScaling = false);
+	ve::vec3 TransformVector(const ve::vec3& vector, bool applyScaling = false);
+
+	ve::vec3 InverseTransformLocation(const ve::vec3& location, bool applyScaling = false);
+	ve::vec3 InverseTransformVector(const ve::vec3& vector, bool applyScaling = false);
+
+	Transform GetInverse();
+
 	Transform operator*(const Transform& rhs) const;
 
 	Transform(ve::vec3 position, ve::vec3 eulerRotation, ve::vec3 scale);
+	Transform(ve::vec3 position, ve::quat rotation, ve::vec3 scale);
 };
 
 VE_DECLARE_BITMASK_ENUM(Transform::UpdateFlags)
