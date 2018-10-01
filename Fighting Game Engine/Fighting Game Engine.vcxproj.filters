@@ -412,14 +412,14 @@
     <ClCompile Include="GameInstance.cpp">
       <Filter>Val Engine\Engine\EngineComponents</Filter>
     </ClCompile>
-    <ClCompile Include="GameObject.cpp">
-      <Filter>Val Engine\Engine\Objects</Filter>
-    </ClCompile>
     <ClCompile Include="BaseObject.cpp">
       <Filter>Val Engine\Engine\Objects</Filter>
     </ClCompile>
     <ClCompile Include="ServiceUpdateDispatcher.cpp">
       <Filter>Val Engine\Engine\EngineComponents</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneObject.cpp">
+      <Filter>Val Engine\Engine\Objects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -753,14 +753,14 @@
     <ClInclude Include="BaseObject.h">
       <Filter>Val Engine\Engine\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="GameObject.h">
-      <Filter>Val Engine\Engine\Objects</Filter>
-    </ClInclude>
     <ClInclude Include="EnumUtils.h">
       <Filter>Val Engine\Engine\Utilities\Data</Filter>
     </ClInclude>
     <ClInclude Include="ServiceUpdateDispatcher.h">
       <Filter>Val Engine\Engine\EngineComponents</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneObject.h">
+      <Filter>Val Engine\Engine\Objects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

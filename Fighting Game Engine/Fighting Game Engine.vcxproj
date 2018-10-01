@@ -116,7 +116,6 @@
     <ClCompile Include="GameCharacter.cpp" />
     <ClCompile Include="GameCharacterComponent.cpp" />
     <ClCompile Include="GameCharacterData.cpp" />
-    <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GamePlayer.cpp" />
     <ClCompile Include="GameScene.cpp" />
     <ClCompile Include="GameSceneManager.cpp" />
@@ -144,6 +143,7 @@
     <ClCompile Include="PlayerManager.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="RenderingDataBuffer.cpp" />
+    <ClCompile Include="SceneObject.cpp" />
     <ClCompile Include="ScriptArray.cpp" />
     <ClCompile Include="ScriptBehaviour.cpp" />
     <ClCompile Include="ScriptMap.cpp" />
@@ -219,7 +219,6 @@
     <ClInclude Include="GameCharacter.h" />
     <ClInclude Include="GameCharacterComponent.h" />
     <ClInclude Include="GameCharacterData.h" />
-    <ClInclude Include="GameObject.h" />
     <ClInclude Include="GamePlayer.h" />
     <ClInclude Include="GameScene.h" />
     <ClInclude Include="GameSceneManager.h" />
@@ -262,6 +261,7 @@
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="ResourceInitializer.h" />
     <ClInclude Include="FilesystemManager.h" />
+    <ClInclude Include="SceneObject.h" />
     <ClInclude Include="Screen.h" />
     <ClInclude Include="Script.h" />
     <ClInclude Include="ScriptArray.h" />

@@ -2,7 +2,7 @@
 #include "BaseObject.h"
 #include "Transform.h"
 
-class GameObject :	public BaseObject
+class SceneObject :	public BaseObject
 {
 	friend class GameScene;
 
@@ -20,9 +20,6 @@ public:
 	BaseObject* GetTransformParent() const { return _transformParent; }
 	void SetTransformParent(const BaseObject* parent);
 
-	virtual void OnPostInit() {}
-	virtual void OnDestroy() {}
-
-	GameObject() = default;
-	~GameObject() = default;
+	SceneObject() = default;
+	~SceneObject() = default;
 };

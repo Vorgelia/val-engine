@@ -1,9 +1,10 @@
 #pragma once
+#include "IReflectable.h"
 
 class GameScene;
 class GameInstance;
 
-class BaseObject
+class BaseObject : public IReflectable
 {
 	friend class GameInstance;
 
@@ -14,6 +15,9 @@ public:
 	virtual BaseObject* GetOwner() const;
 	virtual GameScene* GetOwningScene() const;
 	virtual GameInstance* GetOwningInstance() const;
+
+	virtual void OnPostInit() {}
+	virtual void OnDestroy() {}
 
 	BaseObject();
 	virtual ~BaseObject() = default;

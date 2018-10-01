@@ -1,7 +1,8 @@
 #pragma once
+#include "BaseObject.h"
 class GameInstance;
 
-class BaseService
+class BaseService : public BaseObject
 {
 protected:
 	GameInstance* _serviceManager;

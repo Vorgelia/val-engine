@@ -23,7 +23,7 @@ protected:
 	template<typename KeyT, typename ValueT>
 	void AddReflectionMap(const std::string& name, const std::unordered_map<KeyT, ValueT>& field) const;
 
-	virtual void RegisterReflectionFields() const = 0;
+	virtual void RegisterReflectionFields() const {};
 
 public:
 	virtual json Serialize() const;
