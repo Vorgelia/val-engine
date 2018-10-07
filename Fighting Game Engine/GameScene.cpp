@@ -1,12 +1,10 @@
 #include "GameScene.h"
-#include "Object.h"
 #include "GameSceneManager.h"
 #include "GameInstance.h"
 #include "FilesystemManager.h"
 #include "RenderingGL.h"
 #include "ResourceManager.h"
 #include "Screen.h"
-#include "Behaviour.h"
 #include "DebugLog.h"
 
 void GameScene::LoadResources()
@@ -51,11 +49,6 @@ void GameScene::LoadResources()
 			}
 			RegisterObject(_objects.back().get());
 		}
-
-		_postEffectsOrder = _filesystem->ReturnFileLines(_dataPath.string() + "/PostEffectsOrder.txt", true);
-		for (auto& i : _postEffectsOrder)
-			if(i.substr(0, 2) != "//" && !i.empty())
-				_resource->GetPostEffect(i);
 	}
 	catch(std::runtime_error& err)
 	{
@@ -64,40 +57,29 @@ void GameScene::LoadResources()
 	_loaded = true;
 }
 
+void GameScene::OnInit()
+{
+	_debug = _owningInstance->Debug();
+	_resource = _owningInstance->ResourceManager();
+	_rendering = _owningInstance->Rendering();
+	_filesystem = _owningInstance->Filesystem();
+}
+
+void GameScene::OnDestroyed()
+{
+	_objects.clear();
+	_objectLookup.clear();
+	_objectNameLookup.clear();
+
+	_postEffectsOrder.clear();
+
+	_loaded = false;
+	_initialized = false;
+}
+
 bool GameScene::loaded() const
 {
 	return _loaded;
-}
-
-const std::vector<std::string>& GameScene::postEffectsOrder() const
-{
-	return _postEffectsOrder;
-}
-
-GameScene* GameScene::GetOwningScene() const
-{
-	return const_cast<GameScene*>(this);
-}
-
-GameInstance* GameScene::GetOwningInstance() const
-{
-	return _gameInstance;
-}
-
-void GameScene::RunFunctionOnObjectBehaviours(std::function<void(Behaviour*)> func)
-{
-	if(_shouldSortObjects)
-	{
-		SortObjects();
-	}
-
-	for(auto& iter : _objects)
-	{
-		if(iter != nullptr && iter->enabled)
-		{
-			iter->RunFunctionOnBehaviours(func);
-		}
-	}
 }
 
 void GameScene::RegisterObject(Object* obj)
@@ -126,76 +108,6 @@ void GameScene::SortObjects()
 const std::string& GameScene::name() const
 {
 	return _name;
-}
-
-bool GameScene::initialized() const
-{
-	return _initialized;
-}
-
-void GameScene::Init()
-{
-	_initialized = true;
-	RunFunctionOnObjectBehaviours(VE_BEHAVIOUR_FUNCTION_CALLER(OnSceneInit));
-}
-
-void GameScene::EngineUpdate()
-{
-	RunFunctionOnObjectBehaviours([](Behaviour* behaviour) { behaviour->TryInit(); });
-	RunFunctionOnObjectBehaviours(VE_BEHAVIOUR_FUNCTION_CALLER(EngineUpdate));
-}
-
-void GameScene::GameUpdate()
-{
-	RunFunctionOnObjectBehaviours(VE_BEHAVIOUR_FUNCTION_CALLER(GameUpdate));
-}
-
-void GameScene::LateGameUpdate()
-{
-	RunFunctionOnObjectBehaviours(VE_BEHAVIOUR_FUNCTION_CALLER(LateGameUpdate));
-}
-
-void GameScene::LateEngineUpdate()
-{
-	RunFunctionOnObjectBehaviours(VE_BEHAVIOUR_FUNCTION_CALLER(LateEngineUpdate));
-}
-
-void GameScene::RenderUI()
-{
-	RunFunctionOnObjectBehaviours(VE_BEHAVIOUR_FUNCTION_CALLER(OnRenderUI));
-}
-
-void GameScene::OnLoaded()
-{
-
-}
-
-void GameScene::RenderObjects()
-{
-	RunFunctionOnObjectBehaviours(VE_BEHAVIOUR_FUNCTION_CALLER(OnRenderObjects));
-}
-
-void GameScene::ApplyPostEffects()
-{
-	for(auto& iter : _postEffectsOrder)
-	{
-		_rendering->DrawPostEffect(
-			_resource->GetPostEffect(iter));
-	}
-
-	RunFunctionOnObjectBehaviours(VE_BEHAVIOUR_FUNCTION_CALLER(OnApplyPostEffects));
-}
-
-void GameScene::Cleanup()
-{
-	_objects.clear();
-	_objectLookup.clear();
-	_objectNameLookup.clear();
-
-	_postEffectsOrder.clear();
-
-	_loaded = false;
-	_initialized = false;
 }
 
 Object* GameScene::LoadObject(const std::string & prefabPath)
@@ -287,20 +199,8 @@ Behaviour* GameScene::FindBehaviour(const std::string& name)
 	return nullptr;
 }
 
-GameScene::GameScene(const FS::path& path, GameInstance* serviceManager)
+GameScene::GameScene()
 {
-	_serviceManager = serviceManager;
-	_debug = _serviceManager->Debug();
-	_resource = _serviceManager->ResourceManager();
-	_rendering = _serviceManager->Rendering();
-	_filesystem = _serviceManager->Filesystem();
-
-	_initialized = false;
-	_loaded = false;
-	_dataPath = path;
-	_name = path.leaf().string();
-
-	_postEffectsOrder.clear();
 }
 
 GameScene::~GameScene()

@@ -1,6 +1,5 @@
 #include "Transform.h"
 #include "JSON.h"
-#include "BehaviourFactory.h"
 
 ve::mat4 Transform::GetMatrix() const
 {
@@ -56,35 +55,33 @@ ve::vec3 Transform::GetScaleInverse() const
 	ve::vec3 invScale{};
 	for(int i = 0; i < 3; ++i)
 	{
-		invScale[i] = glm::almostZero(_scale[i]) ? 0 : (ve::dec_t(1.0) / _scale[i]);
+		invScale[i] = glm::nearlyZero(_scale[i]) ? 0 : (ve::dec_t(1.0) / _scale[i]);
 	}
 	return invScale;
 }
 
-ve::vec3 Transform::TransformLocation(const ve::vec3& location, bool applyScaling)
+ve::vec3 Transform::TransformLocation(const ve::vec3& location, bool applyScaling) const
 {
 	return TransformVector(location) + _position;
 }
 
-ve::vec3 Transform::TransformVector(const ve::vec3& vector, bool applyScaling)
+ve::vec3 Transform::TransformVector(const ve::vec3& vector, bool applyScaling) const
 {
 	return GetQuat() * ((applyScaling ? GetScale() : ve::vec3(1)) * vector);
 }
 
-ve::vec3 Transform::InverseTransformLocation(const ve::vec3& location, bool applyScaling)
+ve::vec3 Transform::InverseTransformLocation(const ve::vec3& location, bool applyScaling) const
 {
 	return InverseTransformVector(location - _position, applyScaling);
 }
 
-ve::vec3 Transform::InverseTransformVector(const ve::vec3& vector, bool applyScaling)
+ve::vec3 Transform::InverseTransformVector(const ve::vec3& vector, bool applyScaling) const
 {
 	return glm::inverse(GetQuat()) * vector * (applyScaling ? GetScaleInverse() : ve::vec3(1));
 }
 
-Transform Transform::GetInverse()
+Transform Transform::GetInverse() const
 {
-	_rotation = glm::eulerAngles(ve::quat());
-	
 	ve::quat invQuat = glm::inverse(GetQuat());
 	ve::vec3 invScale = GetScaleInverse();
 	ve::vec3 invPosition = invQuat * (invScale * - _position);

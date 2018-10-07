@@ -2,32 +2,21 @@
 #include "BaseService.h"
 #include "ValEngine.h"
 
-#define VE_FRAME_RATE 60
-#define VE_FRAME_TIME (1.0/VE_FRAME_RATE)
-
-class Time : public BaseService
+class TimeTracker
 {
+protected:
+	double _timeOffset;
+
+	double _time;
+	double _deltaTime;
+
 public:
-	double deltaTime;
-	double smoothDeltaTime;
-	double time;
-	double lastTime;
-	double lastUpdateTime;
-	double timeSinceLoad;
+	double time() const { return _time; }
+	double deltaTime() const { return _deltaTime; }
 
-	int updateRate;
-	double smoothUpdateRate;
+	void Reset(double currentTime);
+	void Update(double currentTime);
 
-	ve::int_t frameCount;
-	ve::int_t frameCountSinceLoad;
-
-	void Init() override;
-	void Update() override;
-	void Cleanup() override;
-
-	void FrameUpdate();
-	void HandleSceneLoaded();
-
-	Time(GameInstance* serviceManager);
-	~Time() = default;
+	TimeTracker();
+	~TimeTracker() = default;
 };

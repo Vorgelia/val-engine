@@ -40,12 +40,10 @@ public:
 	void Cleanup() override;
 
 	void Log(const std::string& data, std::string fileName, int fileLine, LogItem::Type type = LogItem::Type::Log);
+	std::shared_ptr<BaseScriptVariable> Log(const Script* script, std::vector<std::shared_ptr<BaseScriptVariable>>&);
 	void WriteThread();
 	void GetStackTrace(std::vector<std::string>* storage, unsigned int stackSize) const;
 
-#pragma region Scripting Bindings
-	std::shared_ptr<BaseScriptVariable> Log(const Script* script, std::vector<std::shared_ptr<BaseScriptVariable>>&);
-#pragma endregion
 
 	Debug(GameInstance* serviceManager);
 	virtual ~Debug();

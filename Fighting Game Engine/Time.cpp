@@ -1,46 +1,22 @@
 #include "Time.h"
-#include <Windows.h>
-#include "GLIncludes.hpp"
-#include "MathIncludes.hpp"
 
-void Time::Init()
+void TimeTracker::Reset(double currentTime)
 {
-
+	_timeOffset = currentTime;
+	_time = currentTime;
+	_deltaTime = 0.0f;
 }
 
-void Time::Update()
+void TimeTracker::Update(double currentTime)
 {
-	lastTime = time;
-	time = glfwGetTime();
-	deltaTime = time - lastTime;
-	smoothDeltaTime = glm::max<double>(glm::lerp<double>(smoothDeltaTime, deltaTime, deltaTime * 3), deltaTime);
-	smoothUpdateRate = glm::max<double>(glm::lerp<double>(smoothUpdateRate, deltaTime * VE_FRAME_RATE, deltaTime * 3), deltaTime * VE_FRAME_RATE);
-	timeSinceLoad += deltaTime;
-	updateRate = 0;
+	_deltaTime = currentTime - _timeOffset;
+	_time = currentTime;
 }
 
-void Time::Cleanup()
+TimeTracker::TimeTracker()
+	: _timeOffset(0.0)
+	, _time(0.0)
+	, _deltaTime(0.0)
 {
-}
-
-//Advance game update related variables by one frame
-void Time::FrameUpdate()
-{
-	updateRate += 1;
-	frameCount += 1;
-	frameCountSinceLoad += 1;
-	lastUpdateTime += VE_FRAME_TIME;
-}
-
-void Time::HandleSceneLoaded()
-{
-	timeSinceLoad = 0;
-	lastUpdateTime = time - VE_FRAME_TIME;
-	frameCountSinceLoad = 0;
-	smoothUpdateRate = 0;
-}
-
-Time::Time(GameInstance* serviceManager) : BaseService(serviceManager, -100)
-{
-	_allowServiceUpdate = true;
+	
 }

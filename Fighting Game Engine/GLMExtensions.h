@@ -40,7 +40,7 @@ namespace glm
 	}
 
 	template<typename T1>
-	bool almostZero(T1 lhs)
+	bool nearlyZero(T1 lhs)
 	{
 		return glm::abs(lhs) < 1e-8;
 	}

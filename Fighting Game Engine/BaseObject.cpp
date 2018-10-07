@@ -1,32 +1,13 @@
 #include "BaseObject.h"
-
-BaseObject* BaseObject::GetOwner() const
-{
-	return _owner;
-}
-
-GameScene* BaseObject::GetOwningScene() const
-{
-	if(_owner == nullptr)
-	{
-		return nullptr;
-	}
-
-	return _owner->GetOwningScene();
-}
-
-GameInstance* BaseObject::GetOwningInstance() const
-{
-	if(_owner == nullptr)
-	{
-		return nullptr;
-	}
-
-	return _owner->GetOwningInstance();
-}
+#include "ObjectReferenceManager.h"
 
 BaseObject::BaseObject()
-	: _owner(nullptr)
+	: _owningInstance(nullptr)
 {
-	
+	ObjectReferenceManager::Get().AddObject(this);
+}
+
+BaseObject::~BaseObject()
+{
+	ObjectReferenceManager::Get().RemoveObject(this);
 }

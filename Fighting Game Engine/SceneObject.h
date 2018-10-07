@@ -1,25 +1,36 @@
 #pragma once
 #include "BaseObject.h"
 #include "Transform.h"
+#include "ObjectReferenceManager.h"
 
 class SceneObject :	public BaseObject
 {
-	friend class GameScene;
+	friend class ObjectInitializer;
+
+private:
+	GameScene* _owningScene;
 
 protected:
-	Transform _localTransform;
-	BaseObject* _transformParent;
+	std::string _name;
 
+	Transform _localTransform;
+	ObjectReference<SceneObject> _transformParent;
+	
 public:
-	const Transform& GetLocalTransform() const { return _localTransform; }
+	const std::string& name() const { return _name; }
+	GameScene* owningScene() const { return _owningScene; }
+	const Transform& localTransform() const { return _localTransform; }
+	SceneObject* transformParent() const { return _transformParent.get(); }
+
 	Transform GetWorldTransform() const;
 
 	void SetLocalTransform(Transform transform) { _localTransform = std::move(transform); }
 	void SetWorldTransform(const Transform& transform);
 
-	BaseObject* GetTransformParent() const { return _transformParent; }
-	void SetTransformParent(const BaseObject* parent);
+	void SetTransformParent(SceneObject* parent);
 
-	SceneObject() = default;
+	void RegisterReflectionFields() const override;
+
+	SceneObject();
 	~SceneObject() = default;
 };

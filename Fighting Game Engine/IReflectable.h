@@ -8,6 +8,7 @@
 #include "ReflectionField.h"
 
 #define VE_REFLECTION_ARG(param) #param, param
+#define VE_PRIVATE_REFLECTION_ARG(param) #param, _##param
 
 class IReflectable
 {
@@ -117,28 +118,3 @@ inline bool IReflectable::TryDeserializeField(const std::string& name, const jso
 	iter->second->Deserialize(j);
 	return true;
 }
-
-
-struct iwr : IReflectable
-{
-	int integer;
-
-
-	void RegisterReflectionFields() const override;
-
-	iwr(int inint = 0);
-};
-
-struct faff : IReflectable
-{
-private:
-	int ifloop;
-	std::vector<iwr> vfloop;
-	std::unordered_map<std::string, iwr> mfloop;
-
-	void RegisterReflectionFields() const override;
-
-public:
-	faff(int in_ifloop = 0, std::vector<iwr> in_vfloop = {}, std::unordered_map<std::string, iwr> in_mfloop = {});
-
-};

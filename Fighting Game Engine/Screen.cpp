@@ -67,7 +67,6 @@ Screen::Screen(GameInstance* serviceManager) :
 	targetAspectInv(9.0 / 16.0)
 {
 	glfwInit();
-	_allowServiceUpdate = true;
 
 	//Window settings
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);

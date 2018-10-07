@@ -90,8 +90,7 @@
     <ClCompile Include="BaseScriptCollection.cpp" />
     <ClCompile Include="BaseService.cpp" />
     <ClCompile Include="BaseShader.cpp" />
-    <ClCompile Include="Behaviour.cpp" />
-    <ClCompile Include="BehaviourFactory.cpp" />
+    <ClCompile Include="ObjectComponent.cpp" />
     <ClCompile Include="CachedMesh.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CharacterCollisionResult.cpp" />
@@ -139,7 +138,10 @@
     <ClCompile Include="NetworkEntity.cpp" />
     <ClCompile Include="NetworkGamePlayer.cpp" />
     <ClCompile Include="NetworkMessage.cpp" />
-    <ClCompile Include="Object.cpp" />
+    <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="ObjectFactory.cpp" />
+    <ClCompile Include="ObjectInitializer.cpp" />
+    <ClCompile Include="ObjectReferenceManager.cpp" />
     <ClCompile Include="PlayerManager.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="RenderingDataBuffer.cpp" />
@@ -155,7 +157,6 @@
     <ClCompile Include="Profiler.cpp" />
     <ClCompile Include="RenderingGL.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
-    <ClCompile Include="ResourceInitializer.cpp" />
     <ClCompile Include="FilesystemManager.cpp" />
     <ClCompile Include="Screen.cpp" />
     <ClCompile Include="Script.cpp" />
@@ -179,7 +180,7 @@
     <ClCompile Include="Time.cpp" />
     <ClCompile Include="TimeDataBuffer.cpp" />
     <ClCompile Include="Transform.cpp" />
-    <ClCompile Include="ServiceUpdateDispatcher.cpp" />
+    <ClCompile Include="UpdateDispatcher.cpp" />
     <ClCompile Include="Vec4Buffer.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -188,8 +189,7 @@
     <ClInclude Include="BaseScriptCollection.h" />
     <ClInclude Include="BaseService.h" />
     <ClInclude Include="BaseShader.h" />
-    <ClInclude Include="Behaviour.h" />
-    <ClInclude Include="BehaviourFactory.h" />
+    <ClInclude Include="ObjectComponent.h" />
     <ClInclude Include="CachedMesh.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CharacterCollisionResult.h" />
@@ -206,6 +206,7 @@
     <ClInclude Include="ComputeShader.h" />
     <ClInclude Include="ComputeShaderEffect.h" />
     <ClInclude Include="ConnectionSocket.h" />
+    <ClInclude Include="ContainerUtils.h" />
     <ClInclude Include="DebugLog.h" />
     <ClInclude Include="Delegate.h" />
     <ClInclude Include="EnumUtils.h" />
@@ -248,7 +249,10 @@
     <ClInclude Include="NetworkEntity.h" />
     <ClInclude Include="NetworkGamePlayer.h" />
     <ClInclude Include="NetworkMessage.h" />
-    <ClInclude Include="Object.h" />
+    <ClInclude Include="GameObject.h" />
+    <ClInclude Include="ObjectFactory.h" />
+    <ClInclude Include="ObjectInitializer.h" />
+    <ClInclude Include="ObjectReferenceManager.h" />
     <ClInclude Include="PlayerManager.h" />
     <ClInclude Include="PostEffect.h" />
     <ClInclude Include="Profiler.h" />
@@ -259,7 +263,6 @@
     <ClInclude Include="RenderingGL.h" />
     <ClInclude Include="ResourceContainer.h" />
     <ClInclude Include="ResourceManager.h" />
-    <ClInclude Include="ResourceInitializer.h" />
     <ClInclude Include="FilesystemManager.h" />
     <ClInclude Include="SceneObject.h" />
     <ClInclude Include="Screen.h" />
@@ -292,8 +295,9 @@
     <ClInclude Include="Time.h" />
     <ClInclude Include="SystemIncludes.hpp" />
     <ClInclude Include="TimeDataBuffer.h" />
+    <ClInclude Include="TrackedUpdateFunction.h" />
     <ClInclude Include="Transform.h" />
-    <ClInclude Include="ServiceUpdateDispatcher.h" />
+    <ClInclude Include="UpdateDispatcher.h" />
     <ClInclude Include="ValEngine.h" />
     <ClInclude Include="Vec4Buffer.h" />
   </ItemGroup>

@@ -132,11 +132,13 @@ void GameSceneManager::Update()
 
 void GameSceneManager::Init()
 {
-	_debug = _serviceManager->Debug();
-	_rendering = _serviceManager->Rendering();
-	_resourceManager = _serviceManager->ResourceManager();
-	_time = _serviceManager->Time();
-	_input = _serviceManager->Input();
+	_debug = _gameInstance->Debug();
+	_rendering = _gameInstance->Rendering();
+	_resourceManager = _gameInstance->ResourceManager();
+	_time = _gameInstance->Time();
+	_input = _gameInstance->Input();
+
+	_gameInstance->updateDispatcher().BindFunction(this, UpdateFunctionTiming(UpdateGroup::FrameStart, UpdateType::Any));
 }
 
 void GameSceneManager::Cleanup()
@@ -152,11 +154,9 @@ void GameSceneManager::ApplyFunctionToCurrentScene(std::function<void(GameScene*
 	func(_currentScene);
 }
 
-GameSceneManager::GameSceneManager(GameInstance* serviceManager) :
-	BaseService(serviceManager, 100)
+GameSceneManager::GameSceneManager(GameInstance* gameInstance) :
+	BaseService(gameInstance)
 {
-	_allowServiceUpdate = true;
-
 	//Instantiate all the game scenes
 	FS::directory_iterator dir(FS::path("Scenes/"));
 	FS::directory_iterator end;
@@ -171,7 +171,7 @@ GameSceneManager::GameSceneManager(GameInstance* serviceManager) :
 		_scenes.emplace(
 			std::make_pair(
 				dir->path().leaf().string(),
-				std::make_unique<GameScene>(dir->path().string(), _serviceManager)));
+				std::make_unique<GameScene>(dir->path().string(), _gameInstance)));
 		++dir;
 	}
 

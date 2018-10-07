@@ -1,24 +1,24 @@
 #pragma once
 #include "IReflectable.h"
+#include "ObjectFactory.h"
 
 class GameScene;
 class GameInstance;
 
 class BaseObject : public IReflectable
 {
-	friend class GameInstance;
+	friend class ObjectInitializer;
 
 protected:
-	BaseObject* _owner;
+	GameInstance* _owningInstance;
+	BaseObject* _outer;
 
 public:
-	virtual BaseObject* GetOwner() const;
-	virtual GameScene* GetOwningScene() const;
-	virtual GameInstance* GetOwningInstance() const;
+	GameInstance* owningInstance() const { return _owningInstance; }
 
-	virtual void OnPostInit() {}
-	virtual void OnDestroy() {}
+	virtual void OnInit() {}
+	virtual void OnDestroyed() {}
 
 	BaseObject();
-	virtual ~BaseObject() = default;
+	virtual ~BaseObject();
 };

@@ -42,17 +42,17 @@ public:
 
 	ve::vec3 GetScaleInverse() const;
 
-	ve::vec3 TransformLocation(const ve::vec3& location, bool applyScaling = false);
-	ve::vec3 TransformVector(const ve::vec3& vector, bool applyScaling = false);
+	ve::vec3 TransformLocation(const ve::vec3& location, bool applyScaling = false) const;
+	ve::vec3 TransformVector(const ve::vec3& vector, bool applyScaling = false) const;
 
-	ve::vec3 InverseTransformLocation(const ve::vec3& location, bool applyScaling = false);
-	ve::vec3 InverseTransformVector(const ve::vec3& vector, bool applyScaling = false);
+	ve::vec3 InverseTransformLocation(const ve::vec3& location, bool applyScaling = false) const;
+	ve::vec3 InverseTransformVector(const ve::vec3& vector, bool applyScaling = false) const;
 
-	Transform GetInverse();
+	Transform GetInverse() const;
 
 	Transform operator*(const Transform& rhs) const;
 
-	Transform(ve::vec3 position, ve::vec3 eulerRotation, ve::vec3 scale);
+	Transform(ve::vec3 position = ve::vec3(0,0,0), ve::vec3 eulerRotation = ve::vec3(0,0,0), ve::vec3 scale = ve::vec3(1,1,1));
 	Transform(ve::vec3 position, ve::quat rotation, ve::vec3 scale);
 };
 

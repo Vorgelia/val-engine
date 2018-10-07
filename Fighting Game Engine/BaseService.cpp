@@ -1,23 +1,8 @@
 #include "BaseService.h"
 #include <cassert>
 
-bool BaseService::allowServiceUpdate() const
+BaseService::BaseService(GameInstance* gameInstance)
+	: BaseObject(gameInstance)
 {
-	return _allowServiceUpdate;
+	assert(_owningInstance != nullptr);
 }
-
-int BaseService::serviceUpdateSortingOrder() const
-{
-	return _serviceUpdateSortingOrder;
-}
-
-BaseService::BaseService(GameInstance* serviceManager, int sortingOrder) :
-	_serviceUpdateSortingOrder(sortingOrder)
-{
-	assert(serviceManager != nullptr);
-	_serviceManager = serviceManager;
-	_allowServiceUpdate = false;
-}
-
-BaseService::~BaseService()
-= default;

@@ -11,17 +11,17 @@
 #include "InputManager.h"
 #include "FightingGameManager.h"
 #include "FilesystemManager.h"
+#include "ObjectFactory.h"
 
 #define VE_NAMED_SERVICE_GETTER(name, type)\
-	::##type* ServiceManager::name()\
+	::##type* GameInstance::name()\
 	{\
-		if(_s##type == nullptr)\
+		if(_##type == nullptr)\
 		{\
-			_s##type = std::make_unique<::##type>(this);\
-			_activeServices.push_back(&_s##type);\
-			_servicesUpdated = true;\
+			_##type = _objectFactory.CreateObject<::##type>(this);\
+			_activeServices.emplace_back(_##type.get());\
 		}\
-		return static_cast<::##type*>(_s##type.get());\
+		return _##type.get();\
 	}
 
 #define VE_SERVICE_GETTER(type) VE_NAMED_SERVICE_GETTER(type, type)
@@ -30,7 +30,6 @@ VE_SERVICE_GETTER(Debug);
 VE_SERVICE_GETTER(GameSceneManager);
 VE_SERVICE_GETTER(ResourceManager);
 VE_SERVICE_GETTER(ScriptManager);
-VE_SERVICE_GETTER(Time);
 VE_SERVICE_GETTER(Screen);
 VE_SERVICE_GETTER(PlayerManager);
 VE_SERVICE_GETTER(FightingGameManager);
@@ -40,15 +39,11 @@ VE_NAMED_SERVICE_GETTER(Filesystem, FilesystemManager);
 VE_NAMED_SERVICE_GETTER(Graphics, GraphicsGL);
 VE_NAMED_SERVICE_GETTER(Rendering, RenderingGL);
 
-void GameInstance::InitializeServices()
-{
-	if(!_activeServices.empty())
-	{
-		CleanupServices();
-	}
+VE_REGISTER_OBJECT_GENERATOR(GameInstance);
 
+void GameInstance::OnInit()
+{
 	//Utilities
-	Time();
 	Debug();
 	Input();
 
@@ -67,50 +62,20 @@ void GameInstance::InitializeServices()
 	PlayerManager();
 	FightingGameManager();
 
-	for(auto& iter : _activeServices)
-	{
-		(*iter)->Init();
-	}
+	_timeTracker.Reset(glfwGetTime());
 }
 
-void GameInstance::CleanupServices()
+void GameInstance::OnDestroyed()
 {
-	for(auto& iter : _activeServices)
-	{
-		(*iter)->Cleanup();
-	}
-
-	for(std::unique_ptr<BaseService>* service : _activeServices)
-	{
-		BaseService* ptr = service->release();
-		delete ptr;
-	}
 }
 
 void GameInstance::UpdateServices()
 {
-	if(_servicesUpdated)
-	{
-		std::sort(_activeServices.begin(), _activeServices.end(), [](std::unique_ptr<BaseService>* a, std::unique_ptr<BaseService>* b) -> bool
-		{
-			return (*a)->serviceUpdateSortingOrder() > (*b)->serviceUpdateSortingOrder();
-		});
-		_servicesUpdated = false;
-	}
-
-	for(std::unique_ptr<BaseService>* service : _activeServices)
-	{
-		if((*service)->allowServiceUpdate())
-		{
-			(*service)->Update();
-		}
-	}
+	_timeTracker.Update(glfwGetTime());
+	_updateDispatcher.DispatchUpdates();
 }
 
 GameInstance::GameInstance()
+	: _updateDispatcher(this)
 {
-	_servicesUpdated = true;
 }
-
-GameInstance::~GameInstance()
-= default;
