@@ -772,6 +772,9 @@
     <ClInclude Include="ObjectInitializer.h">
       <Filter>Val Engine</Filter>
     </ClInclude>
+    <ClInclude Include="EngineConfigData.h">
+      <Filter>Val Engine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="FixedPoint64.natvis">

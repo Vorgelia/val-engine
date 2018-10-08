@@ -2,10 +2,8 @@
 #include <vector>
 #include <string>
 #include <unordered_set>
-#include <boost/filesystem.hpp>
+#include <filesystem>
 #include "GLIncludes.hpp"
-
-namespace FS = boost::filesystem;
 
 class Mesh;
 enum class VertexAttributeLocation

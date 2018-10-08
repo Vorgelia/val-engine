@@ -11,7 +11,7 @@ public:
 	BaseService(BaseService& service) = delete;
 	BaseService(BaseService&& service) = delete;
 
-	BaseService(GameInstance* gameInstance);
+	BaseService();
 	virtual ~BaseService() = default;
 };
 

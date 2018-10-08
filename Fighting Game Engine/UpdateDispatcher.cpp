@@ -2,11 +2,18 @@
 #include "ValEngine.h"
 #include "ContainerUtils.h"
 #include "GameInstance.h"
+#include "GameSceneManager.h"
 
 void UpdateDispatcher::Init()
 {
 	assert(_gameInstance != nullptr);
-	JSON::TryGetMember(_gameInstance->configData(), "fixedGameUpdateInterval", _fixedGameUpdateInterval);
+
+	_fixedGameUpdateInterval = _gameInstance->configData().gameConfigData.fixedGameUpdateInterval;
+
+	ResetFixedGameUpdateTime();
+
+	auto& sceneLoadedDelegate = _gameInstance->GameSceneManager()->SceneLoaded;
+	sceneLoadedDelegate += VE_DELEGATE_FUNC(GameSceneManager::GameSceneEventHandler, HandleSceneLoaded);
 }
 
 void UpdateDispatcher::SortFunctions()
@@ -25,6 +32,16 @@ void UpdateDispatcher::SortFunctions()
 	{
 		return a.timing.updateGroup < b.timing.updateGroup;
 	});
+}
+
+void UpdateDispatcher::ResetFixedGameUpdateTime()
+{
+	_lastFixedGameUpdateTime = _gameInstance->timeTracker().time() + _lastFixedGameUpdateTime;
+}
+
+void UpdateDispatcher::HandleSceneLoaded(const GameScene* scene)
+{
+	_justLoadedLevel = true;
 }
 
 void UpdateDispatcher::RunUpdateFunctionsOfType(UpdateType type)
@@ -70,6 +87,13 @@ void UpdateDispatcher::DispatchUpdates()
 		_shouldSortFunctions = false;
 	}
 
+	if(_justLoadedLevel)
+	{
+		ResetFixedGameUpdateTime();
+		_justLoadedLevel = false;
+		return;
+	}
+
 	const TimeTracker& time = _gameInstance->timeTracker();
 
 	int gameUpdateAmount = 0;
@@ -81,7 +105,13 @@ void UpdateDispatcher::DispatchUpdates()
 	int updateAmount = 0;
 	while(updateAmount < glm::max(1, gameUpdateAmount))
 	{
-		UpdateType updateFunctionType = UpdateType::EngineUpdate;
+		UpdateType updateFunctionType = UpdateType::None;
+
+		if(updateAmount == 0)
+		{
+			updateFunctionType |= UpdateType::EngineUpdate;
+		}
+
 		if(updateAmount < gameUpdateAmount)
 		{
 			updateFunctionType |= UpdateType::AnyFixedGameUpdate;
@@ -106,6 +136,7 @@ UpdateDispatcher::UpdateDispatcher(GameInstance* gameInstance)
 	, _shouldSortFunctions(false)
 	, _fixedGameUpdateInterval(1.0 / 60.0)
 	, _initialized(false)
+	, _justLoadedLevel(false)
 {
 
 }

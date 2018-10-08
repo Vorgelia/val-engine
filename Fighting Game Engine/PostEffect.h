@@ -1,8 +1,8 @@
 #pragma once
 #include <vector>
-#include <boost/filesystem.hpp>
+#include <filesystem>
 
-namespace FS = boost::filesystem;
+namespace fs = std::filesystem;
 
 class Material;
 //Buffer to write to , Material to render with

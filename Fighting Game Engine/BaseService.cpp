@@ -1,8 +1,7 @@
 #include "BaseService.h"
 #include <cassert>
 
-BaseService::BaseService(GameInstance* gameInstance)
-	: BaseObject(gameInstance)
+BaseService::BaseService()
 {
 	assert(_owningInstance != nullptr);
 }

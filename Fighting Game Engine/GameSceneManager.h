@@ -3,6 +3,7 @@
 #include "Delegate.h"
 #include <memory>
 #include <functional>
+#include <filesystem>
 #include <unordered_map>
 
 class GameScene;
@@ -18,16 +19,8 @@ class GameSceneManager : public BaseService
 {
 private:
 	Debug* _debug;
-	RenderingGL* _rendering;
-	ResourceManager* _resourceManager;
-	Time* _time;
-	InputManager* _input;
 
-private:
-	std::unordered_map<std::string, std::unique_ptr<GameScene> const> _scenes;
-
-	GameScene* _currentScene = nullptr;
-	std::string _currentSceneName = "";
+	ve::unique_object_ptr<GameScene> _currentScene;
 
 	std::string _sceneToLoad = "";
 	bool _isLoading = false;
@@ -45,14 +38,13 @@ public:
 	GameScene* currentScene() const;
 	bool isLoading() const;
 
-	void Update() override;
-	void Init() override;
-	void Cleanup() override;
+	void OnInit() override;
+	void OnDestroyed() override;
+
+	void UpdateService();
 
 	void LoadScene(const std::string& name);
-	void ReloadScene();
-	void RenderScene();
 
-	GameSceneManager(GameInstance* serviceManager);
-	virtual ~GameSceneManager();
+	GameSceneManager();
+	virtual ~GameSceneManager() = default;
 };

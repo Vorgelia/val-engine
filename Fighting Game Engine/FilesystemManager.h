@@ -1,14 +1,13 @@
 #pragma once
 #include "BaseService.h"
 #include "JSON.h"
-#include <boost/filesystem.hpp>
 #include <string>
 #include <unordered_map>
 #include <vector>
 #include <memory>
 #include <functional>
 
-namespace FS = boost::filesystem;
+namespace fs = std::filesystem;
 
 class Debug;
 class ResourceManager;

@@ -4,9 +4,6 @@
 
 //TODO: Add/move more stuff here.
 
-namespace ValEngine
-{
-
-}
+namespace ValEngine {}
 
 namespace ve = ValEngine;

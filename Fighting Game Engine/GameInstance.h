@@ -4,6 +4,7 @@
 #include "BaseService.h"
 #include "UpdateDispatcher.h"
 #include "GameObject.h"
+#include "EngineConfigData.h"
 
 #define VE_NAMED_SERVICE(name, type) \
 	private:\
@@ -36,19 +37,20 @@ private:
 
 	std::vector<ObjectReference<BaseService>> _activeServices;
 
-	json _configData;
+	EngineConfigData _configData;
+	json _rawConfigData;
 
 public:
+	ObjectFactory& objectFactory() { return _objectFactory; }
+	const TimeTracker& timeTracker() const { return _timeTracker; }
+	UpdateDispatcher& updateDispatcher() { return _updateDispatcher; }
+	const EngineConfigData& configData() const { return _configData; }
+	const json& rawConfigData() const { return _rawConfigData; }
+
 	void OnInit() override;
 	void OnDestroyed() override;
 
 	void UpdateServices();
-
-	const ObjectFactory& objectFactory() const { return _objectFactory; }
-	const TimeTracker& timeTracker() const { return _timeTracker; }
-	const UpdateDispatcher& updateDispatcher() const { return _updateDispatcher; }
-
-	const json& configData() const { return _configData; }
 
 	GameInstance& operator=(GameInstance& sm) = delete;
 	GameInstance& operator=(GameInstance&& sm) = delete;

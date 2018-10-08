@@ -4,9 +4,9 @@
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
-#include <boost/filesystem.hpp>
+#include <filesystem>
 
-namespace FS = boost::filesystem;
+namespace fs = std::filesystem;
 
 class Script;
 class BaseScriptVariable;

@@ -4,13 +4,13 @@
 #include <string>
 #include <memory>
 #include <functional>
-#include <boost/filesystem.hpp>
+#include <filesystem>
 #include "BaseObject.h"
 
 #include "ResourceManager.h"
 #include "FilesystemManager.h"
 
-namespace FS = boost::filesystem;
+namespace fs = std::filesystem;
 
 class Behaviour;
 class GameInstance;

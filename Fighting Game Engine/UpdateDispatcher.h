@@ -15,10 +15,16 @@ protected:
 	double _fixedGameUpdateInterval;
 	double _lastFixedGameUpdateTime;
 
+	bool _justLoadedLevel;
+
 	bool _initialized;
 
 	void Init();
 	void SortFunctions();
+
+	void ResetFixedGameUpdateTime();
+
+	void HandleSceneLoaded(const GameScene* scene);
 
 	void RunUpdateFunctionsOfType(UpdateType type);
 

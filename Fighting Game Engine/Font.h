@@ -2,9 +2,9 @@
 #include "GLIncludes.hpp"
 #include <GLM/glm.hpp>
 #include <unordered_map>
-#include <boost/filesystem.hpp>
+#include <filesystem>
 
-namespace FS = boost::filesystem;
+namespace fs = std::filesystem;
 
 class Texture;
 enum class TextAlignment

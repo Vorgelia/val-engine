@@ -189,6 +189,7 @@
     <ClInclude Include="BaseScriptCollection.h" />
     <ClInclude Include="BaseService.h" />
     <ClInclude Include="BaseShader.h" />
+    <ClInclude Include="EngineConfigData.h" />
     <ClInclude Include="ObjectComponent.h" />
     <ClInclude Include="CachedMesh.h" />
     <ClInclude Include="Camera.h" />

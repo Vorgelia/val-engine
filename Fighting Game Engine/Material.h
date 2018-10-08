@@ -2,10 +2,10 @@
 #include <GLM/glm.hpp>
 #include <string>
 #include <unordered_map>
-#include <boost/filesystem.hpp>
+#include <filesystem>
 #include "GLIncludes.hpp"
 
-namespace FS = boost::filesystem;
+namespace fs = std::filesystem;
 
 class Texture;
 class SurfaceShader;

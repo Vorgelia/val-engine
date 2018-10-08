@@ -2,7 +2,7 @@
 
 #include <Windows.h>
 #include <SOIL/src/SOIL.h>
-#include <boost/filesystem.hpp>
+#include <filesystem>
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/algorithm.hpp>
 #include <boost/assign/list_of.hpp>

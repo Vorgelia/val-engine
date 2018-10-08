@@ -43,6 +43,9 @@ VE_REGISTER_OBJECT_GENERATOR(GameInstance);
 
 void GameInstance::OnInit()
 {
+	_rawConfigData = Filesystem()->LoadFileResource<json>("EngineConfig.json");
+	_configData.Deserialize(_rawConfigData);
+
 	//Utilities
 	Debug();
 	Input();
@@ -53,7 +56,6 @@ void GameInstance::OnInit()
 	Graphics();
 
 	//File Management
-	Filesystem();
 	ResourceManager();
 	ScriptManager();
 

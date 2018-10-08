@@ -13,12 +13,28 @@
 
 GameScene* GameSceneManager::currentScene() const
 {
-	return _currentScene;
+	return _currentScene.get();
 }
 
 bool GameSceneManager::isLoading() const
 {
 	return _isLoading;
+}
+
+void GameSceneManager::OnInit()
+{
+	_debug = _owningInstance->Debug();
+	LoadScene(_owningInstance->configData().gameConfigData.defaultScene);
+}
+
+void GameSceneManager::OnDestroyed()
+{
+	
+}
+
+void GameSceneManager::UpdateService()
+{
+	
 }
 
 void GameSceneManager::LoadScene(const std::string& name)
@@ -95,26 +111,17 @@ void GameSceneManager::HandleSceneLoad()
 	{
 		_debug->VE_LOG("----\n\n\n Loading Scene: " + _sceneToLoad + "\n\n\n----", LogItem::Type::Message);
 
-		auto& iter = _scenes.find(_sceneToLoad);
-		if(iter == _scenes.end())
-		{
-			_debug->VE_LOG("GameSceneManager - Attempting to load invalid scene " + _sceneToLoad);
-			_sceneToLoad.clear();
-		}
-
 		if(_currentScene != nullptr)
 		{
-			_currentScene->Cleanup();
-			_resourceManager->Unload();
+			_currentScene.reset();
 		}
 
-		_currentScene = iter->second.get();
+		_currentScene = _owningInstance->objectFactory().CreateObject<GameScene>(this);
 		_isLoading = true;
-		_currentSceneName = _sceneToLoad;
 		_sceneToLoad.clear();
 		_currentScene->LoadResources();
 
-		SceneLoaded(_currentScene);
+		SceneLoaded(_currentScene.get());
 	}
 }
 
@@ -130,55 +137,13 @@ void GameSceneManager::Update()
 	}
 }
 
-void GameSceneManager::Init()
-{
-	_debug = _gameInstance->Debug();
-	_rendering = _gameInstance->Rendering();
-	_resourceManager = _gameInstance->ResourceManager();
-	_time = _gameInstance->Time();
-	_input = _gameInstance->Input();
-
-	_gameInstance->updateDispatcher().BindFunction(this, UpdateFunctionTiming(UpdateGroup::FrameStart, UpdateType::Any));
-}
-
 void GameSceneManager::Cleanup()
 {
 	_resourceManager->Unload();
 }
 
-void GameSceneManager::ApplyFunctionToCurrentScene(std::function<void(GameScene*)> func, bool requiredInitializedState) const
+GameSceneManager::GameSceneManager()
+	: _currentScene(nullptr)
 {
-	if(_isLoading || _currentScene == nullptr || (requiredInitializedState != _currentScene->initialized()))
-		return;
-
-	func(_currentScene);
+	
 }
-
-GameSceneManager::GameSceneManager(GameInstance* gameInstance) :
-	BaseService(gameInstance)
-{
-	//Instantiate all the game scenes
-	FS::directory_iterator dir(FS::path("Scenes/"));
-	FS::directory_iterator end;
-
-	while(dir != end)
-	{
-		if(!FS::is_directory(*dir))
-		{
-			continue;
-		}
-
-		_scenes.emplace(
-			std::make_pair(
-				dir->path().leaf().string(),
-				std::make_unique<GameScene>(dir->path().string(), _gameInstance)));
-		++dir;
-	}
-
-	_currentScene = nullptr;
-	_sceneToLoad = "Intro";
-	_isLoading = true;
-}
-
-GameSceneManager::~GameSceneManager()
-= default;
