@@ -22,7 +22,7 @@ class ClassName
 private/protected: Type _variableName
 public: Type variableName
 Type FunctionName
-Type variableGetter/Setter()
+Type variableGetter()
 
 ----Arbitrary to-do list----
 --Engine Features
@@ -32,27 +32,8 @@ TODO: Check if a framebuffer was used last frame before cleaning it up.
 TODO: Service for managing the type of the current build [debug, release]
 
 --Code Cleanup
-TODO: Replace some defines with service members [*].
 TODO: ValScript is a horrible mess. Do something about it.
 	---For starters, remove the std::shared_ptr madness.
-
-----Important defines----
---Engine--
-Resource.cpp:           VE_CREATE_DEFAULT_RESOURCES
-InputDevice.cpp:        VE_INPUT_BUFFER_INIT*
--                       VE_INPUT_BUFFER_MID*
-Rendering.cpp:          VE_AUX_BUFFER_AMOUNT
--                       VE_WORLD_SCALE
--                       VE_FONT_DEFAULT
-Screen.h:               VE_USE_SINGLE_BUFFER
-Time.h:                 VE_FRAME_TIME*
--                       VE_FRAME_RATE*
-Debug.h:		        VE_DEBUG_ERRORTHROW*
-ScriptParsingUtils.cpp: VE_TAB_SPACE_AMOUNT
-
---Game--
-PlayerManager.cpp:      VE_MAX_PLAYERS
--                       VE_MAX_SPECTATORS
 */
 
 
@@ -64,24 +45,20 @@ PlayerManager.cpp:      VE_MAX_PLAYERS
 
 int main()
 {
-	//We're setting the numeric locale to default C. Different locales have different ways of signifying decimal points, so converting text into variables can be unpredictable.
-	//This just makes it so that decimal point is always a dot, on both input and output.
 	std::setlocale(LC_NUMERIC, "C");
 
-	GameInstance serviceManager;
-	serviceManager.InitializeServices();
+	ve::unique_object_ptr<GameInstance> gameInstance = ve::unique_object_ptr<GameInstance>(new GameInstance());
+	ObjectFactory::InitializeObject(gameInstance.get(), nullptr);
 
-	Screen* screen = serviceManager.Screen();
+	Screen* screen = gameInstance->Screen();
 
 	while(!glfwWindowShouldClose(screen->window))
 	{
-		serviceManager.UpdateServices();
+		gameInstance->UpdateServices();
 
 		if(glfwGetKey(screen->window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		{
 			glfwSetWindowShouldClose(screen->window, GLFW_TRUE);
 		}
 	}
-
-	serviceManager.CleanupServices();
 }

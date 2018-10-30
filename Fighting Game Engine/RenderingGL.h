@@ -3,9 +3,10 @@
 #include <vector>
 #include <GLM/glm.hpp>
 #include "Font.h"
+#include "ObjectReferenceManager.h"
 
 class Mesh;
-class Camera;
+class BaseCamera;
 class Material;
 class Texture;
 class Transform;
@@ -29,32 +30,46 @@ class TimeDataBuffer;
 class RenderingDataBuffer;
 class Vec4Buffer;
 
+class RenderingCommand;
+
 class RenderingGL : public BaseService
 {
 	friend class GameSceneManager;
+	friend class BaseCamera;
+
 private:
 	Debug* _debug{};
 	GraphicsGL* _graphics{};
 	ResourceManager* _resourceManager{};
 	Screen* _screen{};
-	Time* _time{};
 
 private:
+	std::unordered_set<ObjectReference<BaseCamera>> _cameras;
+
 	std::unique_ptr<FrameBuffer> _mainBuffer;
-	std::vector<std::unique_ptr<FrameBuffer>> _auxBuffers;
-	glm::mat4 _orthoMat;
-	glm::mat4 _screenMat;
+
+	std::vector<std::unique_ptr<FrameBuffer>> _temporaryFrameBuffers;
+	std::unordered_set<FrameBuffer*> _reservedTemporaryFrameBuffers;
+
+	std::vector<std::pair<ObjectReference<BaseCamera>, std::vector<RenderingCommand>>> _perCameraRenderingCommands;
+
+	glm::mat4 _uiProjectionMatrix;
 
 	std::unique_ptr<TimeDataBuffer> _timeDataBuffer;
 	std::unique_ptr<RenderingDataBuffer> _renderingDataBuffer;
 	std::unique_ptr<Vec4Buffer> _commonComputeVec4Buffer;
 
+	void RegisterCamera(BaseCamera* camera);
+	void UnregisterCamera(BaseCamera* camera);
+
+	void ApplyRenderingCommandsForCamera(const BaseCamera* camera, const std::vector<RenderingCommand>& renderingCommands);
+
 	void InitTextDrawing();
 	void DrawTextCharacter(glm::vec4 rect, glm::vec4 params, Texture* tex) const;
 
-	void BindMaterialUniforms(const Material& material, int& out_texturesBound) const;
-	void BindShaderTextures(SurfaceShader* shader, const std::vector<MaterialTexture>& textures, int& out_textureUnitOffset) const;
-	void BindBufferUniforms(SurfaceShader* shad, int& index);
+	void BindMaterialUniforms(const Material& material, int& inout_textureUnitOffset) const;
+	void BindShaderTextures(SurfaceShader* shader, const std::vector<MaterialTexture>& textures, int& inout_textureUnitOffset) const;
+	void BindBufferUniforms(SurfaceShader* shad, int& inout_textureUnitOffset);
 
 	void BindFrameBufferImages(const FrameBuffer* buffer, GLuint bindingPoint) const;
 
@@ -64,24 +79,26 @@ private:
 	void EndFrame();
 
 public:
-	std::vector<Camera> cameras;
-	glm::vec4 tintColor;
+	void OnInit() override;
+	void OnDestroyed() override;
 
-	void DrawMesh(Transform* transform, Mesh* mesh, Material* mat, Camera* camera = nullptr);
+	FrameBuffer* GetTemporaryFrameBuffer();
+	void ReleaseTemporaryFrameBuffer(FrameBuffer* frameBuffer);
+
+	void AddRenderingCommandsForCamera(const BaseCamera* camera,  std::vector<RenderingCommand> renderingCommands);
+
+	void ApplyMaterialToFrameBuffer(const FrameBuffer* frameBuffer, const Material* material);
+
+	void ApplyRenderingCommands();
 
 	void DrawScreenMesh(glm::vec4 rect, Mesh* mesh, Material* mat);
 	void DrawScreenMesh(glm::vec4 rect, Mesh* mesh, const std::vector<MaterialTexture>& textures, Material* mat);
 	void DrawScreenMesh(glm::vec4 rect, Mesh* mesh, FrameBuffer* frameBuffer, Material* mat, glm::vec4 params = glm::vec4(0, 0, 1, 1));
 
-	void DrawPostEffect(PostEffect* pf);
-	void DrawScreenText(glm::vec4 rect, GLuint size, std::string text, Font* font, TextAlignment alignment = TextAlignment::Left);
+	void DrawScreenText(glm::vec4 rect, GLuint size, const std::string& text, Font* font, TextAlignment alignment = TextAlignment::Left);
 
 	const FrameBuffer* GetFramebuffer(int index = -1);
 
-	void Init() override;
-	void Update() override;
-	void Cleanup() override;
-
-	RenderingGL(GameInstance* serviceManager);
-	~RenderingGL();
+	RenderingGL() = default;
+	~RenderingGL() = default;
 };

@@ -10,11 +10,13 @@ class ObjectReferenceManager
 
 protected:
 	static std::unique_ptr<ObjectReferenceManager> _instance;
+
 public:
 	static ObjectReferenceManager& Get();
 
 protected:
 	std::unordered_set<const BaseObject*> _objectLookup;
+
 	void AddObject(const BaseObject* object);
 	void RemoveObject(const BaseObject* object);
 
@@ -29,19 +31,26 @@ protected:
 template<typename ObjectT = BaseObject>
 struct ObjectReference
 {
-	static_assert(std::is_same_v<BaseObject,ObjectT> || std::is_base_of_v<BaseObject, ObjectT>, "ObjectReference type is not derived from BaseObject");
+	static_assert(std::is_same_v<BaseObject, ObjectT> || std::is_base_of_v<BaseObject, ObjectT>, "ObjectReference type is not derived from BaseObject");
 
 protected:
 	mutable ObjectT* _referencedObject;
 
 public:
 	ObjectT* get() const;
+	bool IsValid() const { return get() != nullptr; }
+
 	void Reset(ObjectT* newObject);
 
 	explicit operator ObjectT*() const { return get(); }
 	ObjectT* operator->() const { return get(); }
 	ObjectT& operator*() const { return *get(); }
 	ObjectReference& operator=(ObjectT* rhs);
+
+	bool operator==(const ObjectReference<ObjectT>& other) const { return get() == other.get(); }
+
+	template<typename TargetObjectT>
+	operator ObjectReference<TargetObjectT>() const { return ObjectReference<TargetObjectT>(dynamic_cast<TargetObjectT>(get())); }
 
 	ObjectReference(ObjectT* object);
 };
@@ -77,4 +86,6 @@ ObjectReference<ObjectT>& ObjectReference<ObjectT>::operator=(ObjectT* rhs)
 
 template <typename ObjectT>
 ObjectReference<ObjectT>::ObjectReference(ObjectT* object)
-	: _referencedObject(object) { }
+	: _referencedObject(object)
+{
+}

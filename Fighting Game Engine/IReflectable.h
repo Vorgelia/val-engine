@@ -4,11 +4,14 @@
 #include <memory>
 #include <utility>
 #include "TemplateUtils.h"
-#include "JSON.h"
 #include "ReflectionField.h"
+#include "JSON.h"
 
 #define VE_REFLECTION_ARG(param) #param, param
 #define VE_PRIVATE_REFLECTION_ARG(param) #param, _##param
+
+#define VE_REFLECTION_VAR(type, param) AddReflection##type(#param, param)
+#define VE_PRIVATE_REFLECTION_VAR(type, param) AddReflection##type(#param, _##param)
 
 class IReflectable
 {
@@ -18,7 +21,10 @@ private:
 protected:
 	template<typename T>
 	void AddReflectionField(const std::string& name, const T& field) const;
+
+	void AddReflectionLambdaField(const std::string& name, std::function<void(const json&)> deserializeLambda, std::function<json()> serializeLambda);
 	void AddReflectionJsonField(const std::string& name, const json& field) const;
+
 	template<typename ValueT>
 	void AddReflectionArray(const std::string& name, const std::vector<ValueT>& field) const;
 	template<typename KeyT, typename ValueT>
@@ -41,6 +47,11 @@ template <typename T>
 void IReflectable::AddReflectionField(const std::string& name, const T& field) const
 {
 	_storedFields.insert_or_assign(name, std::make_shared<ReflectionField<T>>(name, const_cast<T*>(&field)));
+}
+
+inline void IReflectable::AddReflectionLambdaField(const std::string& name, std::function<void(const json&)> deserializeLambda, std::function<json()> serializeLambda)
+{
+	_storedFields.insert_or_assign(name, std::make_shared<LambdaReflectionField>(name, deserializeLambda, serializeLambda));
 }
 
 inline void IReflectable::AddReflectionJsonField(const std::string& name, const json& field) const

@@ -21,11 +21,13 @@ bool Material::HasProperty(Material::Properties pr) const
 	return (this->properties & (unsigned char)pr) != 0;
 }
 
-Material::Material(const std::string& name, SurfaceShader* shader, unsigned char properties, const std::vector<uniformFloat>& floats, const std::vector<uniformVec>& vecs, const std::vector<uniformTex>& textures)
+Material::Material(const std::string& name, SurfaceShader* shader, Properties properties, const std::vector<uniformFloat>& floats, const std::vector<uniformVec>& vecs, const std::vector<uniformTex>& textures)
 {
 	this->name = name;
 	this->shader = shader;
 	this->properties = properties;
+
+	renderingOrder = RenderingOrder::SolidGeometry;
 
 	for(unsigned int i = 0; i < floats.size(); ++i)
 	{
@@ -46,4 +48,7 @@ Material::Material(const std::string& name, SurfaceShader* shader, unsigned char
 Material::Material(const std::string& name)
 {
 	this->name = name;
+	renderingOrder = RenderingOrder::SolidGeometry;
+	shader = nullptr;
+	properties = Properties::ZTest | Properties::ZWrite | Properties::All;
 }

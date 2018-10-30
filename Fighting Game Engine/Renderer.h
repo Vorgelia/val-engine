@@ -1,28 +1,36 @@
 #pragma once
-#include "Behaviour.h"
+#include "ObjectComponent.h"
 #include <string>
+#include "RenderingCommand.h"
 
 class ResourceManager;
 class RenderingGL;
 
-class Renderer :
-	public Behaviour
+class BaseRenderer : public ObjectComponent
 {
-protected:
-	ResourceManager* _resource;
-	RenderingGL* _rendering;
+	VE_DECLARE_OBJECT(BaseRenderer)
+
+public:
+	virtual std::vector<RenderingCommand> GetRenderingCommands() const = 0;
+
+	BaseRenderer();
+	~BaseRenderer() = default;
+};
+
+class Renderer : public BaseRenderer
+{
+	VE_DECLARE_OBJECT(Renderer)
 
 protected:
 	Mesh* _mesh;
 	Material* _material;
 
 public:
-	VE_BEHAVIOUR_NAME(Renderer);
+	virtual json Serialize() const;
+	virtual void Deserialize(const json& j);
 
-	VE_BEHAVIOUR_REGISTER_FUNCTION(OnRenderObjects);
+	std::vector<RenderingCommand> GetRenderingCommands() const override;
 
-	Renderer(Object* owner, GameInstance* serviceManager, Mesh* mesh = nullptr, Material* material = nullptr);
-	Renderer(Object* owner, GameInstance* serviceManager, const json& j);
+	Renderer() = default;
 	~Renderer() = default;
 };
-

@@ -14,7 +14,7 @@
 
 namespace ValEngine
 {
-	template<typename EnumT, typename std::enable_if_t<std::is_enum_v<EnumT>, EnumT> = 0>
+	template<typename EnumT, typename std::enable_if_t<std::is_enum_v<EnumT>, EnumT> = nullptr>
 	struct is_bitmask : std::bool_constant<false> {};
 
 	template<typename EnumT>

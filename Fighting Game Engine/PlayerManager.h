@@ -23,10 +23,11 @@ public:
 	void RemovePlayer(int id);
 	void ClearPlayers();
 
-	void Init() override;
-	void Update() override;
-	void Cleanup() override;
+	void OnInit() override;
+	void OnDestroyed() override;
 
-	PlayerManager(GameInstance* serviceManager);
-	~PlayerManager();
+	void UpdatePlayers();
+
+	PlayerManager();
+	~PlayerManager() = default;
 };

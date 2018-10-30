@@ -21,7 +21,6 @@ class PostEffect;
 class Material;
 class CachedMesh;
 class InputEvent;
-class Object;
 enum class InputButton;
 enum class InputDirection;
 

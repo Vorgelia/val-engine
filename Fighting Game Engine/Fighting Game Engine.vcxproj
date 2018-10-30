@@ -144,7 +144,9 @@
     <ClCompile Include="ObjectReferenceManager.cpp" />
     <ClCompile Include="PlayerManager.cpp" />
     <ClCompile Include="Renderer.cpp" />
+    <ClCompile Include="RenderingCommand.cpp" />
     <ClCompile Include="RenderingDataBuffer.cpp" />
+    <ClCompile Include="ResourceWrapper.cpp" />
     <ClCompile Include="SceneObject.cpp" />
     <ClCompile Include="ScriptArray.cpp" />
     <ClCompile Include="ScriptBehaviour.cpp" />
@@ -260,11 +262,13 @@
     <ClInclude Include="ReflectionField.h" />
     <ClInclude Include="ReflectionTraits.h" />
     <ClInclude Include="Renderer.h" />
+    <ClInclude Include="RenderingCommand.h" />
     <ClInclude Include="RenderingDataBuffer.h" />
     <ClInclude Include="RenderingGL.h" />
     <ClInclude Include="ResourceContainer.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="FilesystemManager.h" />
+    <ClInclude Include="ResourceWrapper.h" />
     <ClInclude Include="SceneObject.h" />
     <ClInclude Include="Screen.h" />
     <ClInclude Include="Script.h" />

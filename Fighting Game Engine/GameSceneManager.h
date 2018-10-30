@@ -4,7 +4,6 @@
 #include <memory>
 #include <functional>
 #include <filesystem>
-#include <unordered_map>
 
 class GameScene;
 class GameInstance;
@@ -24,12 +23,6 @@ private:
 
 	std::string _sceneToLoad = "";
 	bool _isLoading = false;
-
-	void HandleSceneInit();
-	bool HandleSceneUpdate();
-	void HandleSceneLoad();
-
-	void ApplyFunctionToCurrentScene(std::function<void(GameScene*)> func, bool requiredInitializedState = true) const;
 
 public:
 	typedef Delegate<const GameScene*> GameSceneEventHandler;

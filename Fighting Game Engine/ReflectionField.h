@@ -141,3 +141,29 @@ public:
 	{
 	}
 };
+
+class LambdaReflectionField : public BaseReflectionField
+{
+protected:
+	std::function<void(const json&)> _deserializeLambda;
+	std::function<json()> _serializeLambda;
+
+public:
+	virtual void Deserialize(const JSON::json_t& j) override
+	{
+		_deserializeLambda(j);
+	}
+
+	virtual json Serialize() override
+	{
+		return _serializeLambda();
+	}
+
+	LambdaReflectionField(std::string name, std::function<void(const json&)> deserializeLambda, std::function<json()> serializeLambda)
+		: BaseReflectionField(name, ReflectionFieldType::Lambda)
+		, _serializeLambda(std::move(serializeLambda))
+		, _deserializeLambda(std::move(deserializeLambda))
+	{
+		
+	}
+};

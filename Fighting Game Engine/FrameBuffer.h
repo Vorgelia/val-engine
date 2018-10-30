@@ -32,6 +32,8 @@ private:
 
 public:
 
+	std::vector<Texture*> GetTextures() const;
+
 	FrameBuffer(glm::ivec2 size, int texAmount, bool depthStencil, GLint format, glm::vec4 clearColor, GLint filtering, GLuint clearFlags);
 	~FrameBuffer() = default;
 };

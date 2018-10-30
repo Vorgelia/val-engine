@@ -3,13 +3,24 @@
 
 struct RenderingConfigData : public IReflectable
 {
-	bool useSingleBuffer;
 	ve::ivec2 defaultResolution;
+	ve::ivec2 spriteRenderingScale;
+	ve::ivec2 uiRenderingScale;
+
+	bool useSingleBuffer;
+
+	int frameBuferTextureAmount;
+	std::string defaultFont;
 
 	void RegisterReflectionFields() const override
 	{
-		AddReflectionField(VE_REFLECTION_ARG(defaultResolution));
-		AddReflectionField(VE_REFLECTION_ARG(useSingleBuffer));
+		VE_REFLECTION_VAR(Field, defaultResolution);
+		VE_REFLECTION_VAR(Field, defaultResolution);
+		VE_REFLECTION_VAR(Field, useSingleBuffer);
+		VE_REFLECTION_VAR(Field, spriteRenderingScale);
+		VE_REFLECTION_VAR(Field, uiRenderingScale);
+		VE_REFLECTION_VAR(Field, frameBuferTextureAmount);
+		VE_REFLECTION_VAR(Field, defaultFont);
 	}
 };
 
@@ -20,21 +31,36 @@ struct GameConfigData : public IReflectable
 
 	void RegisterReflectionFields() const override
 	{
-		AddReflectionField(VE_REFLECTION_ARG(fixedGameUpdateInterval));
-		AddReflectionField(VE_REFLECTION_ARG(defaultScene));
+		VE_REFLECTION_VAR(Field, fixedGameUpdateInterval);
+		VE_REFLECTION_VAR(Field, defaultScene);
 	}
 };
 
+struct SerializationConfigData : public IReflectable
+{
+	std::string objectClassPropertyName;
+	std::string objectListPropertyName;
+	std::string componentListPropertyName;
+
+	void RegisterReflectionFields() const override
+	{
+		VE_REFLECTION_VAR(Field, objectClassPropertyName);
+		VE_REFLECTION_VAR(Field, objectListPropertyName);
+		VE_REFLECTION_VAR(Field, componentListPropertyName);
+	}
+};
 
 struct EngineConfigData : public IReflectable
 {
 	RenderingConfigData renderingConfigData;
 	GameConfigData gameConfigData;
-	
+	SerializationConfigData serializationConfigData;
+
 	void RegisterReflectionFields() const override
 	{
-		AddReflectionField(VE_REFLECTION_ARG(renderingConfigData));
-		AddReflectionField(VE_REFLECTION_ARG(gameConfigData));
+		VE_REFLECTION_VAR(Field, renderingConfigData);
+		VE_REFLECTION_VAR(Field, gameConfigData);
+		VE_REFLECTION_VAR(Field, serializationConfigData);
 	}
 };
 

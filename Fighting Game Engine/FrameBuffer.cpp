@@ -2,6 +2,19 @@
 #include "Texture.h"
 #include "GraphicsGL.h"
 
+std::vector<Texture*> FrameBuffer::GetTextures() const
+{
+	std::vector<Texture*> outVector{};
+	outVector.reserve(textures.size());
+
+	for(auto& iter : textures)
+	{
+		outVector.push_back(iter.get());
+	}
+
+	return outVector;
+}
+
 FrameBuffer::FrameBuffer(glm::ivec2 size, int texAmount, bool depthStencil, GLint format, glm::vec4 clearColor, GLint filtering, GLuint clearFlags)
 {
 	resolution = size;

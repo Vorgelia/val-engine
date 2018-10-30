@@ -14,18 +14,6 @@
 #include "InputManager.h"
 #include <memory>
 
-void GraphicsGL::Init()
-{
-	_debug = _serviceManager->Debug();
-	FT_Init_FreeType(&_freetypeLibrary);
-}
-
-void GraphicsGL::Update() {}
-
-void GraphicsGL::Cleanup()
-{
-}
-
 std::unique_ptr<Texture> GraphicsGL::CreateTexture(const std::string& name, const std::vector<unsigned char>& pixels, glm::ivec2 dimensions, int format, GLuint filt, GLuint edgeBehaviour)
 {
 	GLuint textureId;
@@ -204,6 +192,16 @@ GLuint GraphicsGL::CreateShaderProgram(const std::vector<GLuint>& shaders, Shade
 		glShaderStorageBlockBinding(shaderProgram, blockIndex, (GLuint)ShaderStorageBlockBindingPoints::CommonVec4Buffer);
 
 	return shaderProgram;
+}
+
+void GraphicsGL::OnInit()
+{
+	_debug = _owningInstance->Debug();
+	FT_Init_FreeType(&_freetypeLibrary);
+}
+void GraphicsGL::OnDestroyed()
+{
+	
 }
 
 std::unique_ptr<FrameBuffer> GraphicsGL::CreateFrameBuffer(glm::ivec2 size, int texAmount, bool depthStencil, GLint format, glm::vec4 clearColor, GLint filtering, GLuint clearFlags)
@@ -575,11 +573,8 @@ bool GraphicsGL::BindTexture(const Texture& texture, GLuint pos)
 	return false;
 }
 
-GraphicsGL::GraphicsGL(GameInstance* serviceManager) : BaseService(serviceManager)
+GraphicsGL::GraphicsGL()
 {
 	glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &_maxTextureUnits);
 	_boundTextures.resize(_maxTextureUnits, (GLuint)0);
 }
-
-GraphicsGL::~GraphicsGL()
-= default;

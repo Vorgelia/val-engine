@@ -38,7 +38,14 @@ public:
 	UpdateFunctionTiming(UpdateGroup inUpdateGroup, UpdateType inUpdateType)
 		: updateGroup(inUpdateGroup)
 		, updateType(inUpdateType)
-	{ }
+	{
+	}
+
+	UpdateFunctionTiming(int inUpdateGroup, UpdateType inUpdateType)
+		: updateGroup(UpdateGroup(inUpdateGroup))
+		, updateType(inUpdateType)
+	{
+	}
 };
 
 struct TrackedUpdateFunction

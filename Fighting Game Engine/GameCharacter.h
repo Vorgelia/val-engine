@@ -6,7 +6,6 @@
 #include <memory>
 #include "CharacterCollisionResult.h"
 
-class Object;
 class Script;
 class BaseScriptVariable;
 class CharacterState;

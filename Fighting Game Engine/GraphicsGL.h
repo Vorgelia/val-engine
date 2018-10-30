@@ -59,9 +59,8 @@ private:
 	GLuint CreateShaderProgram(const std::vector<GLuint>& shaders, ShaderProgramType type) const;
 
 public:
-	void Init() override;
-	void Update() override;
-	void Cleanup() override;
+	void OnInit() override;
+	void OnDestroyed() override;
 
 	std::unique_ptr<Texture> CreateTexture(const std::string& name, const std::vector<unsigned char>& pixels, glm::ivec2 dimensions, int format = GL_RGBA16, GLuint filt = GL_NEAREST, GLuint edgeBehaviour = GL_REPEAT);
 	void UpdateTexture(Texture& texture, const std::vector<unsigned char>& pixels);
@@ -104,8 +103,8 @@ public:
 
 	void DispatchCompute(const ComputeShader& shader, unsigned int workGroupSizeX = 1, unsigned int workGroupSizeY = 1, unsigned int workGroupSizeZ = 1);
 
-	GraphicsGL(GameInstance* serviceManager);
-	~GraphicsGL();
+	GraphicsGL();
+	~GraphicsGL() = default;
 };
 
 template<typename BufferT>

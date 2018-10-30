@@ -15,6 +15,7 @@ void ObjectInitializer::InitializeObject(BaseObject* other) const
 	if(otherAsObjectComponent != nullptr)
 	{
 		otherAsObjectComponent->_owner = _outerAsGameObject;
+		otherAsObjectComponent->_transformParent = _outerAsGameObject;
 		otherAsSceneObject = otherAsObjectComponent;
 	}
 	else

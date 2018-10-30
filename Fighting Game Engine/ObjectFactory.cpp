@@ -1,4 +1,5 @@
 ﻿#include "ObjectFactory.h"
+#include "GameInstance.h"
 
 void ve::ObjectDeleter::operator()(BaseObject* object) const
 {
@@ -12,6 +13,11 @@ ObjectFactory::BaseObjectGeneratorMap* ObjectFactory::objectGenerators()
 	return generatorMap.get();
 }
 
+const EngineConfigData& ObjectFactory::GetEngineConfigData() const
+{
+	return _gameInstance->configData();
+}
+
 void ObjectFactory::InitializeObject(BaseObject* object, BaseObject* outer, const json& j)
 {
 	ObjectInitializer objectInitializer{ outer };
@@ -23,4 +29,10 @@ void ObjectFactory::InitializeObject(BaseObject* object, BaseObject* outer, cons
 	}
 
 	object->OnInit();
+}
+
+ObjectFactory::ObjectFactory(GameInstance* gameInstance)
+	: _gameInstance(gameInstance)
+{
+	
 }

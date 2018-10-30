@@ -19,13 +19,13 @@ void ResourceManager::GenerateDefaultTextures()
 		0, 0, 0, 255,	 255, 0, 255, 255
 	};
 
-	_cachedTexture.Add("base_texture", _graphics->CreateTexture("base_texture", pixels, glm::ivec2(2, 2)), true);
+	_TextureMap.emplace("base_texture", ResourceWrapper<Texture>(_graphics->CreateTexture("base_texture", pixels, glm::ivec2(2, 2)), true));
 
 	pixels = std::vector<unsigned char>{ 0, 0, 0, 255 };
-	_cachedTexture.Add("black", _graphics->CreateTexture("black", pixels, glm::ivec2(1, 1)), true);
+	_TextureMap.emplace("black", ResourceWrapper<Texture>(_graphics->CreateTexture("black", pixels, glm::ivec2(1, 1)), true));
 
 	pixels = std::vector<unsigned char>{ 255, 255, 255, 255 };
-	_cachedTexture.Add("white", _graphics->CreateTexture("white", pixels, glm::ivec2(1, 1)), true);
+	_TextureMap.emplace("white", ResourceWrapper<Texture>(_graphics->CreateTexture("white", pixels, glm::ivec2(1, 1)), true));
 }
 
 void ResourceManager::LoadDefaultResources()
@@ -137,49 +137,39 @@ inline std::unique_ptr<std::string> ResourceManager::CreateResource(const std::s
 	return resource;
 }
 
-void ResourceManager::Init()
+void ResourceManager::HandleSceneLoaded(const GameScene* scene)
 {
-	_debug = _serviceManager->Debug();
-	_graphics = _serviceManager->Graphics();
-	_filesystem = _serviceManager->Filesystem();
+	TrimContainers();
+}
 
-#ifdef VE_CREATE_DEFAULT_RESOURCES
-	if(!FS::exists("Meshes/") || !FS::exists("Shaders/") || !FS::exists("Settings/") || !FS::exists("States/"))
-	{
-		_debug->VE_LOG("-----\n\n\nFile structure invalid. Creating default resources.\n\n\n-----");
-		ResourceInitializer::Init();
-	}
-#endif
+void ResourceManager::OnInit()
+{
+	_debug = _owningInstance->Debug();
+	_graphics = _owningInstance->Graphics();
+	_filesystem = _owningInstance->Filesystem();
+	_gameSceneManager = _owningInstance->GameSceneManager();
+
+	_gameSceneManager->SceneLoaded += VE_DELEGATE_FUNC(GameSceneManager::GameSceneEventHandler, HandleSceneLoaded);
 
 	GenerateDefaultTextures();
 	LoadDefaultResources();
 }
 
-void ResourceManager::Update() {}
-
-void ResourceManager::Cleanup()
+void ResourceManager::OnDestroyed()
 {
-	Unload(true);
+	TrimContainers();
 }
 
-void ResourceManager::Unload(bool includePersistent)
+void ResourceManager::TrimContainers()
 {
-	_cachedComputeShader.Cleanup(includePersistent);
-	_cachedFont.Cleanup(includePersistent);
-	_cachedJsonData.Cleanup(includePersistent);
-	_cachedMaterial.Cleanup(includePersistent);
-	_cachedMesh.Cleanup(includePersistent);
-	_cachedCachedMesh.Cleanup(includePersistent);
-	_cachedPostEffect.Cleanup(includePersistent);
-	_cachedSurfaceShader.Cleanup(includePersistent);
-	_cachedTextData.Cleanup(includePersistent);
-	_cachedTexture.Cleanup(includePersistent);
+	TrimContainer(_ComputeShaderMap);
+	TrimContainer(_FontMap);
+	TrimContainer(_JsonDataMap);
+	TrimContainer(_MaterialMap);
+	TrimContainer(_MeshMap);
+	TrimContainer(_CachedMeshMap);
+	TrimContainer(_PostEffectMap);
+	TrimContainer(_SurfaceShaderMap);
+	TrimContainer(_TextDataMap);
+	TrimContainer(_TextureMap);
 }
-
-ResourceManager::ResourceManager(GameInstance* serviceManager) : BaseService(serviceManager)
-{
-
-}
-
-ResourceManager::~ResourceManager()
-= default;

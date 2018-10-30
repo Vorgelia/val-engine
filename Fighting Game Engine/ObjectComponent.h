@@ -19,6 +19,6 @@ public:
 
 	void RegisterReflectionFields() const override;
 
-	ObjectComponent(GameInstance* owningInstance);
+	ObjectComponent();
 	virtual ~ObjectComponent() = default;
 };

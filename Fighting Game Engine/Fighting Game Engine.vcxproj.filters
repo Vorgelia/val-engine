@@ -409,9 +409,6 @@
     <ClCompile Include="UpdateDispatcher.cpp">
       <Filter>Val Engine\Engine\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="ObjectFactory.cpp">
-      <Filter>Val Engine\Engine\Services\Global</Filter>
-    </ClCompile>
     <ClCompile Include="ObjectReferenceManager.cpp">
       <Filter>Val Engine\Engine\Services\Global</Filter>
     </ClCompile>
@@ -422,6 +419,11 @@
       <Filter>Val Engine\Engine\Objects</Filter>
     </ClCompile>
     <ClCompile Include="ObjectInitializer.cpp" />
+    <ClCompile Include="ResourceWrapper.cpp" />
+    <ClCompile Include="ObjectFactory.cpp">
+      <Filter>Val Engine\Engine\Services</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderingCommand.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FGIncludes.hpp">
@@ -757,9 +759,6 @@
     <ClInclude Include="UpdateDispatcher.h">
       <Filter>Val Engine\Engine\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="ObjectFactory.h">
-      <Filter>Val Engine\Engine\Services\Global</Filter>
-    </ClInclude>
     <ClInclude Include="ObjectReferenceManager.h">
       <Filter>Val Engine\Engine\Services\Global</Filter>
     </ClInclude>
@@ -773,6 +772,15 @@
       <Filter>Val Engine</Filter>
     </ClInclude>
     <ClInclude Include="EngineConfigData.h">
+      <Filter>Val Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceWrapper.h">
+      <Filter>Val Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectFactory.h">
+      <Filter>Val Engine\Engine\Services</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderingCommand.h">
       <Filter>Val Engine</Filter>
     </ClInclude>
   </ItemGroup>

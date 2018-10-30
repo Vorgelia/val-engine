@@ -1,6 +1,8 @@
 ﻿#pragma once
 #include "JSON.h"
+#include "FilesystemManager.h"
 #include "ObjectInitializer.h"
+#include "EngineConfigData.h"
 
 class GameInstance;
 class GameScene;
@@ -9,7 +11,6 @@ class SceneObject;
 class GameObject;
 class ObjectComponent;
 
-#define VE_REGISTER_OBJECT_GENERATOR(GenType) bool _registered##GenType = ObjectFactory::RegisterObjectGenerator<GenType>(#GenType)
 
 namespace ValEngine
 {
@@ -28,18 +29,29 @@ class ObjectFactory
 	typedef std::unordered_map<std::string, BaseObjectGenerator> BaseObjectGeneratorMap;
 
 protected:
+	GameInstance* _gameInstance;
+
 	static BaseObjectGeneratorMap* objectGenerators();
 
-	void InitializeObject(BaseObject* object, BaseObject* outer, const json& j);
+	const EngineConfigData& GetEngineConfigData() const;
 
 public:
 	template<typename ObjectT>
 	static bool RegisterObjectGenerator(const std::string& name);
 	
 	template<typename ObjectT>
-	ve::unique_object_ptr<ObjectT> CreateObject(BaseObject* outer, const json& j = json());
+	ve::unique_object_ptr<ObjectT> CreateObject(BaseObject* outer, const json& j = json()); 
+	template<typename ObjectT>
+	ve::unique_object_ptr<ObjectT> CreateObjectDeferred();
+
 	template<typename ObjectT = BaseObject>
-	ve::unique_object_ptr<ObjectT> CreateObject(const std::string& className, BaseObject* outer, const json& j = json());
+	ve::unique_object_ptr<ObjectT> CreateObjectOfClass(const std::string& className, BaseObject* outer, const json& j = json());
+	template<typename ObjectT = BaseObject>
+	ve::unique_object_ptr<ObjectT> CreateObjectFromJson(BaseObject* outer, const json& j = json());
+
+	static void InitializeObject(BaseObject* object, BaseObject* outer, const json& j = json());
+
+	explicit ObjectFactory(GameInstance* gameInstance);
 };
 
 namespace ve = ValEngine;
@@ -54,9 +66,7 @@ bool ObjectFactory::RegisterObjectGenerator(const std::string& name)
 template <typename ObjectT>
 ve::unique_object_ptr<ObjectT> ObjectFactory::CreateObject(BaseObject* outer, const json& j)
 {
-	static_assert(std::is_base_of_v<BaseObject, ObjectT>);
-
-	ve::unique_object_ptr<ObjectT> object{ new ObjectT() };
+	ve::unique_object_ptr<ObjectT> object = CreateObjectDeferred<ObjectT>();
 
 	InitializeObject(outer, object.get(), j);
 
@@ -64,7 +74,15 @@ ve::unique_object_ptr<ObjectT> ObjectFactory::CreateObject(BaseObject* outer, co
 }
 
 template <typename ObjectT>
-ve::unique_object_ptr<ObjectT> ObjectFactory::CreateObject(const std::string& className, BaseObject* outer, const json& j)
+ve::unique_object_ptr<ObjectT> ObjectFactory::CreateObjectDeferred()
+{
+	static_assert(std::is_base_of_v<BaseObject, ObjectT>);
+
+	return ve::unique_object_ptr<ObjectT> { new ObjectT() };
+}
+
+template <typename ObjectT>
+ve::unique_object_ptr<ObjectT> ObjectFactory::CreateObjectOfClass(const std::string& className, BaseObject* outer, const json& j)
 {
 	static_assert(std::is_base_of_v<BaseObject, ObjectT>);
 
@@ -76,9 +94,23 @@ ve::unique_object_ptr<ObjectT> ObjectFactory::CreateObject(const std::string& cl
 		return nullptr;
 	}
 
-	ve::unique_object_ptr<ObjectT> object{ generatorIter->second() };
+	ve::unique_object_ptr<ObjectT> object{ dynamic_cast<ObjectT*>(generatorIter->second()) };
 
 	InitializeObject(outer, object.get(), j);
 
 	return object;
+}
+
+template <typename ObjectT>
+ve::unique_object_ptr<ObjectT> ObjectFactory::CreateObjectFromJson(BaseObject* outer, const json& j)
+{
+	const std::string& classPropertyName = GetEngineConfigData().serializationConfigData.objectClassPropertyName;
+
+	std::string className{};
+	if(!JSON::TryGetMember(j, classPropertyName, className))
+	{
+		return nullptr;
+	}
+
+	return CreateObjectOfClass<ObjectT>(className, outer, j);
 }

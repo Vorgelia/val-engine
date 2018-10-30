@@ -24,6 +24,12 @@ bool GameSceneManager::isLoading() const
 void GameSceneManager::OnInit()
 {
 	_debug = _owningInstance->Debug();
+
+	_owningInstance->updateDispatcher().BindFunction(
+		this,
+		UpdateFunctionTiming(UpdateGroup::FrameEnd, UpdateType::LastFixedGameUpdate),
+		[this]() { UpdateService(); });
+
 	LoadScene(_owningInstance->configData().gameConfigData.defaultScene);
 }
 
@@ -34,79 +40,6 @@ void GameSceneManager::OnDestroyed()
 
 void GameSceneManager::UpdateService()
 {
-	
-}
-
-void GameSceneManager::LoadScene(const std::string& name)
-{
-	if(!_isLoading)
-	{
-		_sceneToLoad = name;
-	}
-}
-
-void GameSceneManager::ReloadScene()
-{
-	if(_currentScene != nullptr && !_isLoading)
-	{
-		LoadScene(_currentSceneName);
-	}
-}
-
-void GameSceneManager::RenderScene()
-{
-	_rendering->BeginFrame();
-
-	VE_SCENE_FUNCTION_CALL(RenderObjects);
-
-	VE_SCENE_FUNCTION_CALL(ApplyPostEffects);
-
-	VE_SCENE_FUNCTION_CALL(RenderUI);
-
-	_rendering->EndFrame();
-}
-
-void GameSceneManager::HandleSceneInit()
-{
-	if(_isLoading && _currentScene != nullptr && _currentScene->loaded())
-	{
-		_isLoading = false;
-		_time->HandleSceneLoaded();
-		VE_SCENE_FUNCTION_CALL(Init, false);
-	}
-}
-
-bool GameSceneManager::HandleSceneUpdate()
-{
-	if(_isLoading)
-	{
-		return false;
-	}
-
-	//This is a variable that keeps track of whether we've run a game update on this iteration. If we have, this will tell the engine to render at the end.
-	bool gameUpdated = false;
-	VE_SCENE_FUNCTION_CALL(EngineUpdate);//Send an engine update regardless of game updates
-
-	int updateCount = 2;
-	//Run game updates until running one would put us ahead of our current time
-	while((_time->lastUpdateTime + VE_FRAME_TIME <= _time->time) && ((--updateCount) >= 0))
-	{
-		gameUpdated = true;
-
-		_time->FrameUpdate();
-		_input->FrameUpdate();
-
-		VE_SCENE_FUNCTION_CALL(GameUpdate);
-		VE_SCENE_FUNCTION_CALL(LateGameUpdate);
-	}
-
-	VE_SCENE_FUNCTION_CALL(LateEngineUpdate);//Send a late engine update regardless of game updates
-
-	return gameUpdated;
-}
-
-void GameSceneManager::HandleSceneLoad()
-{
 	if(!_sceneToLoad.empty())
 	{
 		_debug->VE_LOG("----\n\n\n Loading Scene: " + _sceneToLoad + "\n\n\n----", LogItem::Type::Message);
@@ -116,34 +49,26 @@ void GameSceneManager::HandleSceneLoad()
 			_currentScene.reset();
 		}
 
-		_currentScene = _owningInstance->objectFactory().CreateObject<GameScene>(this);
 		_isLoading = true;
+
+		_currentScene = _owningInstance->objectFactory().CreateObjectDeferred<GameScene>();
+		_currentScene->_dataPath = "/Scenes/"+_sceneToLoad+".json";
+		_owningInstance->objectFactory().InitializeObject(_currentScene.get(), this);
 		_sceneToLoad.clear();
-		_currentScene->LoadResources();
 
 		SceneLoaded(_currentScene.get());
+		_isLoading = false;
 	}
 }
 
-void GameSceneManager::Update()
+void GameSceneManager::LoadScene(const std::string& name)
 {
-	HandleSceneInit();
-	bool gameUpdated = HandleSceneUpdate();
-	HandleSceneLoad();
-
-	if(gameUpdated)
-	{
-		RenderScene();
-	}
-}
-
-void GameSceneManager::Cleanup()
-{
-	_resourceManager->Unload();
+	_sceneToLoad = name;
 }
 
 GameSceneManager::GameSceneManager()
-	: _currentScene(nullptr)
+	: _debug(nullptr)
+	, _currentScene(nullptr)
 {
 	
 }

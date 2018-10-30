@@ -5,9 +5,8 @@ void ObjectComponent::RegisterReflectionFields() const
 	AddReflectionField(VE_REFLECTION_ARG(enabled));
 }
 
-ObjectComponent::ObjectComponent(GameInstance* owningInstance)
-	: SceneObject(owningInstance)
-	, _owner(nullptr)
+ObjectComponent::ObjectComponent()
+	: _owner(nullptr)
 	, enabled(true)
 {
 	
