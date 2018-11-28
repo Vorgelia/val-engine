@@ -9,8 +9,8 @@
 	}
 
 #define VE_BITMASK_VALUE_NONE None = 0b0
-#define VE_BITMASK_VALUE_ANY Any = 0b11111111
-#define VE_BITMASK_VALUE_ALL All = 0b11111111
+#define VE_BITMASK_VALUE_ANY Any = std::numeric_limits<std::uint64_t>::max()
+#define VE_BITMASK_VALUE_ALL All = std::numeric_limits<std::uint64_t>::max()
 
 namespace ValEngine
 {

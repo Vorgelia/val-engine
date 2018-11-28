@@ -5,7 +5,8 @@
 #include "Renderer.h"
 #include "RenderingGL.h"
 #include "GraphicsGL.h"
-#include "Screen.h"
+#include "ScreenManager.h"
+#include "GameInstance.h"
 #include "FrameBuffer.h"
 
 VE_OBJECT_DEFINITION(BaseCamera);
@@ -46,7 +47,7 @@ void BaseCamera::OnInit()
 
 	//TODO: Customization over framebuffer creation in BaseCamera::Serialize 
 	_graphics = _owningInstance->Graphics();
-	_frameBuffer = _graphics->CreateFrameBuffer(_owningInstance->Screen()->size, _owningInstance->configData().renderingConfigData.frameBuferTextureAmount);
+	_frameBuffer = _graphics->CreateFrameBuffer(_owningInstance->ScreenManager()->size, _owningInstance->configData().renderingConfigData.frameBuferTextureAmount);
 
 	_rendering = _owningInstance->Rendering();
 	_rendering->RegisterCamera(this);
@@ -70,17 +71,6 @@ void BaseCamera::OnDestroyed()
 void BaseCamera::HandleScreenResized()
 {
 	//_frameBuffer->resolution;
-}
-
-void BaseCamera::Render() const
-{
-	std::vector<RenderingCommand> commands = GatherRenderingCommands();
-	if(commands.empty())
-	{
-		return;
-	}
-
-	_rendering->AddRenderingCommandsForCamera(this, std::move(commands));
 }
 
 glm::mat4 BaseCamera::GetViewMatrix() const

@@ -69,11 +69,6 @@ ObjectT* ObjectReference<ObjectT>::get() const
 template <typename ObjectT>
 void ObjectReference<ObjectT>::Reset(ObjectT* newObject)
 {
-	if(!ObjectReferenceManager::Get().IsObjectValid(_referencedObject))
-	{
-		_referencedObject = nullptr;
-		return;
-	}
 	_referencedObject = newObject;
 }
 

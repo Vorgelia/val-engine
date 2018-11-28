@@ -190,9 +190,6 @@
     <ClCompile Include="ScriptManager.cpp">
       <Filter>Val Engine\Engine\Services\Resources</Filter>
     </ClCompile>
-    <ClCompile Include="Screen.cpp">
-      <Filter>Val Engine\Engine\Services\Rendering</Filter>
-    </ClCompile>
     <ClCompile Include="GraphicsGL.cpp">
       <Filter>Val Engine\Engine\Services\Rendering</Filter>
     </ClCompile>
@@ -424,6 +421,9 @@
       <Filter>Val Engine\Engine\Services</Filter>
     </ClCompile>
     <ClCompile Include="RenderingCommand.cpp" />
+    <ClCompile Include="ScreenManager.cpp">
+      <Filter>Val Engine\Engine\Services\Rendering</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FGIncludes.hpp">
@@ -506,9 +506,6 @@
     </ClInclude>
     <ClInclude Include="Time.h">
       <Filter>Val Engine\Engine\Services\Utilities</Filter>
-    </ClInclude>
-    <ClInclude Include="Screen.h">
-      <Filter>Val Engine\Engine\Services\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="GraphicsGL.h">
       <Filter>Val Engine\Engine\Services\Rendering</Filter>
@@ -782,6 +779,9 @@
     </ClInclude>
     <ClInclude Include="RenderingCommand.h">
       <Filter>Val Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="ScreenManager.h">
+      <Filter>Val Engine\Engine\Services\Rendering</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

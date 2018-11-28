@@ -4,7 +4,7 @@ class GameInstance;
 
 class BaseService : public BaseObject
 {
-	VE_DECLARE_OBJECT(BaseService)
+	VE_OBJECT_DECLARATION(BaseService);
 
 public:
 	BaseService& operator=(BaseService&) = delete;

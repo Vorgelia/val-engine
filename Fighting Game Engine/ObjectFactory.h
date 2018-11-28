@@ -11,7 +11,6 @@ class SceneObject;
 class GameObject;
 class ObjectComponent;
 
-
 namespace ValEngine
 {
 	struct ObjectDeleter

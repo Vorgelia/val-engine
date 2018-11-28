@@ -30,7 +30,7 @@ VE_SERVICE_GETTER(Debug);
 VE_SERVICE_GETTER(GameSceneManager);
 VE_SERVICE_GETTER(ResourceManager);
 VE_SERVICE_GETTER(ScriptManager);
-VE_SERVICE_GETTER(Screen);
+VE_SERVICE_GETTER(ScreenManager);
 VE_SERVICE_GETTER(PlayerManager);
 VE_SERVICE_GETTER(FightingGameManager);
 
@@ -39,7 +39,7 @@ VE_NAMED_SERVICE_GETTER(Filesystem, FilesystemManager);
 VE_NAMED_SERVICE_GETTER(Graphics, GraphicsGL);
 VE_NAMED_SERVICE_GETTER(Rendering, RenderingGL);
 
-VE_REGISTER_OBJECT_GENERATOR(GameInstance);
+VE_OBJECT_DEFINITION(GameInstance);
 
 void GameInstance::OnInit()
 {
@@ -48,10 +48,9 @@ void GameInstance::OnInit()
 
 	//Utilities
 	Debug();
-	Input();
 
 	//Rendering API
-	Screen();
+	ScreenManager();
 	Rendering();
 	Graphics();
 
@@ -60,6 +59,7 @@ void GameInstance::OnInit()
 	ScriptManager();
 
 	//Game Management
+	Input();
 	GameSceneManager();
 	PlayerManager();
 	FightingGameManager();

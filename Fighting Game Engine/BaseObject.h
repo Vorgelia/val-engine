@@ -9,6 +9,7 @@ class GameInstance;
 	public:\
 	virtual std::string className() const override { return #ObjectT; }\
 	static BaseObject* StaticClass();\
+	virtual BaseObject* GetClass() const override;\
 	private:
 
 #define VE_OBJECT_DEFINITION(GenType)\
@@ -17,7 +18,11 @@ class GameInstance;
 	{\
 		static std::unique_ptr<GenType> _staticClass = std::make_unique<GenType>();\
 		return _staticClass.get();\
-	}
+	}\
+	BaseObject* GenType::GetClass() const\
+	{\
+		return GenType::StaticClass();\
+	}\
 
 class BaseObject : public IReflectable
 {
@@ -31,6 +36,7 @@ protected:
 
 public:
 	static BaseObject* StaticClass();
+	virtual BaseObject* GetClass() const;
 	virtual std::string className() const { return "BaseObject"; }
 
 	GameInstance* owningInstance() const { return _owningInstance; }

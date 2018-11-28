@@ -14,6 +14,8 @@
 #include "InputManager.h"
 #include <memory>
 
+VE_OBJECT_DEFINITION(GraphicsGL);
+
 std::unique_ptr<Texture> GraphicsGL::CreateTexture(const std::string& name, const std::vector<unsigned char>& pixels, glm::ivec2 dimensions, int format, GLuint filt, GLuint edgeBehaviour)
 {
 	GLuint textureId;
@@ -208,10 +210,10 @@ std::unique_ptr<FrameBuffer> GraphicsGL::CreateFrameBuffer(glm::ivec2 size, int 
 {
 	std::unique_ptr<FrameBuffer> frameBuffer = std::make_unique<FrameBuffer>(size, texAmount, depthStencil, format, clearColor, filtering, clearFlags);
 
-	frameBuffer->textures.reserve(texAmount);
+	frameBuffer->_textures.reserve(texAmount);
 	for(int i = 0; i < texAmount; ++i)
 	{
-		frameBuffer->textures.push_back(CreateTexture("", std::vector<unsigned char>(), size, format, filtering, GL_CLAMP_TO_EDGE));
+		frameBuffer->_textures.push_back(CreateTexture("", std::vector<unsigned char>(), size, format, filtering, GL_CLAMP_TO_EDGE));
 	}
 
 	UpdateFrameBuffer(*frameBuffer);
@@ -220,41 +222,48 @@ std::unique_ptr<FrameBuffer> GraphicsGL::CreateFrameBuffer(glm::ivec2 size, int 
 
 void GraphicsGL::UpdateFrameBuffer(FrameBuffer& frameBuffer)
 {
-	frameBuffer.invResolution = glm::vec2(1.0f / frameBuffer.resolution.x, 1.0f / frameBuffer.resolution.y);
-
-	std::vector<GLuint> attachments;
-	if(!frameBuffer._valid)
+	if(frameBuffer.IsValid() && !frameBuffer.IsDirty())
 	{
-		glGenFramebuffers(1, &frameBuffer.id);
+		return;
 	}
 
-	BindFrameBufferId(frameBuffer.id);
-
-	for(unsigned int i = 0; i < frameBuffer.textures.size(); ++i)
+	std::vector<GLuint> attachments;
+	if(!frameBuffer.IsValid())
 	{
-		BindTexture(*frameBuffer.textures[i], 0);
+		glGenFramebuffers(1, &frameBuffer._id);
+	}
 
-		if(!frameBuffer._valid)
+	BindFrameBufferId(frameBuffer._id);
+
+	for(unsigned int i = 0; i < frameBuffer._textures.size(); ++i)
+	{
+		BindTexture(*frameBuffer._textures[i], 0);
+
+		if(!frameBuffer.IsValid())
 		{
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, frameBuffer.textures[i]->_id, 0);
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, frameBuffer._textures[i]->_id, 0);
 			attachments.push_back(GL_COLOR_ATTACHMENT0 + i);
 		}
 	}
 
-	if(frameBuffer.hasDepthStencil)
+	if((frameBuffer.flags() | FrameBufferFlags::DepthStencil) != FrameBufferFlags::None)
 	{
-		if(!frameBuffer._valid)
+		if(!frameBuffer.IsValid())
 		{
-			glGenRenderbuffers(1, &frameBuffer.depthStencil);
+			glGenRenderbuffers(1, &frameBuffer._depthStencil);
 		}
-		glBindRenderbuffer(GL_RENDERBUFFER, frameBuffer.depthStencil);
-		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, frameBuffer.resolution.x, frameBuffer.resolution.y);
-		if(!frameBuffer._valid)
-			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, frameBuffer.depthStencil);
+		glBindRenderbuffer(GL_RENDERBUFFER, frameBuffer._depthStencil);
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, frameBuffer._resolution.x, frameBuffer._resolution.y);
+		if(!frameBuffer.IsValid())
+		{
+			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, frameBuffer._depthStencil);
+		}
 	}
 
-	if(!frameBuffer._valid)
+	if(!frameBuffer.IsValid())
+	{
 		glDrawBuffers(attachments.size(), &attachments[0]);
+	}
 
 	glClearColor(frameBuffer._clearColor.x, frameBuffer._clearColor.y, frameBuffer._clearColor.z, frameBuffer._clearColor.w);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
@@ -265,7 +274,8 @@ void GraphicsGL::UpdateFrameBuffer(FrameBuffer& frameBuffer)
 	}
 	else
 	{
-		frameBuffer._valid = true;
+		frameBuffer._flags |= FrameBufferFlags::Valid;
+		frameBuffer._flags &= ~FrameBufferFlags::Dirty;
 	}
 
 	BindDefaultFrameBuffer();
@@ -275,7 +285,7 @@ void GraphicsGL::ClearFrameBuffer(FrameBuffer& frameBuffer)
 {
 	BindFrameBuffer(frameBuffer);
 	glClearColor(frameBuffer._clearColor.x, frameBuffer._clearColor.y, frameBuffer._clearColor.z, frameBuffer._clearColor.w);
-	glClear(frameBuffer.clearFlags);
+	glClear(frameBuffer._clearFlags);
 }
 
 void GraphicsGL::DestroyFrameBuffer(FrameBuffer& frameBuffer) const
@@ -285,13 +295,13 @@ void GraphicsGL::DestroyFrameBuffer(FrameBuffer& frameBuffer) const
 		DestroyTexture(*tex);
 	}
 
-	if(frameBuffer.hasDepthStencil)
-		glDeleteRenderbuffers(1, &frameBuffer.depthStencil);
+	if((frameBuffer.flags() | FrameBufferFlags::DepthStencil) != FrameBufferFlags::None)
+		glDeleteRenderbuffers(1, &frameBuffer._depthStencil);
 
-	if(frameBuffer._valid)
-		glDeleteFramebuffers(1, &frameBuffer.id);
+	if(frameBuffer.IsValid())
+		glDeleteFramebuffers(1, &frameBuffer._id);
 
-	frameBuffer._valid = false;
+	frameBuffer._flags &= ~FrameBufferFlags::Valid;
 }
 
 void GraphicsGL::UpdateGraphicsBuffer(const GraphicsBuffer& buffer) const
@@ -476,9 +486,9 @@ bool GraphicsGL::BindMesh(const Mesh& mesh)
 
 bool GraphicsGL::BindFrameBuffer(const FrameBuffer& frameBuffer)
 {
-	if(frameBuffer._valid)
+	if(frameBuffer.IsValid())
 	{
-		return BindFrameBufferId(frameBuffer.id);
+		return BindFrameBufferId(frameBuffer._id);
 	}
 
 	return false;

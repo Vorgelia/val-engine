@@ -8,7 +8,7 @@ class RenderingGL;
 
 class BaseRenderer : public ObjectComponent
 {
-	VE_DECLARE_OBJECT(BaseRenderer)
+	VE_OBJECT_DECLARATION(BaseRenderer)
 
 public:
 	virtual std::vector<RenderingCommand> GetRenderingCommands() const = 0;
@@ -19,7 +19,7 @@ public:
 
 class Renderer : public BaseRenderer
 {
-	VE_DECLARE_OBJECT(Renderer)
+	VE_OBJECT_DECLARATION(Renderer)
 
 protected:
 	Mesh* _mesh;

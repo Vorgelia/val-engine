@@ -31,6 +31,8 @@ enum class GraphicsBufferType;
 
 class GraphicsGL : public BaseService
 {
+	VE_OBJECT_DECLARATION(GraphicsGL);
+
 private:
 	Debug* _debug;
 

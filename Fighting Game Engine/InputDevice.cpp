@@ -10,12 +10,6 @@
 #include <GLM/glm.hpp>
 #include "InputDeviceId.h"
 
-//Default input leniency. We want the first input of every move to only count if it's the latest one by default.
-#define INPUT_BUFFER_INIT 1
-#define INPUT_BUFFER_MID 8
-//1200 keeps track of the last 20 seconds of inputs, but it can easily be increased if that's not enough
-#define VE_INPUT_BUFFER_SIZE 1200
-
 const std::string& InputDevice::deviceName() const
 {
 	return _deviceName;

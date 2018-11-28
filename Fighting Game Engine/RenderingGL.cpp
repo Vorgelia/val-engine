@@ -23,6 +23,8 @@
 #include <GLM/gtc/type_ptr.hpp>
 #include "RenderingCommand.h"
 
+VE_OBJECT_DEFINITION(RenderingGL);
+
 void RenderingGL::OnInit()
 {
 	_graphics = _owningInstance->Graphics();
@@ -58,7 +60,9 @@ void RenderingGL::OnInit()
 	_graphics->BindBufferToBindingPoint(GLuint(ShaderStorageBlockBindingPoints::CommonVec4Buffer), *_commonComputeVec4Buffer);
 
 	//Register a callback for the screen resizing
-	_screen->ScreenUpdated += Screen::ScreenUpdateEventHandler::func_t([this]() { OnScreenResize(); });
+	_screen->ScreenUpdated +=  VE_DELEGATE_FUNC(Screen::ScreenUpdateEventHandler, OnScreenResize);
+
+	_owningInstance->updateDispatcher().BindFunction(this, UpdateFunctionTiming(UpdateGroup::Rendering, UpdateType::LastFixedGameUpdate), [this]() { RenderAllCameras(); });
 }
 
 void RenderingGL::OnDestroyed()
@@ -117,11 +121,14 @@ void RenderingGL::EndFrame()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	DrawScreenMesh(glm::vec4(0, 0, 1920, 1080), _resourceManager->GetMesh("Meshes/Base/screenQuad.vm"), _mainBuffer.get(), _resourceManager->GetMaterial("Materials/Base/Screen_FB.vmat"));
 
-#ifdef VE_USE_SINGLE_BUFFER
-	glFlush();
-#else
-	glfwSwapBuffers(_screen->window);
-#endif
+	if(_owningInstance->configData().renderingConfigData.useSingleBuffer)
+	{
+		glFlush();
+	}
+	else
+	{
+		glfwSwapBuffers(_screen->window);
+	}
 }
 
 FrameBuffer* RenderingGL::GetTemporaryFrameBuffer()
@@ -145,16 +152,72 @@ void RenderingGL::ReleaseTemporaryFrameBuffer(FrameBuffer* frameBuffer)
 	_reservedTemporaryFrameBuffers.erase(frameBuffer);
 }
 
+void RenderingGL::RenderCamera(const BaseCamera* camera)
+{
+	if(!ve::IsValid(camera))
+	{
+		return;
+	}
+
+	std::vector<RenderingCommand> renderingCommands = camera->GatherRenderingCommands();
+
+	std::sort(renderingCommands.begin(), renderingCommands.end()
+		, [](const RenderingCommand& lhs, const RenderingCommand& rhs)
+	{
+		return (lhs.material->renderingOrder == rhs.material->renderingOrder)
+			? (lhs.transform.GetPosition().z < rhs.transform.GetPosition().z)
+			: (lhs.material->renderingOrder < rhs.material->renderingOrder);
+	});
+
+	for(auto& iter : renderingCommands)
+	{
+		if(iter.material == nullptr || iter.mesh == nullptr)
+		{
+			continue;
+		}
+
+		_graphics->BindMesh(*iter.mesh);
+		_graphics->ApplyMaterial(*iter.material);
+
+		int textureIndex = 0;
+		BindMaterialUniforms(*iter.material, textureIndex);
+
+		glm::mat4 modelMatrix = glm::mat4(iter.transform.GetMatrix());
+		glm::mat4 viewMatrix = camera->GetViewMatrix();
+		glm::mat4 projectionMatrix = camera->GetProjectionMatrix();
+
+		glUniformMatrix4fv(iter.material->shader->UniformLocation("ve_matrix_model"), 1, false, glm::value_ptr(modelMatrix));
+		glUniformMatrix4fv(iter.material->shader->UniformLocation("ve_matrix_view"), 1, false, glm::value_ptr(viewMatrix));
+		glUniformMatrix4fv(iter.material->shader->UniformLocation("ve_matrix_projection"), 1, false, glm::value_ptr(projectionMatrix));
+		glUniformMatrix4fv(iter.material->shader->UniformLocation("ve_matrix_mvp"), 1, false, glm::value_ptr(projectionMatrix * viewMatrix * modelMatrix));
+
+		glDrawElements(GL_TRIANGLES, iter.mesh->elementAmount(), GL_UNSIGNED_INT, nullptr);
+	}
+}
+
+void RenderingGL::RenderAllCameras()
+{
+	for(auto& iter : _cameras)
+	{
+		if(!iter->enabled)
+		{
+			continue;
+		}
+
+		RenderCamera(iter.get());
+	}
+}
+
 //Screen resize callback. Resize all framebuffers to match the screen size.
 void RenderingGL::OnScreenResize()
 {
-	_mainBuffer->resolution = _screen->size;
+	_mainBuffer->SetResolution(_screen->size);
 	_graphics->UpdateFrameBuffer(*_mainBuffer);
 }
 
-void RenderingGL::BindMaterialUniforms(const Material& material, int& out_texturesBound) const
+void RenderingGL::BindMaterialUniforms(const Material& material, int& inout_textureUnitOffset) const
 {
-	out_texturesBound = 0;
+	inout_textureUnitOffset = 0;
 	_graphics->BindShader(*material.shader);
 	//Bind uniforms specified in the material.
 	for(auto iter = material.uniformFloats.begin(); iter != material.uniformFloats.end(); ++iter)
@@ -175,19 +238,19 @@ void RenderingGL::BindMaterialUniforms(const Material& material, int& out_textur
 			glm::vec4 params = iter->second.params;
 
 			//Bind the current texture at the specified index.
-			_graphics->BindTexture(*iter->second.ref, out_texturesBound);
-			glUniform1i(material.shader->UniformLocation(iter->first), out_texturesBound);
+			_graphics->BindTexture(*iter->second.ref, inout_textureUnitOffset);
+			glUniform1i(material.shader->UniformLocation(iter->first), inout_textureUnitOffset);
 
 			//Params are used for cropping the texture, size passes information about the texture itself.
 			glUniform4f(material.shader->UniformLocation(iter->first + ("_params")), params.x, params.y, params.z, params.w);
 			glUniform4f(material.shader->UniformLocation(iter->first + ("_size")), texSize.x, texSize.y, texSize.z, texSize.w);
 
-			out_texturesBound += 1;
+			inout_textureUnitOffset += 1;
 		}
 	}
 }
 
-void RenderingGL::BindShaderTextures(SurfaceShader* shader, const std::vector<MaterialTexture>& textures, int& out_textureUnitOffset) const
+void RenderingGL::BindShaderTextures(SurfaceShader* shader, const std::vector<MaterialTexture>& textures, int& inout_textureUnitOffset) const
 {
 	int uniformIndex = 0;
 	for(auto& iter = textures.begin(); iter != textures.end(); ++iter)
@@ -198,27 +261,27 @@ void RenderingGL::BindShaderTextures(SurfaceShader* shader, const std::vector<Ma
 			glm::vec4 texParams = iter->params;
 			glm::vec4 texSize = tex->size();
 
-			_graphics->BindTexture(*tex, out_textureUnitOffset);
-			glUniform1i(shader->UniformLocation("tex" + std::to_string(uniformIndex)), out_textureUnitOffset);
+			_graphics->BindTexture(*tex, inout_textureUnitOffset);
+			glUniform1i(shader->UniformLocation("tex" + std::to_string(uniformIndex)), inout_textureUnitOffset);
 			glUniform4f(shader->UniformLocation("tex" + std::to_string(uniformIndex) + ("_params")), texParams.x, texParams.y, texParams.z, texParams.w);
 			glUniform4f(shader->UniformLocation("tex" + std::to_string(uniformIndex) + ("_size")), texSize.x, texSize.y, texSize.z, texSize.w);
 
-			++out_textureUnitOffset;
+			++inout_textureUnitOffset;
 			++uniformIndex;
 		}
 	}
 }
 
-void RenderingGL::BindBufferUniforms(SurfaceShader* shad, int& inout_textureIndex)
+void RenderingGL::BindBufferUniforms(SurfaceShader* shad, int& inout_textureUnitOffset)
 {
 	//Bind the textures of every framebuffer to the shader.
-	for(unsigned int i = 0; i < _mainBuffer->textures.size(); ++i)
+	for(unsigned int i = 0; i < _mainBuffer->_textures.size(); ++i)
 	{
 		if(shad->UniformLocation("mainBuf_tex" + std::to_string(i)) > -1)
 		{
-			_graphics->BindTexture(*(_mainBuffer->textures[i]), inout_textureIndex);
-			glUniform1i(shad->UniformLocation("mainBuf_tex" + std::to_string(i)), inout_textureIndex);
-			inout_textureIndex += 1;
+			_graphics->BindTexture(*(_mainBuffer->_textures[i]), inout_textureUnitOffset);
+			glUniform1i(shad->UniformLocation("mainBuf_tex" + std::to_string(i)), inout_textureUnitOffset);
+			inout_textureUnitOffset += 1;
 		}
 	}
 }
@@ -230,9 +293,9 @@ void RenderingGL::BindFrameBufferImages(const FrameBuffer* buffer, GLuint bindin
 		return;
 	}
 
-	for(size_t i = 0; i < buffer->textures.size(); ++i)
+	for(size_t i = 0; i < buffer->_textures.size(); ++i)
 	{
-		_graphics->BindTextureToImageUnit(bindingPoint + i, *(buffer->textures[i]));
+		_graphics->BindTextureToImageUnit(bindingPoint + i, *(buffer->_textures[i]));
 	}
 }
 
@@ -284,14 +347,6 @@ void RenderingGL::DrawScreenMesh(glm::vec4 rect, Mesh* mesh, const std::vector<M
 	glDrawElements(GL_TRIANGLES, mesh->elementAmount(), GL_UNSIGNED_INT, nullptr);
 }
 
-void RenderingGL::AddRenderingCommandsForCamera(const BaseCamera* camera, std::vector<RenderingCommand> renderingCommands)
-{
-	if(camera == nullptr)
-	{
-		return;
-	}
-
-}
 
 void RenderingGL::ApplyMaterialToFrameBuffer(const FrameBuffer* frameBuffer, const Material* material)
 {
@@ -422,47 +477,6 @@ void RenderingGL::RegisterCamera(BaseCamera* camera)
 void RenderingGL::UnregisterCamera(BaseCamera* camera)
 {
 	_cameras.erase(camera);
-}
-
-void RenderingGL::ApplyRenderingCommandsForCamera(const BaseCamera* camera, const std::vector<RenderingCommand>& renderingCommands)
-{
-	if(camera == nullptr)
-	{
-		return;
-	}
-
-	std::sort(renderingCommands.begin(), renderingCommands.end()
-		, [](const RenderingCommand& lhs, const RenderingCommand& rhs)
-	{
-		return (lhs.material->renderingOrder == rhs.material->renderingOrder)
-			? (lhs.transform.GetPosition().z < rhs.transform.GetPosition().z)
-			: (lhs.material->renderingOrder < rhs.material->renderingOrder);
-	});
-
-	for(auto& iter : renderingCommands)
-	{
-		if(iter.material == nullptr || iter.mesh == nullptr)
-		{
-			continue;
-		}
-
-		_graphics->BindMesh(*iter.mesh);
-		_graphics->ApplyMaterial(*iter.material);
-
-		int textureIndex = 0;
-		BindMaterialUniforms(*iter.material, textureIndex);
-
-		glm::mat4 modelMatrix = glm::mat4(iter.transform.GetMatrix());
-		glm::mat4 viewMatrix = camera->GetViewMatrix();
-		glm::mat4 projectionMatrix = camera->GetProjectionMatrix();
-
-		glUniformMatrix4fv(iter.material->shader->UniformLocation("ve_matrix_model"), 1, false, glm::value_ptr(modelMatrix));
-		glUniformMatrix4fv(iter.material->shader->UniformLocation("ve_matrix_view"), 1, false, glm::value_ptr(viewMatrix));
-		glUniformMatrix4fv(iter.material->shader->UniformLocation("ve_matrix_projection"), 1, false, glm::value_ptr(projectionMatrix));
-		glUniformMatrix4fv(iter.material->shader->UniformLocation("ve_matrix_mvp"), 1, false, glm::value_ptr(projectionMatrix * viewMatrix * modelMatrix));
-
-		glDrawElements(GL_TRIANGLES, iter.mesh->elementAmount(), GL_UNSIGNED_INT, nullptr);
-	}
 }
 
 void RenderingGL::InitTextDrawing()

@@ -6,7 +6,8 @@
 #include "ObjectFactory.h"
 #include "Mesh.h"
 
-VE_REGISTER_OBJECT_GENERATOR(Renderer);
+VE_OBJECT_DEFINITION(BaseRenderer);
+VE_OBJECT_DEFINITION(Renderer);
 
 json Renderer::Serialize() const
 {

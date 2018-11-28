@@ -25,6 +25,7 @@ public:
 	void operator=(Delegate<argTypes...>& listener) = delete;
 	void operator=(Delegate<argTypes...>&& listener) = delete;
 
+	void Invoke(argTypes... types) { this->operator()(types...); }
 	void Clear();
 
 	Delegate() = default;

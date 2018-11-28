@@ -160,7 +160,7 @@
     <ClCompile Include="RenderingGL.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="FilesystemManager.cpp" />
-    <ClCompile Include="Screen.cpp" />
+    <ClCompile Include="ScreenManager.cpp" />
     <ClCompile Include="Script.cpp" />
     <ClCompile Include="ScriptBlock.cpp" />
     <ClCompile Include="ScriptConditionalBlock.cpp" />
@@ -270,7 +270,7 @@
     <ClInclude Include="FilesystemManager.h" />
     <ClInclude Include="ResourceWrapper.h" />
     <ClInclude Include="SceneObject.h" />
-    <ClInclude Include="Screen.h" />
+    <ClInclude Include="ScreenManager.h" />
     <ClInclude Include="Script.h" />
     <ClInclude Include="ScriptArray.h" />
     <ClInclude Include="ScriptBehaviour.h" />

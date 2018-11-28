@@ -6,11 +6,6 @@
 #include <regex>
 #include <boost/algorithm/string/erase.hpp>
 
-//If the following define exists, the engine will create some default resource files if the folder structure is missing.
-//I opt to create and then read files rather than reading directly from the resources because the generated files have comments in them that explain how they work
-//They are also easier to just modify instead of writing new ones from scratch
-//#define VE_CREATE_DEFAULT_RESOURCES
-
 void ResourceManager::GenerateDefaultTextures()
 {
 	std::vector<unsigned char>& pixels = std::vector<unsigned char>

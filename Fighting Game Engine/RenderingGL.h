@@ -37,6 +37,8 @@ class RenderingGL : public BaseService
 	friend class GameSceneManager;
 	friend class BaseCamera;
 
+	VE_OBJECT_DECLARATION(RenderingGL);
+
 private:
 	Debug* _debug{};
 	GraphicsGL* _graphics{};
@@ -51,8 +53,6 @@ private:
 	std::vector<std::unique_ptr<FrameBuffer>> _temporaryFrameBuffers;
 	std::unordered_set<FrameBuffer*> _reservedTemporaryFrameBuffers;
 
-	std::vector<std::pair<ObjectReference<BaseCamera>, std::vector<RenderingCommand>>> _perCameraRenderingCommands;
-
 	glm::mat4 _uiProjectionMatrix;
 
 	std::unique_ptr<TimeDataBuffer> _timeDataBuffer;
@@ -61,8 +61,6 @@ private:
 
 	void RegisterCamera(BaseCamera* camera);
 	void UnregisterCamera(BaseCamera* camera);
-
-	void ApplyRenderingCommandsForCamera(const BaseCamera* camera, const std::vector<RenderingCommand>& renderingCommands);
 
 	void InitTextDrawing();
 	void DrawTextCharacter(glm::vec4 rect, glm::vec4 params, Texture* tex) const;
@@ -85,19 +83,16 @@ public:
 	FrameBuffer* GetTemporaryFrameBuffer();
 	void ReleaseTemporaryFrameBuffer(FrameBuffer* frameBuffer);
 
-	void AddRenderingCommandsForCamera(const BaseCamera* camera,  std::vector<RenderingCommand> renderingCommands);
+	void RenderCamera(const BaseCamera* camera);
+	void RenderAllCameras();
 
 	void ApplyMaterialToFrameBuffer(const FrameBuffer* frameBuffer, const Material* material);
-
-	void ApplyRenderingCommands();
 
 	void DrawScreenMesh(glm::vec4 rect, Mesh* mesh, Material* mat);
 	void DrawScreenMesh(glm::vec4 rect, Mesh* mesh, const std::vector<MaterialTexture>& textures, Material* mat);
 	void DrawScreenMesh(glm::vec4 rect, Mesh* mesh, FrameBuffer* frameBuffer, Material* mat, glm::vec4 params = glm::vec4(0, 0, 1, 1));
 
 	void DrawScreenText(glm::vec4 rect, GLuint size, const std::string& text, Font* font, TextAlignment alignment = TextAlignment::Left);
-
-	const FrameBuffer* GetFramebuffer(int index = -1);
 
 	RenderingGL() = default;
 	~RenderingGL() = default;

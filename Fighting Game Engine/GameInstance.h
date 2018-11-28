@@ -16,12 +16,14 @@
 
 class GameInstance : public BaseObject
 {
+	VE_OBJECT_DECLARATION(GameInstance);
+
 private:
 	VE_SERVICE(Debug);
 	VE_SERVICE(GameSceneManager);
 	VE_SERVICE(ResourceManager);
 	VE_SERVICE(ScriptManager);
-	VE_SERVICE(Screen);
+	VE_SERVICE(ScreenManager);
 	VE_SERVICE(PlayerManager);
 	VE_SERVICE(FightingGameManager);
 

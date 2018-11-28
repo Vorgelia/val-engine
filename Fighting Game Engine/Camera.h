@@ -12,13 +12,15 @@ class BaseCamera : public ObjectComponent
 {
 	VE_OBJECT_DECLARATION(BaseCamera);
 
+	friend class RenderingGL;
+
 protected:
 	RenderingGL* _rendering;
 	GraphicsGL* _graphics;
 
 	std::unique_ptr<FrameBuffer> _frameBuffer;
 
-	std::vector<RenderingCommand> GatherRenderingCommands()const;
+	std::vector<RenderingCommand> GatherRenderingCommands() const;
 
 public:
 	int renderingPriority;
@@ -29,8 +31,6 @@ public:
 	void OnDestroyed() override;
 
 	virtual void HandleScreenResized();
-
-	virtual void Render() const;
 
 	virtual glm::mat4 GetProjectionMatrix() const = 0;
 	virtual glm::mat4 GetViewMatrix() const;
