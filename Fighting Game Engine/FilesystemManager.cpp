@@ -67,10 +67,10 @@ std::vector<unsigned char> FilesystemManager::LoadBinaryResource(int id, const s
 	return std::vector<unsigned char>((unsigned char*)sData, (unsigned char*)sData[size]);
 }
 
-std::string FilesystemManager::ReturnFile(const FS::path& dir) const
+std::string FilesystemManager::ReturnFile(const fs::path& dir) const
 {
 	//Abstraction for turning a file into a string.
-	if(!FS::exists(dir))
+	if(!fs::exists(dir))
 	{
 		_debug->VE_LOG("Unable to find resource at " + dir.string(), LogItem::Type::Error);
 		return std::string();
@@ -90,7 +90,7 @@ std::string FilesystemManager::ReturnFile(const FS::path& dir) const
 }
 
 //Abstraction for turning a file into an array of its lines. Heavily used in parsing.
-std::vector<std::string> FilesystemManager::ReturnFileLines(const FS::path& dir, bool removeWhitespace) const
+std::vector<std::string> FilesystemManager::ReturnFileLines(const fs::path& dir, bool removeWhitespace) const
 {
 	std::string& content = ReturnFile(dir);
 
@@ -110,9 +110,9 @@ std::vector<std::string> FilesystemManager::ReturnFileLines(const FS::path& dir,
 }
 
 template<>
-std::unique_ptr<json> FilesystemManager::LoadFileResource(const FS::path& path)
+std::unique_ptr<json> FilesystemManager::LoadFileResource(const fs::path& path)
 {
-	if(!FS::exists(path))
+	if(!fs::exists(path))
 	{
 		return std::unique_ptr<json>(nullptr);
 	}
@@ -139,9 +139,9 @@ std::unique_ptr<json> FilesystemManager::LoadFileResource(const FS::path& path)
 }
 
 template<>
-std::unique_ptr<CachedMesh> FilesystemManager::LoadFileResource(const FS::path& path)
+std::unique_ptr<CachedMesh> FilesystemManager::LoadFileResource(const fs::path& path)
 {
-	if(!FS::exists(path))
+	if(!fs::exists(path))
 	{
 		return std::unique_ptr<CachedMesh>(nullptr);
 	}
@@ -198,9 +198,9 @@ std::unique_ptr<CachedMesh> FilesystemManager::LoadFileResource(const FS::path& 
 }
 
 template<>
-std::unique_ptr<Material> FilesystemManager::LoadFileResource(const FS::path& path)
+std::unique_ptr<Material> FilesystemManager::LoadFileResource(const fs::path& path)
 {
-	if(!FS::exists(path))
+	if(!fs::exists(path))
 	{
 		return std::unique_ptr<Material>(nullptr);
 	}
@@ -239,7 +239,7 @@ std::unique_ptr<Material> FilesystemManager::LoadFileResource(const FS::path& pa
 			{
 			case 0:
 				if(spl[0] == "properties")
-					mat->properties = boost::lexical_cast<GLuint>(spl[1]);
+					mat->properties = Material::Properties(boost::lexical_cast<GLuint>(spl[1]));
 				else if(spl[0] == "shader")
 					mat->shader = _resource->GetSurfaceShader(spl[1]);
 				break;
@@ -284,9 +284,9 @@ std::unique_ptr<Material> FilesystemManager::LoadFileResource(const FS::path& pa
 }
 
 template<>
-std::unique_ptr<PostEffect> FilesystemManager::LoadFileResource(const FS::path& path)
+std::unique_ptr<PostEffect> FilesystemManager::LoadFileResource(const fs::path& path)
 {
-	if(!FS::exists(path))
+	if(!fs::exists(path))
 	{
 		return std::unique_ptr<PostEffect>(nullptr);
 	}
@@ -339,7 +339,7 @@ std::unique_ptr<PostEffect> FilesystemManager::LoadFileResource(const FS::path& 
 	return postEffect;
 }
 
-bool FilesystemManager::SaveFile(const FS::path& dir, std::string& content, int flags) const
+bool FilesystemManager::SaveFile(const fs::path& dir, std::string& content, int flags) const
 {
 	boost::algorithm::erase_all(content, "\r");
 
@@ -356,14 +356,14 @@ bool FilesystemManager::SaveFile(const FS::path& dir, std::string& content, int 
 
 //Most of these parsers work in similar ways.
 //Lines beginning with // are comments, #DIRECTIVES change where the data goes, the data itself is split on = and ,
-void FilesystemManager::LoadControlSettings(const FS::path& path, std::unordered_map<InputDirection, InputEvent>& dir, std::unordered_map<InputButton, InputEvent>& bt) const
+void FilesystemManager::LoadControlSettings(const fs::path& path, std::unordered_map<InputDirection, InputEvent>& dir, std::unordered_map<InputButton, InputEvent>& bt) const
 {
 	std::vector<std::string> lines;
 
-	if(!FS::exists(path))
+	if(!fs::exists(path))
 	{
 		lines = ReturnFileLines("Settings/Input/Default.vi");
-		FS::copy_file("Settings/Input/Default.vi", path);
+		fs::copy_file("Settings/Input/Default.vi", path);
 	}
 	else
 	{
@@ -405,38 +405,30 @@ void FilesystemManager::LoadControlSettings(const FS::path& path, std::unordered
 	}
 }
 
-void FilesystemManager::ApplyFunctionToFiles(const FS::path& dir, std::function<void(const FS::path&)> func) const
+void FilesystemManager::ApplyFunctionToFiles(const fs::path& dir, std::function<void(const fs::path&)> func) const
 {
-	if(!FS::is_directory(dir))
+	if(!fs::is_directory(dir))
 	{
 		func(dir);
 		return;
 	}
 
-	for(auto& iter : boost::make_iterator_range(FS::directory_iterator(dir)))
+	for(auto& iter : fs::directory_iterator(dir))
 	{
-		if(!FS::is_directory(iter.path()))
+		if(!fs::is_directory(iter.path()))
 		{
 			func(iter.path());
 		}
 	}
 }
 
-void FilesystemManager::Init()
+void FilesystemManager::OnInit()
 {
-	_debug = _serviceManager->Debug();
-	_resource = _serviceManager->ResourceManager();
+	_debug = _owningInstance->Debug();
+	_resource = _owningInstance->ResourceManager();
 }
 
-void FilesystemManager::Update()
-{
-}
-
-void FilesystemManager::Cleanup()
-{
-}
-
-void FilesystemManager::LoadTextureData(const FS::path& path, std::vector<unsigned char>& out_pixels, glm::ivec2& out_size) const
+void FilesystemManager::LoadTextureData(const fs::path& path, std::vector<unsigned char>& out_pixels, glm::ivec2& out_size) const
 {
 	out_size.x = out_size.y = 0;
 	out_pixels.clear();
@@ -459,9 +451,4 @@ void FilesystemManager::LoadTextureData(const FS::path& path, std::vector<unsign
 	}
 
 	SOIL_free_image_data(pixels);
-}
-
-
-FilesystemManager::FilesystemManager(GameInstance* serviceManager) : BaseService(serviceManager)
-{
 }
