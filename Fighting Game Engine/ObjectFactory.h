@@ -28,29 +28,27 @@ class ObjectFactory
 	typedef std::unordered_map<std::string, BaseObjectGenerator> BaseObjectGeneratorMap;
 
 protected:
-	GameInstance* _gameInstance;
-
 	static BaseObjectGeneratorMap* objectGenerators();
 
-	const EngineConfigData& GetEngineConfigData() const;
+	static const EngineConfigData& GetEngineConfigData(BaseObject* contextObject);
 
 public:
 	template<typename ObjectT>
 	static bool RegisterObjectGenerator(const std::string& name);
 	
 	template<typename ObjectT>
-	ve::unique_object_ptr<ObjectT> CreateObject(BaseObject* outer, const json& j = json()); 
+	static ve::unique_object_ptr<ObjectT> CreateObject(BaseObject* outer, const json& j = json()); 
 	template<typename ObjectT>
-	ve::unique_object_ptr<ObjectT> CreateObjectDeferred();
+	static ve::unique_object_ptr<ObjectT> CreateObjectDeferred();
 
 	template<typename ObjectT = BaseObject>
-	ve::unique_object_ptr<ObjectT> CreateObjectOfClass(const std::string& className, BaseObject* outer, const json& j = json());
+	static ve::unique_object_ptr<ObjectT> CreateObjectOfClass(const std::string& className, BaseObject* outer, const json& j = json());
 	template<typename ObjectT = BaseObject>
-	ve::unique_object_ptr<ObjectT> CreateObjectFromJson(BaseObject* outer, const json& j = json());
+	static ve::unique_object_ptr<ObjectT> CreateObjectFromJson(BaseObject* outer, const json& j = json());
 
 	static void InitializeObject(BaseObject* object, BaseObject* outer, const json& j = json());
 
-	explicit ObjectFactory(GameInstance* gameInstance);
+	ObjectFactory() = delete;
 };
 
 namespace ve = ValEngine;
@@ -103,7 +101,7 @@ ve::unique_object_ptr<ObjectT> ObjectFactory::CreateObjectOfClass(const std::str
 template <typename ObjectT>
 ve::unique_object_ptr<ObjectT> ObjectFactory::CreateObjectFromJson(BaseObject* outer, const json& j)
 {
-	const std::string& classPropertyName = GetEngineConfigData().serializationConfigData.objectClassPropertyName;
+	const std::string& classPropertyName = GetEngineConfigData(outer).serializationConfigData.objectClassPropertyName;
 
 	std::string className{};
 	if(!JSON::TryGetMember(j, classPropertyName, className))

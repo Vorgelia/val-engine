@@ -5,6 +5,7 @@
 #include "UpdateDispatcher.h"
 #include "GameObject.h"
 #include "EngineConfigData.h"
+#include "TimeTracker.h"
 
 #define VE_NAMED_SERVICE(name, type) \
 	private:\
@@ -33,7 +34,6 @@ private:
 	VE_NAMED_SERVICE(Rendering, RenderingGL);
 
 private:
-	ObjectFactory _objectFactory;
 	TimeTracker _timeTracker;
 	UpdateDispatcher _updateDispatcher;
 
@@ -43,7 +43,6 @@ private:
 	json _rawConfigData;
 
 public:
-	ObjectFactory& objectFactory() { return _objectFactory; }
 	const TimeTracker& timeTracker() const { return _timeTracker; }
 	UpdateDispatcher& updateDispatcher() { return _updateDispatcher; }
 	const EngineConfigData& configData() const { return _configData; }

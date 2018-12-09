@@ -1,21 +1,22 @@
 #pragma once
 #include<GLM/glm.hpp>
+#include "InputIdentifiers.h"
 
 class InputFrame
 {
 	friend class InputDevice;
 
-	unsigned char _buttonStates;
-	unsigned char _axisState;
+	InputButton _buttonStates;
+	InputDirection _axisState;
 
 public:
-	unsigned char buttonStates() const;
-	unsigned char axisState() const;
+	InputButton buttonStates() const { return _buttonStates; }
+	InputDirection axisState() const { return _axisState; }
 
 	InputFrame flipped() const;
 	glm::vec2 ToVector() const;
 
-	InputFrame(unsigned char buttonStates, unsigned char axisState);
+	InputFrame(InputButton buttonStates, InputDirection axisState);
 	InputFrame();
 };
 

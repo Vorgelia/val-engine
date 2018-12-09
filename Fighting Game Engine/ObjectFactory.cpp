@@ -13,9 +13,9 @@ ObjectFactory::BaseObjectGeneratorMap* ObjectFactory::objectGenerators()
 	return generatorMap.get();
 }
 
-const EngineConfigData& ObjectFactory::GetEngineConfigData() const
+const EngineConfigData& ObjectFactory::GetEngineConfigData(BaseObject* contextObject)
 {
-	return _gameInstance->configData();
+	return contextObject->owningInstance()->configData();
 }
 
 void ObjectFactory::InitializeObject(BaseObject* object, BaseObject* outer, const json& j)
@@ -29,10 +29,4 @@ void ObjectFactory::InitializeObject(BaseObject* object, BaseObject* outer, cons
 	}
 
 	object->OnInit();
-}
-
-ObjectFactory::ObjectFactory(GameInstance* gameInstance)
-	: _gameInstance(gameInstance)
-{
-	
 }

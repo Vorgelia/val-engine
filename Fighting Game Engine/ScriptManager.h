@@ -12,14 +12,15 @@ class Script;
 class BaseScriptVariable;
 class GameCharacter;
 class Debug;
-class Time;
 class FilesystemManager;
 class ResourceManager;
 
 class ScriptManager : public BaseService
 {
+	VE_OBJECT_DECLARATION(ScriptManager);
+
+protected:
 	Debug* _debug;
-	Time* _time;
 	FilesystemManager* _filesystem;
 	ResourceManager* _resource;
 
@@ -31,12 +32,11 @@ private:
 	void CacheGlobalVariables();
 
 public:
-	void Init() override;
-	void Update() override;
-	void Cleanup() override;
+	void OnInit() override;
+	void OnDestroyed() override;
 
-	Script* GetScript(const FS::path& path);
-	Script* AddScript(const FS::path& path);
+	Script* GetScript(const fs::path& path);
+	Script* AddScript(const fs::path& path);
 	void AddVariable(const std::string& name, const std::shared_ptr<BaseScriptVariable>& variable);
 
 	void HandleScriptCharacterBindings(GameCharacter& character, Script* script) const;
@@ -45,6 +45,6 @@ public:
 
 	std::shared_ptr<BaseScriptVariable> GetVariable(const std::string& name);
 
-	ScriptManager(GameInstance* serviceManager);
-	~ScriptManager();
+	ScriptManager() = default;
+	~ScriptManager() = default;
 };

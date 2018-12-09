@@ -4,7 +4,7 @@
 #include "FilesystemManager.h"
 #include "RenderingGL.h"
 #include "ResourceManager.h"
-#include "Screen.h"
+#include "ScreenManager.h"
 #include "DebugLog.h"
 
 void GameScene::LoadResources()
@@ -89,7 +89,7 @@ ObjectReference<GameObject> GameScene::LoadObject(const std::string& prefabPath)
 		return nullptr;
 	}
 
-	_objects.push_back(_owningInstance->objectFactory().CreateObjectFromJson<GameObject>(this, *data));
+	_objects.push_back(ObjectFactory::CreateObjectFromJson<GameObject>(this, *data));
 	GameObject* result = _objects.back().get();
 	RegisterObject(result);
 

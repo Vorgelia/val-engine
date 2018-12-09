@@ -1,5 +1,5 @@
 #pragma once
-#include "Behaviour.h"
+#include "ObjectComponent.h"
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
@@ -20,8 +20,7 @@ class ScriptManager;
 class FilesystemManager;
 class ResourceManager;
 
-class GameCharacter :
-	public Behaviour
+class GameCharacter : public ObjectComponent
 {
 	friend class ScriptManager;
 	friend class CharacterRenderer;

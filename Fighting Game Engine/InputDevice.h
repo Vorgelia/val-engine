@@ -13,24 +13,23 @@ class FilesystemManager;
 class GameInstance;
 class InputMotion;
 class InputMotionComponent;
-class Time;
-class Screen;
 typedef CircularBuffer<InputFrame> InputBuffer;
 
-class InputDevice
+class InputDevice : public BaseObject
 {
 	friend class GamePlayer;
+	friend class InputManager;
+
+	VE_OBJECT_DECLARATION(InputDevice)
 
 private:
-	Time* _time;
-	Screen* _screen;
+	InputManager* _inputManager;
 	FilesystemManager* _filesystem;
 
-private:
+protected:
 	int _deviceID;
 	std::string _deviceName;
 	std::string _deviceFilename;
-	std::vector<InputFrame> _cachedInputFrames;
 
 	std::vector<unsigned char> _cachedJoyButtons;
 	std::vector<float> _cachedJoyAxes;
@@ -38,6 +37,7 @@ private:
 	std::unordered_map<InputButton, InputEvent> _buttonMap;
 	std::unordered_map<InputDirection, InputEvent> _directionMap;
 
+	std::vector<InputFrame> _cachedInputFrames;
 	std::shared_ptr<InputBuffer> _inputBuffer;
 
 	int InputMotionDistance(int currentIndex, InputMotionComponent motionComp, int maxBuffer, bool firstInput = false);
@@ -47,16 +47,19 @@ public:
 	const std::string& deviceName() const;
 	const InputBuffer* inputBuffer() const;
 
+	virtual void OnInit() override;
+	virtual void OnDestroyed() override;
+
 	void PollInput();
 	void UpdateJoyInputs();
 	void PushInputsToBuffer();
 	
-	std::string Serialize();
+	std::string SerializeSettings();
 
 	bool EvaluateInput(const InputEvent& ie);
 	bool EvaluateMotion(const InputMotion& motion);
 	bool InputMotionFrameCheck(const InputMotionComponent& motionComp, int index) const;
 
-	InputDevice(int deviceID, GameInstance* serviceManager);
-	~InputDevice();
+	InputDevice();
+	~InputDevice() = default;
 };

@@ -41,24 +41,23 @@ TODO: ValScript is a horrible mess. Do something about it.
 #include "ValEngine.h"
 #include "GLIncludes.hpp"
 #include "GameInstance.h"
-#include "Screen.h"
+#include "ScreenManager.h"
 
 int main()
 {
 	std::setlocale(LC_NUMERIC, "C");
 
-	ve::unique_object_ptr<GameInstance> gameInstance = ve::unique_object_ptr<GameInstance>(new GameInstance());
-	ObjectFactory::InitializeObject(gameInstance.get(), nullptr);
+	ve::unique_object_ptr<GameInstance> gameInstance = ObjectFactory::CreateObject<GameInstance>(nullptr);
 
-	Screen* screen = gameInstance->Screen();
+	ScreenManager* screen = gameInstance->ScreenManager();
 
-	while(!glfwWindowShouldClose(screen->window))
+	while(!glfwWindowShouldClose(screen->window()))
 	{
 		gameInstance->UpdateServices();
 
-		if(glfwGetKey(screen->window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+		if(glfwGetKey(screen->window(), GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		{
-			glfwSetWindowShouldClose(screen->window, GLFW_TRUE);
+			glfwSetWindowShouldClose(screen->window(), GLFW_TRUE);
 		}
 	}
 }

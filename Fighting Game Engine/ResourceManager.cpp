@@ -6,6 +6,8 @@
 #include <regex>
 #include <boost/algorithm/string/erase.hpp>
 
+VE_OBJECT_DEFINITION(ResourceManager)
+
 void ResourceManager::GenerateDefaultTextures()
 {
 	std::vector<unsigned char>& pixels = std::vector<unsigned char>

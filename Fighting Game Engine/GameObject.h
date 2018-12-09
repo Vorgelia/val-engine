@@ -37,7 +37,7 @@ public:
 template <typename ComponentT>
 ObjectReference<ComponentT> GameObject::AddComponentOfType(const json& j)
 {
-	_components.push_back(_owningInstance->objectFactory().CreateObject<ComponentT>(this, j));
+	_components.push_back(ObjectFactory::CreateObject<ComponentT>(this, j));
 	ComponentT* result = reinterpret_cast<ComponentT*>(_components.back().get());
 
 	return ObjectReference<ComponentT>(result);

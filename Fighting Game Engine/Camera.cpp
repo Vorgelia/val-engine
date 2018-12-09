@@ -47,7 +47,7 @@ void BaseCamera::OnInit()
 
 	//TODO: Customization over framebuffer creation in BaseCamera::Serialize 
 	_graphics = _owningInstance->Graphics();
-	_frameBuffer = _graphics->CreateFrameBuffer(_owningInstance->ScreenManager()->size, _owningInstance->configData().renderingConfigData.frameBuferTextureAmount);
+	_frameBuffer = _graphics->CreateFrameBuffer(_owningInstance->ScreenManager()->screenSize(), _owningInstance->configData().renderingConfigData.frameBuferTextureAmount);
 
 	_rendering = _owningInstance->Rendering();
 	_rendering->RegisterCamera(this);

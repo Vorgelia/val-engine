@@ -32,7 +32,9 @@ public:
 	ScreenUpdateEventHandler ScreenUpdated;
 
 	GLFWwindow* window() const { return _window; }
-	
+
+	const glm::ivec2& screenSize() const { return _screenSize; }
+
 	void OnInit() override;
 	void OnDestroyed() override;
 
@@ -41,6 +43,6 @@ public:
 	void HandleResized(GLFWwindow* wnd, int sizeX, int sizeY);
 	void SetActiveWindow(GLFWwindow* window);
 
-	ScreenManager();
+	ScreenManager() = default;
 	~ScreenManager() = default;
 };

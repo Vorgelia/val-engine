@@ -18,7 +18,7 @@
 	{\
 		if(_##type == nullptr)\
 		{\
-			_##type = _objectFactory.CreateObject<::##type>(this);\
+			_##type = ObjectFactory::CreateObject<::##type>(this);\
 			_activeServices.emplace_back(_##type.get());\
 		}\
 		return _##type.get();\

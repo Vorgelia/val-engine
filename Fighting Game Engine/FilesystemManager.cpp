@@ -20,8 +20,10 @@
 #include "DebugLog.h"
 #include "ResourceManager.h"
 
-//Probably my least favourite part of making this engine is importing files.
-//The code always looks like a mess but at least i don't have to touch it after making it.
+
+VE_OBJECT_DEFINITION(FilesystemManager);
+
+
 std::string FilesystemManager::LoadTextResource(int id, const std::string& type) const
 {
 	//Copypasta text resource loading. Could probably be optimized.

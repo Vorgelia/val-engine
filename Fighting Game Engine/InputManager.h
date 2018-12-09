@@ -6,32 +6,42 @@
 #include "Delegate.h"
 
 class InputDevice;
+class ScreenManager;
 
 class InputManager : public BaseService
 {
-private:
-	std::unordered_map<int, std::shared_ptr<InputDevice>> _inputDevices;
-	std::vector<std::unique_ptr<InputDevice>> _temporaryNetworkDevices;
+	VE_OBJECT_DECLARATION(InputManager);
+
+protected:
+	ScreenManager* _screenManager;
+
+protected:
+	std::unordered_map<int, ve::unique_object_ptr<InputDevice>> _inputDevices;
+	std::vector<ve::unique_object_ptr<InputDevice>> _temporaryNetworkDevices;
 	std::thread _inputCollectionThread;
 	bool _stopInputs = false;
+
+	InputDevice* AddInputDevice(int deviceID);
 
 public:
 	typedef Delegate<InputDevice*> DeviceEventHandler;
 	DeviceEventHandler DeviceAdded;
 	DeviceEventHandler DeviceRemoved;
 
-	void Init() override;
-	void Update() override;
-	void Cleanup() override;
+	virtual void OnInit() override;
+	virtual void OnDestroyed() override;
 
-	void FrameUpdate();
+	void UpdateInputs();
 
-	const std::unordered_map<int, std::shared_ptr<InputDevice>>& inputDevices() const;
+	const std::unordered_map<int, ve::unique_object_ptr<InputDevice>>& inputDevices() const { return _inputDevices; }
+
+	bool IsKeyboardKeyPressed(int keyID) const;
+	bool EvaluateInput(InputDevice* inputDevice, const InputEvent& inputEvent) const;
 
 	InputDevice* GetInputDevice(int id);
 	InputDevice* GetTemporaryNetworkDevice();
 	void ReleaseTemporaryNetworkDevice(InputDevice* device);
 
-	InputManager(GameInstance* serviceManager);
-	~InputManager();
+	InputManager() = default;
+	~InputManager() = default;
 };

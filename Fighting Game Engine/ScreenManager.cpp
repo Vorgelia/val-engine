@@ -88,8 +88,3 @@ void ScreenManager::SetActiveWindow(GLFWwindow* window)
 	glfwSetWindowPos(window, (int)(_videoMode->width*0.5 - _screenSize.x*0.5), (int)(_videoMode->height*0.5 - _screenSize.y*0.5));
 	glfwSwapInterval(0);
 }
-
-ScreenManager::ScreenManager()
-{
-
-}

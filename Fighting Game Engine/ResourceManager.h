@@ -39,6 +39,8 @@ class FilesystemManager;
 
 class ResourceManager : public BaseService
 {
+	VE_OBJECT_DECLARATION(ResourceManager);
+
 private:
 	Debug* _debug;
 	GraphicsGL* _graphics;

@@ -1,30 +1,40 @@
 #pragma once
+#include "EnumUtils.h"
 
-enum class InputButton
+//TODO: Generalize
+enum class InputButton : uint16_t
 {
-	Light = 1,
-	Medium = 2,
-	Heavy = 4,
-	Attacks = 7,//Convenience entry that represents any of the buttons
-	Shield = 8,
-	Any = 15,//Convenience entry that represents any button
-	Taunt = 16,
-	Pause = 32
+	VE_BITMASK_VALUE_NONE,
+	Light	= 0b0000001,
+	Medium	= 0b0000010,
+	Heavy	= 0b0000100,
+	Attacks = 0b0000111,//Convenience entry that represents any of the attacks
+	Shield	= 0b0001000,
+	Buttons	= 0b0001111,//Convenience entry that represents any gameplay button
+	Taunt	= 0b0010000,
+	Pause	= 0b0100000,
+	VE_BITMASK_VALUE_ANY
 };
+VE_DECLARE_BITMASK_ENUM(InputButton);
 
 enum class InputDirection
 {
-	Up = 1,
-	Down = 2,
-	Right = 4,
-	Left = 8
+	VE_BITMASK_VALUE_NONE,
+	Up		= 0b0001,
+	Down	= 0b0010,
+	Right	= 0b0100,
+	Left	= 0b1000,
+	VE_BITMASK_VALUE_ANY
 };
+VE_DECLARE_BITMASK_ENUM(InputDirection);
 
-//Bitmask, even though it might not look like it.
 enum class InputTypeMask
 {
-	Pressed = 1,
-	Released = 2,
-	Event = 3,
-	Held = 4
+	VE_BITMASK_VALUE_NONE,
+	Pressed = 0b0001,
+	Released = 0b0010,
+	Event = 0b0100,
+	Held = 0b1000
 };
+
+VE_DECLARE_BITMASK_ENUM(InputTypeMask);

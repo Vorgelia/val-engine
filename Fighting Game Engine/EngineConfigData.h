@@ -58,17 +58,33 @@ struct SerializationConfigData : public IReflectable
 	}
 };
 
+struct InputConfigData : public IReflectable
+{
+	int inputBufferLeniencyFirst;
+	int inputBufferLeniencyAny;
+	int inputBufferSize;
+
+	void RegisterReflectionFields() const override
+	{
+		VE_REFLECTION_VAR(Field, inputBufferLeniencyAny);
+		VE_REFLECTION_VAR(Field, inputBufferLeniencyFirst);
+		VE_REFLECTION_VAR(Field, inputBufferSize);
+	}
+};
+
 struct EngineConfigData : public IReflectable
 {
 	RenderingConfigData renderingConfigData;
 	GameConfigData gameConfigData;
 	SerializationConfigData serializationConfigData;
+	InputConfigData inputConfigData;
 
 	void RegisterReflectionFields() const override
 	{
 		VE_REFLECTION_VAR(Field, renderingConfigData);
 		VE_REFLECTION_VAR(Field, gameConfigData);
 		VE_REFLECTION_VAR(Field, serializationConfigData);
+		VE_REFLECTION_VAR(Field, inputConfigData);
 	}
 };
 

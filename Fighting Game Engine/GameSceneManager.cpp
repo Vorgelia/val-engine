@@ -51,9 +51,9 @@ void GameSceneManager::UpdateService()
 
 		_isLoading = true;
 
-		_currentScene = _owningInstance->objectFactory().CreateObjectDeferred<GameScene>();
+		_currentScene = ObjectFactory::CreateObjectDeferred<GameScene>();
 		_currentScene->_dataPath = "/Scenes/"+_sceneToLoad+".json";
-		_owningInstance->objectFactory().InitializeObject(_currentScene.get(), this);
+		ObjectFactory::InitializeObject(_currentScene.get(), this);
 		_sceneToLoad.clear();
 
 		SceneLoaded(_currentScene.get());

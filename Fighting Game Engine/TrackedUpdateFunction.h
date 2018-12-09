@@ -58,6 +58,7 @@ public:
 	func_t function;
 
 	bool IsValid() const { return object.get() != nullptr; }
+
 	bool Invoke()
 	{
 		if(IsValid())

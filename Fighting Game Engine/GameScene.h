@@ -11,7 +11,6 @@
 
 namespace fs = std::filesystem;
 
-class Behaviour;
 class GameInstance;
 class RenderingGL;
 class ResourceManager;
@@ -73,7 +72,7 @@ template <typename ObjectT>
 ObjectReference<ObjectT> GameScene::AddObject(const json& jsonData)
 {
 	static_assert(std::is_base_of_v<SceneObject, ObjectT>, "Objects added to a scene need to derive from SceneObject.");
-	_objects.push_back(_owningInstance->objectFactory().CreateObject<ObjectT>(this, jsonData));
+	_objects.push_back(ObjectFactory::CreateObject<ObjectT>(this, jsonData));
 
 	ObjectT* result = _objects.back().get();
 	RegisterObject(result);

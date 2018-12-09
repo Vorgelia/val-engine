@@ -50,7 +50,10 @@ void UpdateDispatcher::RunUpdateFunctionsOfType(UpdateType type)
 	{
 		if((func.timing.updateType | type) != UpdateType::None)
 		{
-			func.Invoke();
+			if(!func.Invoke())
+			{
+				_shouldSortFunctions = true;
+			}
 		}
 	}
 }

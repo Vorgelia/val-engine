@@ -27,6 +27,8 @@ enum class InputDirection;
 
 class FilesystemManager : public BaseService
 {
+	VE_OBJECT_DECLARATION(FilesystemManager);
+
 private:
 	Debug* _debug;
 	ResourceManager* _resource;

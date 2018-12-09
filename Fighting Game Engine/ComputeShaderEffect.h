@@ -1,32 +1,34 @@
 #pragma once
-#include "Behaviour.h"
+#include "ObjectComponent.h"
 
 class GraphicsGL;
 class RenderingGL;
 class ResourceManager;
 class ComputeShader;
+class BaseCamera;
 
-class ComputeShaderEffect :
-	public Behaviour
+class ComputeShaderEffect :	public ObjectComponent
 {
-private:
+	VE_OBJECT_DECLARATION(ComputeShaderEffect);
+
+protected:
 	GraphicsGL* _graphics;
 	RenderingGL* _rendering;
 	ResourceManager* _resource;
 
-private:
+protected:
 	ComputeShader* _computeShader;
+	ObjectReference<BaseCamera> _sceneCamera;
 
-	glm::vec2 _lastCameraPos;
-	glm::vec2 _cameraUVDelta;
+	ve::vec3 _lastCameraPos;
+	ve::vec3 _cameraUVDelta;
+
+	void Deserialize(const json& j) override;
 
 public:
-	VE_BEHAVIOUR_NAME(ComputeShaderEffect);
+	void OnInit() override;
+	void OnDestroyed() override;
 
-	VE_BEHAVIOUR_REGISTER_FUNCTION(LateGameUpdate);
-	VE_BEHAVIOUR_REGISTER_FUNCTION(OnApplyPostEffects);
-
-	ComputeShaderEffect(Object* owner, GameInstance* serviceManager, const json& j);
-	~ComputeShaderEffect();
+	void UpdateEffect();
 };
 

@@ -178,9 +178,6 @@
     <ClCompile Include="InputManager.cpp">
       <Filter>Val Engine\Engine\Services\Utilities</Filter>
     </ClCompile>
-    <ClCompile Include="Time.cpp">
-      <Filter>Val Engine\Engine\Services\Utilities</Filter>
-    </ClCompile>
     <ClCompile Include="FilesystemManager.cpp">
       <Filter>Val Engine\Engine\Services\Resources</Filter>
     </ClCompile>
@@ -254,9 +251,6 @@
       <Filter>Val Engine\Engine\Objects\Input</Filter>
     </ClCompile>
     <ClCompile Include="Renderer.cpp">
-      <Filter>Val Engine\Engine\Objects\Behaviours</Filter>
-    </ClCompile>
-    <ClCompile Include="ScriptBehaviour.cpp">
       <Filter>Val Engine\Engine\Objects\Behaviours</Filter>
     </ClCompile>
     <ClCompile Include="ScriptError.cpp">
@@ -424,6 +418,9 @@
     <ClCompile Include="ScreenManager.cpp">
       <Filter>Val Engine\Engine\Services\Rendering</Filter>
     </ClCompile>
+    <ClCompile Include="TimeTracker.cpp">
+      <Filter>Val Engine\Engine\Utilities</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FGIncludes.hpp">
@@ -483,9 +480,6 @@
     <ClInclude Include="MenuBehaviour.h">
       <Filter>Val Engine\Game\Characters\Behaviours\Scenes</Filter>
     </ClInclude>
-    <ClInclude Include="ScriptBehaviour.h">
-      <Filter>Val Engine\Engine\Objects\Behaviours</Filter>
-    </ClInclude>
     <ClInclude Include="MathIncludes.hpp">
       <Filter>Val Engine\IncludeLists</Filter>
     </ClInclude>
@@ -503,9 +497,6 @@
     </ClInclude>
     <ClInclude Include="GameSceneManager.h">
       <Filter>Val Engine\Engine\Services\GameManagement</Filter>
-    </ClInclude>
-    <ClInclude Include="Time.h">
-      <Filter>Val Engine\Engine\Services\Utilities</Filter>
     </ClInclude>
     <ClInclude Include="GraphicsGL.h">
       <Filter>Val Engine\Engine\Services\Rendering</Filter>
@@ -782,6 +773,9 @@
     </ClInclude>
     <ClInclude Include="ScreenManager.h">
       <Filter>Val Engine\Engine\Services\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="TimeTracker.h">
+      <Filter>Val Engine\Engine\Utilities</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

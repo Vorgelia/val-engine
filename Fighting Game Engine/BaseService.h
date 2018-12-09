@@ -16,4 +16,3 @@ public:
 	BaseService();
 	virtual ~BaseService() = default;
 };
-
