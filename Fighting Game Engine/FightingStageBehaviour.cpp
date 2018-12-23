@@ -8,16 +8,28 @@
 #include "CharacterEventComponent.h"
 #include "CharacterPhysicsComponent.h"
 
-VE_BEHAVIOUR_REGISTER_TYPE(FightingStageBehaviour);
+VE_OBJECT_DEFINITION(FightingStageBehaviour);
 
 FightingStageBehaviour::CharacterCollisionResultMap FightingStageBehaviour::GenerateCharacterCollisionResults() const
 {
 	std::unordered_set<GameCharacter*> handledCharacters;
 	CharacterCollisionResultMap collisionResults;
-	for(GameCharacter* thisCharacter : _gameManager->characters())
+	for(const ObjectReference<GameCharacter>& thisCharacterRef : _gameManager->characters())
 	{
-		for(GameCharacter* otherCharacter : _gameManager->characters())
+		GameCharacter* thisCharacter = thisCharacterRef.get();
+		if(thisCharacter == nullptr)
 		{
+			continue;
+		}
+
+		for(const ObjectReference<GameCharacter>& otherCharacterRef : _gameManager->characters())
+		{
+			GameCharacter* otherCharacter = otherCharacterRef.get();
+			if(otherCharacter == nullptr)
+			{
+				continue;
+			}
+
 			if(otherCharacter == thisCharacter)
 			{
 				continue;
@@ -74,9 +86,16 @@ void FightingStageBehaviour::HandleAttackHit(GameCharacter* attacker, GameCharac
 	attacker->eventComponent()->HandleAttackHit(attackReceiver, hit, eventData);
 }
 
-const ve::vec4& FightingStageBehaviour::stageBounds() const
+void FightingStageBehaviour::OnInit()
 {
-	return _stageBounds;
+	_gameManager = dynamic_cast<FightingGameManager*>(_owningInstance->gameManager());
+
+	VE_REGISTER_UPDATE_FUNCTION(UpdateGroup::FrameUpdate, UpdateType::AnyFixedGameUpdate, GameUpdate);
+	VE_REGISTER_UPDATE_FUNCTION(UpdateGroup::LateFrameUpdate, UpdateType::AnyFixedGameUpdate, LateGameUpdate);
+}
+
+void FightingStageBehaviour::OnDestroyed()
+{
 }
 
 void FightingStageBehaviour::GameUpdate()
@@ -106,7 +125,7 @@ void FightingStageBehaviour::LateGameUpdate()
 			default:
 				break;
 			case CharacterAttackResultFlags::AttackHit:
-				HandleAttackHit(character, result.otherCharacter, result.attackHit.get());
+				HandleAttackHit(character, result.otherCharacter, result.attackHit.value());
 				break;
 			case CharacterAttackResultFlags::AttacksTraded: 
 				if(!tradeResolutionMap.insert_or_assign(character, std::unordered_set<GameCharacter*>()).first->second.emplace(result.otherCharacter).second)
@@ -114,24 +133,24 @@ void FightingStageBehaviour::LateGameUpdate()
 					continue;
 				}
 
-				bool thisCharacterTradePriorityFlag = character->eventComponent()->ResolveTrade(result.otherCharacter, result.attackHit.get(), result.attackReceived.get());
-				bool otherCharacterTradePriorityFlag = result.otherCharacter->eventComponent()->ResolveTrade(character, result.attackReceived.get(), result.attackHit.get());
+				bool thisCharacterTradePriorityFlag = character->eventComponent()->ResolveTrade(result.otherCharacter, result.attackHit.value(), result.attackReceived.value());
+				bool otherCharacterTradePriorityFlag = result.otherCharacter->eventComponent()->ResolveTrade(character, result.attackReceived.value(), result.attackHit.value());
 
 				if(thisCharacterTradePriorityFlag && otherCharacterTradePriorityFlag)
 				{
-					character->eventComponent()->HandleTradeUnresolved(result.otherCharacter, result.attackHit.get(), result.attackReceived.get());
-					result.otherCharacter->eventComponent()->HandleTradeUnresolved(character, result.attackReceived.get(), result.attackHit.get());
+					character->eventComponent()->HandleTradeUnresolved(result.otherCharacter, result.attackHit.value(), result.attackReceived.value());
+					result.otherCharacter->eventComponent()->HandleTradeUnresolved(character, result.attackReceived.value(), result.attackHit.value());
 				}
 				else 
 				{
 					if(thisCharacterTradePriorityFlag)
 					{
-						HandleAttackHit(character, result.otherCharacter, result.attackHit.get(), !otherCharacterTradePriorityFlag);
+						HandleAttackHit(character, result.otherCharacter, result.attackHit.value(), !otherCharacterTradePriorityFlag);
 					}
 					
 					if(otherCharacterTradePriorityFlag)
 					{
-						HandleAttackHit(result.otherCharacter, character, result.attackHit.get(), !thisCharacterTradePriorityFlag);
+						HandleAttackHit(result.otherCharacter, character, result.attackHit.value(), !thisCharacterTradePriorityFlag);
 					}
 				}
 
@@ -159,11 +178,4 @@ void FightingStageBehaviour::LateGameUpdate()
 	{
 		iter->CharacterLateUpdate();
 	}
-}
-
-FightingStageBehaviour::FightingStageBehaviour(Object* owner, GameInstance* serviceManager, const json& j)
-	: Behaviour(owner, serviceManager, j)
-{
-	JSON::TryGetMember(j, "stageBounds", _stageBounds);
-	_gameManager = serviceManager->FightingGameManager();
 }

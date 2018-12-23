@@ -31,6 +31,8 @@ struct RenderingConfigData : public IReflectable
 struct GameConfigData : public IReflectable
 {
 	std::string gameName;
+	std::string gameManagerClassName;
+
 	double fixedGameUpdateInterval;
 	std::string defaultScene;
 	int maxNetworkPlayers;
@@ -38,6 +40,7 @@ struct GameConfigData : public IReflectable
 	void RegisterReflectionFields() const override
 	{
 		VE_REFLECTION_VAR(Field, gameName);
+		VE_REFLECTION_VAR(Field, gameManagerClassName);
 		VE_REFLECTION_VAR(Field, fixedGameUpdateInterval);
 		VE_REFLECTION_VAR(Field, defaultScene);
 		VE_REFLECTION_VAR(Field, maxNetworkPlayers);
@@ -47,14 +50,14 @@ struct GameConfigData : public IReflectable
 struct SerializationConfigData : public IReflectable
 {
 	std::string objectClassPropertyName;
-	std::string objectListPropertyName;
 	std::string componentListPropertyName;
+	std::string prefabPathPropertyName;
 
 	void RegisterReflectionFields() const override
 	{
 		VE_REFLECTION_VAR(Field, objectClassPropertyName);
-		VE_REFLECTION_VAR(Field, objectListPropertyName);
 		VE_REFLECTION_VAR(Field, componentListPropertyName);
+		VE_REFLECTION_VAR(Field, prefabPathPropertyName);
 	}
 };
 

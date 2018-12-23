@@ -34,7 +34,7 @@ GamePlayer::GamePlayer(int id, int deviceId, GameInstance* serviceManager)
 	_id = id;
 	SetDevice(deviceId);
 
-	_input->DeviceRemoved += VE_DELEGATE_FUNC(InputManager::DeviceEventHandler, HandleDeviceRemoved);
+	//_input->DeviceRemoved += VE_DELEGATE_FUNC(InputManager::DeviceEventHandler, HandleDeviceRemoved);
 }
 
 GamePlayer::~GamePlayer()

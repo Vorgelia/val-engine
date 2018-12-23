@@ -12,7 +12,6 @@
 #include "FilesystemManager.h"
 #include "CachedMesh.h"
 #include "Material.h"
-#include "PostEffect.h"
 #include "Transform.h"
 #include "GLIncludes.hpp"
 #include "InputDevice.h"
@@ -283,62 +282,6 @@ std::unique_ptr<Material> FilesystemManager::LoadFileResource(const fs::path& pa
 	}
 
 	return mat;
-}
-
-template<>
-std::unique_ptr<PostEffect> FilesystemManager::LoadFileResource(const fs::path& path)
-{
-	if(!fs::exists(path))
-	{
-		return std::unique_ptr<PostEffect>(nullptr);
-	}
-
-	std::vector<std::string> lines = ReturnFileLines(path, true);
-
-	std::unique_ptr<PostEffect> postEffect = std::make_unique<PostEffect>();
-
-	int readState = 0;//0 Properties, 1 Rendering Stages
-	for(unsigned int i = 0; i < lines.size(); ++i)
-	{
-		if(lines[i] == "" || lines[i].substr(0, 2) == "//")
-			continue;
-		else if(lines[i][0] == '#')
-		{
-			if(lines[i] == "#PROPERTIES")
-				readState = 0;
-			if(lines[i] == "#STAGES")
-				readState = 1;
-		}
-		else
-		{
-			std::vector<std::string> spl;
-			switch(readState)
-			{
-			case 0:
-				boost::split(spl, lines[i], boost::is_any_of("="), boost::token_compress_on);
-				if(spl.size() < 2)
-					continue;
-				if(spl[0] == "cleanBufferBefore")
-					postEffect->clearBuffersBefore = (spl[1] == "true");
-				else if(spl[0] == "cleanBufferAfter")
-					postEffect->clearBuffersAfter = (spl[1] == "true");
-				else if(spl[0] == "order")
-					postEffect->order = boost::lexical_cast<int>(spl[1]);
-				break;
-			case 1:
-				boost::split(spl, lines[i], boost::is_any_of(":"), boost::token_compress_on);
-				if(spl.size() < 2)
-					continue;
-				if(spl[1] == "null")
-					postEffect->elementChain.push_back(std::pair<int, Material*>(boost::lexical_cast<int>(spl[0]), nullptr));
-				else
-					postEffect->elementChain.push_back(std::pair<int, Material*>(boost::lexical_cast<int>(spl[0]), _resource->GetMaterial(spl[1])));
-				break;
-			}
-		}
-	}
-
-	return postEffect;
 }
 
 bool FilesystemManager::SaveFile(const fs::path& dir, std::string& content, int flags) const

@@ -2,7 +2,9 @@
 #include "IReflectable.h"
 #include "CharacterHitData.h"
 #include "CollisionBox.h"
+#include "EnumUtils.h"
 #include <boost/optional/optional.hpp>
+#include <optional>
 
 class GameCharacter;
 
@@ -27,26 +29,29 @@ struct CollisionHit
 	CollisionHit(const CollisionBox& thisCollision, const CollisionBox& otherCollision, const ve::vec2& depenetrationDistance);
 };
 
-enum class CharacterAttackResultFlags : unsigned char
+enum class CharacterAttackResultFlags : std::uint8_t
 {
-	None = 0b0,
+	VE_BITMASK_VALUE_NONE,
 	AttackHit = 0b1,
 	AttackReceived = 0b10,
-	AttacksTraded = 0b11
+	AttacksTraded = 0b11,
+	VE_BITMASK_VALUE_ALL
 };
+
+VE_DECLARE_BITMASK_ENUM(CharacterAttackResultFlags);
 
 struct CharacterCollisionResult 
 {
 	GameCharacter* otherCharacter;
 
-	boost::optional<AttackCollisionHit> attackReceived;
-	boost::optional<AttackCollisionHit> attackHit;
+	std::optional<AttackCollisionHit> attackReceived;
+	std::optional<AttackCollisionHit> attackHit;
 
 	//TODO: +Arbitrary named hit data box hits
 	std::vector<CollisionHit> collisionHits;
 
 	CharacterAttackResultFlags attackResultFlags() const;
 
-	CharacterCollisionResult(GameCharacter* otherCharacter, const boost::optional<AttackCollisionHit>&& attackReceived, const boost::optional<AttackCollisionHit>&& attackHit);
-	CharacterCollisionResult();
+	CharacterCollisionResult(GameCharacter* otherCharacter, const std::optional<AttackCollisionHit>&& attackReceived, const std::optional<AttackCollisionHit>&& attackHit);
+	CharacterCollisionResult() = default;
 };

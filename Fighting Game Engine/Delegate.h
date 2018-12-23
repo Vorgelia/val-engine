@@ -2,6 +2,7 @@
 #include <vector>
 #include <functional>
 #include "ContainerUtils.h"
+#include "ObjectReferenceManager.h"
 
 #define VE_DELEGATE_FUNC(type, name) \
 	type::registered_func_t(this, type::func_t{[this](auto ...args){ name(args...); }})
@@ -37,7 +38,7 @@ public:
 template<typename ...argTypes>
 inline void Delegate<argTypes...>::operator()(argTypes ...types)
 {
-	for(int i = 0; i < _listeners.size() ;)
+	for(size_t i = 0; i < _listeners.size() ;)
 	{
 		if(_listeners[i].first.IsValid())
 		{

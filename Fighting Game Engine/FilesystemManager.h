@@ -18,12 +18,11 @@ class Shader;
 class Texture;
 class TextureData;
 struct MaterialTexture;
-class PostEffect;
 class Material;
 class CachedMesh;
-class InputEvent;
-enum class InputButton;
-enum class InputDirection;
+struct InputEvent;
+enum class InputButton : uint16_t;
+enum class InputDirection : uint8_t;
 
 class FilesystemManager : public BaseService
 {
@@ -62,8 +61,6 @@ template<>
 std::unique_ptr<CachedMesh> FilesystemManager::LoadFileResource(const fs::path& path);
 template<>
 std::unique_ptr<Material> FilesystemManager::LoadFileResource(const fs::path& path);
-template<>
-std::unique_ptr<PostEffect>	FilesystemManager::LoadFileResource(const fs::path& path);
 
 template<typename ResourceT>
 inline std::unique_ptr<ResourceT> FilesystemManager::LoadFileResource(const fs::path & path)

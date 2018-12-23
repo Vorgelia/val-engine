@@ -23,7 +23,7 @@ public:
 
 template <typename ResourceT>
 ResourceWrapper<ResourceT>::ResourceWrapper(std::unique_ptr<ResourceT>&& resourcePtr, bool isPersistent)
-	: _resource(resourcePtr)
+	: _resource(std::move(resourcePtr))
 	, _isPersistent(isPersistent)
 {
 	

@@ -12,7 +12,7 @@ class Texture
 
 private:
 	std::string _name;
-	FS::path _path;
+	fs::path _path;
 
 	glm::vec4 _size;
 	bool _valid;

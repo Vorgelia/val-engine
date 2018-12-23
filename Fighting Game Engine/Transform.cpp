@@ -44,11 +44,6 @@ void Transform::SetRotation(ve::vec3 rotation)
 	_rotation = std::move(rotation);
 	_updateFlags |= UpdateFlags::Matrix | UpdateFlags::Quat;
 }
-void Transform::SetDepth(ve::dec_t depth)
-{
-	_depth = std::move(depth);
-	_updateFlags |= UpdateFlags::Matrix;
-}
 
 ve::vec3 Transform::GetScaleInverse() const
 {
@@ -95,23 +90,35 @@ Transform Transform::operator*(const Transform& rhs) const
 	return Transform(newPosition, rhs.GetRotation() + GetRotation(), rhs.GetScale() * GetScale());
 }
 
+void Transform::RegisterReflectionFields() const
+{
+	VE_PRIVATE_REFLECTION_VAR(Field, position);
+	VE_PRIVATE_REFLECTION_VAR(Field, scale);
+	VE_PRIVATE_REFLECTION_VAR(Field, rotation);
+}
+
+void Transform::Deserialize(const json& j)
+{
+	IReflectable::Deserialize(j);
+
+	_updateFlags = UpdateFlags::All;
+}
+
 Transform::Transform(ve::vec3 position, ve::vec3 eulerRotation, ve::vec3 scale)
 	: _updateFlags(UpdateFlags::All)
 	, _position(position)
 	, _scale(scale)
 	, _rotation(eulerRotation)
-	, _depth(0.0f)
 {
 
 }
 
-Transform::Transform(ve::vec3 position, ve::quat rotation, ve::vec3 scale)
+Transform::Transform(ve::vec3 position, ve::quat quat, ve::vec3 scale)
 	: _updateFlags(UpdateFlags::Matrix)
 	, _position(position)
 	, _scale(scale)
-	, _rotation(glm::eulerAngles(rotation))
-	, _depth(0.0f)
-	, _quat(rotation)
+	, _rotation(glm::eulerAngles(quat))
+	, _quat(quat)
 {
 
 }

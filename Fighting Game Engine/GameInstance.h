@@ -15,6 +15,8 @@
 
 #define VE_SERVICE(type) VE_NAMED_SERVICE(type, type)
 
+class BaseGameManager;
+
 class GameInstance : public BaseObject
 {
 	VE_OBJECT_DECLARATION(GameInstance);
@@ -26,7 +28,6 @@ private:
 	VE_SERVICE(ScriptManager);
 	VE_SERVICE(ScreenManager);
 	VE_SERVICE(PlayerManager);
-	VE_SERVICE(FightingGameManager);
 
 	VE_NAMED_SERVICE(Input, InputManager);
 	VE_NAMED_SERVICE(Filesystem, FilesystemManager);
@@ -35,7 +36,9 @@ private:
 
 private:
 	TimeTracker _timeTracker;
-	UpdateDispatcher _updateDispatcher;
+	ve::unique_object_ptr<UpdateDispatcher> _updateDispatcher;
+
+	ve::unique_object_ptr<BaseGameManager> _gameManager;
 
 	std::vector<ObjectReference<BaseService>> _activeServices;
 
@@ -44,7 +47,8 @@ private:
 
 public:
 	const TimeTracker& timeTracker() const { return _timeTracker; }
-	UpdateDispatcher& updateDispatcher() { return _updateDispatcher; }
+	UpdateDispatcher& updateDispatcher() const { return *_updateDispatcher.get(); }
+	BaseGameManager* gameManager() const { return _gameManager.get(); }
 	const EngineConfigData& configData() const { return _configData; }
 	const json& rawConfigData() const { return _rawConfigData; }
 

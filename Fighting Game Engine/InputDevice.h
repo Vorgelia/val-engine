@@ -8,6 +8,7 @@
 #include "CircularBuffer.h"
 #include "InputIdentifiers.h"
 #include "Delegate.h"
+#include "BaseObject.h"
 
 class FilesystemManager;
 class GameInstance;

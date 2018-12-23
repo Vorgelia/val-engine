@@ -1,14 +1,11 @@
 #pragma once
-#include <cstdint>
 #include "Math.h"
-#include "BaseObject.h"
-#include "ObjectReferenceManager.h"
 
-//TODO: Add/move more stuff here.
+class BaseObject;
 
 namespace ValEngine
 {
-	bool IsValid(const BaseObject* object) { return ObjectReferenceManager::Get().IsObjectValid(object); }
+	bool IsValid(const BaseObject* object);
 }
 
 namespace ve = ValEngine;

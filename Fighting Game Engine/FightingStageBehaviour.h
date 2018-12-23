@@ -1,15 +1,17 @@
 #pragma once
 #include "ValEngine.h"
-#include "Behaviour.h"
+#include "ObjectComponent.h"
 #include "MathIncludes.hpp"
 #include "GameCharacter.h"
+#include "BaseSceneBehavior.h"
 
 struct CharacterCollisionResult;
 class FightingGameManager;
 
-class FightingStageBehaviour :
-	public Behaviour
+class FightingStageBehaviour : public BaseSceneBehavior
 {
+	VE_OBJECT_DECLARATION(FightingStageBehaviour);
+
 protected:
 	FightingGameManager* _gameManager;
 
@@ -24,13 +26,14 @@ protected:
 	virtual void HandleAttackHit(GameCharacter* attacker, GameCharacter* attackReceiver, const AttackCollisionHit& hit, bool wasTrade = false);
 
 public:
-	VE_BEHAVIOUR_NAME(FightingStageBehaviour);
+	const ve::vec4& stageBounds() const { return _stageBounds; }
 
-	const ve::vec4& stageBounds() const;
+	void OnInit() override;
+	void OnDestroyed() override;
 
-	VE_BEHAVIOUR_REGISTER_FUNCTION(GameUpdate);
-	VE_BEHAVIOUR_REGISTER_FUNCTION(LateGameUpdate);
+	void GameUpdate();
+	void LateGameUpdate();
 
-	FightingStageBehaviour(Object* owner, GameInstance* serviceManager, const json& j);
+	FightingStageBehaviour() = default;
 	~FightingStageBehaviour() = default;
 };

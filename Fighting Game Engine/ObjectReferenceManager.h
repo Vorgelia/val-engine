@@ -31,8 +31,6 @@ protected:
 template<typename ObjectT = BaseObject>
 struct ObjectReference
 {
-	static_assert(std::is_same_v<BaseObject, ObjectT> || std::is_base_of_v<BaseObject, ObjectT>, "ObjectReference type is not derived from BaseObject");
-
 protected:
 	mutable ObjectT* _referencedObject;
 
@@ -52,7 +50,10 @@ public:
 	template<typename TargetObjectT>
 	operator ObjectReference<TargetObjectT>() const { return ObjectReference<TargetObjectT>(dynamic_cast<TargetObjectT>(get())); }
 
-	ObjectReference(ObjectT* object);
+	explicit ObjectReference(ObjectT* object);
+	explicit ObjectReference(std::nullptr_t);
+	ObjectReference();
+	~ObjectReference();
 };
 
 template <typename ObjectT>
@@ -83,4 +84,24 @@ template <typename ObjectT>
 ObjectReference<ObjectT>::ObjectReference(ObjectT* object)
 	: _referencedObject(object)
 {
+}
+
+template <typename ObjectT>
+ObjectReference<ObjectT>::ObjectReference(std::nullptr_t)
+	: _referencedObject(nullptr)
+{
+	
+}
+
+template <typename ObjectT>
+ObjectReference<ObjectT>::ObjectReference()
+	: _referencedObject(nullptr)
+{
+	
+}
+
+template <typename ObjectT>
+ObjectReference<ObjectT>::~ObjectReference()
+{
+	static_assert(std::is_base_of_v<BaseObject, ObjectT>);
 }

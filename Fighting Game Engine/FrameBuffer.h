@@ -5,6 +5,7 @@
 #include <vector>
 #include <memory>
 #include "EnumUtils.h"
+#include "Texture.h"
 
 class Texture;
 

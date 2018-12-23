@@ -3,9 +3,9 @@
 #include <string>
 #include <memory>
 #include <utility>
+#include "JSON.h"
 #include "TemplateUtils.h"
 #include "ReflectionField.h"
-#include "JSON.h"
 
 #define VE_REFLECTION_ARG(param) #param, param
 #define VE_PRIVATE_REFLECTION_ARG(param) #param, _##param
@@ -46,7 +46,14 @@ public:
 template <typename T>
 void IReflectable::AddReflectionField(const std::string& name, const T& field) const
 {
-	_storedFields.insert_or_assign(name, std::make_shared<ReflectionField<T>>(name, const_cast<T*>(&field)));
+	if constexpr(std::is_same_v<T, json>)
+	{
+		AddReflectionJsonField(name, field);
+	}
+	else
+	{
+		_storedFields.insert_or_assign(name, std::make_shared<ReflectionField<T>>(name, const_cast<T*>(&field)));
+	}
 }
 
 inline void IReflectable::AddReflectionLambdaField(const std::string& name, std::function<void(const json&)> deserializeLambda, std::function<json()> serializeLambda)

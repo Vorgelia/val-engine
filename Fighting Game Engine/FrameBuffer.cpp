@@ -18,7 +18,7 @@ std::vector<Texture*> FrameBuffer::textures() const
 void FrameBuffer::SetResolution(ve::ivec2 resolution)
 {
 	_resolution = resolution;
-	_invResolution = glm::vec2(1.0 / double{ resolution.x }, 1.0 / double{ resolution.y });
+	_invResolution = glm::vec2(1.0 / double(resolution.x), 1.0 / double(resolution.y));
 	_flags |= FrameBufferFlags::Dirty;
 }
 

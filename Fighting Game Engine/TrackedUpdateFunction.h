@@ -11,6 +11,7 @@ enum class UpdateGroup
 	TimingUpdate = 0,
 	FrameStart = 100,
 	FrameUpdate = 200,
+	LateFrameUpdate = 250,
 	Rendering = 300,
 	PostProcess = 400,
 	UI = 500,

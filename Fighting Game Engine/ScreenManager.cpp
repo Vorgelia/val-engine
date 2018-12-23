@@ -41,7 +41,6 @@ void ScreenManager::OnDestroyed()
 
 void ScreenManager::Update()
 {
-	double mousex, mousey;
 	glfwGetCursorPos(_window, &_mousePosition.x, &_mousePosition.y);
 
 	glm::ivec2 framebufferSize;

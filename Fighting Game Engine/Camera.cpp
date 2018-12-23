@@ -9,7 +9,6 @@
 #include "GameInstance.h"
 #include "FrameBuffer.h"
 
-VE_OBJECT_DEFINITION(BaseCamera);
 VE_OBJECT_DEFINITION(OrthoCamera);
 
 std::vector<RenderingCommand> BaseCamera::GatherRenderingCommands() const

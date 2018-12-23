@@ -85,11 +85,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BaseGameCharacterComponent.cpp" />
     <ClCompile Include="BaseObject.cpp" />
+    <ClCompile Include="BaseSceneBehavior.cpp" />
     <ClCompile Include="CharacterHitData.cpp" />
     <ClCompile Include="BaseScriptCollection.cpp" />
     <ClCompile Include="BaseService.cpp" />
     <ClCompile Include="BaseShader.cpp" />
+    <ClCompile Include="BaseGameManager.cpp" />
     <ClCompile Include="ObjectComponent.cpp" />
     <ClCompile Include="CachedMesh.cpp" />
     <ClCompile Include="Camera.cpp" />
@@ -113,7 +116,6 @@
     <ClCompile Include="Font.cpp" />
     <ClCompile Include="FrameBuffer.cpp" />
     <ClCompile Include="GameCharacter.cpp" />
-    <ClCompile Include="GameCharacterComponent.cpp" />
     <ClCompile Include="GameCharacterData.cpp" />
     <ClCompile Include="GamePlayer.cpp" />
     <ClCompile Include="GameScene.cpp" />
@@ -154,7 +156,6 @@
     <ClCompile Include="ScriptLine.cpp" />
     <ClCompile Include="ScriptLoopBlock.cpp" />
     <ClCompile Include="ScriptOperator.cpp" />
-    <ClCompile Include="PostEffect.cpp" />
     <ClCompile Include="Profiler.cpp" />
     <ClCompile Include="RenderingGL.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
@@ -182,15 +183,19 @@
     <ClCompile Include="TimeDataBuffer.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="UpdateDispatcher.cpp" />
+    <ClCompile Include="ValEngine.cpp" />
     <ClCompile Include="Vec4Buffer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BaseGameCharacterComponent.h" />
     <ClInclude Include="BaseObject.h" />
+    <ClInclude Include="BaseSceneBehavior.h" />
     <ClInclude Include="CharacterHitData.h" />
     <ClInclude Include="BaseScriptCollection.h" />
     <ClInclude Include="BaseService.h" />
     <ClInclude Include="BaseShader.h" />
     <ClInclude Include="EngineConfigData.h" />
+    <ClInclude Include="BaseGameManager.h" />
     <ClInclude Include="ObjectComponent.h" />
     <ClInclude Include="CachedMesh.h" />
     <ClInclude Include="Camera.h" />
@@ -220,7 +225,6 @@
     <ClInclude Include="Font.h" />
     <ClInclude Include="FrameBuffer.h" />
     <ClInclude Include="GameCharacter.h" />
-    <ClInclude Include="GameCharacterComponent.h" />
     <ClInclude Include="GameCharacterData.h" />
     <ClInclude Include="GamePlayer.h" />
     <ClInclude Include="GameScene.h" />
@@ -256,7 +260,6 @@
     <ClInclude Include="ObjectInitializer.h" />
     <ClInclude Include="ObjectReferenceManager.h" />
     <ClInclude Include="PlayerManager.h" />
-    <ClInclude Include="PostEffect.h" />
     <ClInclude Include="Profiler.h" />
     <ClInclude Include="ReflectionField.h" />
     <ClInclude Include="ReflectionTraits.h" />

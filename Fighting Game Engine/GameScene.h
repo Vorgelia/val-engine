@@ -16,9 +16,12 @@ class RenderingGL;
 class ResourceManager;
 class FilesystemManager;
 class Debug;
+class BaseSceneBehavior;
 
 class GameScene : public BaseObject
 {
+	VE_OBJECT_DECLARATION(GameScene);
+
 	friend class GameSceneManager;
 	friend class ObjectInitializer;
 
@@ -33,6 +36,8 @@ protected:
 
 	bool _loaded;
 
+	ve::unique_object_ptr<BaseSceneBehavior> _sceneBehavior;
+
 	std::vector<ve::unique_object_ptr<GameObject>> _objects;
 	std::unordered_map<std::string, ObjectReference<GameObject>> _objectNameLookup;
 
@@ -46,6 +51,7 @@ protected:
 public:
 	const std::string& name() const;
 	bool loaded() const;
+	BaseSceneBehavior* sceneBehavior() const { return _sceneBehavior.get(); }
 
 	const TimeTracker& GetTime() const { return _timeTracker; }
 
@@ -54,9 +60,10 @@ public:
 
 	template<typename ObjectT = GameObject>
 	ObjectReference<ObjectT> AddObject(const json& jsonData = json());
+	ObjectReference<GameObject> AddObjectFromJson(const json& jsonData = json());
 	ObjectReference<GameObject> LoadObject(const std::string& prefabPath);
 
-	SceneObject* FindObject(const std::string& name);
+	GameObject* FindObject(const std::string& name);
 	template<typename ObjectT>
 	ObjectReference<ObjectT> FindObjectOfType();
 	template<typename ObjectT>
@@ -71,7 +78,7 @@ public:
 template <typename ObjectT>
 ObjectReference<ObjectT> GameScene::AddObject(const json& jsonData)
 {
-	static_assert(std::is_base_of_v<SceneObject, ObjectT>, "Objects added to a scene need to derive from SceneObject.");
+	static_assert(std::is_base_of_v<GameObject, ObjectT>, "Objects added to a scene need to derive from GameObject.");
 	_objects.push_back(ObjectFactory::CreateObject<ObjectT>(this, jsonData));
 
 	ObjectT* result = _objects.back().get();
@@ -88,26 +95,26 @@ ObjectReference<ObjectT> GameScene::FindObjectOfType()
 		ObjectT* obj = nullptr;
 		if constexpr(std::is_base_of_v<ObjectComponent, ObjectT>)
 		{
-			obj = iter.get()->GetComponentOfType<ObjectT>();
+			obj = iter.get()->GetComponentOfType<ObjectT>().get();
 		}
 		else
 		{
-			obj = dynamic_cast<ObjectT>(iter.get());
+			obj = dynamic_cast<ObjectT*>(iter.get());
 		}
 
 		if(obj != nullptr)
 		{
-			return obj;
+			return ObjectReference<ObjectT>(obj);
 		}
 	}
 
-	return nullptr;
+	return ObjectReference<ObjectT>(nullptr);
 }
 
 template <typename ObjectT>
 std::vector<ObjectReference<ObjectT>> GameScene::FindObjectsOfType()
 {
-	std::vector<ObjectT*> objects;
+	std::vector<ObjectReference<ObjectT>> objects;
 
 	for(auto& iter : _objects)
 	{
@@ -122,7 +129,7 @@ std::vector<ObjectReference<ObjectT>> GameScene::FindObjectsOfType()
 			std::vector<ObjectReference<ObjectT>> components = iter.get()->GetComponentsOfType<ObjectT>();
 			if(components.size() > 0)
 			{
-				objects.reserve(objects.size() + components.size());
+				objects.reserve(components.size());
 				std::move(components.begin(), components.end(), objects.end());
 			}
 		}

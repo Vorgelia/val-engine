@@ -7,6 +7,8 @@
 #include "ScreenManager.h"
 #include "DebugLog.h"
 
+VE_OBJECT_DEFINITION(GameScene);
+
 void GameScene::LoadResources()
 {
 	_loaded = false;
@@ -16,28 +18,28 @@ void GameScene::LoadResources()
 		return;
 	}
 
-	std::vector<std::string> rfl;
-	try
+	json* sceneData = _resource->GetJsonData(_dataPath.string());
+	if(sceneData == nullptr)
 	{
-		json& j = *_resource->GetJsonData(_dataPath.string());
-		for(const json& objData : j)
+		_loaded = true;
+		return;
+	}
+
+	json objectJson;
+	if(JSON::TryGetMember(*sceneData, "objects", objectJson))
+	{
+		for(const json& objData : objectJson)
 		{
-			std::string prefabPath;
-			if(objData.size() == 1 && JSON::TryGetMember<std::string>(objData, "prefabPath", prefabPath))
-			{
-				AddObject(*_resource->GetJsonData(prefabPath));
-			}
-			else
-			{
-				AddObject(objData);
-			}
-			RegisterObject(_objects.back().get());
+			AddObjectFromJson(objData);
 		}
 	}
-	catch(std::runtime_error& err)
+
+	json sceneBehaviorData;
+	if(JSON::TryGetMember(*sceneData, "sceneBehavior", sceneBehaviorData))
 	{
-		_debug->VE_LOG(err.what());
+		_sceneBehavior = ObjectFactory::CreateObjectFromJson<BaseSceneBehavior>(this, sceneBehaviorData);
 	}
+
 	_loaded = true;
 }
 
@@ -81,19 +83,38 @@ const std::string& GameScene::name() const
 	return _name;
 }
 
+ObjectReference<GameObject> GameScene::AddObjectFromJson(const json& jsonData)
+{
+	std::string prefabPath;
+	json objectJson = jsonData;
+	if(JSON::TryGetMember(jsonData, _owningInstance->configData().serializationConfigData.prefabPathPropertyName, prefabPath))
+	{
+		const json* data = _resource->GetJsonData(prefabPath);
+		if(data == nullptr)
+		{
+			return ObjectReference<GameObject>();
+		}
+
+		objectJson = *data;
+		objectJson.merge_patch(jsonData);
+	}
+
+	_objects.push_back(ObjectFactory::CreateObjectFromJson<GameObject>(this, objectJson));
+	GameObject* result = _objects.back().get();
+	RegisterObject(result);
+
+	return ObjectReference<GameObject>(result);
+}
+
 ObjectReference<GameObject> GameScene::LoadObject(const std::string& prefabPath)
 {
 	const json* data = _resource->GetJsonData(prefabPath);
 	if(data == nullptr)
 	{
-		return nullptr;
+		return ObjectReference<GameObject>();
 	}
 
-	_objects.push_back(ObjectFactory::CreateObjectFromJson<GameObject>(this, *data));
-	GameObject* result = _objects.back().get();
-	RegisterObject(result);
-
-	return ObjectReference<GameObject>(result);
+	return AddObjectFromJson(*data);
 }
 
 void GameScene::DestroyObject(GameObject* object)

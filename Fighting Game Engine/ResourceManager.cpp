@@ -3,6 +3,17 @@
 #include "ComputeShader.h"
 #include "FilesystemManager.h"
 #include "GraphicsGL.h"
+
+#include "Mesh.h"
+#include "CachedMesh.h"
+#include "SurfaceShader.h"
+#include "ComputeShader.h"
+#include "Material.h"
+#include "Texture.h"
+#include "Font.h"
+#include "FilesystemManager.h"
+#include "GraphicsGL.h"
+
 #include <regex>
 #include <boost/algorithm/string/erase.hpp>
 
@@ -165,7 +176,6 @@ void ResourceManager::TrimContainers()
 	TrimContainer(_MaterialMap);
 	TrimContainer(_MeshMap);
 	TrimContainer(_CachedMeshMap);
-	TrimContainer(_PostEffectMap);
 	TrimContainer(_SurfaceShaderMap);
 	TrimContainer(_TextDataMap);
 	TrimContainer(_TextureMap);

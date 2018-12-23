@@ -8,28 +8,26 @@
 #include "GameSceneManager.h"
 #include "GameScene.h"
 
-////TODO: Figure out a way to remove these and re-introduce the forward declarations
-//#include "Mesh.h"
-//#include "CachedMesh.h"
-//#include "SurfaceShader.h"
-//#include "ComputeShader.h"
-//#include "Material.h"
-//#include "Texture.h"
-//#include "PostEffect.h"
-//#include "Font.h"
-//#include "FilesystemManager.h"
-//#include "GraphicsGL.h"
+//TODO: Figure out a way to remove these and re-introduce the forward declarations
+#include "Mesh.h"
+#include "CachedMesh.h"
+#include "SurfaceShader.h"
+#include "ComputeShader.h"
+#include "Material.h"
+#include "Texture.h"
+#include "Font.h"
+#include "FilesystemManager.h"
+#include "GraphicsGL.h"
 
-//TODO: PUT BACK RIGHT NOW!!!
-class CachedMesh;
-class Mesh;
-class Texture;
-class Material;
-class SurfaceShader;
-class ComputeShader;
-class PostEffect;
-class Font;
-class ShaderAttachment;
+////TODO: PUT BACK RIGHT NOW!!!
+//class CachedMesh;
+//class Mesh;
+//class Texture;
+//class Material;
+//class SurfaceShader;
+//class ComputeShader;
+//class Font;
+//class ShaderAttachment;
 
 namespace fs = std::filesystem;
 
@@ -66,7 +64,6 @@ private:
 	ve_resource_container(SurfaceShader);
 	ve_resource_container(ComputeShader);
 	ve_resource_container(Font);
-	ve_resource_container(PostEffect);
 
 	ve_named_resource_container(std::string, TextData);
 	ve_named_resource_container(json, JsonData);
@@ -126,7 +123,7 @@ ResourceT* ResourceManager::GetResourceFromContainer(ResourceContainer<ResourceT
 	{
 		if(_gameSceneManager->currentScene() != nullptr)
 		{
-			iter->second._referencedLevels.emplace(_gameSceneManager->currentScene());
+			iter->second._referencedLevels.emplace(_gameSceneManager->currentScene()->name());
 		}
 		return iter->second.Get();
 	}

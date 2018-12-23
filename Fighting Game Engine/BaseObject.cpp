@@ -13,6 +13,8 @@ json BaseObject::Serialize() const
 
 BaseObject::BaseObject()
 	: _owningInstance(nullptr)
+	, _outer(nullptr)
+	, enabled(true)
 {
 	ObjectReferenceManager::Get().AddObject(this);
 }

@@ -31,7 +31,15 @@ protected:
 public:
 	virtual void Deserialize(const json& j) override
 	{
-		if constexpr(std::is_base_of_v<IReflectable, ValueT>)
+		if constexpr(std::is_pointer_v<ValueT> && std::is_base_of_v<BaseObject, std::remove_pointer_t<ValueT>>)
+		{
+			BaseObject* objectPtr = static_cast<BaseObject*>(*_data);
+			if(ve::IsValid(objectPtr))
+			{
+				objectPtr->Deserialize(j);
+			}
+		}
+		else if constexpr(std::is_base_of_v<IReflectable, ValueT>)
 		{
 			reinterpret_cast<IReflectable*>(_data)->Deserialize(j);
 		}
@@ -43,7 +51,15 @@ public:
 
 	virtual json Serialize() override
 	{
-		return JSON::ToJson<ValueT>(*_data);
+		if constexpr(std::is_pointer_v<ValueT> && std::is_base_of_v<BaseObject, std::remove_pointer_t<ValueT>>)
+		{
+			BaseObject* objectPtr = static_cast<BaseObject*>(*_data);
+			return ve::IsValid(objectPtr) ? objectPtr->Serialize() : json();
+		}
+		else
+		{
+			return JSON::ToJson<ValueT>(*_data);
+		}
 	}
 
 	ReflectionField(std::string name, ValueT* data)

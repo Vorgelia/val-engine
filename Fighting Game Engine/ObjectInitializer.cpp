@@ -26,6 +26,7 @@ void ObjectInitializer::InitializeObject(BaseObject* other) const
 	if(otherAsSceneObject != nullptr)
 	{
 		otherAsSceneObject->_owningScene = _outerScene;
+		otherAsSceneObject->_name = otherAsSceneObject->className();
 	}
 }
 

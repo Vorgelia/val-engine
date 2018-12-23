@@ -290,7 +290,7 @@ void GraphicsGL::ClearFrameBuffer(FrameBuffer& frameBuffer)
 
 void GraphicsGL::DestroyFrameBuffer(FrameBuffer& frameBuffer) const
 {
-	for(const std::unique_ptr<Texture>& tex : frameBuffer.textures)
+	for(Texture* tex : frameBuffer.textures())
 	{
 		DestroyTexture(*tex);
 	}

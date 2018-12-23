@@ -7,6 +7,7 @@
 
 class InputDevice;
 class ScreenManager;
+struct InputEvent;
 
 class InputManager : public BaseService
 {

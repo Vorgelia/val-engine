@@ -18,7 +18,7 @@ MaterialTexture::MaterialTexture(Texture* ref, glm::vec4 params)
 
 bool Material::HasProperty(Material::Properties pr) const
 {
-	return (this->properties & (unsigned char)pr) != 0;
+	return (this->properties & pr) != Material::Properties::None;
 }
 
 Material::Material(const std::string& name, SurfaceShader* shader, Properties properties, const std::vector<uniformFloat>& floats, const std::vector<uniformVec>& vecs, const std::vector<uniformTex>& textures)

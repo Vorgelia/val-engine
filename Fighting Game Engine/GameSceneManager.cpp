@@ -25,10 +25,7 @@ void GameSceneManager::OnInit()
 {
 	_debug = _owningInstance->Debug();
 
-	_owningInstance->updateDispatcher().BindFunction(
-		this,
-		UpdateFunctionTiming(UpdateGroup::FrameEnd, UpdateType::LastFixedGameUpdate),
-		[this]() { UpdateService(); });
+	VE_REGISTER_UPDATE_FUNCTION(UpdateGroup::FrameEnd, UpdateType::LastFixedGameUpdate, UpdateService);
 
 	LoadScene(_owningInstance->configData().gameConfigData.defaultScene);
 }

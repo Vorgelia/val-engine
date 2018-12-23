@@ -14,6 +14,7 @@ void SceneObject::RegisterReflectionFields() const
 {
 	BaseObject::RegisterReflectionFields();
 	AddReflectionField(VE_PRIVATE_REFLECTION_ARG(name));
+	AddReflectionField(VE_PRIVATE_REFLECTION_ARG(localTransform));
 }
 
 void SceneObject::SetWorldTransform(const Transform& transform)

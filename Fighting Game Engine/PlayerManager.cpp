@@ -40,11 +40,7 @@ void PlayerManager::ClearPlayers()
 
 void PlayerManager::OnInit()
 {
-	_owningInstance->updateDispatcher().BindFunction(
-		this,
-		UpdateFunctionTiming(int(UpdateGroup::FrameUpdate) - 20, UpdateType::AnyFixedGameUpdate),
-		[this]() { UpdatePlayers(); }
-	);
+	VE_REGISTER_UPDATE_FUNCTION(int(UpdateGroup::FrameUpdate) - 20, UpdateType::AnyFixedGameUpdate, UpdatePlayers);
 }
 
 void PlayerManager::OnDestroyed()

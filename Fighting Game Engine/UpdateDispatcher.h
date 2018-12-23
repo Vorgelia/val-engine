@@ -4,11 +4,11 @@
 
 class GameInstance;
 
-struct UpdateDispatcher
+class UpdateDispatcher : public BaseObject
 {
-protected:
-	GameInstance* _gameInstance;
+	VE_OBJECT_DECLARATION(UpdateDispatcher)
 
+protected:
 	std::vector<TrackedUpdateFunction> _boundFunctions;
 	bool _shouldSortFunctions;
 
@@ -33,5 +33,5 @@ public:
 	void UnbindFunction(BaseObject* object);
 	void DispatchUpdates();
 
-	explicit UpdateDispatcher(GameInstance* gameInstance);
+	UpdateDispatcher();
 };

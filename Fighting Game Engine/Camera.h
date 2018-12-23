@@ -10,8 +10,6 @@ class RenderingCommand;
 
 class BaseCamera : public ObjectComponent
 {
-	VE_OBJECT_DECLARATION(BaseCamera);
-
 	friend class RenderingGL;
 
 protected:

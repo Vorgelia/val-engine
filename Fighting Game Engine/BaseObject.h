@@ -39,14 +39,16 @@ protected:
 	GameInstance* _owningInstance;
 	BaseObject* _outer;
 
-	virtual json Serialize() const override;
-
 public:
+	bool enabled;
+
 	static BaseObject* StaticClass();
 	virtual BaseObject* GetClass() const;
 	virtual std::string className() const { return "BaseObject"; }
 
 	GameInstance* owningInstance() const { return _owningInstance; }
+
+	virtual json Serialize() const override;
 
 	virtual void OnInit() {}
 	virtual void OnDestroyed() {}

@@ -34,6 +34,9 @@ public:
 	GLFWwindow* window() const { return _window; }
 
 	const glm::ivec2& screenSize() const { return _screenSize; }
+	const glm::ivec2& screenInvSize() const { return _screenInvSize; }
+
+	const glm::ivec4& viewportSize() const { return _viewportSize; }
 
 	void OnInit() override;
 	void OnDestroyed() override;

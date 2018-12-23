@@ -4,6 +4,7 @@
 #include "GLIncludes.hpp"
 #include "FilesystemManager.h"
 #include "InputDeviceId.h"
+#include "InputEvent.h"
 #include "TrackedUpdateFunction.h"
 #include "ScreenManager.h"
 #include "GameInstance.h"

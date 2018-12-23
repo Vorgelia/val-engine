@@ -6,10 +6,9 @@
 #include "ResourceManager.h"
 #include "RenderingGL.h"
 #include "ScriptManager.h"
-#include "Time.h"
-#include "Screen.h"
+#include "ScreenManager.h"
 #include "InputManager.h"
-#include "FightingGameManager.h"
+#include "BaseGameManager.h"
 #include "FilesystemManager.h"
 #include "ObjectFactory.h"
 
@@ -32,7 +31,6 @@ VE_SERVICE_GETTER(ResourceManager);
 VE_SERVICE_GETTER(ScriptManager);
 VE_SERVICE_GETTER(ScreenManager);
 VE_SERVICE_GETTER(PlayerManager);
-VE_SERVICE_GETTER(FightingGameManager);
 
 VE_NAMED_SERVICE_GETTER(Input, InputManager);
 VE_NAMED_SERVICE_GETTER(Filesystem, FilesystemManager);
@@ -43,6 +41,8 @@ VE_OBJECT_DEFINITION(GameInstance);
 
 void GameInstance::OnInit()
 {
+	_updateDispatcher = ObjectFactory::CreateObject<UpdateDispatcher>(this);
+
 	_rawConfigData = Filesystem()->LoadFileResource<json>("EngineConfig.json");
 	_configData.Deserialize(_rawConfigData);
 
@@ -62,7 +62,8 @@ void GameInstance::OnInit()
 	Input();
 	GameSceneManager();
 	PlayerManager();
-	FightingGameManager();
+	
+	_gameManager = ObjectFactory::CreateObjectOfClass<BaseGameManager>(_configData.gameConfigData.gameManagerClassName, this);
 
 	_timeTracker.Reset(glfwGetTime());
 }
@@ -74,10 +75,9 @@ void GameInstance::OnDestroyed()
 void GameInstance::UpdateServices()
 {
 	_timeTracker.Update(glfwGetTime());
-	_updateDispatcher.DispatchUpdates();
+	_updateDispatcher->DispatchUpdates();
 }
 
 GameInstance::GameInstance()
-	: _updateDispatcher(this)
 {
 }

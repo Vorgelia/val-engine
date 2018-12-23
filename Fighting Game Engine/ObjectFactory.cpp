@@ -1,5 +1,6 @@
 ﻿#include "ObjectFactory.h"
 #include "GameInstance.h"
+#include "GameObject.h"
 
 void ve::ObjectDeleter::operator()(BaseObject* object) const
 {

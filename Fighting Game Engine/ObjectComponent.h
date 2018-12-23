@@ -10,12 +10,12 @@ class ObjectComponent : public SceneObject
 	friend class ObjectInitializer;
 
 protected:
-	GameObject* _owner;
+	ObjectReference<GameObject> _owner;
 
 public:
 	bool enabled;
 
-	GameObject* owner() const { return _owner; }
+	GameObject* owner() const { return _owner.get(); }
 
 	void RegisterReflectionFields() const override;
 

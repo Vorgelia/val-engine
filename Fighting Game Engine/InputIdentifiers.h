@@ -13,11 +13,11 @@ enum class InputButton : uint16_t
 	Buttons	= 0b0001111,//Convenience entry that represents any gameplay button
 	Taunt	= 0b0010000,
 	Pause	= 0b0100000,
-	VE_BITMASK_VALUE_ANY
+	VE_BITMASK_VALUE_ANY_T(InputButton)
 };
 VE_DECLARE_BITMASK_ENUM(InputButton);
 
-enum class InputDirection
+enum class InputDirection : uint8_t
 {
 	VE_BITMASK_VALUE_NONE,
 	Up		= 0b0001,
@@ -28,7 +28,7 @@ enum class InputDirection
 };
 VE_DECLARE_BITMASK_ENUM(InputDirection);
 
-enum class InputTypeMask
+enum class InputTypeMask : uint8_t
 {
 	VE_BITMASK_VALUE_NONE,
 	Pressed = 0b0001,

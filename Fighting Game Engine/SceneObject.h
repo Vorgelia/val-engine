@@ -20,6 +20,7 @@ public:
 	const std::string& name() const { return _name; }
 	GameScene* owningScene() const { return _owningScene; }
 	const Transform& localTransform() const { return _localTransform; }
+	Transform& localTransform() { return _localTransform; }
 	SceneObject* transformParent() const { return _transformParent.get(); }
 
 	Transform GetWorldTransform() const;
@@ -29,7 +30,7 @@ public:
 
 	void SetTransformParent(SceneObject* parent);
 
-	void RegisterReflectionFields() const override;
+	virtual void RegisterReflectionFields() const override;
 
 	SceneObject();
 	~SceneObject() = default;

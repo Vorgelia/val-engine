@@ -4,15 +4,15 @@
 #include "GameInstance.h"
 #include "GameSceneManager.h"
 
+VE_OBJECT_DEFINITION(UpdateDispatcher);
+
 void UpdateDispatcher::Init()
 {
-	assert(_gameInstance != nullptr);
-
-	_fixedGameUpdateInterval = _gameInstance->configData().gameConfigData.fixedGameUpdateInterval;
+	_fixedGameUpdateInterval = _owningInstance->configData().gameConfigData.fixedGameUpdateInterval;
 
 	ResetFixedGameUpdateTime();
 
-	auto& sceneLoadedDelegate = _gameInstance->GameSceneManager()->SceneLoaded;
+	auto& sceneLoadedDelegate = _owningInstance->GameSceneManager()->SceneLoaded;
 	sceneLoadedDelegate += VE_DELEGATE_FUNC(GameSceneManager::GameSceneEventHandler, HandleSceneLoaded);
 }
 
@@ -36,7 +36,7 @@ void UpdateDispatcher::SortFunctions()
 
 void UpdateDispatcher::ResetFixedGameUpdateTime()
 {
-	_lastFixedGameUpdateTime = _gameInstance->timeTracker().time() + _lastFixedGameUpdateTime;
+	_lastFixedGameUpdateTime = _owningInstance->timeTracker().time() + _lastFixedGameUpdateTime;
 }
 
 void UpdateDispatcher::HandleSceneLoaded(const GameScene* scene)
@@ -66,7 +66,7 @@ void UpdateDispatcher::BindFunction(BaseObject* object, UpdateFunctionTiming tim
 
 void UpdateDispatcher::UnbindFunction(BaseObject* object)
 {
-	for(int i = 0; i < _boundFunctions.size();)
+	for(size_t i = 0; i < _boundFunctions.size();)
 	{
 		if(_boundFunctions[i].object.get() == object)
 		{
@@ -97,7 +97,7 @@ void UpdateDispatcher::DispatchUpdates()
 		return;
 	}
 
-	const TimeTracker& time = _gameInstance->timeTracker();
+	const TimeTracker& time = _owningInstance->timeTracker();
 
 	int gameUpdateAmount = 0;
 	if(_fixedGameUpdateInterval > 0 && glm::nearlyZero(_fixedGameUpdateInterval))
@@ -134,10 +134,10 @@ void UpdateDispatcher::DispatchUpdates()
 	}
 }
 
-UpdateDispatcher::UpdateDispatcher(GameInstance* gameInstance)
-	: _gameInstance(gameInstance)
-	, _shouldSortFunctions(false)
+UpdateDispatcher::UpdateDispatcher()
+	: _shouldSortFunctions(false)
 	, _fixedGameUpdateInterval(1.0 / 60.0)
+	, _lastFixedGameUpdateTime(-1.0f)
 	, _initialized(false)
 	, _justLoadedLevel(false)
 {

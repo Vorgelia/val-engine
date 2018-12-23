@@ -1,6 +1,6 @@
 #include "RenderingGL.h"
 #include "GameInstance.h"
-#include "Screen.h"
+#include "ScreenManager.h"
 #include "FrameBuffer.h"
 #include "Mesh.h"
 #include "SurfaceShader.h"
@@ -12,7 +12,6 @@
 #include "ResourceManager.h"
 #include "GraphicsGL.h"
 #include "GraphicsBuffer.h"
-#include "PostEffect.h"
 #include "DebugLog.h"
 #include "GraphicsBindingData.h"
 #include "RenderingDataBuffer.h"
@@ -30,12 +29,12 @@ void RenderingGL::OnInit()
 	_graphics = _owningInstance->Graphics();
 	_debug = _owningInstance->Debug();
 	_resourceManager = _owningInstance->ResourceManager();
-	_screen = _owningInstance->Screen();
+	_screen = _owningInstance->ScreenManager();
 
 	const RenderingConfigData& renderingConfigData = _owningInstance->configData().renderingConfigData;
 
 	//Generate the main buffer and the auxiliary buffers.
-	_mainBuffer = _graphics->CreateFrameBuffer(_screen->size, renderingConfigData.frameBuferTextureAmount, true, GL_RGBA16, glm::vec4(0, 0, 0, 1));
+	_mainBuffer = _graphics->CreateFrameBuffer(_screen->screenSize(), renderingConfigData.frameBuferTextureAmount, true, GL_RGBA16, glm::vec4(0, 0, 0, 1));
 
 	BindFrameBufferImages(_mainBuffer.get(), (GLuint)ImageBindingPoints::MainBufferAttachment0);
 	BindFrameBufferImages(_mainBuffer.get(), (GLuint)ImageBindingPoints::AuxBuffer2Attachment0);
@@ -60,7 +59,7 @@ void RenderingGL::OnInit()
 	_graphics->BindBufferToBindingPoint(GLuint(ShaderStorageBlockBindingPoints::CommonVec4Buffer), *_commonComputeVec4Buffer);
 
 	//Register a callback for the screen resizing
-	_screen->ScreenUpdated +=  VE_DELEGATE_FUNC(Screen::ScreenUpdateEventHandler, OnScreenResize);
+	_screen->ScreenUpdated += VE_DELEGATE_FUNC(ScreenManager::ScreenUpdateEventHandler, OnScreenResize);
 
 	_owningInstance->updateDispatcher().BindFunction(this, UpdateFunctionTiming(UpdateGroup::Rendering, UpdateType::LastFixedGameUpdate), [this]() { RenderAllCameras(); });
 }
@@ -83,7 +82,7 @@ void RenderingGL::BeginFrame()
 	//Viewport controls the rendering size in pixels based on the actual window size.
 	//We set it to the full window size here to perform no added transformation to the ones we do when rendering. Try changing _screen->size.y to _screen->size.y*0.5.
 	//This will be used later to force the aspect ratio to 16/9
-	glViewport(0, 0, _screen->size.x, _screen->size.y);
+	glViewport(0, 0, _screen->screenSize().x, _screen->screenSize().y);
 
 	for(auto& iter : _cameras)
 	{
@@ -103,7 +102,7 @@ void RenderingGL::BeginFrame()
 	_timeDataBuffer->SetupData(
 		_owningInstance->timeTracker().time(),
 		_owningInstance->configData().gameConfigData.fixedGameUpdateInterval);
-	_renderingDataBuffer->SetupData(_screen->size, _screen->invSize);
+	_renderingDataBuffer->SetupData(_screen->screenSize(), _screen->screenInvSize());
 
 	_graphics->UpdateGraphicsBuffer(*_timeDataBuffer);
 	_graphics->UpdateGraphicsBuffer(*_renderingDataBuffer);
@@ -113,7 +112,7 @@ void RenderingGL::EndFrame()
 {
 	//Render the main buffer to the default buffer.
 	//Set the viewport to what was calculated for a forced 16:9 aspect ratio
-	glViewport(_screen->viewportSize.x, _screen->viewportSize.y, _screen->viewportSize.z, _screen->viewportSize.w);
+	glViewport(_screen->viewportSize().x, _screen->viewportSize().y, _screen->viewportSize().z, _screen->viewportSize().w);
 	//Bind the default framebuffer, clear it and draw the main buffer directly.
 	_graphics->BindDefaultFrameBuffer();
 
@@ -127,7 +126,7 @@ void RenderingGL::EndFrame()
 	}
 	else
 	{
-		glfwSwapBuffers(_screen->window);
+		glfwSwapBuffers(_screen->window());
 	}
 }
 
@@ -142,7 +141,7 @@ FrameBuffer* RenderingGL::GetTemporaryFrameBuffer()
 		}
 	}
 
-	_temporaryFrameBuffers.push_back(_graphics->CreateFrameBuffer(_screen->size, 3, true, GL_RGBA16, glm::vec4(0, 0, 0, 1)));
+	_temporaryFrameBuffers.push_back(_graphics->CreateFrameBuffer(_screen->screenSize(), 3, true, GL_RGBA16, glm::vec4(0, 0, 0, 1)));
 	_reservedTemporaryFrameBuffers.emplace(_temporaryFrameBuffers.back().get());
 	return _temporaryFrameBuffers.back().get();
 }
@@ -211,7 +210,7 @@ void RenderingGL::RenderAllCameras()
 //Screen resize callback. Resize all framebuffers to match the screen size.
 void RenderingGL::OnScreenResize()
 {
-	_mainBuffer->SetResolution(_screen->size);
+	_mainBuffer->SetResolution(_screen->screenSize());
 	_graphics->UpdateFrameBuffer(*_mainBuffer);
 }
 
@@ -303,9 +302,9 @@ void RenderingGL::BindFrameBufferImages(const FrameBuffer* buffer, GLuint bindin
 void RenderingGL::DrawScreenMesh(glm::vec4 rect, Mesh* mesh, FrameBuffer* frameBuffer, Material* mat, glm::vec4 params)
 {
 	std::vector<MaterialTexture> textures;
-	for(auto& texture : frameBuffer->textures)
+	for(auto& texture : frameBuffer->textures())
 	{
-		textures.emplace_back(texture.get(), params);
+		textures.emplace_back(texture, params);
 	}
 
 	DrawScreenMesh(rect, mesh, textures, mat);
@@ -460,7 +459,7 @@ void RenderingGL::DrawScreenText(glm::vec4 rect, GLuint size, const std::string&
 		{
 			glm::vec4 cr = glm::vec4(cursor.x + fc->bearing.x*scale, cursor.y + (font->topBearing() - fc->bearing.y)*scale, fc->size.x*scale, fc->size.y*scale);
 			DrawTextCharacter(cr, fc->textureParams, font->GetAtlas(fc->atlasIndex));
-			cursor.x += (int)glm::round((fc->advance)*scale);
+			cursor.x += int(glm::round((fc->advance) * scale));
 			++ch;
 		}
 	}
@@ -468,15 +467,17 @@ void RenderingGL::DrawScreenText(glm::vec4 rect, GLuint size, const std::string&
 
 void RenderingGL::RegisterCamera(BaseCamera* camera)
 {
-	if(_cameras.find(camera) == _cameras.end())
+	ObjectReference<BaseCamera> cameraRef{ camera };
+	if(_cameras.find(cameraRef) == _cameras.end())
 	{
-		_cameras.emplace(camera);
+		_cameras.emplace(cameraRef);
 	}
 }
 
 void RenderingGL::UnregisterCamera(BaseCamera* camera)
 {
-	_cameras.erase(camera);
+	ObjectReference<BaseCamera> cameraRef{ camera };
+	_cameras.erase(cameraRef);
 }
 
 void RenderingGL::InitTextDrawing()

@@ -1,5 +1,5 @@
 #pragma once
-#include "Behaviour.h"
+#include "BaseSceneBehavior.h"
 
 struct MaterialTexture;
 
@@ -8,14 +8,14 @@ class Time;
 class RenderingGL;
 class InputManager;
 class ResourceManager;
-class Screen;
+class ScreenManager;
 
-class MenuBehaviour :
-	public Behaviour
+class MenuBehaviour : public BaseSceneBehavior
 {
+	VE_OBJECT_DECLARATION(MenuBehaviour);
+
 private:
-	Time* _time;
-	Screen* _screen;
+	ScreenManager* _screen;
 	InputManager* _input;
 	RenderingGL* _rendering;
 	ResourceManager* _resource;
@@ -25,13 +25,12 @@ private:
 	std::unique_ptr<MaterialTexture> _fadingOverlay;
 
 public:
-	VE_BEHAVIOUR_NAME(MenuBehaviour);
+	void OnInit() override;
 
-	VE_BEHAVIOUR_REGISTER_FUNCTION(EngineUpdate);
-	VE_BEHAVIOUR_REGISTER_FUNCTION(GameUpdate);
-	VE_BEHAVIOUR_REGISTER_FUNCTION(OnRenderUI);
+	void OnGameUpdate();
+	void OnRenderUI();
 
-	MenuBehaviour(Object* owner, GameInstance* serviceManager, const json& j);
-	~MenuBehaviour();
+	MenuBehaviour() = default;
+	~MenuBehaviour() = default;
 };
 

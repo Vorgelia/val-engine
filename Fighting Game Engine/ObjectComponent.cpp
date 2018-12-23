@@ -1,4 +1,6 @@
 #include "ObjectComponent.h"
+#include "GameObject.h"
+
 void ObjectComponent::RegisterReflectionFields() const
 {
 	SceneObject::RegisterReflectionFields();

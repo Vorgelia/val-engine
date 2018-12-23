@@ -1,20 +1,20 @@
 #pragma once
-#include "Behaviour.h"
+#include "BaseSceneBehavior.h"
 
 class GameSceneManager;
 class InputManager;
 class RenderingGL;
-class Time;
+class Debug;
 class ResourceManager;
 
-class IntroBehaviour :
-	public Behaviour
+class IntroBehaviour : public BaseSceneBehavior
 {
+	VE_OBJECT_DECLARATION(IntroBehaviour)
+
 private:
 	GameSceneManager* _gameSceneManager;
 	InputManager* _input;
 	RenderingGL* _rendering;
-	Time* _time;
 	Debug* _debug;
 	ResourceManager* _resource;
 
@@ -22,14 +22,14 @@ private:
 	float _introDuration = 4;
 
 public:
-	VE_BEHAVIOUR_NAME(IntroBehaviour);
+	virtual void RegisterReflectionFields() const;
 
-	VE_BEHAVIOUR_REGISTER_FUNCTION(OnSceneInit);
-	VE_BEHAVIOUR_REGISTER_FUNCTION(OnRenderUI);
-	VE_BEHAVIOUR_REGISTER_FUNCTION(GameUpdate);
+	virtual void OnInit() override;
 
-	IntroBehaviour(Object* owner, GameInstance* serviceManager);
-	IntroBehaviour(Object* owner, GameInstance* serviceManager, const json& j);
+	void OnRenderUI();
+	void OnGameUpdate();
+
+	IntroBehaviour() = default;
 	~IntroBehaviour() = default;
 };
 

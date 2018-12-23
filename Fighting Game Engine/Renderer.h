@@ -5,11 +5,10 @@
 
 class ResourceManager;
 class RenderingGL;
+class Material;
 
 class BaseRenderer : public ObjectComponent
 {
-	VE_OBJECT_DECLARATION(BaseRenderer)
-
 public:
 	virtual std::vector<RenderingCommand> GetRenderingCommands() const = 0;
 

@@ -283,9 +283,6 @@
     <ClCompile Include="Material.cpp">
       <Filter>Val Engine\Engine\Data\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="PostEffect.cpp">
-      <Filter>Val Engine\Engine\Data\Rendering</Filter>
-    </ClCompile>
     <ClCompile Include="NetworkMessage.cpp">
       <Filter>Val Engine\Engine\Data\Networking</Filter>
     </ClCompile>
@@ -358,9 +355,6 @@
     <ClCompile Include="CharacterEventComponent.cpp">
       <Filter>Val Engine\Game\Characters\Components</Filter>
     </ClCompile>
-    <ClCompile Include="GameCharacterComponent.cpp">
-      <Filter>Val Engine\Game\Characters\Components</Filter>
-    </ClCompile>
     <ClCompile Include="CharacterCollisionResult.cpp">
       <Filter>Val Engine\Game\Characters\Hit Data</Filter>
     </ClCompile>
@@ -421,6 +415,12 @@
     <ClCompile Include="TimeTracker.cpp">
       <Filter>Val Engine\Engine\Utilities</Filter>
     </ClCompile>
+    <ClCompile Include="ValEngine.cpp">
+      <Filter>Val Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseGameManager.cpp" />
+    <ClCompile Include="BaseSceneBehavior.cpp" />
+    <ClCompile Include="BaseGameCharacterComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FGIncludes.hpp">
@@ -570,9 +570,6 @@
     <ClInclude Include="Material.h">
       <Filter>Val Engine\Engine\Data\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="PostEffect.h">
-      <Filter>Val Engine\Engine\Data\Rendering</Filter>
-    </ClInclude>
     <ClInclude Include="ScriptParsingUtils.h">
       <Filter>Val Engine\Engine\Utilities\Scripting</Filter>
     </ClInclude>
@@ -681,9 +678,6 @@
     <ClInclude Include="CharacterEventComponent.h">
       <Filter>Val Engine\Game\Characters\Components</Filter>
     </ClInclude>
-    <ClInclude Include="GameCharacterComponent.h">
-      <Filter>Val Engine\Game\Characters\Components</Filter>
-    </ClInclude>
     <ClInclude Include="CharacterCollisionResult.h">
       <Filter>Val Engine\Game\Characters\Hit Data</Filter>
     </ClInclude>
@@ -776,6 +770,15 @@
     </ClInclude>
     <ClInclude Include="TimeTracker.h">
       <Filter>Val Engine\Engine\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseGameManager.h">
+      <Filter>Val Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseSceneBehavior.h">
+      <Filter>Val Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseGameCharacterComponent.h">
+      <Filter>Val Engine</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

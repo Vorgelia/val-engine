@@ -9,21 +9,20 @@ class Mesh;
 class BaseCamera;
 class Material;
 class Texture;
-class Transform;
 class FrameBuffer;
 class GraphicsBuffer;
-class PostEffect;
 
 class BaseShader;
 class ComputeShader;
 class SurfaceShader;
 
+struct Transform;
 struct MaterialTexture;
 
 class Debug;
 class GraphicsGL;
 class ResourceManager;
-class Screen;
+class ScreenManager;
 class Time;
 
 class TimeDataBuffer;
@@ -43,7 +42,7 @@ private:
 	Debug* _debug{};
 	GraphicsGL* _graphics{};
 	ResourceManager* _resourceManager{};
-	Screen* _screen{};
+	ScreenManager* _screen{};
 
 private:
 	std::unordered_set<ObjectReference<BaseCamera>> _cameras;

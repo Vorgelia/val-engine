@@ -1,6 +1,5 @@
 ﻿#pragma once
 #include "JSON.h"
-#include "FilesystemManager.h"
 #include "ObjectInitializer.h"
 #include "EngineConfigData.h"
 
@@ -31,6 +30,7 @@ protected:
 	static BaseObjectGeneratorMap* objectGenerators();
 
 	static const EngineConfigData& GetEngineConfigData(BaseObject* contextObject);
+	static void CreateComponents(GameObject* object, const json& j);
 
 public:
 	template<typename ObjectT>
@@ -92,6 +92,10 @@ ve::unique_object_ptr<ObjectT> ObjectFactory::CreateObjectOfClass(const std::str
 	}
 
 	ve::unique_object_ptr<ObjectT> object{ dynamic_cast<ObjectT*>(generatorIter->second()) };
+	if(object.get() == nullptr)
+	{
+		return nullptr;
+	}
 
 	InitializeObject(outer, object.get(), j);
 

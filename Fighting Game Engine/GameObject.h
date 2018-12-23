@@ -7,7 +7,7 @@
 #include "SceneObject.h"
 #include "GameInstance.h"
 
-class Transform;
+struct Transform;
 class Mesh;
 class Material;
 class Renderer;
@@ -30,7 +30,10 @@ public:
 	template<typename ComponentT>
 	std::vector<ObjectReference<ComponentT>> GetComponentsOfType() const;
 
-	GameObject();
+	virtual json Serialize() const override;
+	void Deserialize(const json& j) override;
+
+	GameObject() = default;
 	~GameObject() = default;
 };
 
@@ -48,14 +51,14 @@ ObjectReference<ComponentT> GameObject::GetComponentOfType() const
 {
 	for(auto& iter : _components)
 	{
-		ComponentT* component = dynamic_cast<ComponentT*>(iter);
+		ComponentT* component = dynamic_cast<ComponentT*>(iter.get());
 		if(component != nullptr)
 		{
 			return ObjectReference<ComponentT>(component);
 		}
 	}
 
-	return nullptr;
+	return ObjectReference<ComponentT>();
 }
 
 template <typename ComponentT>
@@ -65,7 +68,7 @@ std::vector<ObjectReference<ComponentT>> GameObject::GetComponentsOfType() const
 
 	for(auto& iter : _components)
 	{
-		ComponentT* component = dynamic_cast<ComponentT*>(iter);
+		ComponentT* component = dynamic_cast<ComponentT*>(iter.get());
 		if(component != nullptr)
 		{
 			outComponents.emplace_back(component);

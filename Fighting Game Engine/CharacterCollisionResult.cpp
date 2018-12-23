@@ -1,4 +1,5 @@
 ﻿#include "CharacterCollisionResult.h"
+#include <optional>
 
 void AttackCollisionHit::RegisterReflectionFields() const
 {
@@ -22,32 +23,25 @@ CollisionHit::CollisionHit(const CollisionBox& thisCollision, const CollisionBox
 //TODO: Templated enum flags type
 CharacterAttackResultFlags CharacterCollisionResult::attackResultFlags() const
 {
-	unsigned char flags = unsigned char(CharacterAttackResultFlags::None);
-	if(attackReceived.is_initialized())
+	CharacterAttackResultFlags flags = CharacterAttackResultFlags::None;
+	if(attackReceived.has_value())
 	{
-		flags += flags | unsigned char(CharacterAttackResultFlags::AttackReceived);
+		flags |= CharacterAttackResultFlags::AttackReceived;
 	}
 
-	if(attackHit.is_initialized())
+	if(attackHit.has_value())
 	{
-		flags += flags | unsigned char(CharacterAttackResultFlags::AttackHit);
+		flags |= CharacterAttackResultFlags::AttackHit;
 	}
 
 	return CharacterAttackResultFlags(flags);
 }
 
 CharacterCollisionResult::CharacterCollisionResult(
-	GameCharacter* otherCharacter, const boost::optional<AttackCollisionHit>&& attackReceived, const boost::optional<AttackCollisionHit>&& attackHit)
+	GameCharacter* otherCharacter, const std::optional<AttackCollisionHit>&& attackReceived, const std::optional<AttackCollisionHit>&& attackHit)
 	: otherCharacter(otherCharacter)
 	, attackReceived(attackReceived)
 	, attackHit(attackHit)
 {
 	
-}
-
-CharacterCollisionResult::CharacterCollisionResult()
-	: attackReceived()
-	, attackHit()
-	, collisionHits()
-{
 }
