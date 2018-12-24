@@ -13,7 +13,7 @@ void UpdateParticle(uint index)
 		return;
 		
 	vec4 data = ve_commonVec4Data[index];
-	data.xy -= uvOffset*6.5;
+	data.xy -= uvOffset*10;
 	
 	if(fract(ve_worldTime.x * 0.1f) < 0.5f)
 	{

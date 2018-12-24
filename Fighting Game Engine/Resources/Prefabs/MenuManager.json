@@ -19,7 +19,7 @@
 		},
 		{
 			"name":"ComputeShaderEffect",
-			"enabled":false,
+			"enabled":true,
 			"shaderPath":"Shaders/Base/Test_FB"
 		}
 	]
