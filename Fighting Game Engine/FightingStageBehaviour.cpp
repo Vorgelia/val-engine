@@ -14,18 +14,16 @@ FightingStageBehaviour::CharacterCollisionResultMap FightingStageBehaviour::Gene
 {
 	std::unordered_set<GameCharacter*> handledCharacters;
 	CharacterCollisionResultMap collisionResults;
-	for(const ObjectReference<GameCharacter>& thisCharacterRef : _gameManager->characters())
+	for(GameCharacter* thisCharacter : _gameManager->characters())
 	{
-		GameCharacter* thisCharacter = thisCharacterRef.get();
-		if(thisCharacter == nullptr)
+		if(!ve::IsValid(thisCharacter))
 		{
 			continue;
 		}
 
-		for(const ObjectReference<GameCharacter>& otherCharacterRef : _gameManager->characters())
+		for(GameCharacter* otherCharacter : _gameManager->characters())
 		{
-			GameCharacter* otherCharacter = otherCharacterRef.get();
-			if(otherCharacter == nullptr)
+			if(ve::IsValid(otherCharacter))
 			{
 				continue;
 			}

@@ -3,7 +3,6 @@
 #include "CharacterHitData.h"
 #include "CollisionBox.h"
 #include "EnumUtils.h"
-#include <boost/optional/optional.hpp>
 #include <optional>
 
 class GameCharacter;

@@ -12,7 +12,7 @@ class BaseRenderer : public ObjectComponent
 public:
 	virtual std::vector<RenderingCommand> GetRenderingCommands() const = 0;
 
-	BaseRenderer();
+	BaseRenderer() = default;
 	~BaseRenderer() = default;
 };
 

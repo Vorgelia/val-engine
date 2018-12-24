@@ -43,8 +43,12 @@ void GameInstance::OnInit()
 {
 	_updateDispatcher = ObjectFactory::CreateObject<UpdateDispatcher>(this);
 
-	_rawConfigData = Filesystem()->LoadFileResource<json>("EngineConfig.json");
-	_configData.Deserialize(_rawConfigData);
+	json* rawConfigDataPtr = ResourceManager()->GetJsonData("EngineConfig.json");
+	if(rawConfigDataPtr != nullptr)
+	{
+		_rawConfigData = *rawConfigDataPtr;
+		_configData.Deserialize(_rawConfigData);
+	}
 
 	//Utilities
 	Debug();
@@ -62,7 +66,7 @@ void GameInstance::OnInit()
 	Input();
 	GameSceneManager();
 	PlayerManager();
-	
+
 	_gameManager = ObjectFactory::CreateObjectOfClass<BaseGameManager>(_configData.gameConfigData.gameManagerClassName, this);
 
 	_timeTracker.Reset(glfwGetTime());

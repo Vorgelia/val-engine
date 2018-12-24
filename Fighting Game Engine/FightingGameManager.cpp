@@ -1,9 +1,9 @@
 #include "FightingGameManager.h"
 #include "GameSceneManager.h"
+#include "GameCharacter.h"
 #include "GameInstance.h"
 #include "PlayerManager.h"
 #include "GameScene.h"
-#include "GameCharacter.h"
 #include "GLIncludes.hpp"
 #include "FightingStageBehaviour.h"
 #include "ScreenManager.h"
@@ -90,13 +90,13 @@ void FightingGameManager::Update()
 
 GameCharacter* FightingGameManager::AddCharacter(const std::string& path)
 {
-	ObjectReference<GameCharacter> object = ObjectReference<GameCharacter>(_gameSceneManager->currentScene()->LoadObject(path));
+	GameCharacter* object = dynamic_cast<GameCharacter*>(_gameSceneManager->currentScene()->LoadObject(path).get());
 
-	if(!object.IsValid())
+	if(object == nullptr)
 	{
 		return nullptr;
 	}
 
 	_characters.emplace(object);
-	return object.get();
+	return object;
 }

@@ -48,6 +48,7 @@ inline void Delegate<argTypes...>::operator()(argTypes ...types)
 		else
 		{
 			ve::erase_swap(_listeners, i);
+			//_listeners.erase(_listeners.begin() + i);
 		}
 	}
 }

@@ -27,7 +27,9 @@ void ResourceManager::GenerateDefaultTextures()
 		0, 0, 0, 255,	 255, 0, 255, 255
 	};
 
-	_TextureMap.emplace("base_texture", ResourceWrapper<Texture>(_graphics->CreateTexture("base_texture", pixels, glm::ivec2(2, 2)), true));
+	ResourceWrapper<Texture> floof = ResourceWrapper<Texture>(_graphics->CreateTexture("base_texture", pixels, glm::ivec2(2, 2)), true);
+
+	_TextureMap.emplace(std::string("base_texture"), std::move(ResourceWrapper<Texture>(_graphics->CreateTexture("base_texture", pixels, glm::ivec2(2, 2)), true)));
 
 	pixels = std::vector<unsigned char>{ 0, 0, 0, 255 };
 	_TextureMap.emplace("black", ResourceWrapper<Texture>(_graphics->CreateTexture("black", pixels, glm::ivec2(1, 1)), true));

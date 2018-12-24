@@ -1,5 +1,6 @@
 #include "RenderingGL.h"
 #include "GameInstance.h"
+#include "RenderingDataBuffer.h"
 #include "ScreenManager.h"
 #include "FrameBuffer.h"
 #include "Mesh.h"
@@ -7,14 +8,12 @@
 #include "Texture.h"
 #include "Camera.h"
 #include "Transform.h"
-#include "Time.h"
 #include "Material.h"
 #include "ResourceManager.h"
 #include "GraphicsGL.h"
 #include "GraphicsBuffer.h"
 #include "DebugLog.h"
 #include "GraphicsBindingData.h"
-#include "RenderingDataBuffer.h"
 #include "TimeDataBuffer.h"
 #include "Vec4Buffer.h"
 
@@ -100,8 +99,8 @@ void RenderingGL::BeginFrame()
 	_graphics->ClearFrameBuffer(*_mainBuffer);
 
 	_timeDataBuffer->SetupData(
-		_owningInstance->timeTracker().time(),
-		_owningInstance->configData().gameConfigData.fixedGameUpdateInterval);
+		float(_owningInstance->timeTracker().time()),
+		float(_owningInstance->configData().gameConfigData.fixedGameUpdateInterval));
 	_renderingDataBuffer->SetupData(_screen->screenSize(), _screen->screenInvSize());
 
 	_graphics->UpdateGraphicsBuffer(*_timeDataBuffer);

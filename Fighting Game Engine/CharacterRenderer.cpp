@@ -90,3 +90,8 @@ void CharacterRenderer::OnInit()
 
 	_character = dynamic_cast<GameCharacter*>(_owner.get());
 }
+
+void CharacterRenderer::OnDestroyed()
+{
+	
+}

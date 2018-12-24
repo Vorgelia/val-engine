@@ -15,7 +15,7 @@ InputMotionComponent::InputMotionComponent(const json& j)
 	for(auto& iter : j["buttons"])
 	{
 		buttons.emplace_back(
-			JSON::Get<unsigned char>(iter["button"]),
+			InputButton(JSON::Get<unsigned char>(iter["button"])),
 			InputTypeMask(JSON::Get<unsigned char>(iter["type"]))
 		);
 	}

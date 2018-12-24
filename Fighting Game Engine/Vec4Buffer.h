@@ -1,5 +1,6 @@
 #pragma once
 #include "GraphicsBuffer.h"
+
 class Vec4Buffer :
 	public GraphicsBuffer
 {

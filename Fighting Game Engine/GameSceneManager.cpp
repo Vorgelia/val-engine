@@ -2,11 +2,11 @@
 #include "ResourceManager.h"
 #include "InputManager.h"
 #include "GraphicsGL.h"
+#include "BaseSceneBehavior.h"
 #include "RenderingGL.h"
 #include "GameScene.h"
 #include "DebugLog.h"
 #include "GameInstance.h"
-#include "Time.h"
 
 #define VE_SCENE_FUNCTION_CALL(fnName, ...)\
 	ApplyFunctionToCurrentScene([](GameScene* scene) { scene->fnName(); }, ##__VA_ARGS__);

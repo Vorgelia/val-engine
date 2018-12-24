@@ -209,7 +209,7 @@ void InputDevice::UpdateJoyInputs()
 
 void InputDevice::PollInput()
 {
-	_cachedInputFrames.emplace_back(0, 0);
+	_cachedInputFrames.emplace_back(InputButton::None, InputDirection::None);
 	if(_deviceID >= int(InputDeviceId::JoystickFirst) && !glfwJoystickPresent(_deviceID))
 		return;
 

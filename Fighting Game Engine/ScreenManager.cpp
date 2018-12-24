@@ -67,7 +67,7 @@ void ScreenManager::HandleResized(GLFWwindow* wnd, int sizeX, int sizeY)
 	}
 	else
 	{
-		_viewportSize = glm::ivec4((_screenSize.x - _screenSize.y * _viewportSize) / 2, 0, _screenSize.y * _viewportSize, _screenSize.y);
+		_viewportSize = glm::ivec4((_screenSize.x - _screenSize.y * _windowTargetAspect) / 2, 0, _screenSize.y * _windowTargetAspect, _screenSize.y);
 	}
 
 	ScreenUpdated.Invoke();

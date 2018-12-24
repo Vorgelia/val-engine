@@ -25,6 +25,7 @@ public:
 
 protected:
 	ObjectReferenceManager() = default;
+public:
 	~ObjectReferenceManager() = default;
 };
 
@@ -53,7 +54,6 @@ public:
 	explicit ObjectReference(ObjectT* object);
 	explicit ObjectReference(std::nullptr_t);
 	ObjectReference();
-	~ObjectReference();
 };
 
 template <typename ObjectT>
@@ -100,8 +100,14 @@ ObjectReference<ObjectT>::ObjectReference()
 	
 }
 
-template <typename ObjectT>
-ObjectReference<ObjectT>::~ObjectReference()
+namespace std
 {
-	static_assert(std::is_base_of_v<BaseObject, ObjectT>);
+	template <typename ObjectT> 
+	struct hash<ObjectReference<ObjectT>>
+	{
+		size_t operator()(const ObjectReference<ObjectT> & x) const
+		{
+			return std::hash<ObjectT*>().operator()(x.get());
+		}
+	};
 }

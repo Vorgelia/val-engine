@@ -4,6 +4,10 @@
 #include <GLM/glm.hpp>
 #include "Font.h"
 #include "ObjectReferenceManager.h"
+#include "TimeDataBuffer.h"
+#include "RenderingDataBuffer.h"
+#include "Vec4Buffer.h"
+#include "FrameBuffer.h"
 
 class Mesh;
 class BaseCamera;
@@ -24,10 +28,6 @@ class GraphicsGL;
 class ResourceManager;
 class ScreenManager;
 class Time;
-
-class TimeDataBuffer;
-class RenderingDataBuffer;
-class Vec4Buffer;
 
 class RenderingCommand;
 

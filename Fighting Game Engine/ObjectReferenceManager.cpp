@@ -1,10 +1,12 @@
 #include "ObjectReferenceManager.h"
 
+std::unique_ptr<ObjectReferenceManager> ObjectReferenceManager::_instance = nullptr;
+
 ObjectReferenceManager& ObjectReferenceManager::Get()
 {
 	if(_instance == nullptr)
 	{
-		_instance = std::make_unique<ObjectReferenceManager>();
+		_instance = std::unique_ptr<ObjectReferenceManager>(new ObjectReferenceManager());
 	}
 	return *_instance;
 }

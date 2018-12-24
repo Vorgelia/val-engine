@@ -35,12 +35,12 @@ void IntroBehaviour::OnInit()
 void IntroBehaviour::OnRenderUI()
 {
 	Material* screenMat = _resource->GetMaterial("Materials/Intro/Intro_Screen.vmat");
-	double currentTime = owningScene()->GetTime().time();
+	float currentTime = float(owningScene()->GetTime().time());
 
 	screenMat->uniformVectors["ve_color"].a = glm::clamp<float>(glm::min<float>(currentTime, _introDuration - currentTime), 0.0f, 1.0f);
 	_rendering->DrawScreenMesh(glm::vec4(0, 0, 1920, 1080), (Mesh*)nullptr, screenMat);
 
-	double deltaTime = owningScene()->GetTime().deltaTime();
+	float deltaTime = float(owningScene()->GetTime().deltaTime());
 
 	_rendering->DrawScreenText(glm::vec4(0, 10, 100, 100), 24, std::to_string(glm::min<double>((int)std::round(1.0 / deltaTime), 60)), nullptr);
 	_rendering->DrawScreenText(glm::vec4(0, 30, 100, 100), 24, std::to_string(glm::max<double>(((int)((1.0f / deltaTime) * 100))*0.01f, 1.0)), nullptr);
@@ -65,7 +65,7 @@ void IntroBehaviour::OnGameUpdate()
 		}
 	}
 
-	float currentTime = owningScene()->GetTime().time();
+	float currentTime = float(owningScene()->GetTime().time());
 	if(currentTime > _introDuration || playerInput)
 		_gameSceneManager->LoadScene("Menu");
 }

@@ -61,6 +61,6 @@ public:
 	bool EvaluateMotion(const InputMotion& motion);
 	bool InputMotionFrameCheck(const InputMotionComponent& motionComp, int index) const;
 
-	InputDevice();
+	InputDevice() = default;
 	~InputDevice() = default;
 };

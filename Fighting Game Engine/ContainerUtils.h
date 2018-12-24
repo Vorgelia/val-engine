@@ -4,16 +4,26 @@
 
 namespace ValEngine
 {
-	template<typename ContainerT>
-	void erase_swap(ContainerT& container, int index)
+	template<typename ContainedT>
+	void erase_swap(std::vector<ContainedT>& container, size_t index)
 	{
 		if(container.size() <= 1)
 		{
 			container.clear();
+		}
+		else if(index >= container.size())
+		{
 			return;
 		}
+		else if(index == container.size() - 1)
+		{
+			container.pop_back();
+		}
+		else
+		{
+			std::swap(container[index], container[container.size() - 1]);
+			container.pop_back();
+		}
 
-		std::swap(container.begin() + index, container.back());
-		container.pop_back();
 	}
 }

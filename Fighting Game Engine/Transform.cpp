@@ -117,7 +117,7 @@ Transform::Transform(ve::vec3 position, ve::quat quat, ve::vec3 scale)
 	: _updateFlags(UpdateFlags::Matrix)
 	, _position(position)
 	, _scale(scale)
-	, _rotation(glm::eulerAngles(quat))
+	, _rotation(glm::eulerAngles(glm::quat(quat)))
 	, _quat(quat)
 {
 

@@ -5,6 +5,7 @@
 #include <unordered_set>
 #include "BaseGameManager.h"
 #include "ObjectReferenceManager.h"
+#include "GameCharacter.h"
 
 class GameCharacter;
 class GameSceneManager;
@@ -25,7 +26,7 @@ private:
 private:
 	FightingGameState _currentState;
 
-	std::unordered_set<ObjectReference<GameCharacter>> _characters;
+	std::unordered_set<GameCharacter*> _characters;
 
 	void HandleSceneLoaded(const GameScene* scene);
 	void ChangeState(FightingGameState state);
@@ -42,7 +43,7 @@ public:
 	FightingGameStateEventHandler FightingGameStateChanged;
 
 	FightingGameState currentState() const { return _currentState; }
-	const std::unordered_set<ObjectReference<GameCharacter>>& characters() const { return _characters; }
+	const std::unordered_set<GameCharacter*>& characters() const { return _characters; }
 
 	FightingGameManager() = default;
 	~FightingGameManager() = default;

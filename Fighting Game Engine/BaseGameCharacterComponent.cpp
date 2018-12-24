@@ -4,7 +4,6 @@
 #include "FightingStageBehaviour.h"
 #include "FightingGameManager.h"
 
-
 void BaseGameCharacterComponent::OnInit()
 {
 	_gameCharacterOwner = dynamic_cast<GameCharacter*>(_owner.get());

@@ -3,6 +3,7 @@
 #include <memory>
 #include <thread>
 #include "BaseService.h"
+#include "InputDevice.h"
 #include "Delegate.h"
 
 class InputDevice;

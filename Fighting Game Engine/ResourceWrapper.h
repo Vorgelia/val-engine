@@ -17,7 +17,9 @@ protected:
 public:
 	ResourceT* Get() { return _resource.get(); }
 
-	explicit ResourceWrapper(std::unique_ptr<ResourceT>&& resourcePtr, bool isPersistent = false);
+	ResourceWrapper(std::unique_ptr<ResourceT>&& resourcePtr, bool isPersistent = false);
+	ResourceWrapper(ResourceWrapper<ResourceT>&& other) noexcept;
+	ResourceWrapper(ResourceWrapper<ResourceT>& other) = delete;
 	~ResourceWrapper() = default;
 };
 
@@ -27,4 +29,11 @@ ResourceWrapper<ResourceT>::ResourceWrapper(std::unique_ptr<ResourceT>&& resourc
 	, _isPersistent(isPersistent)
 {
 	
+}
+
+template <typename ResourceT>
+ResourceWrapper<ResourceT>::ResourceWrapper(ResourceWrapper<ResourceT>&& other) noexcept
+{
+	_resource.swap(other._resource);
+	_isPersistent = other._isPersistent;
 }

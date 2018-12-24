@@ -5,7 +5,6 @@
 #include <functional>
 #include "JSON.h"
 #include "SceneObject.h"
-#include "GameInstance.h"
 
 struct Transform;
 class Mesh;

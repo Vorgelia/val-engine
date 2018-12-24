@@ -3,6 +3,7 @@
 #include "GameInstance.h"
 #include "FilesystemManager.h"
 #include "RenderingGL.h"
+#include "BaseSceneBehavior.h"
 #include "ResourceManager.h"
 #include "ScreenManager.h"
 #include "DebugLog.h"

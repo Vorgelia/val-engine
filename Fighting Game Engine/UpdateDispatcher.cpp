@@ -22,6 +22,7 @@ void UpdateDispatcher::SortFunctions()
 	{
 		if(!_boundFunctions[i].IsValid())
 		{
+			//_boundFunctions.erase(_boundFunctions.begin() + i);
 			ve::erase_swap(_boundFunctions, i);
 			continue;
 		}
