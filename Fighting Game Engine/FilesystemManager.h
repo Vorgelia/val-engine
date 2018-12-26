@@ -50,6 +50,7 @@ public:
 	bool SaveFile(const fs::path& dir, std::string& content, int flags = std::ios::out | std::ios::trunc) const;
 
 	virtual void OnInit() override;
+	virtual void OnServiceInit() override;
 
 	FilesystemManager() = default;
 	~FilesystemManager() = default;

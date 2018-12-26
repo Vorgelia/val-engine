@@ -43,6 +43,11 @@ void PlayerManager::OnInit()
 	VE_REGISTER_UPDATE_FUNCTION(int(UpdateGroup::FrameUpdate) - 20, UpdateType::AnyFixedGameUpdate, UpdatePlayers);
 }
 
+void PlayerManager::OnServiceInit()
+{
+	
+}
+
 void PlayerManager::OnDestroyed()
 {
 	ClearPlayers();

@@ -39,6 +39,7 @@ public:
 	const glm::ivec4& viewportSize() const { return _viewportSize; }
 
 	void OnInit() override;
+	void OnServiceInit() override;
 	void OnDestroyed() override;
 
 	void Update();

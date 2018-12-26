@@ -49,7 +49,10 @@ void ScriptManager::OnInit()
 	_debug = _owningInstance->Debug();
 	_filesystem = _owningInstance->Filesystem();
 	_resource = _owningInstance->ResourceManager();
+}
 
+void ScriptManager::OnServiceInit()
+{
 	CacheGlobalVariables();
 	AddScript("Scripts/Base/example.vscript");
 }

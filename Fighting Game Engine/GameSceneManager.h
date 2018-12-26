@@ -32,6 +32,7 @@ public:
 	bool isLoading() const;
 
 	void OnInit() override;
+	void OnServiceInit() override;
 	void OnDestroyed() override;
 
 	void UpdateService();

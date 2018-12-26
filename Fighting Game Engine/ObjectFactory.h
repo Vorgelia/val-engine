@@ -65,7 +65,7 @@ ve::unique_object_ptr<ObjectT> ObjectFactory::CreateObject(BaseObject* outer, co
 {
 	ve::unique_object_ptr<ObjectT> object = CreateObjectDeferred<ObjectT>();
 
-	InitializeObject(outer, object.get(), j);
+	InitializeObject(object.get(), outer, j);
 
 	return object;
 }
@@ -97,7 +97,7 @@ ve::unique_object_ptr<ObjectT> ObjectFactory::CreateObjectOfClass(const std::str
 		return nullptr;
 	}
 
-	InitializeObject(outer, object.get(), j);
+	InitializeObject(object.get(), outer, j);
 
 	return object;
 }

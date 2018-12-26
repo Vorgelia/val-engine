@@ -33,6 +33,7 @@ private:
 
 public:
 	void OnInit() override;
+	void OnServiceInit() override;
 	void OnDestroyed() override;
 
 	Script* GetScript(const fs::path& path);

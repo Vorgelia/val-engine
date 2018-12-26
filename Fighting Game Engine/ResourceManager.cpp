@@ -160,7 +160,10 @@ void ResourceManager::OnInit()
 	_gameSceneManager = _owningInstance->GameSceneManager();
 
 	_gameSceneManager->SceneLoaded += VE_DELEGATE_FUNC(GameSceneManager::GameSceneEventHandler, HandleSceneLoaded);
+}
 
+void ResourceManager::OnServiceInit()
+{
 	GenerateDefaultTextures();
 	LoadDefaultResources();
 }

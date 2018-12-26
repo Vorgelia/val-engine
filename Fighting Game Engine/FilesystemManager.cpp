@@ -373,6 +373,11 @@ void FilesystemManager::OnInit()
 	_resource = _owningInstance->ResourceManager();
 }
 
+void FilesystemManager::OnServiceInit()
+{
+	
+}
+
 void FilesystemManager::LoadTextureData(const fs::path& path, std::vector<unsigned char>& out_pixels, glm::ivec2& out_size) const
 {
 	out_size.x = out_size.y = 0;

@@ -90,6 +90,7 @@ protected:
 public:
 
 	virtual void OnInit() override;
+	void OnServiceInit() override;
 	virtual void OnDestroyed() override;
 
 	ResourceManager() = default;

@@ -26,7 +26,10 @@ void GameSceneManager::OnInit()
 	_debug = _owningInstance->Debug();
 
 	VE_REGISTER_UPDATE_FUNCTION(UpdateGroup::FrameEnd, UpdateType::LastFixedGameUpdate, UpdateService);
+}
 
+void GameSceneManager::OnServiceInit()
+{
 	LoadScene(_owningInstance->configData().gameConfigData.defaultScene);
 }
 

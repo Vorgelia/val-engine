@@ -17,11 +17,12 @@
 	{\
 		if(_##type == nullptr)\
 		{\
-			_##type = ObjectFactory::CreateObject<::##type>(this);\
+			_##type = ObjectFactory::CreateObjectDeferred<::##type>();\
 			_activeServices.emplace_back(_##type.get());\
+			ObjectFactory::InitializeObject(_##type.get(), this);\
 		}\
 		return _##type.get();\
-	}
+	}\
 
 #define VE_SERVICE_GETTER(type) VE_NAMED_SERVICE_GETTER(type, type)
 
@@ -43,7 +44,8 @@ void GameInstance::OnInit()
 {
 	_updateDispatcher = ObjectFactory::CreateObject<UpdateDispatcher>(this);
 
-	json* rawConfigDataPtr = ResourceManager()->GetJsonData("EngineConfig.json");
+	_FilesystemManager = ObjectFactory::CreateObjectDeferred<FilesystemManager>();
+	std::unique_ptr<json> rawConfigDataPtr = _FilesystemManager->LoadFileResource<json>("EngineConfig.json");
 	if(rawConfigDataPtr != nullptr)
 	{
 		_rawConfigData = *rawConfigDataPtr;
@@ -59,6 +61,7 @@ void GameInstance::OnInit()
 	Graphics();
 
 	//File Management
+	ObjectFactory::InitializeObject(_FilesystemManager.get(), this);
 	ResourceManager();
 	ScriptManager();
 
@@ -66,6 +69,11 @@ void GameInstance::OnInit()
 	Input();
 	GameSceneManager();
 	PlayerManager();
+
+	for(auto& iter : _activeServices)
+	{
+		iter->OnServiceInit();
+	}
 
 	_gameManager = ObjectFactory::CreateObjectOfClass<BaseGameManager>(_configData.gameConfigData.gameManagerClassName, this);
 

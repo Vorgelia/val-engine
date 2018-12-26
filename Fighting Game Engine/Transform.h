@@ -37,7 +37,10 @@ public:
 	void SetPosition(ve::vec3 position);
 	void SetScale(ve::vec3 scale);
 	void SetRotation(ve::vec3 rotation);
-	void SetDepth(ve::dec_t depth);
+
+	void Translate(ve::vec3 translation);
+	void AddScale(ve::vec3 scale);
+	void AddRotation(ve::vec3 eulerAngles);
 
 	ve::vec3 GetScaleInverse() const;
 

@@ -45,6 +45,24 @@ void Transform::SetRotation(ve::vec3 rotation)
 	_updateFlags |= UpdateFlags::Matrix | UpdateFlags::Quat;
 }
 
+void Transform::Translate(ve::vec3 translation)
+{
+	_position += translation;
+	_updateFlags |= UpdateFlags::Matrix;
+}
+
+void Transform::AddScale(ve::vec3 scale)
+{
+	_scale += scale;
+	_updateFlags |= UpdateFlags::Matrix;
+}
+
+void Transform::AddRotation(ve::vec3 eulerAngles)
+{
+	_rotation += eulerAngles;
+	_updateFlags |= UpdateFlags::Matrix | UpdateFlags::Quat;
+}
+
 ve::vec3 Transform::GetScaleInverse() const
 {
 	ve::vec3 invScale{};

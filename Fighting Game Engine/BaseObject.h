@@ -30,7 +30,6 @@ class GameInstance;
 #define VE_REGISTER_UPDATE_FUNCTION(UpdateGroup, UpdateType, UpdateFunction)\
 	VE_REGISTER_CUSTOM_UPDATE_FUNCTION(_owningInstance->updateDispatcher(), UpdateGroup, UpdateType, UpdateFunction)
 
-
 class BaseObject : public IReflectable
 {
 	friend class ObjectInitializer;

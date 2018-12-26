@@ -34,6 +34,11 @@ void ScreenManager::OnInit()
 	_owningInstance->updateDispatcher().BindFunction(this, UpdateFunctionTiming(int(UpdateGroup::TimingUpdate) + 1, UpdateType::EngineUpdate), [this]() { Update(); });
 }
 
+void ScreenManager::OnServiceInit()
+{
+	
+}
+
 void ScreenManager::OnDestroyed()
 {
 	glfwTerminate();

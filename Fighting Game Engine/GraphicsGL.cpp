@@ -199,8 +199,13 @@ GLuint GraphicsGL::CreateShaderProgram(const std::vector<GLuint>& shaders, Shade
 void GraphicsGL::OnInit()
 {
 	_debug = _owningInstance->Debug();
+}
+
+void GraphicsGL::OnServiceInit()
+{
 	FT_Init_FreeType(&_freetypeLibrary);
 }
+
 void GraphicsGL::OnDestroyed()
 {
 	

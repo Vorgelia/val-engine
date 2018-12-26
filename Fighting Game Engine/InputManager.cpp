@@ -35,9 +35,12 @@ void InputManager::OnInit()
 {
 	_screenManager = _owningInstance->ScreenManager();
 
-	AddInputDevice(int(InputDeviceId::Keyboard));
-
 	VE_REGISTER_UPDATE_FUNCTION(UpdateGroup::TimingUpdate, UpdateType::AnyFixedGameUpdate, UpdateInputs);
+}
+
+void InputManager::OnServiceInit()
+{
+	AddInputDevice(int(InputDeviceId::Keyboard));
 }
 
 void InputManager::OnDestroyed()

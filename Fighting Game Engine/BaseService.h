@@ -4,7 +4,12 @@ class GameInstance;
 
 class BaseService : public BaseObject
 {
+	friend class GameInstance;
+
 	VE_OBJECT_DECLARATION(BaseService);
+
+protected:
+	virtual void OnServiceInit() {}
 
 public:
 	BaseService& operator=(BaseService&) = delete;
@@ -13,6 +18,6 @@ public:
 	BaseService(BaseService& service) = delete;
 	BaseService(BaseService&& service) = delete;
 
-	BaseService();
+	BaseService() = default;
 	virtual ~BaseService() = default;
 };

@@ -31,6 +31,7 @@ public:
 	DeviceEventHandler DeviceRemoved;
 
 	virtual void OnInit() override;
+	void OnServiceInit() override;
 	virtual void OnDestroyed() override;
 
 	void UpdateInputs();

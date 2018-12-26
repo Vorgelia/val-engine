@@ -29,7 +29,10 @@ void RenderingGL::OnInit()
 	_debug = _owningInstance->Debug();
 	_resourceManager = _owningInstance->ResourceManager();
 	_screen = _owningInstance->ScreenManager();
+}
 
+void RenderingGL::OnServiceInit()
+{
 	const RenderingConfigData& renderingConfigData = _owningInstance->configData().renderingConfigData;
 
 	//Generate the main buffer and the auxiliary buffers.

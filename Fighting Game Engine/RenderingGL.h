@@ -77,6 +77,7 @@ private:
 
 public:
 	void OnInit() override;
+	void OnServiceInit() override;
 	void OnDestroyed() override;
 
 	FrameBuffer* GetTemporaryFrameBuffer();

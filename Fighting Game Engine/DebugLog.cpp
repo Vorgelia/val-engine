@@ -14,6 +14,11 @@ VE_OBJECT_DEFINITION(Debug)
 
 void Debug::OnInit()
 {
+
+}
+
+void Debug::OnServiceInit()
+{
 	_endWrite.store(false);
 	_writeStream = std::ofstream("log_output.txt", std::ios::trunc);
 	_writeStream << "--Val Engine Output Log--";

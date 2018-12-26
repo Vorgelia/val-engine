@@ -24,6 +24,7 @@ public:
 	void ClearPlayers();
 
 	void OnInit() override;
+	void OnServiceInit() override;
 	void OnDestroyed() override;
 
 	void UpdatePlayers();

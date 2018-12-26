@@ -62,6 +62,7 @@ private:
 
 public:
 	void OnInit() override;
+	void OnServiceInit() override;
 	void OnDestroyed() override;
 
 	std::unique_ptr<Texture> CreateTexture(const std::string& name, const std::vector<unsigned char>& pixels, glm::ivec2 dimensions, int format = GL_RGBA16, GLuint filt = GL_NEAREST, GLuint edgeBehaviour = GL_REPEAT);

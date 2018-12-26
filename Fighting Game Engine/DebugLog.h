@@ -38,6 +38,7 @@ private:
 
 public:
 	void OnInit() override;
+	void OnServiceInit() override;
 	void OnDestroyed() override;
 
 	void Log(const std::string& data, std::string fileName, int fileLine, LogItem::Type type = LogItem::Type::Log);

@@ -11,7 +11,7 @@
 	private:\
 	ve::unique_object_ptr<class type> _##type;\
 	public:\
-	type* name();
+	::##type* name();\
 
 #define VE_SERVICE(type) VE_NAMED_SERVICE(type, type)
 
