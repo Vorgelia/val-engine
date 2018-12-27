@@ -11,7 +11,7 @@ struct RenderingConfigData : public IReflectable
 
 	bool useSingleBuffer;
 
-	int frameBuferTextureAmount;
+	int frameBufferTextureAmount;
 	std::string defaultFont;
 
 	void RegisterReflectionFields() const override
@@ -23,7 +23,7 @@ struct RenderingConfigData : public IReflectable
 
 		VE_REFLECTION_VAR(Field, useSingleBuffer);
 
-		VE_REFLECTION_VAR(Field, frameBuferTextureAmount);
+		VE_REFLECTION_VAR(Field, frameBufferTextureAmount);
 		VE_REFLECTION_VAR(Field, defaultFont);
 	}
 };

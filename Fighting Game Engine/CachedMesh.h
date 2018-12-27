@@ -33,11 +33,6 @@ public:
 	std::vector<GLuint> elements;
 	std::vector<VertexAttribute> vertexFormat;
 
-	std::unordered_set<Mesh*> owners;
-
-	bool RegisterOwner(Mesh*);
-	bool UnregisterOwner(Mesh*);
-
 	CachedMesh(const std::string& name, std::vector<float>& verts, std::vector<GLuint>& elements, const std::vector<VertexAttribute>& vertexFormat);
 	CachedMesh(std::string name);
 	~CachedMesh();

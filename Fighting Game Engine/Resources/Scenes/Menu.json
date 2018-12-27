@@ -1,7 +1,13 @@
 {
 	"sceneBehavior":
 	{
-		"__ve_class" : "FightingStageBehaviour"
+		"__ve_class" : "FightingStageBehaviour",
+		"stageBounds":{
+			"x": -60,
+			"y": 2,
+			"z": 60,
+			"w": 50
+		}
 	},
 	"objects":
 	[
@@ -13,28 +19,26 @@
 			"id":1,
 			"name":"Background",
 			"enabled":true,
+			"localTransform":{
+				"position":{
+					"x":0,
+					"y":0,
+					"z":10
+				},
+				"scale":{
+					"x":240,
+					"y":180,
+					"z":1
+				},
+				"rotation":{
+					"x":0,
+					"y":0,
+					"z":0
+				}
+			},
 			"__ve_components":[
 				{
-					"name":"Transform",
-					"enabled":true,
-					"position":{
-						"x":0,
-						"y":0
-					},
-					"scale":{
-						"x":240,
-						"y":180
-					},
-					"rotation":{
-						"x":0,
-						"y":0,
-						"z":0,
-						"w":1
-					},
-					"depth":0
-				},
-				{
-					"name":"Renderer",
+					"__ve_class":"Renderer",
 					"enabled":true,
 					"mesh":"Meshes/Base/quad_sprite.vm",
 					"material":"Materials/Menu/Menu_Test.vmat"
@@ -50,11 +54,11 @@
 				"position":{
 					"x":5,
 					"y":-36,
-					"z":0
+					"z":20
 				},
 				"scale":{
 					"x":145,
-					"y":145
+					"y":145,
 					"z":1
 				},
 				"rotation":{
@@ -62,7 +66,7 @@
 					"y":0,
 					"z":0
 				}
-			}
+			},
 			"__ve_components":[
 				{
 					"__ve_class":"Renderer",

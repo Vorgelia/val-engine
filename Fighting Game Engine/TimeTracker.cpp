@@ -9,8 +9,14 @@ void TimeTracker::Reset(double currentTime)
 
 void TimeTracker::Update(double currentTime)
 {
-	_deltaTime = currentTime - _timeOffset;
+	_deltaTime = currentTime - _time;
 	_time = currentTime;
+}
+
+void TimeTracker::Update(const TimeTracker& baseTimeTracker)
+{
+	_deltaTime = baseTimeTracker.deltaTime();
+	_time = baseTimeTracker.time();
 }
 
 TimeTracker::TimeTracker()

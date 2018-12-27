@@ -17,23 +17,6 @@ std::vector<VertexAttribute> VertexAttribute::defaultMesh()
 	return{ VertexAttribute(VertexAttributeLocation::Vertex, 2), VertexAttribute(VertexAttributeLocation::UV, 2), VertexAttribute(VertexAttributeLocation::Normal, 3) };
 }
 
-bool CachedMesh::RegisterOwner(Mesh* owner)
-{
-	auto result = owners.insert(owner);
-	return result.second;
-}
-
-bool CachedMesh::UnregisterOwner(Mesh* owner)
-{
-	auto iter = owners.find(owner);
-	if(iter != owners.end())
-	{
-		owners.erase(iter);
-		return true;
-	}
-	return false;
-}
-
 CachedMesh::CachedMesh(const std::string& name, std::vector<float>& verts, std::vector<GLuint>& elements, const std::vector<VertexAttribute>& vertexFormat)
 {
 	this->name = name;

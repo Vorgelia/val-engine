@@ -49,8 +49,8 @@ public:
 
 	void SetResolution(ve::ivec2 resolution);
 
-	bool IsValid() const { return (_flags | FrameBufferFlags::Valid) != FrameBufferFlags::None; }
-	bool IsDirty() const { return (_flags | FrameBufferFlags::Dirty) != FrameBufferFlags::None; }
+	bool IsValid() const { return (_flags & FrameBufferFlags::Valid) != FrameBufferFlags::None; }
+	bool IsDirty() const { return (_flags & FrameBufferFlags::Dirty) != FrameBufferFlags::None; }
 	
 	FrameBuffer(ve::ivec2 size, int texAmount, bool depthStencil, GLint format, glm::vec4 clearColor, GLint filtering, GLuint clearFlags);
 	~FrameBuffer() = default;

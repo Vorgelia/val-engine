@@ -14,6 +14,8 @@ class ObjectComponent;
 
 class GameObject : public SceneObject
 {
+	VE_OBJECT_DECLARATION(GameObject);
+
 	friend class GameScene;
 
 protected:

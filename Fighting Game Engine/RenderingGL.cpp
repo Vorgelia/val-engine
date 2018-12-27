@@ -36,10 +36,9 @@ void RenderingGL::OnServiceInit()
 	const RenderingConfigData& renderingConfigData = _owningInstance->configData().renderingConfigData;
 
 	//Generate the main buffer and the auxiliary buffers.
-	_mainBuffer = _graphics->CreateFrameBuffer(_screen->screenSize(), renderingConfigData.frameBuferTextureAmount, true, GL_RGBA16, glm::vec4(0, 0, 0, 1));
+	_mainBuffer = _graphics->CreateFrameBuffer(_screen->screenSize(), renderingConfigData.frameBufferTextureAmount, true, GL_RGBA16, glm::vec4(0, 0, 0, 1));
 
 	BindFrameBufferImages(_mainBuffer.get(), (GLuint)ImageBindingPoints::MainBufferAttachment0);
-	BindFrameBufferImages(_mainBuffer.get(), (GLuint)ImageBindingPoints::AuxBuffer2Attachment0);
 
 	//The ortho mat and the screen mat might be confusing. It's less that they set a rendering resolution and more that they map the -1 to 1 coordinates to what is specified.
 	//Why do we need two different ones? Screen mat maps the screen pixels from the top-left corner(0,0) to the bottom-right(1920,1080) and it's used with UI elements.
@@ -63,7 +62,9 @@ void RenderingGL::OnServiceInit()
 	//Register a callback for the screen resizing
 	_screen->ScreenUpdated += VE_DELEGATE_FUNC(ScreenManager::ScreenUpdateEventHandler, OnScreenResize);
 
-	_owningInstance->updateDispatcher().BindFunction(this, UpdateFunctionTiming(UpdateGroup::Rendering, UpdateType::LastFixedGameUpdate), [this]() { RenderAllCameras(); });
+	VE_REGISTER_UPDATE_FUNCTION(UpdateGroup::Rendering, UpdateType::LastFixedGameUpdate, RenderAllCameras);
+	VE_REGISTER_UPDATE_FUNCTION(UpdateGroup::FrameStart, UpdateType::LastFixedGameUpdate, BeginFrame);
+	VE_REGISTER_UPDATE_FUNCTION(UpdateGroup::FrameEnd, UpdateType::LastFixedGameUpdate, EndFrame);
 }
 
 void RenderingGL::OnDestroyed()

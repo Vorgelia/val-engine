@@ -1,48 +1,40 @@
 {
-	"gameConfigData":
-	{
-		"gameName" : "Val Engine",
-		"gameManagerClassName" : "FightingGameManager",
-		"fixedGameUpdateInterval" : 0.01666666666,
-		"defaultScene" : "Scenes/Intro",
-		"maxNetworkPlayers" : 16
-	},
-	"inputConfigData":
-	{
-		"inputBufferLeniencyFirst" : 1,
-		"inputBufferLeniencyAny" : 8,
-		"inputBufferSize" : 1200,
-	},
-	"renderingConfigData":
-	{
-		"defaultResolution" : 
-		{
-			"x" = 1280,
-			"y" = 720
-		},
-		"targetAspectRatio" : 
-		{
-			"x" = 16,
-			"y" = 9
-		},
-		"spriteRenderingScale" : 
-		{
-			"x" = 192,
-			"y" = 108
-		},
-		"uiRenderingScale" : 
-		{
-			"x" = 1920,
-			"y" = 1080
-		},
-		"useSingleBuffer" : false,
-		"frameBufferTextureAmount" : 3,
-		"defaultFont" : "Fonts/Amble.ttf"
-	},
-	"serializationConfigData":
-	{
-		"objectClassPropertyName" : "__ve_class",
-		"componentListPropertyName" : "__ve_components",
-		"prefabPathPropertyName" : "__ve_prefabPath"
-	}
+   "gameConfigData":{
+      "gameName":"Val Engine",
+      "gameManagerClassName":"FightingGameManager",
+      "fixedGameUpdateInterval":0.01666666666,
+      "defaultScene":"Intro",
+      "maxNetworkPlayers":16
+   },
+   "inputConfigData":{
+      "inputBufferLeniencyFirst":1,
+      "inputBufferLeniencyAny":8,
+      "inputBufferSize":1200
+   },
+   "renderingConfigData":{
+      "defaultResolution":{
+         "x":1280,
+         "y":720
+      },
+      "targetAspectRatio":{
+         "x":16,
+         "y":9
+      },
+      "spriteRenderingScale":{
+         "x":192,
+         "y":108
+      },
+      "uiRenderingScale":{
+         "x":1920,
+         "y":1080
+      },
+      "useSingleBuffer":false,
+      "frameBufferTextureAmount":3,
+      "defaultFont":"Fonts/Amble.ttf"
+   },
+   "serializationConfigData":{
+      "objectClassPropertyName":"__ve_class",
+      "componentListPropertyName":"__ve_components",
+      "prefabPathPropertyName":"__ve_prefabPath"
+   }
 }

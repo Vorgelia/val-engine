@@ -9,6 +9,7 @@
 void ObjectInitializer::InitializeObject(BaseObject* other) const
 {
 	other->_owningInstance = _outerInstance;
+	other->_outer = _outer;
 
 	ObjectComponent* otherAsObjectComponent = dynamic_cast<ObjectComponent*>(other);
 	SceneObject* otherAsSceneObject;

@@ -15,6 +15,8 @@ protected:
 	double _fixedGameUpdateInterval;
 	double _lastFixedGameUpdateTime;
 
+	int _gameUpdatesPerFrame;
+
 	bool _justLoadedLevel;
 
 	bool _initialized;
@@ -29,6 +31,8 @@ protected:
 	void RunUpdateFunctionsOfType(UpdateType type);
 
 public:
+	int gameUpdatesPerFrame() const { return _gameUpdatesPerFrame; }
+
 	void BindFunction(BaseObject* object, UpdateFunctionTiming timing, TrackedUpdateFunction::func_t function);
 	void UnbindFunction(BaseObject* object);
 	void DispatchUpdates();

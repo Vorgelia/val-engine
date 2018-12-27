@@ -1,5 +1,5 @@
 #pragma once
-#include "BaseSceneBehavior.h"
+#include "ObjectComponent.h"
 
 struct MaterialTexture;
 
@@ -10,7 +10,7 @@ class InputManager;
 class ResourceManager;
 class ScreenManager;
 
-class MenuBehaviour : public BaseSceneBehavior
+class MenuBehaviour : public ObjectComponent
 {
 	VE_OBJECT_DECLARATION(MenuBehaviour);
 

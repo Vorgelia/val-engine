@@ -10,6 +10,7 @@
 #include "CircularBuffer.h"
 #include "Camera.h"
 #include "ScreenManager.h"
+#include "DebugLog.h"
 
 VE_OBJECT_DEFINITION(MenuBehaviour);
 
@@ -21,6 +22,9 @@ void MenuBehaviour::OnInit()
 	_resource = _owningInstance->ResourceManager();
 
 	_fadingOverlay = std::make_unique<MaterialTexture>(_resource->GetTexture("black"));
+
+	VE_REGISTER_UPDATE_FUNCTION(UpdateGroup::FrameUpdate, UpdateType::AnyFixedGameUpdate, OnGameUpdate);
+	VE_REGISTER_UPDATE_FUNCTION(UpdateGroup::UI, UpdateType::LastFixedGameUpdate, OnRenderUI);
 }
 
 void MenuBehaviour::OnRenderUI()
@@ -28,6 +32,8 @@ void MenuBehaviour::OnRenderUI()
 	double currentTime = owningScene()->GetTime().time();
 	double deltaTime = owningScene()->GetTime().deltaTime();
 
+	
+	_owningInstance->Debug()->VE_LOG("deltaTime" + std::to_string(deltaTime), LogItem::Type::Message);
 
 	_rendering->DrawScreenText(glm::vec4(0, 10, 100, 100), 24, std::to_string(glm::min<double>((int)std::round(1.0 / deltaTime), 60)), nullptr);
 

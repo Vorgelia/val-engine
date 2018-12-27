@@ -26,7 +26,7 @@ public:
 protected:
 	ObjectReferenceManager() = default;
 public:
-	~ObjectReferenceManager() = default;
+	~ObjectReferenceManager();
 };
 
 template<typename ObjectT = BaseObject>

@@ -1,20 +1,7 @@
-[
+{
+	"sceneBehavior":
 	{
-        "id":1,
-        "name":"IntroManager",
-        "enabled":true,
-        "behaviours":
-		[
-            {
-                "name":"IntroBehaviour",
-                "enabled":true,
-                "introDuration":4.0
-            },
-			{
-				"name":"ScriptBehaviour",
-				"enabled":true,
-				"script":"Scripts/Base/example.vscript"
-			}
-        ]
-    }
-]
+		"__ve_class" : "IntroBehaviour",
+		"scriptPath" : "Scripts/Base/example.vscript"
+	}
+}

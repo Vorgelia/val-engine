@@ -37,7 +37,7 @@ void UpdateDispatcher::SortFunctions()
 
 void UpdateDispatcher::ResetFixedGameUpdateTime()
 {
-	_lastFixedGameUpdateTime = _owningInstance->timeTracker().time() + _lastFixedGameUpdateTime;
+	_lastFixedGameUpdateTime = _owningInstance->timeTracker().time() + _fixedGameUpdateInterval;
 }
 
 void UpdateDispatcher::HandleSceneLoaded(const GameScene* scene)
@@ -100,38 +100,49 @@ void UpdateDispatcher::DispatchUpdates()
 
 	const TimeTracker& time = _owningInstance->timeTracker();
 
+	//TODO: Cleanup
 	int gameUpdateAmount = 0;
-	if(_fixedGameUpdateInterval > 0 && glm::nearlyZero(_fixedGameUpdateInterval))
+	if(_fixedGameUpdateInterval > 0 && !glm::nearlyZero(_fixedGameUpdateInterval))
 	{
-		gameUpdateAmount = int(glm::floor((_lastFixedGameUpdateTime - time.time()) / _fixedGameUpdateInterval));
+		if(_lastFixedGameUpdateTime < 0.0f)
+		{
+			gameUpdateAmount = 1;
+			_lastFixedGameUpdateTime = time.time();
+		}
+		else
+		{
+			gameUpdateAmount = int(glm::floor((_lastFixedGameUpdateTime - time.time()) / _fixedGameUpdateInterval));
+			gameUpdateAmount = glm::min(gameUpdateAmount, 10);
+			_lastFixedGameUpdateTime += _fixedGameUpdateInterval * gameUpdateAmount;
+		}
+		_gameUpdatesPerFrame = gameUpdateAmount;
 	}
 
-	int updateAmount = 0;
-	while(updateAmount < glm::max(1, gameUpdateAmount))
+	int updatesRan = 0;
+	while(updatesRan < glm::max(1, gameUpdateAmount))
 	{
 		UpdateType updateFunctionType = UpdateType::None;
 
-		if(updateAmount == 0)
+		if(updatesRan == 0)
 		{
 			updateFunctionType |= UpdateType::EngineUpdate;
 		}
 
-		if(updateAmount < gameUpdateAmount)
+		if(updatesRan < gameUpdateAmount)
 		{
 			updateFunctionType |= UpdateType::AnyFixedGameUpdate;
-			if(updateAmount == 0)
+			if(updatesRan == 0)
 			{
 				updateFunctionType |= UpdateType::FirstFixedGameUpdate;
 			}
-			if(updateAmount == gameUpdateAmount - 1)
+			if(updatesRan == gameUpdateAmount - 1)
 			{
 				updateFunctionType |= UpdateType::LastFixedGameUpdate;
 			}
 		}
 
 		RunUpdateFunctionsOfType(updateFunctionType);
-
-		++updateAmount;
+		++updatesRan;
 	}
 }
 

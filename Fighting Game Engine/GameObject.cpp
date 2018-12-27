@@ -3,6 +3,8 @@
 #include "ResourceManager.h"
 #include "Renderer.h"
 
+VE_OBJECT_DEFINITION(GameObject);
+
 ObjectReference<ObjectComponent> GameObject::AddComponentFromJson(const json& j)
 {
 	_components.push_back(ObjectFactory::CreateObjectFromJson<ObjectComponent>(this, j));

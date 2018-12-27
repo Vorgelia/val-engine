@@ -4,17 +4,8 @@
 #pragma Bind Map
 #pragma Bind Math
 
-//This function runs every frame
-function GameUpdate() : void
-	
-end
-
-function EpsilonEquals(dec lhs, dec rhs) : bool
-	return ve_math_abs(lhs - rhs) < 0.000005
-end
-
 //This function runs once when the script is loaded
-function Init() : void
+function Main() : void
 	ve_assert(ve_math_abs(-100) == 100, "math abs")
 	ve_assert(ve_math_floor(10.1252516) == 10, "math floor")
 	ve_assert(ve_math_ceil(10.000001) == 11, "math ceil")
@@ -81,6 +72,10 @@ function Init() : void
 	return
 	
 	ve_assert(false, "control flow part 2")
+end
+
+function EpsilonEquals(dec lhs, dec rhs) : bool
+	return ve_math_abs(lhs - rhs) < 0.000005
 end
 
 function JustReturn666() : dec

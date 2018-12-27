@@ -26,6 +26,10 @@ void ComputeShaderEffect::UpdateEffect()
 
 void ComputeShaderEffect::Deserialize(const json& j)
 {
+	_resource = _owningInstance->ResourceManager();
+	_graphics = _owningInstance->Graphics();
+	_rendering = _owningInstance->Rendering();
+
 	std::string shaderPath;
 	if(JSON::TryGetMember(j, "shaderPath", shaderPath))
 	{
@@ -35,10 +39,6 @@ void ComputeShaderEffect::Deserialize(const json& j)
 
 void ComputeShaderEffect::OnInit()
 {
-	_resource = _owningInstance->ResourceManager();
-	_graphics = _owningInstance->Graphics();
-	_rendering = _owningInstance->Rendering();
-
 	 _sceneCamera = _owningInstance->GameSceneManager()->currentScene()->FindObjectOfType<BaseCamera>();
 	 if(_sceneCamera.IsValid())
 	 {

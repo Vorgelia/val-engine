@@ -25,3 +25,8 @@ bool ObjectReferenceManager::IsObjectValid(const BaseObject* object)
 {
 	return (object != nullptr) && (_objectLookup.find(object) != _objectLookup.end());
 }
+
+ObjectReferenceManager::~ObjectReferenceManager()
+{
+	_instance = nullptr;
+}

@@ -51,9 +51,11 @@ void GameScene::OnInit()
 	_resource = _owningInstance->ResourceManager();
 	_rendering = _owningInstance->Rendering();
 
-	_timeTracker.Reset(_owningInstance->timeTracker().time());
-
 	LoadResources();
+
+	VE_REGISTER_UPDATE_FUNCTION(UpdateGroup::TimingUpdate, UpdateType::EngineUpdate, UpdateTiming);
+
+	_timeTracker.Reset(_owningInstance->timeTracker().time());
 }
 
 void GameScene::OnDestroyed()
@@ -62,6 +64,11 @@ void GameScene::OnDestroyed()
 	_objectNameLookup.clear();
 
 	_loaded = false;
+}
+
+void GameScene::UpdateTiming()
+{
+	_timeTracker.Update(_owningInstance->timeTracker());
 }
 
 bool GameScene::loaded() const

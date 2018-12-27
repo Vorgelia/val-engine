@@ -58,6 +58,8 @@ public:
 	virtual void OnInit() override;
 	virtual void OnDestroyed() override;
 
+	void UpdateTiming();
+
 	template<typename ObjectT = GameObject>
 	ObjectReference<ObjectT> AddObject(const json& jsonData = json());
 	ObjectReference<GameObject> AddObjectFromJson(const json& jsonData = json());

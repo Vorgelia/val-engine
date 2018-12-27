@@ -20,6 +20,7 @@ private:
 
 private:
 	float _introDuration = 4;
+	std::string _scriptPath;
 
 public:
 	virtual void RegisterReflectionFields() const;

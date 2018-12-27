@@ -88,12 +88,14 @@ ve::unique_object_ptr<ObjectT> ObjectFactory::CreateObjectOfClass(const std::str
 	auto& generatorIter = generators->find(className);
 	if(generatorIter == generators->end())
 	{
+		__debugbreak();
 		return nullptr;
 	}
 
 	ve::unique_object_ptr<ObjectT> object{ dynamic_cast<ObjectT*>(generatorIter->second()) };
 	if(object.get() == nullptr)
 	{
+		__debugbreak();
 		return nullptr;
 	}
 
@@ -110,6 +112,7 @@ ve::unique_object_ptr<ObjectT> ObjectFactory::CreateObjectFromJson(BaseObject* o
 	std::string className{};
 	if(!JSON::TryGetMember(j, classPropertyName, className))
 	{
+		__debugbreak();
 		return nullptr;
 	}
 

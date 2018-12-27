@@ -52,7 +52,7 @@ void GameSceneManager::UpdateService()
 		_isLoading = true;
 
 		_currentScene = ObjectFactory::CreateObjectDeferred<GameScene>();
-		_currentScene->_dataPath = "/Scenes/"+_sceneToLoad+".json";
+		_currentScene->_dataPath = "Scenes/"+_sceneToLoad+".json";
 		ObjectFactory::InitializeObject(_currentScene.get(), this);
 		_sceneToLoad.clear();
 

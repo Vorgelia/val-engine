@@ -21,10 +21,9 @@
 			"z":0
 		}
 	},
-	
 	"__ve_components":[
 		{
-			"name":"CharacterRenderer",
+			"__ve_class":"CharacterRenderer",
 			"enabled":true,
 			"mesh":"Meshes/Base/quad_sprite_character.vm",
 			"material":"Materials/Menu/Menu_Test.vmat"
