@@ -78,6 +78,6 @@ void IntroBehaviour::OnGameUpdate()
 	}
 
 	float currentTime = float(owningScene()->GetTime().time());
-	/*if(currentTime > _introDuration || playerInput)
-		_gameSceneManager->LoadScene("Menu");*/
+	if(currentTime > _introDuration || playerInput)
+		_gameSceneManager->LoadScene("Menu");
 }

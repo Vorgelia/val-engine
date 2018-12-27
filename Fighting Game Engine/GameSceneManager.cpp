@@ -44,14 +44,10 @@ void GameSceneManager::UpdateService()
 	{
 		_debug->VE_LOG("----\n\n\n Loading Scene: " + _sceneToLoad + "\n\n\n----", LogItem::Type::Message);
 
-		if(_currentScene != nullptr)
-		{
-			_currentScene.reset();
-		}
-
 		_isLoading = true;
 
-		_currentScene = ObjectFactory::CreateObjectDeferred<GameScene>();
+		ve::unique_object_ptr<GameScene> newScene = ObjectFactory::CreateObjectDeferred<GameScene>();
+		_currentScene = std::move(newScene);
 		_currentScene->_dataPath = "Scenes/"+_sceneToLoad+".json";
 		ObjectFactory::InitializeObject(_currentScene.get(), this);
 		_sceneToLoad.clear();

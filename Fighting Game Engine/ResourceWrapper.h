@@ -34,6 +34,6 @@ ResourceWrapper<ResourceT>::ResourceWrapper(std::unique_ptr<ResourceT>&& resourc
 template <typename ResourceT>
 ResourceWrapper<ResourceT>::ResourceWrapper(ResourceWrapper<ResourceT>&& other) noexcept
 {
-	_resource.swap(other._resource);
+	_resource = std::move(other._resource);
 	_isPersistent = other._isPersistent;
 }

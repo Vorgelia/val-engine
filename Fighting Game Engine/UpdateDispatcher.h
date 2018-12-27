@@ -10,7 +10,10 @@ class UpdateDispatcher : public BaseObject
 
 protected:
 	std::vector<TrackedUpdateFunction> _boundFunctions;
+	std::vector<TrackedUpdateFunction> _pendingBoundFunctions;
+
 	bool _shouldSortFunctions;
+	bool _isDispatchingUpdates;
 
 	double _fixedGameUpdateInterval;
 	double _lastFixedGameUpdateTime;

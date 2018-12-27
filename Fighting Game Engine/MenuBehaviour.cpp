@@ -32,10 +32,16 @@ void MenuBehaviour::OnRenderUI()
 	double currentTime = owningScene()->GetTime().time();
 	double deltaTime = owningScene()->GetTime().deltaTime();
 
-	
-	_owningInstance->Debug()->VE_LOG("deltaTime" + std::to_string(deltaTime), LogItem::Type::Message);
-
 	_rendering->DrawScreenText(glm::vec4(0, 10, 100, 100), 24, std::to_string(glm::min<double>((int)std::round(1.0 / deltaTime), 60)), nullptr);
+	_rendering->DrawScreenText(glm::vec4(0, 30, 100, 100), 24, std::to_string(deltaTime), nullptr);
+	_rendering->DrawScreenText(glm::vec4(0, 50, 100, 100), 24, std::to_string(_owningInstance->updateDispatcher().gameUpdatesPerFrame()), nullptr);
+
+	int ind = 0;
+	for(auto& i : _input->inputDevices())
+	{
+		_rendering->DrawScreenText(glm::vec4(0, 70 + ind * 30, 100, 100), 24, std::to_string(i.first) + ":" + std::to_string(int(i.second->inputBuffer()->back().buttonStates())) + ":" + std::to_string(int(i.second->inputBuffer()->back().axisState())), nullptr);
+		++ind;
+	}
 
 	if(glm::fract(currentTime) < 0.5f)
 		_rendering->DrawScreenText(glm::vec4(0, 1080 - 200, 1920, 60), 140, "VIDEOGAME", nullptr, TextAlignment::Center);

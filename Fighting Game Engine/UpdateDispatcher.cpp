@@ -43,6 +43,7 @@ void UpdateDispatcher::ResetFixedGameUpdateTime()
 void UpdateDispatcher::HandleSceneLoaded(const GameScene* scene)
 {
 	_justLoadedLevel = true;
+	_shouldSortFunctions = true;
 }
 
 void UpdateDispatcher::RunUpdateFunctionsOfType(UpdateType type)
@@ -61,7 +62,8 @@ void UpdateDispatcher::RunUpdateFunctionsOfType(UpdateType type)
 
 void UpdateDispatcher::BindFunction(BaseObject* object, UpdateFunctionTiming timing, TrackedUpdateFunction::func_t function)
 {
-	_boundFunctions.emplace_back(object, std::move(timing), std::move(function));
+	std::vector<TrackedUpdateFunction>& container = _isDispatchingUpdates ? _pendingBoundFunctions : _boundFunctions;
+	container.emplace_back(object, std::move(timing), std::move(function));
 	_shouldSortFunctions = true;
 }
 
@@ -118,6 +120,14 @@ void UpdateDispatcher::DispatchUpdates()
 		_gameUpdatesPerFrame = gameUpdateAmount;
 	}
 
+	if(!_pendingBoundFunctions.empty())
+	{
+		_boundFunctions.insert(_boundFunctions.end(), std::make_move_iterator(_pendingBoundFunctions.begin()), std::make_move_iterator(_pendingBoundFunctions.end()));
+		_pendingBoundFunctions.clear();
+		SortFunctions();
+	}
+
+	_isDispatchingUpdates = true;
 	int updatesRan = 0;
 	while(updatesRan < glm::max(1, gameUpdateAmount))
 	{
@@ -144,6 +154,7 @@ void UpdateDispatcher::DispatchUpdates()
 		RunUpdateFunctionsOfType(updateFunctionType);
 		++updatesRan;
 	}
+	_isDispatchingUpdates = false;
 }
 
 UpdateDispatcher::UpdateDispatcher()
