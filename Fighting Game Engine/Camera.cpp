@@ -33,8 +33,7 @@ std::vector<RenderingCommand> BaseCamera::GatherRenderingCommands() const
 			continue;
 		}
 
-		renderingCommands.reserve(renderingCommands.size() + currentRenderingCommands.size());
-		std::move(currentRenderingCommands.begin(), currentRenderingCommands.end(), renderingCommands.end());
+		renderingCommands.insert(renderingCommands.end(), std::make_move_iterator(currentRenderingCommands.begin()), std::make_move_iterator(currentRenderingCommands.end()));
 	}
 
 	return std::move(renderingCommands);
@@ -88,9 +87,9 @@ void OrthoCamera::RegisterReflectionFields() const
 void OrthoCamera::Deserialize(const json& j)
 {
 	BaseCamera::Deserialize(j);
-	if(!TryDeserializeField("renderingScale", j))
+	if(_renderingScale.x <= 0 || _renderingScale.y <= 0)
 	{
-		_renderingScale = _owningInstance->configData().renderingConfigData.spriteRenderingScale;
+		_renderingScale = _owningInstance->configData().renderingConfigData.worldRenderingScale;
 	}
 }
 

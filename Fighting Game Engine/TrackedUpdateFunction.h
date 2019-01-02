@@ -54,7 +54,7 @@ struct TrackedUpdateFunction
 public:
 	typedef std::function<void()> func_t;
 
-	ObjectReference<> object;
+	ObjectReference<BaseObject> object;
 	UpdateFunctionTiming timing;
 	func_t function;
 

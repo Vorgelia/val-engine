@@ -6,7 +6,7 @@ struct RenderingConfigData : public IReflectable
 {
 	ve::ivec2 defaultResolution;
 	ve::ivec2 targetAspectRatio;
-	ve::ivec2 spriteRenderingScale;
+	ve::ivec2 worldRenderingScale;
 	ve::ivec2 uiRenderingScale;
 
 	bool useSingleBuffer;
@@ -18,7 +18,7 @@ struct RenderingConfigData : public IReflectable
 	{
 		VE_REFLECTION_VAR(Field, defaultResolution);
 		VE_REFLECTION_VAR(Field, targetAspectRatio);
-		VE_REFLECTION_VAR(Field, spriteRenderingScale);
+		VE_REFLECTION_VAR(Field, worldRenderingScale);
 		VE_REFLECTION_VAR(Field, uiRenderingScale);
 
 		VE_REFLECTION_VAR(Field, useSingleBuffer);

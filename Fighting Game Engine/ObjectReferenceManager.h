@@ -55,6 +55,8 @@ public:
 	ObjectT* operator->() const { return get(); }
 	ObjectT& operator*() const { return *get(); }
 	ObjectReference& operator=(ObjectT* rhs);
+	ObjectReference& operator=(const ObjectReference<ObjectT>& rhs);
+	ObjectReference& operator=(ObjectReference<ObjectT>&& rhs);
 
 	template<typename TargetObjectT>
 	operator ObjectReference<TargetObjectT>() const { return ObjectReference<TargetObjectT>(static_cast<TargetObjectT*>(get())); }
@@ -62,6 +64,8 @@ public:
 	bool operator==(const ObjectReference<ObjectT>& other) const { return get() == other.get(); }
 
 	explicit ObjectReference(ObjectT* object);
+	ObjectReference(const ObjectReference<ObjectT>& object);
+	ObjectReference(ObjectReference<ObjectT>&& object) noexcept;
 	ObjectReference();
 	~ObjectReference();
 };
@@ -95,9 +99,35 @@ ObjectReference<ObjectT>& ObjectReference<ObjectT>::operator=(ObjectT* rhs)
 }
 
 template <typename ObjectT>
+ObjectReference<ObjectT>& ObjectReference<ObjectT>::operator=(const ObjectReference<ObjectT>& rhs)
+{
+	Reset(rhs.get());
+	return *this;
+}
+
+template <typename ObjectT>
+ObjectReference<ObjectT>& ObjectReference<ObjectT>::operator=(ObjectReference<ObjectT>&& rhs)
+{
+	Reset(rhs.get());
+	return *this;
+}
+
+template <typename ObjectT>
 ObjectReference<ObjectT>::ObjectReference(ObjectT* object)
 {
 	Reset(object);
+}
+
+template <typename ObjectT>
+ObjectReference<ObjectT>::ObjectReference(const ObjectReference<ObjectT>& object)
+{
+	Reset(object.get());
+}
+
+template <typename ObjectT>
+ObjectReference<ObjectT>::ObjectReference(ObjectReference<ObjectT>&& object) noexcept
+{
+	Reset(object.get());
 }
 
 template <typename ObjectT>

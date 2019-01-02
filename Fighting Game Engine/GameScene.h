@@ -132,8 +132,7 @@ std::vector<ObjectReference<ObjectT>> GameScene::FindObjectsOfType()
 			std::vector<ObjectReference<ObjectT>> components = iter.get()->GetComponentsOfType<ObjectT>();
 			if(components.size() > 0)
 			{
-				objects.reserve(components.size());
-				std::move(components.begin(), components.end(), objects.end());
+				objects.insert(objects.end(), std::make_move_iterator(components.begin()), std::make_move_iterator(components.end()));
 			}
 		}
 		else
