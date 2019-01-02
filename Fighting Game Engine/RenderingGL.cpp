@@ -470,11 +470,7 @@ void RenderingGL::DrawScreenText(glm::vec4 rect, GLuint size, const std::string&
 
 void RenderingGL::RegisterCamera(BaseCamera* camera)
 {
-	ObjectReference<BaseCamera> cameraRef{ camera };
-	if(_cameras.find(cameraRef) == _cameras.end())
-	{
-		_cameras.emplace(cameraRef);
-	}
+	_cameras.emplace(camera);
 }
 
 void RenderingGL::UnregisterCamera(BaseCamera* camera)

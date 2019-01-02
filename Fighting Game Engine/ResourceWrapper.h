@@ -36,4 +36,5 @@ ResourceWrapper<ResourceT>::ResourceWrapper(ResourceWrapper<ResourceT>&& other) 
 {
 	_resource.swap(other._resource);
 	_isPersistent = other._isPersistent;
+	_referencedLevels = std::move(other._referencedLevels);
 }

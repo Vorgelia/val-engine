@@ -21,8 +21,8 @@ class Renderer : public BaseRenderer
 	VE_OBJECT_DECLARATION(Renderer)
 
 protected:
-	Mesh* _mesh;
-	Material* _material;
+	Mesh* _mesh = nullptr;
+	Material* _material = nullptr;
 
 public:
 	virtual json Serialize() const;

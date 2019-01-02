@@ -92,4 +92,5 @@ void GameInstance::UpdateServices()
 
 GameInstance::GameInstance()
 {
+	_GameSceneManager.reset();
 }
