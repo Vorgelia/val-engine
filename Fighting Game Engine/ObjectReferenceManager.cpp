@@ -1,4 +1,5 @@
 #include "ObjectReferenceManager.h"
+#include "BaseObject.h"
 
 std::unique_ptr<ObjectReferenceManager> ObjectReferenceManager::_instance = nullptr;
 
@@ -19,6 +20,22 @@ void ObjectReferenceManager::AddObject(const BaseObject* object)
 void ObjectReferenceManager::RemoveObject(const BaseObject* object)
 {
 	_objectLookup.erase(object);
+}
+
+void ObjectReferenceManager::RegisterReferenceToObject(BaseObject* object, const ObjectReference<BaseObject>& reference)
+{
+	if(IsObjectValid(object))
+	{
+		object->RegisterReference(reference);
+	}
+}
+
+void ObjectReferenceManager::UnregisterReferenceToObject(BaseObject* object, const ObjectReference<BaseObject>& reference)
+{
+	if(IsObjectValid(object))
+	{
+		object->UnregisterReference(reference);
+	}
 }
 
 bool ObjectReferenceManager::IsObjectValid(const BaseObject* object)

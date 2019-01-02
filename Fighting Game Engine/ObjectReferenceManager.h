@@ -2,11 +2,12 @@
 #include <memory>
 #include <unordered_map>
 #include <unordered_set>
-#include "BaseObject.h"
 
 class ObjectReferenceManager
 {
 	friend class BaseObject;
+	template<typename ObjectT>
+	friend struct ObjectReference;
 
 protected:
 	static std::unique_ptr<ObjectReferenceManager> _instance;
@@ -20,6 +21,9 @@ protected:
 	void AddObject(const BaseObject* object);
 	void RemoveObject(const BaseObject* object);
 
+	void RegisterReferenceToObject(BaseObject* object, const ObjectReference<BaseObject>& reference);
+	void UnregisterReferenceToObject(BaseObject* object, const ObjectReference<BaseObject>& reference);
+
 public:
 	bool IsObjectValid(const BaseObject* object);
 
@@ -29,11 +33,17 @@ public:
 	~ObjectReferenceManager();
 };
 
+class BaseObject;
+
 template<typename ObjectT = BaseObject>
 struct ObjectReference
 {
+	friend class BaseObject;
+
 protected:
 	mutable ObjectT* _referencedObject;
+
+	void Invalidate() const { _referencedObject = nullptr; }
 
 public:
 	ObjectT* get() const;
@@ -46,14 +56,14 @@ public:
 	ObjectT& operator*() const { return *get(); }
 	ObjectReference& operator=(ObjectT* rhs);
 
+	template<typename TargetObjectT>
+	operator ObjectReference<TargetObjectT>() const { return ObjectReference<TargetObjectT>(static_cast<TargetObjectT*>(get())); }
+
 	bool operator==(const ObjectReference<ObjectT>& other) const { return get() == other.get(); }
 
-	template<typename TargetObjectT>
-	operator ObjectReference<TargetObjectT>() const { return ObjectReference<TargetObjectT>(dynamic_cast<TargetObjectT>(get())); }
-
 	explicit ObjectReference(ObjectT* object);
-	explicit ObjectReference(std::nullptr_t);
 	ObjectReference();
+	~ObjectReference();
 };
 
 template <typename ObjectT>
@@ -70,7 +80,11 @@ ObjectT* ObjectReference<ObjectT>::get() const
 template <typename ObjectT>
 void ObjectReference<ObjectT>::Reset(ObjectT* newObject)
 {
+	ObjectReferenceManager::Get().UnregisterReferenceToObject(_referencedObject, *this);
+
 	_referencedObject = newObject;
+
+	ObjectReferenceManager::Get().RegisterReferenceToObject(_referencedObject, *this);
 }
 
 template <typename ObjectT>
@@ -82,27 +96,26 @@ ObjectReference<ObjectT>& ObjectReference<ObjectT>::operator=(ObjectT* rhs)
 
 template <typename ObjectT>
 ObjectReference<ObjectT>::ObjectReference(ObjectT* object)
-	: _referencedObject(object)
 {
-}
-
-template <typename ObjectT>
-ObjectReference<ObjectT>::ObjectReference(std::nullptr_t)
-	: _referencedObject(nullptr)
-{
-	
+	Reset(object);
 }
 
 template <typename ObjectT>
 ObjectReference<ObjectT>::ObjectReference()
 	: _referencedObject(nullptr)
 {
-	
+
+}
+
+template <typename ObjectT>
+ObjectReference<ObjectT>::~ObjectReference()
+{
+	ObjectReferenceManager::Get().UnregisterReferenceToObject(_referencedObject, *this);
 }
 
 namespace std
 {
-	template <typename ObjectT> 
+	template <typename ObjectT>
 	struct hash<ObjectReference<ObjectT>>
 	{
 		size_t operator()(const ObjectReference<ObjectT> & x) const

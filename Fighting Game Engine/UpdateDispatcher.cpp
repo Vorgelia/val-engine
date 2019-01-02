@@ -2,6 +2,7 @@
 #include "ValEngine.h"
 #include "ContainerUtils.h"
 #include "GameInstance.h"
+#include "GameScene.h"
 #include "GameSceneManager.h"
 
 VE_OBJECT_DEFINITION(UpdateDispatcher);
@@ -120,12 +121,7 @@ void UpdateDispatcher::DispatchUpdates()
 		_gameUpdatesPerFrame = gameUpdateAmount;
 	}
 
-	if(!_pendingBoundFunctions.empty())
-	{
-		_boundFunctions.insert(_boundFunctions.end(), std::make_move_iterator(_pendingBoundFunctions.begin()), std::make_move_iterator(_pendingBoundFunctions.end()));
-		_pendingBoundFunctions.clear();
-		SortFunctions();
-	}
+
 
 	_isDispatchingUpdates = true;
 	int updatesRan = 0;
@@ -149,6 +145,13 @@ void UpdateDispatcher::DispatchUpdates()
 			{
 				updateFunctionType |= UpdateType::LastFixedGameUpdate;
 			}
+		}
+
+		if(!_pendingBoundFunctions.empty())
+		{
+			_boundFunctions.insert(_boundFunctions.end(), std::make_move_iterator(_pendingBoundFunctions.begin()), std::make_move_iterator(_pendingBoundFunctions.end()));
+			_pendingBoundFunctions.clear();
+			SortFunctions();
 		}
 
 		RunUpdateFunctionsOfType(updateFunctionType);

@@ -1,6 +1,8 @@
 #pragma once
 #include "IReflectable.h"
 #include "ObjectFactory.h"
+#include <unordered_set>
+#include "ObjectReferenceManager.h"
 
 class GameScene;
 class GameInstance;
@@ -12,16 +14,16 @@ class GameInstance;
 	virtual BaseObject* GetClass() const override;\
 	private:
 
-#define VE_OBJECT_DEFINITION(GenType)\
-	bool _registered##GenType = (GenType::StaticClass() != nullptr) && ObjectFactory::RegisterObjectGenerator<GenType>(#GenType);\
-	BaseObject* GenType::StaticClass()\
+#define VE_OBJECT_DEFINITION(ObjectT)\
+	bool _registered##ObjectT = (ObjectT::StaticClass() != nullptr) && ObjectFactory::RegisterObjectGenerator<ObjectT>(#ObjectT);\
+	BaseObject* ObjectT::StaticClass()\
 	{\
-		static std::unique_ptr<GenType> _staticClass = std::make_unique<GenType>();\
+		static std::unique_ptr<ObjectT> _staticClass = std::make_unique<ObjectT>();\
 		return _staticClass.get();\
 	}\
-	BaseObject* GenType::GetClass() const\
+	BaseObject* ObjectT::GetClass() const\
 	{\
-		return GenType::StaticClass();\
+		return ObjectT::StaticClass();\
 	}\
 
 #define VE_REGISTER_CUSTOM_UPDATE_FUNCTION(UpdateDispatcher, UpdateGroup, UpdateType, UpdateFunction)\
@@ -33,6 +35,13 @@ class GameInstance;
 class BaseObject : public IReflectable
 {
 	friend class ObjectInitializer;
+	friend class ObjectReferenceManager;
+
+private:
+	std::unordered_set<const ObjectReference<BaseObject>*> _references;
+
+	void RegisterReference(const ObjectReference<BaseObject>& reference);
+	void UnregisterReference(const ObjectReference<BaseObject>& reference);
 
 protected:
 	GameInstance* _owningInstance;

@@ -1,8 +1,10 @@
 ﻿#pragma once
 #include "TrackedUpdateFunction.h"
 #include "Time.h"
+#include "BaseObject.h"
 
 class GameInstance;
+class GameScene;
 
 class UpdateDispatcher : public BaseObject
 {

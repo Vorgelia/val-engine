@@ -47,8 +47,7 @@ void IntroBehaviour::OnRenderUI()
 	Material* screenMat = _resource->GetMaterial("Materials/Intro/Intro_Screen.vmat");
 	float currentTime = float(owningScene()->GetTime().time());
 
-	//screenMat->uniformVectors["ve_color"].a = glm::clamp<float>(glm::min<float>(currentTime, _introDuration - currentTime), 0.0f, 1.0f);
-	screenMat->uniformVectors["ve_color"].a = glm::abs(glm::sin(currentTime));
+	screenMat->uniformVectors["ve_color"].a = glm::clamp<float>(glm::min<float>(currentTime, _introDuration - currentTime), 0.0f, 1.0f);
 	_rendering->DrawScreenMesh(glm::vec4(0, 0, 1920, 1080), (Mesh*)nullptr, screenMat);
 
 	float deltaTime = float(owningScene()->GetTime().deltaTime());

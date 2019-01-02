@@ -81,7 +81,7 @@ void Debug::WriteThread()
 			break;
 		}
 
-		_writeStream << "\n\n" << messagePrefix << "\n" << li.ToString();
+		_writeStream << "\n\n" << messagePrefix << "\n" << li.ToString(stackAmount);
 		std::clog << li.ToString(stackAmount) << std::endl << std::endl;
 	}
 }

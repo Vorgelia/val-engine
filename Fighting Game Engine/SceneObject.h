@@ -1,7 +1,6 @@
 #pragma once
 #include "BaseObject.h"
 #include "Transform.h"
-#include "ObjectReferenceManager.h"
 
 class SceneObject :	public BaseObject
 {

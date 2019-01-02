@@ -131,9 +131,11 @@ ResourceT* ResourceManager::GetResourceFromContainer(ResourceContainer<ResourceT
 
 	fs::path path = key;
 
+	GameScene* curScene = _gameSceneManager->currentScene();
+
 	ResourceWrapper<ResourceT> resource = ResourceWrapper<ResourceT>(
 		std::move(CreateResource<ResourceT>(key)),
-		_gameSceneManager->currentScene() == nullptr || path.parent_path().stem().string() == "Base");
+		(_gameSceneManager->currentScene() == nullptr) || (path.parent_path().stem().string() == "Base"));
 	if(!resource._isPersistent)
 	{
 		resource._referencedLevels.emplace(_gameSceneManager->currentScene()->name());

@@ -4,6 +4,16 @@
 
 VE_OBJECT_DEFINITION(BaseObject)
 
+void BaseObject::RegisterReference(const ObjectReference<BaseObject>& reference)
+{
+	_references.emplace(&reference);
+}
+
+void BaseObject::UnregisterReference(const ObjectReference<BaseObject>& reference)
+{
+	_references.erase(&reference);
+}
+
 json BaseObject::Serialize() const
 {
 	json outJson = IReflectable::Serialize();
@@ -21,5 +31,9 @@ BaseObject::BaseObject()
 
 BaseObject::~BaseObject()
 {
+	for(auto& iter : _references)
+	{
+		iter->Invalidate();
+	}
 	ObjectReferenceManager::Get().RemoveObject(this);
 }

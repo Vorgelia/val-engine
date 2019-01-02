@@ -54,8 +54,6 @@ void GameScene::OnInit()
 	LoadResources();
 
 	VE_REGISTER_UPDATE_FUNCTION(UpdateGroup::TimingUpdate, UpdateType::EngineUpdate, UpdateTiming);
-
-	_timeTracker.Reset(_owningInstance->timeTracker().time());
 }
 
 void GameScene::OnDestroyed()
@@ -68,6 +66,11 @@ void GameScene::OnDestroyed()
 
 void GameScene::UpdateTiming()
 {
+	if(!_updatedTiming)
+	{
+		_timeTracker.Reset(_owningInstance->timeTracker().time());
+		_updatedTiming = true;
+	}
 	_timeTracker.Update(_owningInstance->timeTracker());
 }
 

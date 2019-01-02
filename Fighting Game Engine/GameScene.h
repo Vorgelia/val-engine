@@ -35,6 +35,7 @@ protected:
 	std::string _name;
 
 	bool _loaded;
+	bool _updatedTiming = false;
 
 	ve::unique_object_ptr<BaseSceneBehavior> _sceneBehavior;
 

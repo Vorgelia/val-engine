@@ -7,6 +7,11 @@ void TimeTracker::Reset(double currentTime)
 	_deltaTime = 0.0f;
 }
 
+void TimeTracker::ResetDeltaTime()
+{
+	_deltaTime = 0.0f;
+}
+
 void TimeTracker::Update(double currentTime)
 {
 	_deltaTime = currentTime - _time;

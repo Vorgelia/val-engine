@@ -4,6 +4,7 @@
 #include <GLM/glm.hpp>
 #include "Font.h"
 #include "ObjectReferenceManager.h"
+#include "Camera.h"
 #include "TimeDataBuffer.h"
 #include "RenderingDataBuffer.h"
 #include "Vec4Buffer.h"

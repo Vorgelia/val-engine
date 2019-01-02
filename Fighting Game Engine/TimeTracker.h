@@ -13,6 +13,7 @@ public:
 	double deltaTime() const { return _deltaTime; }
 
 	void Reset(double currentTime);
+	void ResetDeltaTime();
 	void Update(double currentTime);
 	void Update(const TimeTracker& baseTimeTracker);
 
