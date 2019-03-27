@@ -27,7 +27,7 @@ std::vector<RenderingCommand> BaseCamera::GatherRenderingCommands() const
 			continue;
 		}
 
-		std::vector<RenderingCommand> currentRenderingCommands = iter->GetRenderingCommands();
+		std::vector<RenderingCommand> currentRenderingCommands = iter->GetRenderingCommands(this);
 		if(currentRenderingCommands.empty())
 		{
 			continue;
@@ -95,7 +95,7 @@ void OrthoCamera::Deserialize(const json& j)
 glm::mat4 OrthoCamera::GetProjectionMatrix() const
 {
 	const glm::vec2 zoomedRenderingScale = glm::vec2(_renderingScale) * _zoomLevel;
-	return glm::ortho(float(-zoomedRenderingScale.x) * 0.5f, float(zoomedRenderingScale.x) * 0.5f, 0.0f, float(zoomedRenderingScale.y), 100.0f, -100.0f);
+	return glm::ortho(float(-zoomedRenderingScale.x) * 0.5f, float(zoomedRenderingScale.x) * 0.5f, 0.0f, float(zoomedRenderingScale.y), 0.0f, -1000.0f);
 }
 
 OrthoCamera::OrthoCamera()

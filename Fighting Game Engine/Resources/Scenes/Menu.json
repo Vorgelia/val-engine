@@ -41,7 +41,7 @@
 			},
 			"__ve_components":[
 				{
-					"__ve_class":"Renderer",
+					"__ve_class":"ParallaxRenderer",
 					"enabled":true,
 					"mesh":"Meshes/Base/quad_sprite.vm",
 					"material":"Materials/Menu/Menu_Test.vmat"
@@ -72,7 +72,7 @@
 			},
 			"__ve_components":[
 				{
-					"__ve_class":"Renderer",
+					"__ve_class":"ParallaxRenderer",
 					"name":"Renderer",
 					"enabled":true,
 					"mesh":"Meshes/Base/quad_sprite.vm",

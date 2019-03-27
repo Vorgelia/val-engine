@@ -29,7 +29,7 @@ private:
 	void HandleRenderingMaterial(const CharacterSprite* spriteData, Texture* texture, bool flipped) const;
 	Transform GetRenderingTransform(const CharacterSprite* spriteData, Texture* texture) const;
 
-	virtual std::vector<RenderingCommand> GetRenderingCommands() const override;
+	virtual std::vector<RenderingCommand> GetRenderingCommands(const BaseCamera* camera) const override;
 
 public:
 

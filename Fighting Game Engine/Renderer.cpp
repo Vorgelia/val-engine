@@ -7,6 +7,7 @@
 #include "Mesh.h"
 
 VE_OBJECT_DEFINITION(Renderer);
+VE_OBJECT_DEFINITION(ParallaxRenderer);
 
 json Renderer::Serialize() const
 {
@@ -35,7 +36,24 @@ void Renderer::Deserialize(const json& j)
 	}
 }
 
-std::vector<RenderingCommand> Renderer::GetRenderingCommands() const
+std::vector<RenderingCommand> Renderer::GetRenderingCommands(const BaseCamera* camera) const
 {
 	return std::vector<RenderingCommand> { RenderingCommand(_mesh, GetWorldTransform(), _material) };
+}
+
+void ParallaxRenderer::RegisterReflectionFields() const
+{
+	VE_PRIVATE_REFLECTION_VAR(Field, parallaxScale);
+}
+
+std::vector<RenderingCommand> ParallaxRenderer::GetRenderingCommands(const BaseCamera* camera) const
+{
+	Transform modifiedWorldTransform = GetWorldTransform();
+
+	ve::vec3 cameraDifferenceXY = camera->GetWorldTransform().GetPosition();
+	cameraDifferenceXY.z = 0;
+
+	modifiedWorldTransform.SetPosition(modifiedWorldTransform.GetPosition() + cameraDifferenceXY * FixedPoint64(_parallaxScale) * (FixedPoint64::one - FixedPoint64::one / modifiedWorldTransform.GetPosition().z));
+
+	return std::vector<RenderingCommand> { RenderingCommand(_mesh, modifiedWorldTransform, _material) };
 }

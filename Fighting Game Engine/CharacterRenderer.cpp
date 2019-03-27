@@ -57,7 +57,7 @@ Transform CharacterRenderer::GetRenderingTransform(const CharacterSprite* sprite
 	return outTransform;
 }
 
-std::vector<RenderingCommand> CharacterRenderer::GetRenderingCommands() const
+std::vector<RenderingCommand> CharacterRenderer::GetRenderingCommands(const BaseCamera* camera) const
 {
 	if(!_character.IsValid() || _character->_stateComponent->_currentFrame == nullptr)
 	{
