@@ -77,6 +77,8 @@ private:
 	void EndFrame();
 
 public:
+	FrameBuffer* mainBuffer() const { return _mainBuffer.get(); }
+
 	void OnInit() override;
 	void OnServiceInit() override;
 	void OnDestroyed() override;

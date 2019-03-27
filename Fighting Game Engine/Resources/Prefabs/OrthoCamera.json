@@ -1,0 +1,12 @@
+{
+	"id":0,
+	"__ve_class":"GameObject",
+	"name":"OrthoCamera",
+	"enabled":true,
+	"__ve_components":[
+		{
+			"__ve_class":"OrthoCamera",
+			"enabled":true
+		}
+	]
+}

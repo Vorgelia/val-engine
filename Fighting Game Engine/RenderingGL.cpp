@@ -87,14 +87,6 @@ void RenderingGL::BeginFrame()
 	//This will be used later to force the aspect ratio to 16/9
 	glViewport(0, 0, _screen->screenSize().x, _screen->screenSize().y);
 
-	for(auto& iter : _cameras)
-	{
-		if(iter.IsValid())
-		{
-			_graphics->ClearFrameBuffer(*iter->frameBuffer());
-		}
-	}
-
 	for(auto& iter : _temporaryFrameBuffers)
 	{
 		_graphics->ClearFrameBuffer(*iter);
@@ -161,15 +153,31 @@ void RenderingGL::RenderCamera(const BaseCamera* camera)
 		return;
 	}
 
+	FrameBuffer* targetFrameBuffer =
+		camera->targetFrameBuffer() == nullptr
+		? _mainBuffer.get()
+		: camera->targetFrameBuffer();
+
+	if(targetFrameBuffer == nullptr)
+	{
+		return;
+	}
+
+	_graphics->BindFrameBuffer(*targetFrameBuffer);
+
 	std::vector<RenderingCommand> renderingCommands = camera->GatherRenderingCommands();
 
 	std::sort(renderingCommands.begin(), renderingCommands.end()
 		, [](const RenderingCommand& lhs, const RenderingCommand& rhs)
 	{
 		return (lhs.material->renderingOrder == rhs.material->renderingOrder)
-			? (lhs.transform.GetPosition().z < rhs.transform.GetPosition().z)
+			? (lhs.transform.GetPosition().z > rhs.transform.GetPosition().z)
 			: (lhs.material->renderingOrder < rhs.material->renderingOrder);
 	});
+
+
+	glm::mat4 cameraViewMatrix = camera->GetViewMatrix();
+	glm::mat4 cameraProjectionMatrix = camera->GetProjectionMatrix();
 
 	for(auto& iter : renderingCommands)
 	{
@@ -185,13 +193,11 @@ void RenderingGL::RenderCamera(const BaseCamera* camera)
 		BindMaterialUniforms(*iter.material, textureIndex);
 
 		glm::mat4 modelMatrix = glm::mat4(iter.transform.GetMatrix());
-		glm::mat4 viewMatrix = camera->GetViewMatrix();
-		glm::mat4 projectionMatrix = camera->GetProjectionMatrix();
 
 		glUniformMatrix4fv(iter.material->shader->UniformLocation("ve_matrix_model"), 1, false, glm::value_ptr(modelMatrix));
-		glUniformMatrix4fv(iter.material->shader->UniformLocation("ve_matrix_view"), 1, false, glm::value_ptr(viewMatrix));
-		glUniformMatrix4fv(iter.material->shader->UniformLocation("ve_matrix_projection"), 1, false, glm::value_ptr(projectionMatrix));
-		glUniformMatrix4fv(iter.material->shader->UniformLocation("ve_matrix_mvp"), 1, false, glm::value_ptr(projectionMatrix * viewMatrix * modelMatrix));
+		glUniformMatrix4fv(iter.material->shader->UniformLocation("ve_matrix_view"), 1, false, glm::value_ptr(cameraViewMatrix));
+		glUniformMatrix4fv(iter.material->shader->UniformLocation("ve_matrix_projection"), 1, false, glm::value_ptr(cameraProjectionMatrix));
+		glUniformMatrix4fv(iter.material->shader->UniformLocation("ve_matrix_mvp"), 1, false, glm::value_ptr(cameraProjectionMatrix * cameraViewMatrix * modelMatrix));
 
 		glDrawElements(GL_TRIANGLES, iter.mesh->elementAmount(), GL_UNSIGNED_INT, nullptr);
 	}

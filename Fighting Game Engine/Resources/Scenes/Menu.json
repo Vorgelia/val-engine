@@ -15,6 +15,9 @@
 			"__ve_prefabPath" : "Prefabs/MenuManager.json"
 		},
 		{
+			"__ve_prefabPath" : "Prefabs/OrthoCamera.json"
+		},
+		{
 			"__ve_class" : "GameObject",
 			"id":1,
 			"name":"Background",
@@ -23,7 +26,7 @@
 				"position":{
 					"x":0,
 					"y":0,
-					"z":10
+					"z":1
 				},
 				"scale":{
 					"x":240,

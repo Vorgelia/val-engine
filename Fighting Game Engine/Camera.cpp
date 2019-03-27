@@ -39,13 +39,17 @@ std::vector<RenderingCommand> BaseCamera::GatherRenderingCommands() const
 	return std::move(renderingCommands);
 }
 
+FrameBuffer* BaseCamera::targetFrameBuffer() const
+{
+	return _targetFrameBuffer == nullptr ? _rendering->mainBuffer() : targetFrameBuffer();
+}
+
 void BaseCamera::OnInit()
 {
 	ObjectComponent::OnInit();
 
 	//TODO: Customization over framebuffer creation in BaseCamera::Serialize 
 	_graphics = _owningInstance->Graphics();
-	_frameBuffer = _graphics->CreateFrameBuffer(_owningInstance->ScreenManager()->screenSize(), _owningInstance->configData().renderingConfigData.frameBufferTextureAmount);
 
 	_rendering = _owningInstance->Rendering();
 	_rendering->RegisterCamera(this);
@@ -54,11 +58,6 @@ void BaseCamera::OnInit()
 void BaseCamera::OnDestroyed()
 {
 	ObjectComponent::OnDestroyed();
-
-	if(_graphics != nullptr)
-	{
-		_graphics->DestroyFrameBuffer(*_frameBuffer);
-	}
 
 	if(_rendering != nullptr)
 	{
@@ -73,7 +72,7 @@ void BaseCamera::HandleScreenResized()
 
 glm::mat4 BaseCamera::GetViewMatrix() const
 {
-	return GetWorldTransform().GetInverse().GetMatrix();
+	return glm::inverse(GetWorldTransform().GetMatrix());
 }
 
 //------//
@@ -96,7 +95,7 @@ void OrthoCamera::Deserialize(const json& j)
 glm::mat4 OrthoCamera::GetProjectionMatrix() const
 {
 	const glm::vec2 zoomedRenderingScale = glm::vec2(_renderingScale) * _zoomLevel;
-	return glm::ortho(float(-zoomedRenderingScale.x), float(zoomedRenderingScale.x), 0.0f, float(zoomedRenderingScale.y), 0.0f, 100.0f);
+	return glm::ortho(float(-zoomedRenderingScale.x) * 0.5f, float(zoomedRenderingScale.x) * 0.5f, 0.0f, float(zoomedRenderingScale.y), 100.0f, -100.0f);
 }
 
 OrthoCamera::OrthoCamera()

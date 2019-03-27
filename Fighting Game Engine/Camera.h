@@ -16,14 +16,14 @@ protected:
 	RenderingGL* _rendering;
 	GraphicsGL* _graphics;
 
-	std::unique_ptr<FrameBuffer> _frameBuffer;
+	FrameBuffer* _targetFrameBuffer;
 
 	std::vector<RenderingCommand> GatherRenderingCommands() const;
 
 public:
 	int renderingPriority;
 
-	FrameBuffer* frameBuffer() const { return _frameBuffer.get(); }
+	FrameBuffer* targetFrameBuffer() const;
 
 	void OnInit() override;
 	void OnDestroyed() override;
