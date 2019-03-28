@@ -53,7 +53,14 @@ std::vector<RenderingCommand> ParallaxRenderer::GetRenderingCommands(const BaseC
 	ve::vec3 cameraDifferenceXY = camera->GetWorldTransform().GetPosition();
 	cameraDifferenceXY.z = 0;
 
-	modifiedWorldTransform.SetPosition(modifiedWorldTransform.GetPosition() + cameraDifferenceXY * FixedPoint64(_parallaxScale) * (FixedPoint64::one - FixedPoint64::one / modifiedWorldTransform.GetPosition().z));
+	if(modifiedWorldTransform.GetPosition().z >= 0.0f)
+	{
+		modifiedWorldTransform.SetPosition(modifiedWorldTransform.GetPosition() + cameraDifferenceXY * FixedPoint64(_parallaxScale) * (FixedPoint64::one - FixedPoint64::one / modifiedWorldTransform.GetPosition().z));
+	}
+	else
+	{
+		modifiedWorldTransform.SetPosition(modifiedWorldTransform.GetPosition() + cameraDifferenceXY * FixedPoint64(_parallaxScale) * modifiedWorldTransform.GetPosition().z * FixedPoint64(0.1f));
+	}
 
 	return std::vector<RenderingCommand> { RenderingCommand(_mesh, modifiedWorldTransform, _material) };
 }

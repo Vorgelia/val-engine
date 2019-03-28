@@ -95,7 +95,7 @@ void OrthoCamera::Deserialize(const json& j)
 glm::mat4 OrthoCamera::GetProjectionMatrix() const
 {
 	const glm::vec2 zoomedRenderingScale = glm::vec2(_renderingScale) * _zoomLevel;
-	return glm::ortho(float(-zoomedRenderingScale.x) * 0.5f, float(zoomedRenderingScale.x) * 0.5f, 0.0f, float(zoomedRenderingScale.y), 0.0f, -1000.0f);
+	return glm::ortho(float(-zoomedRenderingScale.x) * 0.5f, float(zoomedRenderingScale.x) * 0.5f, 0.0f, float(zoomedRenderingScale.y), 1000.0f, -1000.0f);
 }
 
 OrthoCamera::OrthoCamera()
