@@ -20,6 +20,8 @@ class Script;
 
 class Debug : public BaseService
 {
+	VE_OBJECT_DECLARATION(Debug);
+
 private:
 	//The thread containing the write loop.
 	std::thread _writeThread;
@@ -35,18 +37,16 @@ private:
 	void Log(const std::string& data, LogItem::Type type = LogItem::Type::Log);
 
 public:
-	void Update() override;
-	void Init() override;
-	void Cleanup() override;
+	void OnInit() override;
+	void OnServiceInit() override;
+	void OnDestroyed() override;
 
 	void Log(const std::string& data, std::string fileName, int fileLine, LogItem::Type type = LogItem::Type::Log);
+	std::shared_ptr<BaseScriptVariable> Log(const Script* script, std::vector<std::shared_ptr<BaseScriptVariable>>&);
 	void WriteThread();
 	void GetStackTrace(std::vector<std::string>* storage, unsigned int stackSize) const;
 
-#pragma region Scripting Bindings
-	std::shared_ptr<BaseScriptVariable> Log(const Script* script, std::vector<std::shared_ptr<BaseScriptVariable>>&);
-#pragma endregion
 
-	Debug(ServiceManager* serviceManager);
-	virtual ~Debug();
+	Debug() = default;
+	virtual ~Debug() = default;
 };

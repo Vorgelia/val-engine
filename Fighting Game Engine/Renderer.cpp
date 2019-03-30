@@ -1,61 +1,66 @@
 #include "Renderer.h"
 #include "RenderingGL.h"
 #include "ResourceManager.h"
-#include "ServiceManager.h"
+#include "GameInstance.h"
 #include <string>
-#include "BehaviourFactory.h"
+#include "ObjectFactory.h"
+#include "Mesh.h"
 
-VE_BEHAVIOUR_REGISTER_TYPE(Renderer);
+VE_OBJECT_DEFINITION(Renderer);
+VE_OBJECT_DEFINITION(ParallaxRenderer);
 
-void Renderer::OnRenderObjects()
+json Renderer::Serialize() const
 {
-	if(_owner->transform() == nullptr)
+	json outJson = BaseRenderer::Serialize();
+	if(_material != nullptr)
 	{
-		return;
+		outJson.emplace("material", _material->name);
 	}
-	_rendering->DrawMesh(_owner->transform(), _mesh, _material);
+	if(_mesh != nullptr)
+	{
+		outJson.emplace("mesh", _mesh->name);
+	}
+	return outJson;
 }
 
-Renderer::Renderer(Object* owner, ServiceManager* serviceManager, Mesh* mesh, Material* material) : Behaviour(owner, serviceManager)
+void Renderer::Deserialize(const json& j)
 {
-	_resource = serviceManager->ResourceManager();
-	_rendering = serviceManager->Rendering();
-
-	_mesh = mesh;
-	if(_mesh == nullptr)
+	std::string resourcePath;
+	if(JSON::TryGetMember(j, "material", resourcePath))
 	{
-		_mesh = _resource->GetMesh("Materials/Base/quad.vm");
+		_material = _owningInstance->ResourceManager()->GetMaterial(resourcePath);
 	}
-
-	_material = material;
-	if(_material == nullptr)
+	if(JSON::TryGetMember(j, "mesh", resourcePath))
 	{
-		_material = _resource->GetMaterial("Materials/Base/Object2D.vmat");
+		_mesh = _owningInstance->ResourceManager()->GetMesh(resourcePath);
 	}
 }
 
-Renderer::Renderer(Object* owner, ServiceManager* serviceManager, const json& j) : Behaviour(owner, serviceManager, j)
+std::vector<RenderingCommand> Renderer::GetRenderingCommands(const BaseCamera* camera) const
 {
-	_resource = serviceManager->ResourceManager();
-	_rendering = serviceManager->Rendering();
+	return std::vector<RenderingCommand> { RenderingCommand(_mesh, GetWorldTransform(), _material) };
+}
 
-	auto& iter = j.find("mesh");
-	if(iter != j.end())
+void ParallaxRenderer::RegisterReflectionFields() const
+{
+	VE_PRIVATE_REFLECTION_VAR(Field, parallaxScale);
+}
+
+std::vector<RenderingCommand> ParallaxRenderer::GetRenderingCommands(const BaseCamera* camera) const
+{
+	Transform modifiedWorldTransform = GetWorldTransform();
+
+	ve::vec3 cameraDifferenceXY = camera->GetWorldTransform().GetPosition();
+	cameraDifferenceXY.z = 0;
+
+	if(modifiedWorldTransform.GetPosition().z >= 0.0f)
 	{
-		_mesh = _resource->GetMesh(iter->get<std::string>());
+		modifiedWorldTransform.SetPosition(modifiedWorldTransform.GetPosition() + cameraDifferenceXY * FixedPoint64(_parallaxScale) * (FixedPoint64::one - FixedPoint64::one / modifiedWorldTransform.GetPosition().z));
 	}
 	else
 	{
-		_mesh = nullptr;
+		modifiedWorldTransform.SetPosition(modifiedWorldTransform.GetPosition() + cameraDifferenceXY * FixedPoint64(_parallaxScale) * modifiedWorldTransform.GetPosition().z * FixedPoint64(0.1f));
 	}
 
-	iter = j.find("material");
-	if(iter != j.end())
-	{
-		_material = _resource->GetMaterial(iter->get<std::string>());
-	}
-	else
-	{
-		_material = nullptr;
-	}
+	return std::vector<RenderingCommand> { RenderingCommand(_mesh, modifiedWorldTransform, _material) };
 }

@@ -1,6 +1,6 @@
 #include "ScriptManager.h"
 #include "Script.h"
-#include "ServiceManager.h"
+#include "GameInstance.h"
 #include "BaseScriptVariable.h"
 #include "ScriptVariableUtils.h."
 #include "ScriptVariable.h"
@@ -42,26 +42,28 @@
 #define GET_ARG_MAP_CHECKED(collection, index, storage) GET_ARG_CHECKED(collection, index, storage, ScriptMap)
 #define GET_ARG_ARRAY_CHECKED(collection, index, storage) GET_ARG_CHECKED(collection, index, storage, ScriptArray)
 
-void ScriptManager::Init()
-{
-	_debug = _serviceManager->Debug();
-	_time = _serviceManager->Time();
-	_filesystem = _serviceManager->Filesystem();
-	_resource = _serviceManager->ResourceManager();
+VE_OBJECT_DEFINITION(ScriptManager);
 
+void ScriptManager::OnInit()
+{
+	_debug = _owningInstance->Debug();
+	_filesystem = _owningInstance->Filesystem();
+	_resource = _owningInstance->ResourceManager();
+}
+
+void ScriptManager::OnServiceInit()
+{
 	CacheGlobalVariables();
 	AddScript("Scripts/Base/example.vscript");
 }
 
-void ScriptManager::Update() {}
-
-void ScriptManager::Cleanup()
+void ScriptManager::OnDestroyed()
 {
 	_scripts.clear();
 	_globalVariables.clear();
 }
 
-Script* ScriptManager::GetScript(const FS::path & path)
+Script* ScriptManager::GetScript(const fs::path & path)
 {
 	if(path.empty())
 	{
@@ -71,7 +73,7 @@ Script* ScriptManager::GetScript(const FS::path & path)
 	return AddScript(path);
 }
 
-Script* ScriptManager::AddScript(const FS::path& path)
+Script* ScriptManager::AddScript(const fs::path& path)
 {
 	const std::string* scriptSource = _resource->GetTextData(path.string());
 	if(scriptSource == nullptr)
@@ -85,7 +87,7 @@ Script* ScriptManager::AddScript(const FS::path& path)
 	if(!lines.empty())
 	{
 		const std::string& scriptName = path.string();
-		Script* script = _scripts.emplace(std::make_unique<Script>(scriptName, lines, _serviceManager)).first->get();
+		Script* script = _scripts.emplace(std::make_unique<Script>(scriptName, lines, _owningInstance)).first->get();
 
 		HandleScriptBindings(script);
 		script->Init();
@@ -123,16 +125,16 @@ void ScriptManager::HandleScriptBindings(Script* script)
 		}
 		else if(directive == "Time")
 		{
-			script->BindFunction("ve_time_frameCount",
+			script->BindFunction("ve_getTime",
 				[this](const Script*, ScriptArgumentCollection&)->std::shared_ptr<BaseScriptVariable>
 			{
-				return std::make_shared<ScriptDec>(ve::dec_t(_time->frameCount));
+				return std::make_shared<ScriptDec>(ve::dec_t(_owningInstance->timeTracker().time()));
 			});
 
-			script->BindFunction("ve_time_frameCountSinceLoad",
+			script->BindFunction("ve_getTimeSinceLoad",
 				[this](const Script*, ScriptArgumentCollection&)->std::shared_ptr<BaseScriptVariable>
 			{
-				return std::make_shared<ScriptDec>(ve::dec_t(_time->frameCountSinceLoad));
+				return std::make_shared<ScriptDec>(ve::dec_t(_owningInstance->GameSceneManager()->currentScene()->GetTime().time()));
 			});
 		}
 		else if(directive == "Map")
@@ -499,7 +501,7 @@ void ScriptManager::HandleScriptCharacterBindings(GameCharacter& character, Scri
 		return nullptr;
 	});
 
-	script->AddVariable("character_objectId", std::make_shared<ScriptDec>(character.object()->id(), true));
+	//#TODO:Object Ptr variable type
 }
 
 void ScriptManager::RemoveScript(Script* script)
@@ -523,11 +525,3 @@ std::shared_ptr<BaseScriptVariable> ScriptManager::GetVariable(const std::string
 	}
 	return iter->second;
 }
-
-ScriptManager::ScriptManager(ServiceManager* serviceManager) : BaseService(serviceManager)
-{
-
-}
-
-ScriptManager::~ScriptManager()
-= default;

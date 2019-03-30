@@ -2,10 +2,8 @@
 #include <vector>
 #include <string>
 #include <unordered_set>
-#include <boost/filesystem.hpp>
+#include <filesystem>
 #include "GLIncludes.hpp"
-
-namespace FS = boost::filesystem;
 
 class Mesh;
 enum class VertexAttributeLocation
@@ -34,11 +32,6 @@ public:
 	std::vector<float> verts;
 	std::vector<GLuint> elements;
 	std::vector<VertexAttribute> vertexFormat;
-
-	std::unordered_set<Mesh*> owners;
-
-	bool RegisterOwner(Mesh*);
-	bool UnregisterOwner(Mesh*);
 
 	CachedMesh(const std::string& name, std::vector<float>& verts, std::vector<GLuint>& elements, const std::vector<VertexAttribute>& vertexFormat);
 	CachedMesh(std::string name);

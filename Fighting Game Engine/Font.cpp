@@ -31,9 +31,9 @@ const GLuint Font::topBearing() const
 	return _topBearing;
 }
 
-Texture* Font::GetAtlas(int index)
+const Texture& Font::GetAtlas(int index)
 {
-	return _atlases.at(index).get();
+	return _atlases.at(index);
 }
 
 const FontCharacter* Font::GetCharacter(GLubyte ch)

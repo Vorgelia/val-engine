@@ -20,6 +20,8 @@ enum class ReflectionFieldType
 	Ivec3 = 13,
 	Ivec4 = 14,
 	Json = 15,
+	Lambda = 16,
+	ObjectPtr = 17,
 };
 
 template<typename VariableT>
@@ -53,10 +55,12 @@ DECLARE_REFLECTION_TRAITS(float, ReflectionFieldType::Float);
 DECLARE_REFLECTION_TRAITS(ve::dec_t, ReflectionFieldType::Dec);
 DECLARE_REFLECTION_TRAITS(std::string, ReflectionFieldType::String);
 DECLARE_REFLECTION_TRAITS(IReflectable, ReflectionFieldType::Reflectable);
+DECLARE_REFLECTION_TRAITS(BaseObject*, ReflectionFieldType::ObjectPtr);
 
 DECLARE_REFLECTION_TRAITS(ve::vec2, ReflectionFieldType::Vec2);
 DECLARE_REFLECTION_TRAITS(ve::vec3, ReflectionFieldType::Vec3);
 DECLARE_REFLECTION_TRAITS(ve::vec4, ReflectionFieldType::Vec4);
 DECLARE_REFLECTION_TRAITS(ve::ivec2, ReflectionFieldType::Ivec2);
 DECLARE_REFLECTION_TRAITS(ve::ivec3, ReflectionFieldType::Ivec3);
-DECLARE_REFLECTION_TRAITS(ve::ivec4, ReflectionFieldType::Ivec4);
+DECLARE_REFLECTION_TRAITS(ve::ivec4, ReflectionFieldType::Ivec4); 
+DECLARE_REFLECTION_TRAITS(json, ReflectionFieldType::Json);

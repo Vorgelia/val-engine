@@ -1,12 +1,11 @@
 #pragma once
-#include "Behaviour.h"
+#include "GameObject.h"
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
 #include <memory>
 #include "CharacterCollisionResult.h"
 
-class Object;
 class Script;
 class BaseScriptVariable;
 class CharacterState;
@@ -21,9 +20,10 @@ class ScriptManager;
 class FilesystemManager;
 class ResourceManager;
 
-class GameCharacter :
-	public Behaviour
+class GameCharacter : public GameObject
 {
+	VE_OBJECT_DECLARATION(GameCharacter);
+
 	friend class ScriptManager;
 	friend class CharacterRenderer;
 	friend class CharacterStateComponent;
@@ -46,9 +46,9 @@ private:
 	bool _flipped;
 	std::unordered_set<std::string> _systemFlags;
 
-	std::unique_ptr<CharacterStateComponent> _stateComponent;
-	std::unique_ptr<CharacterPhysicsComponent> _physicsComponent;
-	std::unique_ptr<CharacterEventComponent> _eventComponent;
+	CharacterStateComponent* _stateComponent;
+	CharacterPhysicsComponent* _physicsComponent;
+	CharacterEventComponent* _eventComponent;
 
 	void CharacterInit();
 	void CharacterUpdate();
@@ -57,18 +57,21 @@ private:
 	void UpdateSystemFlags();
 
 public:
-	VE_BEHAVIOUR_NAME(GameCharacter);
+	const GameCharacterData* characterData() const { return _characterData.get(); }
+	CharacterStateComponent* stateComponent() const { return _stateComponent; };
+	CharacterPhysicsComponent* physicsComponent() const { return _physicsComponent; }
+	CharacterEventComponent* eventComponent() const { return _eventComponent; }
 
-	const GameCharacterData* characterData() const;
-	CharacterStateComponent* stateComponent() const;
-	CharacterPhysicsComponent* physicsComponent() const;
-	CharacterEventComponent* eventComponent() const;
+	void OnInit() override;
+	void OnDestroyed() override;
+
+	void Deserialize(const json& j) override;
 
 	void SetOwner(GamePlayer* owner);
 
 	CharacterCollisionResult GenerateCollisions(const GameCharacter* other) const;
 
-	GameCharacter(Object* owner, ServiceManager* serviceManager, const json& j);
+	GameCharacter();
 	~GameCharacter() = default;
 };
 

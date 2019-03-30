@@ -4,24 +4,25 @@
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
-#include <boost/filesystem.hpp>
+#include <filesystem>
 
-namespace FS = boost::filesystem;
+namespace fs = std::filesystem;
 
 class Script;
 class BaseScriptVariable;
 class GameCharacter;
 class Debug;
-class Time;
 class FilesystemManager;
 class ResourceManager;
 
 class ScriptManager : public BaseService
 {
-	Debug* _debug;
-	Time* _time;
-	FilesystemManager* _filesystem;
-	ResourceManager* _resource;
+	VE_OBJECT_DECLARATION(ScriptManager);
+
+protected:
+	ObjectReference<Debug> _debug;
+	ObjectReference<FilesystemManager> _filesystem;
+	ObjectReference<ResourceManager> _resource;
 
 private:
 	std::unordered_map<std::string, std::shared_ptr<BaseScriptVariable>> _globalVariables;
@@ -31,12 +32,12 @@ private:
 	void CacheGlobalVariables();
 
 public:
-	void Init() override;
-	void Update() override;
-	void Cleanup() override;
+	void OnInit() override;
+	void OnServiceInit() override;
+	void OnDestroyed() override;
 
-	Script* GetScript(const FS::path& path);
-	Script* AddScript(const FS::path& path);
+	Script* GetScript(const fs::path& path);
+	Script* AddScript(const fs::path& path);
 	void AddVariable(const std::string& name, const std::shared_ptr<BaseScriptVariable>& variable);
 
 	void HandleScriptCharacterBindings(GameCharacter& character, Script* script) const;
@@ -45,6 +46,6 @@ public:
 
 	std::shared_ptr<BaseScriptVariable> GetVariable(const std::string& name);
 
-	ScriptManager(ServiceManager* serviceManager);
-	~ScriptManager();
+	ScriptManager() = default;
+	~ScriptManager() = default;
 };

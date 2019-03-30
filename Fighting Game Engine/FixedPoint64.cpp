@@ -358,7 +358,7 @@ FixedPoint64::FixedPoint64(int value)
 }
 
 FixedPoint64::FixedPoint64(float value)
-	: _bits(Fixed64::FromFloat(value))
+	: _bits(Fixed64::FromDouble(value))
 {
 }
 

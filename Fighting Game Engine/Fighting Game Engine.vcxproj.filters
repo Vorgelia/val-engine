@@ -23,24 +23,6 @@
     <Filter Include="Val Engine\Engine\Utilities\Scripting">
       <UniqueIdentifier>{2ec85e0d-ea58-4921-8385-df70958db5f1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Val Engine\Engine\Services">
-      <UniqueIdentifier>{a747d1bb-2e16-4bd0-a490-130129cc4aef}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Val Engine\Engine\Services\Rendering">
-      <UniqueIdentifier>{c677247f-cd18-41c3-93ae-76e40a5a21b5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Val Engine\Engine\Services\Utilities">
-      <UniqueIdentifier>{3f77b299-e56c-48af-ba12-8a852e73d8c4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Val Engine\Engine\Services\Resources">
-      <UniqueIdentifier>{79bbcd3b-a0e4-4894-a4dc-f7f771e6dcb0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Val Engine\Engine\Services\GameManagement">
-      <UniqueIdentifier>{05046ce2-b869-4e64-a4dc-6e283c08cb2c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Val Engine\Engine\Services\Global">
-      <UniqueIdentifier>{66d1b5c8-db0d-4a82-b58b-56936f86c13e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Val Engine\Engine\Objects">
       <UniqueIdentifier>{a49d1f15-f531-418d-829c-f9a4dba34e0d}</UniqueIdentifier>
     </Filter>
@@ -98,9 +80,6 @@
     <Filter Include="Val Engine\Game\Characters\Frame">
       <UniqueIdentifier>{615b4344-ec17-4486-9a90-d76d50e310d4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Val Engine\Game\Services">
-      <UniqueIdentifier>{6490bb19-f282-4a97-9f02-c55c6f72f33d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Val Engine\Game\Data">
       <UniqueIdentifier>{39769fba-2aff-4488-9c3d-c855a283bde9}</UniqueIdentifier>
     </Filter>
@@ -131,12 +110,30 @@
     <Filter Include="Val Engine\Misc">
       <UniqueIdentifier>{4cd4adc7-750a-4322-9f20-0ccb97aa13c1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Val Engine\Engine\Services">
+      <UniqueIdentifier>{a747d1bb-2e16-4bd0-a490-130129cc4aef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Val Engine\Engine\Services\Rendering">
+      <UniqueIdentifier>{c677247f-cd18-41c3-93ae-76e40a5a21b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Val Engine\Engine\Services\Utilities">
+      <UniqueIdentifier>{3f77b299-e56c-48af-ba12-8a852e73d8c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Val Engine\Engine\Services\Resources">
+      <UniqueIdentifier>{79bbcd3b-a0e4-4894-a4dc-f7f771e6dcb0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Val Engine\Engine\Services\GameManagement">
+      <UniqueIdentifier>{05046ce2-b869-4e64-a4dc-6e283c08cb2c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Val Engine\Engine\Services\Global">
+      <UniqueIdentifier>{66d1b5c8-db0d-4a82-b58b-56936f86c13e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Val Engine\Game\Services">
+      <UniqueIdentifier>{6490bb19-f282-4a97-9f02-c55c6f72f33d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameScene.cpp">
-      <Filter>Val Engine\Game</Filter>
-    </ClCompile>
-    <ClCompile Include="Object.cpp">
       <Filter>Val Engine\Game</Filter>
     </ClCompile>
     <ClCompile Include="FightingGameManager.cpp">
@@ -172,9 +169,6 @@
     <ClCompile Include="Delegate.cpp">
       <Filter>Val Engine\Engine\Utilities\Data</Filter>
     </ClCompile>
-    <ClCompile Include="ServiceManager.cpp">
-      <Filter>Val Engine\Engine\Services</Filter>
-    </ClCompile>
     <ClCompile Include="BaseService.cpp">
       <Filter>Val Engine\Engine\Services</Filter>
     </ClCompile>
@@ -182,9 +176,6 @@
       <Filter>Val Engine\Engine\Services\Utilities</Filter>
     </ClCompile>
     <ClCompile Include="InputManager.cpp">
-      <Filter>Val Engine\Engine\Services\Utilities</Filter>
-    </ClCompile>
-    <ClCompile Include="Time.cpp">
       <Filter>Val Engine\Engine\Services\Utilities</Filter>
     </ClCompile>
     <ClCompile Include="FilesystemManager.cpp">
@@ -196,25 +187,16 @@
     <ClCompile Include="ScriptManager.cpp">
       <Filter>Val Engine\Engine\Services\Resources</Filter>
     </ClCompile>
-    <ClCompile Include="Screen.cpp">
-      <Filter>Val Engine\Engine\Services\Rendering</Filter>
-    </ClCompile>
     <ClCompile Include="GraphicsGL.cpp">
       <Filter>Val Engine\Engine\Services\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="RenderingGL.cpp">
       <Filter>Val Engine\Engine\Services\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="BehaviourFactory.cpp">
-      <Filter>Val Engine\Engine\Services\Global</Filter>
-    </ClCompile>
     <ClCompile Include="JSON.cpp">
       <Filter>Val Engine\Engine\Services\Global</Filter>
     </ClCompile>
     <ClCompile Include="Profiler.cpp">
-      <Filter>Val Engine\Engine\Services\Global</Filter>
-    </ClCompile>
-    <ClCompile Include="ResourceInitializer.cpp">
       <Filter>Val Engine\Engine\Services\Global</Filter>
     </ClCompile>
     <ClCompile Include="GameSceneManager.cpp">
@@ -268,16 +250,7 @@
     <ClCompile Include="InputDevice.cpp">
       <Filter>Val Engine\Engine\Objects\Input</Filter>
     </ClCompile>
-    <ClCompile Include="Behaviour.cpp">
-      <Filter>Val Engine\Engine\Objects\Behaviours</Filter>
-    </ClCompile>
     <ClCompile Include="Renderer.cpp">
-      <Filter>Val Engine\Engine\Objects\Behaviours</Filter>
-    </ClCompile>
-    <ClCompile Include="ScriptBehaviour.cpp">
-      <Filter>Val Engine\Engine\Objects\Behaviours</Filter>
-    </ClCompile>
-    <ClCompile Include="Transform.cpp">
       <Filter>Val Engine\Engine\Objects\Behaviours</Filter>
     </ClCompile>
     <ClCompile Include="ScriptError.cpp">
@@ -308,9 +281,6 @@
       <Filter>Val Engine\Engine\Data\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="Material.cpp">
-      <Filter>Val Engine\Engine\Data\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="PostEffect.cpp">
       <Filter>Val Engine\Engine\Data\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="NetworkMessage.cpp">
@@ -385,9 +355,6 @@
     <ClCompile Include="CharacterEventComponent.cpp">
       <Filter>Val Engine\Game\Characters\Components</Filter>
     </ClCompile>
-    <ClCompile Include="GameCharacterComponent.cpp">
-      <Filter>Val Engine\Game\Characters\Components</Filter>
-    </ClCompile>
     <ClCompile Include="CharacterCollisionResult.cpp">
       <Filter>Val Engine\Game\Characters\Hit Data</Filter>
     </ClCompile>
@@ -412,6 +379,48 @@
     <ClCompile Include="CharacterHitData.cpp">
       <Filter>Val Engine\Game\Characters\Hit Data</Filter>
     </ClCompile>
+    <ClCompile Include="GameInstance.cpp">
+      <Filter>Val Engine\Engine\Services</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseObject.cpp">
+      <Filter>Val Engine\Engine\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneObject.cpp">
+      <Filter>Val Engine\Engine\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>Val Engine\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="UpdateDispatcher.cpp">
+      <Filter>Val Engine\Engine\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectReferenceManager.cpp">
+      <Filter>Val Engine\Engine\Services\Global</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectComponent.cpp">
+      <Filter>Val Engine\Engine\Objects\Behaviours</Filter>
+    </ClCompile>
+    <ClCompile Include="Transform.cpp">
+      <Filter>Val Engine\Engine\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectInitializer.cpp" />
+    <ClCompile Include="ResourceWrapper.cpp" />
+    <ClCompile Include="ObjectFactory.cpp">
+      <Filter>Val Engine\Engine\Services</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderingCommand.cpp" />
+    <ClCompile Include="ScreenManager.cpp">
+      <Filter>Val Engine\Engine\Services\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="TimeTracker.cpp">
+      <Filter>Val Engine\Engine\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="ValEngine.cpp">
+      <Filter>Val Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseGameManager.cpp" />
+    <ClCompile Include="BaseSceneBehavior.cpp" />
+    <ClCompile Include="BaseGameCharacterComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FGIncludes.hpp">
@@ -465,17 +474,11 @@
     <ClInclude Include="Renderer.h">
       <Filter>Val Engine\Engine\Objects\Behaviours</Filter>
     </ClInclude>
-    <ClInclude Include="Transform.h">
-      <Filter>Val Engine\Engine\Objects\Behaviours</Filter>
-    </ClInclude>
     <ClInclude Include="IntroBehaviour.h">
       <Filter>Val Engine\Game\Characters\Behaviours\Scenes</Filter>
     </ClInclude>
     <ClInclude Include="MenuBehaviour.h">
       <Filter>Val Engine\Game\Characters\Behaviours\Scenes</Filter>
-    </ClInclude>
-    <ClInclude Include="ScriptBehaviour.h">
-      <Filter>Val Engine\Engine\Objects\Behaviours</Filter>
     </ClInclude>
     <ClInclude Include="MathIncludes.hpp">
       <Filter>Val Engine\IncludeLists</Filter>
@@ -495,12 +498,6 @@
     <ClInclude Include="GameSceneManager.h">
       <Filter>Val Engine\Engine\Services\GameManagement</Filter>
     </ClInclude>
-    <ClInclude Include="Time.h">
-      <Filter>Val Engine\Engine\Services\Utilities</Filter>
-    </ClInclude>
-    <ClInclude Include="Screen.h">
-      <Filter>Val Engine\Engine\Services\Rendering</Filter>
-    </ClInclude>
     <ClInclude Include="GraphicsGL.h">
       <Filter>Val Engine\Engine\Services\Rendering</Filter>
     </ClInclude>
@@ -515,9 +512,6 @@
     </ClInclude>
     <ClInclude Include="ScriptManager.h">
       <Filter>Val Engine\Engine\Services\Resources</Filter>
-    </ClInclude>
-    <ClInclude Include="ServiceManager.h">
-      <Filter>Val Engine\Engine\Services</Filter>
     </ClInclude>
     <ClInclude Include="DebugLog.h">
       <Filter>Val Engine\Engine\Services\Utilities</Filter>
@@ -540,17 +534,11 @@
     <ClInclude Include="Delegate.h">
       <Filter>Val Engine\Engine\Utilities\Data</Filter>
     </ClInclude>
-    <ClInclude Include="Object.h">
-      <Filter>Val Engine\Game</Filter>
-    </ClInclude>
     <ClInclude Include="GameScene.h">
       <Filter>Val Engine\Game</Filter>
     </ClInclude>
     <ClInclude Include="NetworkMessage.h">
       <Filter>Val Engine\Engine\Data\Networking</Filter>
-    </ClInclude>
-    <ClInclude Include="BehaviourFactory.h">
-      <Filter>Val Engine\Engine\Services\Global</Filter>
     </ClInclude>
     <ClInclude Include="Profiler.h">
       <Filter>Val Engine\Engine\Services\Global</Filter>
@@ -573,9 +561,6 @@
     <ClInclude Include="JSON.h">
       <Filter>Val Engine\Engine\Services\Global</Filter>
     </ClInclude>
-    <ClInclude Include="ResourceInitializer.h">
-      <Filter>Val Engine\Engine\Services\Global</Filter>
-    </ClInclude>
     <ClInclude Include="Font.h">
       <Filter>Val Engine\Engine\Data\Rendering</Filter>
     </ClInclude>
@@ -583,9 +568,6 @@
       <Filter>Val Engine\Engine\Data\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="Material.h">
-      <Filter>Val Engine\Engine\Data\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="PostEffect.h">
       <Filter>Val Engine\Engine\Data\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="ScriptParsingUtils.h">
@@ -617,9 +599,6 @@
     </ClInclude>
     <ClInclude Include="ScriptToken.h">
       <Filter>Val Engine\Engine\Data\Scripting</Filter>
-    </ClInclude>
-    <ClInclude Include="Behaviour.h">
-      <Filter>Val Engine\Engine\Objects\Behaviours</Filter>
     </ClInclude>
     <ClInclude Include="Camera.h">
       <Filter>Val Engine\Engine\Data\Rendering</Filter>
@@ -699,9 +678,6 @@
     <ClInclude Include="CharacterEventComponent.h">
       <Filter>Val Engine\Game\Characters\Components</Filter>
     </ClInclude>
-    <ClInclude Include="GameCharacterComponent.h">
-      <Filter>Val Engine\Game\Characters\Components</Filter>
-    </ClInclude>
     <ClInclude Include="CharacterCollisionResult.h">
       <Filter>Val Engine\Game\Characters\Hit Data</Filter>
     </ClInclude>
@@ -740,6 +716,69 @@
     </ClInclude>
     <ClInclude Include="CharacterHitData.h">
       <Filter>Val Engine\Game\Characters\Hit Data</Filter>
+    </ClInclude>
+    <ClInclude Include="GameInstance.h">
+      <Filter>Val Engine\Engine\Services</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseObject.h">
+      <Filter>Val Engine\Engine\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="EnumUtils.h">
+      <Filter>Val Engine\Engine\Utilities\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneObject.h">
+      <Filter>Val Engine\Engine\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="TrackedUpdateFunction.h">
+      <Filter>Val Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="ContainerUtils.h">
+      <Filter>Val Engine\Engine\Utilities\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>Val Engine\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="UpdateDispatcher.h">
+      <Filter>Val Engine\Engine\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectReferenceManager.h">
+      <Filter>Val Engine\Engine\Services\Global</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectComponent.h">
+      <Filter>Val Engine\Engine\Objects\Behaviours</Filter>
+    </ClInclude>
+    <ClInclude Include="Transform.h">
+      <Filter>Val Engine\Engine\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectInitializer.h">
+      <Filter>Val Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineConfigData.h">
+      <Filter>Val Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceWrapper.h">
+      <Filter>Val Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectFactory.h">
+      <Filter>Val Engine\Engine\Services</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderingCommand.h">
+      <Filter>Val Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="ScreenManager.h">
+      <Filter>Val Engine\Engine\Services\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="TimeTracker.h">
+      <Filter>Val Engine\Engine\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseGameManager.h">
+      <Filter>Val Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseSceneBehavior.h">
+      <Filter>Val Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseGameCharacterComponent.h">
+      <Filter>Val Engine</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

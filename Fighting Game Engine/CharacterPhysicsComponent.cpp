@@ -2,13 +2,10 @@
 #include "GameCharacter.h"
 #include "GameCharacterData.h"
 #include "Transform.h"
-#include "ServiceManager.h"
+#include "GameInstance.h"
 #include "FightingStageBehaviour.h"
 #include "FightingGameManager.h"
-
-void CharacterPhysicsComponent::Init()
-{
-}
+#include "GameScene.h"
 
 void CharacterPhysicsComponent::Update()
 {
@@ -28,8 +25,7 @@ void CharacterPhysicsComponent::LateUpdate()
 
 void CharacterPhysicsComponent::ApplyAccumulatedOffset()
 {
-	FightingStageBehaviour* stageBehaviour = _fightingGameManager->stageBehaviour();
-	if(stageBehaviour == nullptr)
+	if(!_fightingSceneBehavior.IsValid())
 	{
 		return;
 	}
@@ -39,13 +35,17 @@ void CharacterPhysicsComponent::ApplyAccumulatedOffset()
 		_accumulatedOffset.y = glm::max<ve::dec_t>(ve::dec_t(0), _accumulatedOffset.y);
 	}
 
-	Transform* transform = _owner->object()->transform();
+	Transform transform = _owner->GetWorldTransform();
 
-	transform->position += _accumulatedOffset;
-	transform->position.x = glm::clamp(transform->position.x, stageBehaviour->stageBounds().x, stageBehaviour->stageBounds().z);
-	transform->position.y = glm::clamp(transform->position.y, stageBehaviour->stageBounds().y, stageBehaviour->stageBounds().w);
+	ve::vec3 newPosition = transform.GetPosition() + ve::vec3(_accumulatedOffset, 0);
+	newPosition.x = glm::clamp(newPosition.x, _fightingSceneBehavior->stageBounds().x, _fightingSceneBehavior->stageBounds().z);
+	newPosition.y = glm::clamp(newPosition.y, _fightingSceneBehavior->stageBounds().y, _fightingSceneBehavior->stageBounds().w);
 
-	_grounded = (transform->position.y == stageBehaviour->stageBounds().y);
+	transform.SetPosition(newPosition);
+
+	_owner->SetWorldTransform(transform);
+
+	_grounded = (newPosition.y == _fightingSceneBehavior->stageBounds().y);
 }
 
 void CharacterPhysicsComponent::UpdateForces()
@@ -73,14 +73,14 @@ void CharacterPhysicsComponent::ApplyFriction()
 {
 	if(_grounded)
 	{
-		const ve::dec_t groundFriction = _groundFrictionOverride.duration > 0 ? _groundFrictionOverride.value : _owner->characterData()->_physicsParams.baseGroundFriction;
+		const ve::dec_t groundFriction = _groundFrictionOverride.duration > 0 ? _groundFrictionOverride.value : _gameCharacterOwner->characterData()->_physicsParams.baseGroundFriction;
 		_velocity.x = glm::moveTowards<ve::dec_t>(_velocity.x, ve::dec_t(0), groundFriction);
 		_velocity.y = ve::dec_t(0);
 	}
 	else
 	{
-		const ve::dec_t airFriction = _airFrictionOverride.duration > 0 ? _airFrictionOverride.value : _owner->characterData()->_physicsParams.baseAirFriction;
-		const ve::dec_t gravity = _gravityOverride.duration > 0 ? _gravityOverride.value : _owner->characterData()->_physicsParams.gravity;
+		const ve::dec_t airFriction = _airFrictionOverride.duration > 0 ? _airFrictionOverride.value : _gameCharacterOwner->characterData()->_physicsParams.baseAirFriction;
+		const ve::dec_t gravity = _gravityOverride.duration > 0 ? _gravityOverride.value : _gameCharacterOwner->characterData()->_physicsParams.gravity;
 
 		_velocity.x = glm::moveTowards<ve::dec_t>(_velocity.x, ve::dec_t(0), airFriction);
 		_velocity.y -= gravity;
@@ -129,18 +129,11 @@ void CharacterPhysicsComponent::HandleCharacterCollision(const GameCharacter* ot
 		//displacementPercentage = ve::dec_t(1);
 	//else
 	{
-		const ve::dec_t thisMass = _owner->characterData()->_physicsParams.mass;
+		const ve::dec_t thisMass = _gameCharacterOwner->characterData()->_physicsParams.mass;
 		const ve::dec_t otherMass = other->characterData()->_physicsParams.mass;
 
 		displacementPercentage = thisMass / (thisMass + otherMass);
 	}
 	
 	 _accumulatedOffset.x += collision.depenetrationDistance.x * displacementPercentage;
-}
-
-CharacterPhysicsComponent::CharacterPhysicsComponent(GameCharacter * owner, ServiceManager * serviceManager)
-	: GameCharacterComponent(owner, serviceManager)
-	, _grounded(true)
-{
-	_fightingGameManager = serviceManager->FightingGameManager();
 }

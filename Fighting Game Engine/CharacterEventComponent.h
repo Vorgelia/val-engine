@@ -1,16 +1,13 @@
 #pragma once
-#include "GameCharacterComponent.h"
 #include "CharacterCollisionResult.h"
+#include "BaseScriptVariable.h"
+#include "BaseGameCharacterComponent.h"
 
 struct CharacterCollisionResult;
 
-class CharacterEventComponent : public GameCharacterComponent
+class CharacterEventComponent : public BaseGameCharacterComponent
 {
 	friend class GameCharacter;
-
-protected:
-	void Init() override;
-	void Update() override;
 
 public:
 	void HandleAttackHit(GameCharacter* otherCharacter, const AttackCollisionHit& attackHit, std::shared_ptr<BaseScriptVariable> hitReactionData);
@@ -21,6 +18,6 @@ public:
 	void HandleTradeUnresolved(GameCharacter* otherCharacter, const AttackCollisionHit& attackHit, const AttackCollisionHit& attackReceived);
 	void HandleTradeSuccess(GameCharacter* otherCharacter, const AttackCollisionHit& attackHit, std::shared_ptr<BaseScriptVariable> hitReactionFlags);
 
-	CharacterEventComponent(GameCharacter* owner, ServiceManager* serviceManager);
+	CharacterEventComponent() = default;
 	~CharacterEventComponent() = default;
 };

@@ -1,5 +1,5 @@
 #pragma once
-#include<GLM/glm.hpp>
+#include <GLM/glm.hpp>
 #include <cstdint>
 
 namespace glm
@@ -37,6 +37,12 @@ namespace glm
 			return T(1);
 		}
 		return sgn;
+	}
+
+	template<typename T1>
+	bool nearlyZero(T1 lhs)
+	{
+		return glm::abs(lhs) < 1e-8;
 	}
 
 	typedef glm::tvec2<std::int64_t, glm::highp> lvec2;

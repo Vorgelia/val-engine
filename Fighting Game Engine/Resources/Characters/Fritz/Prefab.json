@@ -1,33 +1,29 @@
 {
+	"__ve_class":"GameCharacter",
+	
 	"name":"Char_Fritz",
 	"enabled":true,
-	"behaviours":[
-		{
-			"name":"Transform",
-			"enabled":true,
-			"position":{
-				"x":0,
-				"y":0
-			},
-			"scale":{
-				"x":100,
-				"y":100
-			},
-			"rotation":{
-				"x":0,
-				"y":0,
-				"z":0,
-				"w":1
-			},
-			"depth":0
+	"dataPath":"Characters/Fritz/CharacterData.json",
+	"localTransform":{
+		"position":{
+			"x":0,
+			"y":0,
+			"z",0
 		},
-		{
-			"name":"GameCharacter",
-			"enabled":true,
-			"dataPath":"Characters/Fritz/CharacterData.json"
+		"scale":{
+			"x":100,
+			"y":100,
+			"z":1
 		},
+		"rotation":{
+			"x":0,
+			"y":0,
+			"z":0
+		}
+	},
+	"__ve_components":[
 		{
-			"name":"CharacterRenderer",
+			"__ve_class":"CharacterRenderer",
 			"enabled":true,
 			"mesh":"Meshes/Base/quad_sprite_character.vm",
 			"material":"Materials/Menu/Menu_Test.vmat"

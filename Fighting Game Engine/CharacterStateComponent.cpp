@@ -1,5 +1,5 @@
 #include "CharacterStateComponent.h"
-#include "ServiceManager.h"
+#include "GameInstance.h"
 #include "CharacterFrame.h"
 #include "CharacterState.h"
 #include "CharacterSprite.h"
@@ -13,12 +13,21 @@
 #include "GamePlayer.h"
 #include "GameCharacterData.h"
 
-void CharacterStateComponent::Init()
+void CharacterStateComponent::OnInit()
 {
-	GameCharacterData* characterData = _owner->_characterData.get();
+	_input = _owningInstance->Input();
+	_scriptManager = _owningInstance->ScriptManager();
+	_filesystem = _owningInstance->Filesystem();
+	_resource = _owningInstance->ResourceManager();
+}
+
+void CharacterStateComponent::CacheCharacterData()
+{
+	GameCharacterData* characterData = _gameCharacterOwner->_characterData.get();
+
 	for(const std::string& path : characterData->_statePaths)
 	{
-		_filesystem->ApplyFunctionToFiles(path, [this](const FS::path path)
+		_filesystem->ApplyFunctionToFiles(path, [this](const fs::path path)
 		{
 			if(path.extension().string() != ".json")
 			{
@@ -36,14 +45,14 @@ void CharacterStateComponent::Init()
 				auto result = this->_stateLookup.insert(std::make_pair(
 					JSON::Get<std::string>(iter["name"]),
 					std::make_unique<CharacterState>(iter, _scriptManager->AddScript(JSON::Get<std::string>(iter["script"])))));
-				_scriptManager->HandleScriptCharacterBindings(*_owner, result.first->second->script());
+				_scriptManager->HandleScriptCharacterBindings(*_gameCharacterOwner, result.first->second->script());
 			}
 		});
 	}
 
 	for(const std::string& path : characterData->_frameDataPaths)
 	{
-		_filesystem->ApplyFunctionToFiles(path, [this](const FS::path path)
+		_filesystem->ApplyFunctionToFiles(path, [this](const fs::path path)
 		{
 			if(path.extension().string() != ".json")
 			{
@@ -67,7 +76,7 @@ void CharacterStateComponent::Init()
 
 	for(auto& iter : _frameLookup)
 	{
-		_owner->_resource->GetTexture(iter.second->spriteData()->sprite());
+		_gameCharacterOwner->_resource->GetTexture(iter.second->spriteData()->sprite());
 	}
 }
 
@@ -96,7 +105,7 @@ void CharacterStateComponent::Update()
 
 void CharacterStateComponent::EvaluateNextState()
 {
-	if(_owner->_playerOwner == nullptr || _owner->_playerOwner->inputDevice() == nullptr)
+	if(_gameCharacterOwner->_playerOwner == nullptr || _gameCharacterOwner->_playerOwner->inputDevice() == nullptr)
 	{
 		return;
 	}
@@ -110,7 +119,7 @@ void CharacterStateComponent::EvaluateNextState()
 			continue;
 		}
 
-		if(_owner->_playerOwner->inputDevice()->EvaluateMotion(i.second->associatedMotion()))
+		if(_gameCharacterOwner->_playerOwner->inputDevice()->EvaluateMotion(i.second->associatedMotion()))
 		{
 			if(nextState == nullptr || nextState->priority() < i.second->priority())
 			{
@@ -255,13 +264,4 @@ const std::unordered_set<std::string>& CharacterStateComponent::GetFlags(Charact
 	}
 
 	return iter->second;
-}
-
-CharacterStateComponent::CharacterStateComponent(GameCharacter* owner, ServiceManager* serviceManager) 
-	: GameCharacterComponent(owner, serviceManager)
-{
-	_input = serviceManager->Input();
-	_scriptManager = serviceManager->ScriptManager();
-	_filesystem = serviceManager->Filesystem();
-	_resource = serviceManager->ResourceManager();
 }

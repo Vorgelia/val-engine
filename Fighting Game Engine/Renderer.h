@@ -1,28 +1,51 @@
 #pragma once
-#include "Behaviour.h"
+#include "ObjectComponent.h"
 #include <string>
+#include "RenderingCommand.h"
 
 class ResourceManager;
 class RenderingGL;
+class Material;
 
-class Renderer :
-	public Behaviour
+class BaseRenderer : public ObjectComponent
 {
-protected:
-	ResourceManager* _resource;
-	RenderingGL* _rendering;
+public:
+	virtual std::vector<RenderingCommand> GetRenderingCommands(const BaseCamera* camera) const = 0;
+
+	BaseRenderer() = default;
+	~BaseRenderer() = default;
+};
+
+class Renderer : public BaseRenderer
+{
+	VE_OBJECT_DECLARATION(Renderer)
 
 protected:
-	Mesh* _mesh;
-	Material* _material;
+	Mesh* _mesh = nullptr;
+	Material* _material = nullptr;
 
 public:
-	VE_BEHAVIOUR_NAME(Renderer);
+	virtual json Serialize() const;
+	virtual void Deserialize(const json& j);
 
-	VE_BEHAVIOUR_REGISTER_FUNCTION(OnRenderObjects);
+	std::vector<RenderingCommand> GetRenderingCommands(const BaseCamera* camera) const override;
 
-	Renderer(Object* owner, ServiceManager* serviceManager, Mesh* mesh = nullptr, Material* material = nullptr);
-	Renderer(Object* owner, ServiceManager* serviceManager, const json& j);
+	Renderer() = default;
 	~Renderer() = default;
 };
 
+class ParallaxRenderer : public Renderer
+{
+	VE_OBJECT_DECLARATION(ParallaxRenderer)
+
+protected:
+	float _parallaxScale = 1.0f;
+
+public:
+	virtual void RegisterReflectionFields() const override;
+
+	std::vector<RenderingCommand> GetRenderingCommands(const BaseCamera* camera) const override;
+
+	ParallaxRenderer() = default;
+	~ParallaxRenderer() = default;
+};

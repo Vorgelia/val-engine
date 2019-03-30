@@ -3,9 +3,10 @@
 #include <memory>
 
 class GameCharacter;
-class Transform;
+struct Transform;
 class Texture;
 class CharacterSprite;
+class Material;
 
 class ResourceManager;
 class RenderingGL;
@@ -13,25 +14,28 @@ class RenderingGL;
 class CharacterRenderer :
 	public Renderer
 {
+	VE_OBJECT_DECLARATION(CharacterRenderer);
+
 private:
 	ResourceManager* _resource;
 	RenderingGL* _rendering;
 
 private:
-	const GameCharacter* _character;
+	ObjectReference<GameCharacter> _character;
 	std::unique_ptr<Material> _renderingMaterialCopy;
-	std::unique_ptr<Transform> _renderingTransform;
 
 	glm::vec2 _pixelsToWorldUnits;
 
 	void HandleRenderingMaterial(const CharacterSprite* spriteData, Texture* texture, bool flipped) const;
-	void HandleRenderingTransform(const CharacterSprite* spriteData, Texture* texture) const;
+	Transform GetRenderingTransform(const CharacterSprite* spriteData, Texture* texture) const;
+
+	virtual std::vector<RenderingCommand> GetRenderingCommands(const BaseCamera* camera) const override;
 
 public:
-	VE_BEHAVIOUR_NAME(CharacterRenderer);
 
-	VE_BEHAVIOUR_REGISTER_FUNCTION(OnRenderObjects);
+	virtual void OnInit() override;
+	virtual void OnDestroyed() override;
 
-	CharacterRenderer(Object* owner, ServiceManager* serviceManager, const json& j);
-	virtual ~CharacterRenderer();
+	CharacterRenderer() = default;
+	~CharacterRenderer() = default;
 };

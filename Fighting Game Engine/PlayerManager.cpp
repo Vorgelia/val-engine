@@ -1,19 +1,20 @@
 #include "PlayerManager.h"
 #include "GamePlayer.h"
 #include "NetworkGamePlayer.h"
+#include "GameInstance.h"
 
 #define VE_MAX_PLAYERS 16
 
 GamePlayer* PlayerManager::AddPlayer(int id, int inputDeviceId)
 {
-	_players[id] = std::make_unique<GamePlayer>(id, inputDeviceId, _serviceManager);
+	_players[id] = std::make_unique<GamePlayer>(id, inputDeviceId, _owningInstance);
 	PlayerAdded(_players[id].get());
 	return _players[id].get();
 }
 
 GamePlayer* PlayerManager::AddNetworkPlayer(int id)
 {
-	_players[id] = std::make_unique<NetworkGamePlayer>(id, _serviceManager);
+	_players[id] = std::make_unique<NetworkGamePlayer>(id, _owningInstance);
 	PlayerAdded(_players[id].get());
 	return _players[id].get();
 }
@@ -37,11 +38,22 @@ void PlayerManager::ClearPlayers()
 	}
 }
 
-void PlayerManager::Init()
+void PlayerManager::OnInit()
 {
+	VE_REGISTER_UPDATE_FUNCTION(int(UpdateGroup::FrameUpdate) - 20, UpdateType::AnyFixedGameUpdate, UpdatePlayers);
 }
 
-void PlayerManager::Update()
+void PlayerManager::OnServiceInit()
+{
+	
+}
+
+void PlayerManager::OnDestroyed()
+{
+	ClearPlayers();
+}
+
+void PlayerManager::UpdatePlayers()
 {
 	for(size_t i = 0; i < _players.size(); ++i)
 	{
@@ -52,16 +64,7 @@ void PlayerManager::Update()
 	}
 }
 
-void PlayerManager::Cleanup()
+PlayerManager::PlayerManager()
 {
-	ClearPlayers();
-}
-
-PlayerManager::PlayerManager(ServiceManager* serviceManager) : BaseService(serviceManager)
-{
-	_allowServiceUpdate = true;
 	_players.resize(VE_MAX_PLAYERS);
 }
-
-PlayerManager::~PlayerManager()
-= default;

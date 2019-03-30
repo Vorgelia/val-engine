@@ -2,36 +2,58 @@
 #include "Script.h"
 #include "ScriptManager.h"
 #include "ResourceManager.h"
+#include "FightingStageBehaviour.h"
 #include "CharacterStateComponent.h"
+#include "FightingGameManager.h"
 #include "CharacterPhysicsComponent.h"
 #include "GamePlayer.h"
 #include "CharacterState.h"
 #include "CharacterFrame.h"
 #include "GameCharacterData.h"
-#include "ServiceManager.h"
+#include "GameInstance.h"
 #include "CharacterEventComponent.h"
 #include "Transform.h"
 
-VE_BEHAVIOUR_REGISTER_TYPE(GameCharacter);
+VE_OBJECT_DEFINITION(GameCharacter);
 
-const GameCharacterData* GameCharacter::characterData() const
+void GameCharacter::OnInit()
 {
-	return _characterData.get();
+	_filesystem = _owningInstance->Filesystem();
+	_scriptManager = _owningInstance->ScriptManager();
+	_resource = _owningInstance->ResourceManager();
+
+	_stateComponent = AddComponentOfType<CharacterStateComponent>().get();
+	_physicsComponent = AddComponentOfType<CharacterPhysicsComponent>().get();
+	_eventComponent = AddComponentOfType<CharacterEventComponent>().get();
 }
 
-CharacterStateComponent* GameCharacter::stateComponent() const
+void GameCharacter::OnDestroyed()
 {
-	return _stateComponent.get();
+	
 }
 
-CharacterPhysicsComponent* GameCharacter::physicsComponent() const
+void GameCharacter::Deserialize(const json& j)
 {
-	return _physicsComponent.get();
-}
+	std::string dataPath;
+	if(JSON::TryGetMember<std::string>(j, "dataPath", dataPath))
+	{
+		json* dataJson = _resource->GetJsonData(dataPath);
+		if(dataJson != nullptr)
+		{
+			_characterData = std::make_unique<GameCharacterData>(*dataJson);
 
-CharacterEventComponent * GameCharacter::eventComponent() const
-{
-	return _eventComponent.get();
+			std::string scriptPath;
+			if(JSON::TryGetMember(*dataJson, "characterScript", scriptPath))
+			{
+				_characterScript = _scriptManager->GetScript(scriptPath);
+				_scriptManager->HandleScriptCharacterBindings(*this, _characterScript);
+			}
+
+			_stateComponent->CacheCharacterData();
+		}
+	}
+
+	GameObject::Deserialize(j);
 }
 
 void GameCharacter::SetOwner(GamePlayer* owner)
@@ -48,7 +70,7 @@ CharacterCollisionResult GameCharacter::GenerateCollisions(const GameCharacter* 
 	collisionResult.otherCharacter = const_cast<GameCharacter*>(other);
 
 	auto& hitResultPicker = [&](const GameCharacter* attacker, const GameCharacter* defender, const std::vector<CharacterHitData>& hitboxes, const std::vector<CharacterHitData>& hurtboxes)
-	-> boost::optional<AttackCollisionHit>
+	-> std::optional<AttackCollisionHit>
 	{
 		for(auto& hitbox : hitboxes)
 		{
@@ -64,8 +86,8 @@ CharacterCollisionResult GameCharacter::GenerateCollisions(const GameCharacter* 
 				{
 					for(auto& hurtCollision : hurtbox.collision())
 					{
-						const CollisionBox relativeHitCollision = hitCollision.RelativeTo(attacker->object()->transform()->position, _flipped);
-						const CollisionBox relativeHurtCollision = hurtCollision.RelativeTo(defender->object()->transform()->position, other->_flipped);
+						const CollisionBox relativeHitCollision = hitCollision.RelativeTo(attacker->GetWorldTransform().GetPosition(), _flipped);
+						const CollisionBox relativeHurtCollision = hurtCollision.RelativeTo(defender->GetWorldTransform().GetPosition(), other->_flipped);
 						if(relativeHitCollision.Overlaps(relativeHurtCollision))
 						{
 							return AttackCollisionHit(hitbox, hurtbox);
@@ -74,7 +96,7 @@ CharacterCollisionResult GameCharacter::GenerateCollisions(const GameCharacter* 
 				}
 			}
 		}
-		return boost::optional<AttackCollisionHit>();
+		return std::optional<AttackCollisionHit>();
 	};
 	
 	collisionResult.attackReceived = hitResultPicker(other, this, otherFrame->hitboxes(), thisFrame->hurtboxes());
@@ -133,39 +155,6 @@ void GameCharacter::UpdateSystemFlags()
 	_systemFlags.clear();
 }
 
-GameCharacter::GameCharacter(Object* owner, ServiceManager* serviceManager, const json& j) : Behaviour(owner, serviceManager, j)
-{
-	_filesystem = serviceManager->Filesystem();
-	_scriptManager = serviceManager->ScriptManager();
-	_resource = serviceManager->ResourceManager();
-
-	_initialized = false;
-
-	std::string dataPath;
-	if(JSON::TryGetMember<std::string>(j, "dataPath", dataPath))
-	{
-		json* dataJson = _resource->GetJsonData(dataPath);
-		if(dataJson != nullptr)
-		{
-			_characterData = std::make_unique<GameCharacterData>(*dataJson);
-			_stateComponent = std::make_unique<CharacterStateComponent>(this, _serviceManager);
-			_physicsComponent = std::make_unique<CharacterPhysicsComponent>(this, _serviceManager);
-			_eventComponent = std::make_unique<CharacterEventComponent>(this, _serviceManager);
-
-			std::string scriptPath;
-			if(JSON::TryGetMember(*dataJson, "characterScript", scriptPath))
-			{
-				_characterScript = _scriptManager->GetScript(scriptPath);
-				_scriptManager->HandleScriptCharacterBindings(*this, _characterScript);
-			}
-
-			_stateComponent->Init();
-			_physicsComponent->Init();
-			_eventComponent->Init();
-		}
-	}
-}
-
 bool CharacterSortingPredicate::operator()(const GameCharacter* lhs, const GameCharacter* rhs) const
 {
 	if(lhs->characterData() == nullptr)
@@ -178,4 +167,19 @@ bool CharacterSortingPredicate::operator()(const GameCharacter* lhs, const GameC
 		return lhs;
 	}
 	return lhs->characterData()->_eventResolutionPriority > rhs->characterData()->_eventResolutionPriority;
+}
+
+GameCharacter::GameCharacter()
+	: _scriptManager(nullptr)
+	, _filesystem(nullptr)
+	, _resource(nullptr)
+	, _initialized(false)
+	, _playerOwner(nullptr)
+	, _characterScript(nullptr)
+	, _flipped(false)
+	, _stateComponent(nullptr)
+	, _physicsComponent(nullptr)
+	, _eventComponent(nullptr)
+{
+
 }

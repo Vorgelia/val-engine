@@ -1,25 +1,16 @@
 {
 	"id":0,
+	"__ve_class":"GameObject",
 	"name":"Manager",
 	"enabled":true,
-	"behaviours":[
+	"__ve_components":[
 		{
-			"name":"MenuBehaviour",
+			"__ve_class":"MenuBehaviour",
 			"enabled":true
 		},
 		{
-			"name":"FightingStageBehaviour",
+			"__ve_class":"ComputeShaderEffect",
 			"enabled":true,
-			"stageBounds":{
-				"x": -60,
-				"y": 2,
-				"z": 60,
-				"w": 50
-			}
-		},
-		{
-			"name":"ComputeShaderEffect",
-			"enabled":false,
 			"shaderPath":"Shaders/Base/Test_FB"
 		}
 	]

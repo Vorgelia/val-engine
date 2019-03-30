@@ -1,15 +1,23 @@
 #include "ResourceManager.h"
-#include "ServiceManager.h"
-#include "ComputeShader.h"
+#include "GameInstance.h"
 #include "FilesystemManager.h"
 #include "GraphicsGL.h"
+#include "DebugLog.h"
+
+#include "Mesh.h"
+#include "CachedMesh.h"
+#include "SurfaceShader.h"
+#include "ComputeShader.h"
+#include "Material.h"
+#include "Texture.h"
+#include "Font.h"
+#include "FilesystemManager.h"
+#include "GraphicsGL.h"
+
 #include <regex>
 #include <boost/algorithm/string/erase.hpp>
 
-//If the following define exists, the engine will create some default resource files if the folder structure is missing.
-//I opt to create and then read files rather than reading directly from the resources because the generated files have comments in them that explain how they work
-//They are also easier to just modify instead of writing new ones from scratch
-//#define VE_CREATE_DEFAULT_RESOURCES
+VE_OBJECT_DEFINITION(ResourceManager)
 
 void ResourceManager::GenerateDefaultTextures()
 {
@@ -19,13 +27,13 @@ void ResourceManager::GenerateDefaultTextures()
 		0, 0, 0, 255,	 255, 0, 255, 255
 	};
 
-	_cachedTexture.Add("base_texture", _graphics->CreateTexture("base_texture", pixels, glm::ivec2(2, 2)), true);
+	_TextureMap.Add("base_texture", _graphics->CreateTexture("base_texture", pixels, glm::ivec2(2, 2)), true);
 
 	pixels = std::vector<unsigned char>{ 0, 0, 0, 255 };
-	_cachedTexture.Add("black", _graphics->CreateTexture("black", pixels, glm::ivec2(1, 1)), true);
+	_TextureMap.Add("black", _graphics->CreateTexture("black", pixels, glm::ivec2(1, 1)), true);
 
 	pixels = std::vector<unsigned char>{ 255, 255, 255, 255 };
-	_cachedTexture.Add("white", _graphics->CreateTexture("white", pixels, glm::ivec2(1, 1)), true);
+	_TextureMap.Add("white", _graphics->CreateTexture("white", pixels, glm::ivec2(1, 1)), true);
 }
 
 void ResourceManager::LoadDefaultResources()
@@ -82,7 +90,7 @@ void ResourceManager::PreprocessTextSource(std::string& inoutShaderSource)
 }
 
 template<>
-std::unique_ptr<Texture> ResourceManager::CreateResource(const std::string& key)
+Texture ResourceManager::CreateResource(const std::string& key)
 {
 	glm::ivec2 textureSize;
 	std::vector<unsigned char> textureData;
@@ -91,14 +99,14 @@ std::unique_ptr<Texture> ResourceManager::CreateResource(const std::string& key)
 }
 
 template<>
-std::unique_ptr<SurfaceShader> ResourceManager::CreateResource(const std::string& key)
+SurfaceShader ResourceManager::CreateResource(const std::string& key)
 {
 	std::string vertSource = _filesystem->ReturnFile(key + ".vert");
 	PreprocessTextSource(vertSource);
 	std::string fragSource = _filesystem->ReturnFile(key + ".frag");
 	PreprocessTextSource(fragSource);
 
-	return	_graphics->CreateShader<SurfaceShader>(
+	return _graphics->CreateShader<SurfaceShader>(
 		key,
 		std::vector<ShaderAttachment>{
 		ShaderAttachment(vertSource, GL_VERTEX_SHADER),
@@ -106,80 +114,75 @@ std::unique_ptr<SurfaceShader> ResourceManager::CreateResource(const std::string
 }
 
 template<>
-std::unique_ptr<ComputeShader> ResourceManager::CreateResource(const std::string& key)
+ComputeShader ResourceManager::CreateResource(const std::string& key)
 {
 	std::string shaderSource = _filesystem->ReturnFile(key + ".comp");
 	PreprocessTextSource(shaderSource);
 
-	return _graphics->CreateShader<ComputeShader>(key, std::vector<ShaderAttachment>{
-		ShaderAttachment(shaderSource, GL_COMPUTE_SHADER)
-	});
+	return _graphics->CreateShader<ComputeShader>(
+		key,
+		std::vector<ShaderAttachment>{
+			ShaderAttachment(shaderSource, GL_COMPUTE_SHADER)
+		}
+	);
 }
 
 template<>
-inline std::unique_ptr<Mesh> ResourceManager::CreateResource(const std::string& key)
+inline Mesh ResourceManager::CreateResource(const std::string& key)
 {
 	CachedMesh* cachedMesh = GetCachedMesh(key);
 	return _graphics->CreateMesh(key, cachedMesh);
 }
 
 template<>
-inline std::unique_ptr<Font> ResourceManager::CreateResource(const std::string& key)
+inline Font ResourceManager::CreateResource(const std::string& key)
 {
 	return _graphics->CreateFont(key);
 }
 
 template<>
-inline std::unique_ptr<std::string> ResourceManager::CreateResource(const std::string& key)
+inline std::string ResourceManager::CreateResource(const std::string& key)
 {
-	std::unique_ptr<std::string> resource = _filesystem->LoadFileResource<std::string>(key);
-	PreprocessTextSource(*resource);
+	std::string resource = _filesystem->GetFileResource<std::string>(key);
+	PreprocessTextSource(resource);
 	return resource;
 }
 
-void ResourceManager::Init()
+void ResourceManager::HandleSceneLoaded(const GameScene* scene)
 {
-	_debug = _serviceManager->Debug();
-	_graphics = _serviceManager->Graphics();
-	_filesystem = _serviceManager->Filesystem();
+	TrimContainers();
+}
 
-#ifdef VE_CREATE_DEFAULT_RESOURCES
-	if(!FS::exists("Meshes/") || !FS::exists("Shaders/") || !FS::exists("Settings/") || !FS::exists("States/"))
-	{
-		_debug->VE_LOG("-----\n\n\nFile structure invalid. Creating default resources.\n\n\n-----");
-		ResourceInitializer::Init();
-	}
-#endif
+void ResourceManager::OnInit()
+{
+	_debug = _owningInstance->Debug();
+	_graphics = _owningInstance->Graphics();
+	_filesystem = _owningInstance->Filesystem();
+	_gameSceneManager = _owningInstance->GameSceneManager();
 
+	_gameSceneManager->SceneLoaded += VE_DELEGATE_FUNC(GameSceneManager::GameSceneEventHandler, HandleSceneLoaded);
+}
+
+void ResourceManager::OnServiceInit()
+{
 	GenerateDefaultTextures();
 	LoadDefaultResources();
 }
 
-void ResourceManager::Update() {}
-
-void ResourceManager::Cleanup()
+void ResourceManager::OnDestroyed()
 {
-	Unload(true);
+	TrimContainers();
 }
 
-void ResourceManager::Unload(bool includePersistent)
+void ResourceManager::TrimContainers()
 {
-	_cachedComputeShader.Cleanup(includePersistent);
-	_cachedFont.Cleanup(includePersistent);
-	_cachedJsonData.Cleanup(includePersistent);
-	_cachedMaterial.Cleanup(includePersistent);
-	_cachedMesh.Cleanup(includePersistent);
-	_cachedCachedMesh.Cleanup(includePersistent);
-	_cachedPostEffect.Cleanup(includePersistent);
-	_cachedSurfaceShader.Cleanup(includePersistent);
-	_cachedTextData.Cleanup(includePersistent);
-	_cachedTexture.Cleanup(includePersistent);
+	TrimContainer(_ComputeShaderMap);
+	TrimContainer(_FontMap);
+	TrimContainer(_JsonDataMap);
+	TrimContainer(_MaterialMap);
+	TrimContainer(_MeshMap);
+	TrimContainer(_CachedMeshMap);
+	TrimContainer(_SurfaceShaderMap);
+	TrimContainer(_TextDataMap);
+	TrimContainer(_TextureMap);
 }
-
-ResourceManager::ResourceManager(ServiceManager* serviceManager) : BaseService(serviceManager)
-{
-
-}
-
-ResourceManager::~ResourceManager()
-= default;

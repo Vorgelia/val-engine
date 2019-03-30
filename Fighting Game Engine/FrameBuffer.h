@@ -1,10 +1,24 @@
 #pragma once
+#include "ValEngine.h"
 #include "GLIncludes.hpp"
 #include <GLM/glm.hpp>
 #include <vector>
 #include <memory>
+#include "EnumUtils.h"
+#include "Texture.h"
 
 class Texture;
+
+enum class FrameBufferFlags : std::uint8_t
+{
+	VE_BITMASK_VALUE_NONE,
+	Valid = 0b0001,
+	Dirty = 0b0010,
+	DepthStencil = 0b0100,
+	VE_BITMASK_VALUE_ALL,
+};
+
+VE_DECLARE_BITMASK_ENUM(FrameBufferFlags);
 
 class FrameBuffer
 {
@@ -12,26 +26,35 @@ class FrameBuffer
 	friend class RenderingGL;
 
 private:
-	bool _valid;
+	FrameBufferFlags _flags;
 
 	glm::vec4 _clearColor;
-	GLuint format;
-	GLuint filtering;
+	GLuint _format;
+	GLuint _filtering;
 
-	GLuint id;
-	GLuint depthStencil;
+	GLuint _id;
+	GLuint _depthStencil;
 
-	glm::ivec2 resolution;
-	glm::vec2 invResolution;
+	ve::ivec2 _resolution;
+	glm::vec2 _invResolution;
 
-	bool hasDepthStencil;
+	GLuint _clearFlags;
 
-	GLuint clearFlags;
-
-	std::vector<std::unique_ptr<Texture>> textures;
+	std::vector<Texture>_textures;
 
 public:
+	FrameBufferFlags flags() const { return _flags; }
+	ve::ivec2 resolution() const { return _resolution; }
 
-	FrameBuffer(glm::ivec2 size, int texAmount, bool depthStencil, GLint format, glm::vec4 clearColor, GLint filtering, GLuint clearFlags);
+	std::vector<Texture>& textures() { return _textures; }
+	const std::vector<Texture>& textures() const { return _textures; }
+
+	void SetResolution(ve::ivec2 resolution);
+
+	bool IsValid() const { return (_flags & FrameBufferFlags::Valid) != FrameBufferFlags::None; }
+	bool IsDirty() const { return (_flags & FrameBufferFlags::Dirty) != FrameBufferFlags::None; }
+	
+	FrameBuffer(ve::ivec2 size, int texAmount, bool depthStencil, GLint format, glm::vec4 clearColor, GLint filtering, GLuint clearFlags);
+	FrameBuffer() = default;
 	~FrameBuffer() = default;
 };

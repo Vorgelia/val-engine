@@ -23,5 +23,5 @@ public:
 	GLuint elementAmount() const;
 
 	Mesh(std::string name, CachedMesh* meshData);
-	~Mesh();
+	~Mesh() = default;
 };

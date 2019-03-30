@@ -1,9 +1,11 @@
 #pragma once
-#include "BaseService.h"
 #include "FightingGameState.h"
 #include "Delegate.h"
 #include <unordered_map>
 #include <unordered_set>
+#include "BaseGameManager.h"
+#include "ObjectReferenceManager.h"
+#include "GameCharacter.h"
 
 class GameCharacter;
 class GameSceneManager;
@@ -12,8 +14,10 @@ class GamePlayer;
 class PlayerManager;
 class FightingStageBehaviour;
 
-class FightingGameManager : public BaseService
+class FightingGameManager : public BaseGameManager
 {
+	VE_OBJECT_DECLARATION(FightingGameManager);
+
 	friend class ScriptManager;
 private:
 	GameSceneManager* _gameSceneManager;
@@ -24,30 +28,23 @@ private:
 
 	std::unordered_set<GameCharacter*> _characters;
 
-	FightingStageBehaviour* _stageBehaviour;
-
 	void HandleSceneLoaded(const GameScene* scene);
 	void ChangeState(FightingGameState state);
 
-	void Init() override;
-	void Update() override;
-	void Cleanup() override;
+	void OnInit() override;
+	void OnDestroyed() override;
+
+	void Update();
 
 	GameCharacter* AddCharacter(const std::string& path);
-	void RemoveCharacter(int id);
-	void CleanupCharacters();
 
 public:
 	typedef Delegate<FightingGameState> FightingGameStateEventHandler;
 	FightingGameStateEventHandler FightingGameStateChanged;
 
-	FightingGameState currentState() const;
-	FightingStageBehaviour* stageBehaviour() const;
+	FightingGameState currentState() const { return _currentState; }
+	const std::unordered_set<GameCharacter*>& characters() const { return _characters; }
 
-	const std::unordered_set<GameCharacter*>& characters() const;
-
-	void ChackCharacterCollisions(GameCharacter* other);
-
-	FightingGameManager(ServiceManager* serviceManager);
+	FightingGameManager() = default;
 	~FightingGameManager() = default;
 };

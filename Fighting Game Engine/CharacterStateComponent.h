@@ -4,11 +4,11 @@
 #include <unordered_set>
 #include <memory>
 #include "JSON.h"
-#include "GameCharacterComponent.h"
+#include "BaseGameCharacterComponent.h"
 
 class CharacterState;
 class CharacterFrame;
-class ServiceManager;
+class GameInstance;
 class InputManager;
 class FilesystemManager;
 class ResourceManager;
@@ -21,7 +21,7 @@ enum class CharacterStateFlagType
 	CancelRequirements = 3,
 };
 
-class CharacterStateComponent : public GameCharacterComponent
+class CharacterStateComponent : public BaseGameCharacterComponent
 {
 	friend class GameCharacter;
 	friend class ScriptManager;
@@ -68,14 +68,16 @@ private:
 	const std::unordered_set<std::string>& GetFlags(CharacterStateFlagType type);
 
 protected:
-	void Init() override;
-	void Update() override;
+	void OnInit() override;
+	void Update();
+
+	void CacheCharacterData();
 
 public:
 	const CharacterState* currentState() const { return _currentState; }
 	const CharacterFrame* currentFrame() const { return _currentFrame; }
 
-	CharacterStateComponent(GameCharacter* owner, ServiceManager* serviceManager);
+	CharacterStateComponent() = default;
 	~CharacterStateComponent() = default;
 };
 

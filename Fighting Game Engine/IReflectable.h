@@ -3,11 +3,15 @@
 #include <string>
 #include <memory>
 #include <utility>
-#include "TemplateUtils.h"
 #include "JSON.h"
+#include "TemplateUtils.h"
 #include "ReflectionField.h"
 
 #define VE_REFLECTION_ARG(param) #param, param
+#define VE_PRIVATE_REFLECTION_ARG(param) #param, _##param
+
+#define VE_REFLECTION_VAR(type, param) AddReflection##type(#param, param)
+#define VE_PRIVATE_REFLECTION_VAR(type, param) AddReflection##type(#param, _##param)
 
 class IReflectable
 {
@@ -17,13 +21,16 @@ private:
 protected:
 	template<typename T>
 	void AddReflectionField(const std::string& name, const T& field) const;
+
+	void AddReflectionLambdaField(const std::string& name, std::function<void(const json&)> deserializeLambda, std::function<json()> serializeLambda);
 	void AddReflectionJsonField(const std::string& name, const json& field) const;
+
 	template<typename ValueT>
 	void AddReflectionArray(const std::string& name, const std::vector<ValueT>& field) const;
 	template<typename KeyT, typename ValueT>
 	void AddReflectionMap(const std::string& name, const std::unordered_map<KeyT, ValueT>& field) const;
 
-	virtual void RegisterReflectionFields() const = 0;
+	virtual void RegisterReflectionFields() const {};
 
 public:
 	virtual json Serialize() const;
@@ -39,7 +46,19 @@ public:
 template <typename T>
 void IReflectable::AddReflectionField(const std::string& name, const T& field) const
 {
-	_storedFields.insert_or_assign(name, std::make_shared<ReflectionField<T>>(name, const_cast<T*>(&field)));
+	if constexpr(std::is_same_v<T, json>)
+	{
+		AddReflectionJsonField(name, field);
+	}
+	else
+	{
+		_storedFields.insert_or_assign(name, std::make_shared<ReflectionField<T>>(name, const_cast<T*>(&field)));
+	}
+}
+
+inline void IReflectable::AddReflectionLambdaField(const std::string& name, std::function<void(const json&)> deserializeLambda, std::function<json()> serializeLambda)
+{
+	_storedFields.insert_or_assign(name, std::make_shared<LambdaReflectionField>(name, deserializeLambda, serializeLambda));
 }
 
 inline void IReflectable::AddReflectionJsonField(const std::string& name, const json& field) const
@@ -117,28 +136,3 @@ inline bool IReflectable::TryDeserializeField(const std::string& name, const jso
 	iter->second->Deserialize(j);
 	return true;
 }
-
-
-struct iwr : IReflectable
-{
-	int integer;
-
-
-	void RegisterReflectionFields() const override;
-
-	iwr(int inint = 0);
-};
-
-struct faff : IReflectable
-{
-private:
-	int ifloop;
-	std::vector<iwr> vfloop;
-	std::unordered_map<std::string, iwr> mfloop;
-
-	void RegisterReflectionFields() const override;
-
-public:
-	faff(int in_ifloop = 0, std::vector<iwr> in_vfloop = {}, std::unordered_map<std::string, iwr> in_mfloop = {});
-
-};

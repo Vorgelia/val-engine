@@ -1,13 +1,14 @@
 #pragma once
-#include "GameCharacterComponent.h"
+#include "ObjectComponent.h"
 #include "MathIncludes.hpp"
 #include <vector>
 #include "CharacterCollisionResult.h"
+#include "BaseGameCharacterComponent.h"
 
-class ServiceManager;
+class GameInstance;
 class FightingGameManager;
 
-class CharacterPhysicsComponent : public GameCharacterComponent
+class CharacterPhysicsComponent : public BaseGameCharacterComponent
 {
 	friend class GameCharacter;
 
@@ -24,9 +25,6 @@ class CharacterPhysicsComponent : public GameCharacterComponent
 	};
 
 private:
-	FightingGameManager* _fightingGameManager;
-
-private:
 	ve::vec2 _accumulatedOffset;
 	ve::vec2 _velocity;
 
@@ -38,9 +36,8 @@ private:
 
 	bool _grounded;
 
-	void Init() override;
-	void Update() override;
-	void LateUpdate() override;
+	void Update();
+	void LateUpdate();
 
 	void ApplyAccumulatedOffset();
 	void UpdateForces();
@@ -61,6 +58,6 @@ public:
 
 	void HandleCharacterCollision(const GameCharacter* other, const CollisionHit collision);
 
-	CharacterPhysicsComponent(GameCharacter* owner, ServiceManager* serviceManager);
+	CharacterPhysicsComponent() = default;
 	~CharacterPhysicsComponent() = default;
 };

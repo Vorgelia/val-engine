@@ -1,5 +1,5 @@
 #include "GraphicsGL.h"
-#include "ServiceManager.h"
+#include "GameInstance.h"
 #include "BaseShader.h"
 #include "ComputeShader.h"
 #include "Texture.h"
@@ -14,26 +14,16 @@
 #include "InputManager.h"
 #include <memory>
 
-void GraphicsGL::Init()
-{
-	_debug = _serviceManager->Debug();
-	FT_Init_FreeType(&_freetypeLibrary);
-}
+VE_OBJECT_DEFINITION(GraphicsGL);
 
-void GraphicsGL::Update() {}
-
-void GraphicsGL::Cleanup()
-{
-}
-
-std::unique_ptr<Texture> GraphicsGL::CreateTexture(const std::string& name, const std::vector<unsigned char>& pixels, glm::ivec2 dimensions, int format, GLuint filt, GLuint edgeBehaviour)
+Texture GraphicsGL::CreateTexture(const std::string& name, const std::vector<unsigned char>& pixels, glm::ivec2 dimensions, int format, GLuint filt, GLuint edgeBehaviour)
 {
 	GLuint textureId;
 	glGenTextures(1, &textureId);
 
-	std::unique_ptr<Texture> texture = std::make_unique<Texture>(name, textureId, dimensions, format, filt, edgeBehaviour);
+	Texture texture = Texture(name, textureId, dimensions, format, filt, edgeBehaviour);
 
-	BindTexture(*texture, 0);
+	BindTexture(texture, 0);
 
 	int dataType = format;
 	switch(format)
@@ -49,7 +39,7 @@ std::unique_ptr<Texture> GraphicsGL::CreateTexture(const std::string& name, cons
 	const unsigned char* data = (!pixels.empty()) ? &pixels[0] : nullptr;
 	glTexImage2D(GL_TEXTURE_2D, 0, format, dimensions.x, dimensions.y, 0, dataType, GL_UNSIGNED_BYTE, data);
 
-	UpdateTexture(*texture, pixels);
+	UpdateTexture(texture, pixels);
 	return texture;
 }
 
@@ -206,57 +196,79 @@ GLuint GraphicsGL::CreateShaderProgram(const std::vector<GLuint>& shaders, Shade
 	return shaderProgram;
 }
 
-std::unique_ptr<FrameBuffer> GraphicsGL::CreateFrameBuffer(glm::ivec2 size, int texAmount, bool depthStencil, GLint format, glm::vec4 clearColor, GLint filtering, GLuint clearFlags)
+void GraphicsGL::OnInit()
 {
-	std::unique_ptr<FrameBuffer> frameBuffer = std::make_unique<FrameBuffer>(size, texAmount, depthStencil, format, clearColor, filtering, clearFlags);
+	_debug = _owningInstance->Debug();
+}
 
-	frameBuffer->textures.reserve(texAmount);
+void GraphicsGL::OnServiceInit()
+{
+	FT_Init_FreeType(&_freetypeLibrary);
+}
+
+void GraphicsGL::OnDestroyed()
+{
+	
+}
+
+FrameBuffer GraphicsGL::CreateFrameBuffer(glm::ivec2 size, int texAmount, bool depthStencil, GLint format, glm::vec4 clearColor, GLint filtering, GLuint clearFlags)
+{
+	FrameBuffer frameBuffer = FrameBuffer(size, texAmount, depthStencil, format, clearColor, filtering, clearFlags);
+
+	frameBuffer._textures.reserve(texAmount);
 	for(int i = 0; i < texAmount; ++i)
 	{
-		frameBuffer->textures.push_back(CreateTexture("", std::vector<unsigned char>(), size, format, filtering, GL_CLAMP_TO_EDGE));
+		frameBuffer._textures.push_back(CreateTexture("", std::vector<unsigned char>(), size, format, filtering, GL_CLAMP_TO_EDGE));
 	}
 
-	UpdateFrameBuffer(*frameBuffer);
+	UpdateFrameBuffer(frameBuffer);
 	return frameBuffer;
 }
 
 void GraphicsGL::UpdateFrameBuffer(FrameBuffer& frameBuffer)
 {
-	frameBuffer.invResolution = glm::vec2(1.0f / frameBuffer.resolution.x, 1.0f / frameBuffer.resolution.y);
-
-	std::vector<GLuint> attachments;
-	if(!frameBuffer._valid)
+	if(frameBuffer.IsValid() && !frameBuffer.IsDirty())
 	{
-		glGenFramebuffers(1, &frameBuffer.id);
+		return;
 	}
 
-	BindFrameBufferId(frameBuffer.id);
-
-	for(unsigned int i = 0; i < frameBuffer.textures.size(); ++i)
+	std::vector<GLuint> attachments;
+	if(!frameBuffer.IsValid())
 	{
-		BindTexture(*frameBuffer.textures[i], 0);
+		glGenFramebuffers(1, &frameBuffer._id);
+	}
 
-		if(!frameBuffer._valid)
+	BindFrameBufferId(frameBuffer._id);
+
+	for(unsigned int i = 0; i < frameBuffer._textures.size(); ++i)
+	{
+		BindTexture(frameBuffer._textures[i], 0);
+
+		if(!frameBuffer.IsValid())
 		{
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, frameBuffer.textures[i]->_id, 0);
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, frameBuffer._textures[i]._id, 0);
 			attachments.push_back(GL_COLOR_ATTACHMENT0 + i);
 		}
 	}
 
-	if(frameBuffer.hasDepthStencil)
+	if((frameBuffer.flags() | FrameBufferFlags::DepthStencil) != FrameBufferFlags::None)
 	{
-		if(!frameBuffer._valid)
+		if(!frameBuffer.IsValid())
 		{
-			glGenRenderbuffers(1, &frameBuffer.depthStencil);
+			glGenRenderbuffers(1, &frameBuffer._depthStencil);
 		}
-		glBindRenderbuffer(GL_RENDERBUFFER, frameBuffer.depthStencil);
-		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, frameBuffer.resolution.x, frameBuffer.resolution.y);
-		if(!frameBuffer._valid)
-			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, frameBuffer.depthStencil);
+		glBindRenderbuffer(GL_RENDERBUFFER, frameBuffer._depthStencil);
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, frameBuffer._resolution.x, frameBuffer._resolution.y);
+		if(!frameBuffer.IsValid())
+		{
+			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, frameBuffer._depthStencil);
+		}
 	}
 
-	if(!frameBuffer._valid)
+	if(!frameBuffer.IsValid())
+	{
 		glDrawBuffers(attachments.size(), &attachments[0]);
+	}
 
 	glClearColor(frameBuffer._clearColor.x, frameBuffer._clearColor.y, frameBuffer._clearColor.z, frameBuffer._clearColor.w);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
@@ -267,7 +279,8 @@ void GraphicsGL::UpdateFrameBuffer(FrameBuffer& frameBuffer)
 	}
 	else
 	{
-		frameBuffer._valid = true;
+		frameBuffer._flags |= FrameBufferFlags::Valid;
+		frameBuffer._flags &= ~FrameBufferFlags::Dirty;
 	}
 
 	BindDefaultFrameBuffer();
@@ -277,23 +290,23 @@ void GraphicsGL::ClearFrameBuffer(FrameBuffer& frameBuffer)
 {
 	BindFrameBuffer(frameBuffer);
 	glClearColor(frameBuffer._clearColor.x, frameBuffer._clearColor.y, frameBuffer._clearColor.z, frameBuffer._clearColor.w);
-	glClear(frameBuffer.clearFlags);
+	glClear(frameBuffer._clearFlags);
 }
 
 void GraphicsGL::DestroyFrameBuffer(FrameBuffer& frameBuffer) const
 {
-	for(const std::unique_ptr<Texture>& tex : frameBuffer.textures)
+	for(Texture& tex : frameBuffer.textures())
 	{
-		DestroyTexture(*tex);
+		DestroyTexture(tex);
 	}
 
-	if(frameBuffer.hasDepthStencil)
-		glDeleteRenderbuffers(1, &frameBuffer.depthStencil);
+	if((frameBuffer.flags() | FrameBufferFlags::DepthStencil) != FrameBufferFlags::None)
+		glDeleteRenderbuffers(1, &frameBuffer._depthStencil);
 
-	if(frameBuffer._valid)
-		glDeleteFramebuffers(1, &frameBuffer.id);
+	if(frameBuffer.IsValid())
+		glDeleteFramebuffers(1, &frameBuffer._id);
 
-	frameBuffer._valid = false;
+	frameBuffer._flags &= ~FrameBufferFlags::Valid;
 }
 
 void GraphicsGL::UpdateGraphicsBuffer(const GraphicsBuffer& buffer) const
@@ -311,22 +324,22 @@ void GraphicsGL::UpdateGraphicsBuffer(const GraphicsBuffer& buffer) const
 	}
 }
 
-std::unique_ptr<Font> GraphicsGL::CreateFont(std::string name)
+Font GraphicsGL::CreateFont(std::string name)
 {
-	std::unique_ptr<Font> font = std::make_unique<Font>(name);
+	Font font = Font(name);
 
 	FT_Face face;
 	if(FT_New_Face(_freetypeLibrary, name.c_str(), 0, &face))
 	{
 		_debug->VE_LOG("Unable to load font: " + name, LogItem::Type::Warning);
-		return nullptr;
+		return font;
 	}
 
 	//Force the Y size to TEXT_SIZE, X size automatic.
-	FT_Set_Pixel_Sizes(face, 0, font->textSize);
+	FT_Set_Pixel_Sizes(face, 0, font.textSize);
 
 	//Load all the characters into textures, one by one.
-	std::vector<unsigned char> pixels(font->atlasSize * font->atlasSize);
+	std::vector<unsigned char> pixels(font.atlasSize * font.atlasSize);
 	glm::ivec2 cursor = glm::ivec2(0, 0);
 
 	for(GLubyte characterIndex = 0; characterIndex < 255; ++characterIndex)
@@ -336,16 +349,16 @@ std::unique_ptr<Font> GraphicsGL::CreateFont(std::string name)
 			continue;
 		}
 
-		if(cursor.x + face->glyph->bitmap.width >= font->atlasSize)
+		if(cursor.x + face->glyph->bitmap.width >= font.atlasSize)
 		{
 			cursor.x = 0;
-			cursor.y += font->textSize;
-			if(cursor.y >= (int)font->atlasSize)
+			cursor.y += font.textSize;
+			if(cursor.y >= (int)font.atlasSize)
 			{
 				cursor = glm::ivec2(0, 0);
-				font->_atlases.push_back(CreateTexture("Atlas" + std::to_string(font->_atlases.size() + 1), pixels, glm::ivec2(font->atlasSize), GL_RED, GL_LINEAR, GL_CLAMP_TO_EDGE));
+				font._atlases.push_back(CreateTexture("Atlas" + std::to_string(font._atlases.size() + 1), pixels, glm::ivec2(font.atlasSize), GL_RED, GL_LINEAR, GL_CLAMP_TO_EDGE));
 				pixels.clear();
-				pixels.resize(font->atlasSize * font->atlasSize);
+				pixels.resize(font.atlasSize * font.atlasSize);
 			}
 		}
 
@@ -354,24 +367,24 @@ std::unique_ptr<Font> GraphicsGL::CreateFont(std::string name)
 		{
 			for(unsigned int i = 0; i < face->glyph->bitmap.width; ++i)
 			{
-				int verticalPos = (font->atlasSize - (1 + cursor.y + j)) * font->atlasSize;
+				int verticalPos = (font.atlasSize - (1 + cursor.y + j)) * font.atlasSize;
 				int horizontalPos = (cursor.x + i);
 				pixels[verticalPos + horizontalPos] = face->glyph->bitmap.buffer[j*face->glyph->bitmap.width + i];
 			}
 		}
 
-		glm::vec4 params = glm::vec4((float)cursor.x / (float)font->atlasSize, (float)cursor.y / (float)font->atlasSize, (float)face->glyph->bitmap.width / (float)font->atlasSize, (float)face->glyph->bitmap.rows / (float)font->atlasSize);
-		font->_characters.insert(std::pair<GLubyte, FontCharacter>(characterIndex, FontCharacter(font->_atlases.size(), params, glm::vec2(face->glyph->bitmap.width, face->glyph->bitmap.rows), glm::vec2(face->glyph->bitmap_left, face->glyph->bitmap_top), face->glyph->advance.x >> 6)));
-		cursor.x += face->glyph->bitmap.width + font->atlasPadding;
+		glm::vec4 params = glm::vec4((float)cursor.x / (float)font.atlasSize, (float)cursor.y / (float)font.atlasSize, (float)face->glyph->bitmap.width / (float)font.atlasSize, (float)face->glyph->bitmap.rows / (float)font.atlasSize);
+		font._characters.insert(std::pair<GLubyte, FontCharacter>(characterIndex, FontCharacter(font._atlases.size(), params, glm::vec2(face->glyph->bitmap.width, face->glyph->bitmap.rows), glm::vec2(face->glyph->bitmap_left, face->glyph->bitmap_top), face->glyph->advance.x >> 6)));
+		cursor.x += face->glyph->bitmap.width + font.atlasPadding;
 
 		if(characterIndex == 'H')
 		{
 			//Hack fraud method of finding the top bearing of the entire font by finding the top bearing of one of the tallest characters.
-			font->_topBearing = face->glyph->bitmap_top;
-			font->_height = glm::max<GLuint>(font->_height, face->glyph->bitmap.rows);
+			font._topBearing = face->glyph->bitmap_top;
+			font._height = glm::max<GLuint>(font._height, face->glyph->bitmap.rows);
 		}
 	}
-	font->_atlases.push_back(CreateTexture("Atlas" + std::to_string(font->_atlases.size() + 1), pixels, glm::ivec2(font->atlasSize, font->atlasSize), GL_RED, GL_LINEAR, GL_CLAMP_TO_EDGE));
+	font._atlases.push_back(CreateTexture("Atlas" + std::to_string(font._atlases.size() + 1), pixels, glm::ivec2(font.atlasSize, font.atlasSize), GL_RED, GL_LINEAR, GL_CLAMP_TO_EDGE));
 
 	return font;
 }
@@ -380,7 +393,7 @@ void GraphicsGL::DestroyFont(Font& font) const
 {
 	for(auto& iter : font._atlases)
 	{
-		DestroyTexture(*iter);
+		DestroyTexture(iter);
 	}
 }
 
@@ -393,20 +406,20 @@ void GraphicsGL::DestroyShader(BaseShader& shader) const
 	glDeleteProgram(shader._id);
 }
 
-std::unique_ptr<Mesh> GraphicsGL::CreateMesh(const std::string& name, CachedMesh* meshData)
+Mesh GraphicsGL::CreateMesh(const std::string& name, CachedMesh* meshData)
 {
-	std::unique_ptr<Mesh> mesh = std::make_unique<Mesh>(name, meshData);
-	mesh->_elementAmount = meshData->elements.size();
+	Mesh mesh = Mesh(name, meshData);
+	mesh._elementAmount = meshData->elements.size();
 
-	glGenVertexArrays(1, &mesh->_vao);
-	BindMesh(*mesh);
+	glGenVertexArrays(1, &mesh._vao);
+	BindMesh(mesh);
 
-	glGenBuffers(1, &mesh->_vbo);
-	glBindBuffer(GL_ARRAY_BUFFER, mesh->_vbo);
+	glGenBuffers(1, &mesh._vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, mesh._vbo);
 	glBufferData(GL_ARRAY_BUFFER, meshData->verts.size() * sizeof(float), &(meshData->verts.at(0)), GL_STATIC_DRAW);
 
-	glGenBuffers(1, &mesh->_ebo);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->_ebo);
+	glGenBuffers(1, &mesh._ebo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh._ebo);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, meshData->elements.size() * sizeof(GLuint), &meshData->elements.at(0), GL_STATIC_DRAW);
 
 	int totalSize = 0;
@@ -478,9 +491,9 @@ bool GraphicsGL::BindMesh(const Mesh& mesh)
 
 bool GraphicsGL::BindFrameBuffer(const FrameBuffer& frameBuffer)
 {
-	if(frameBuffer._valid)
+	if(frameBuffer.IsValid())
 	{
-		return BindFrameBufferId(frameBuffer.id);
+		return BindFrameBufferId(frameBuffer._id);
 	}
 
 	return false;
@@ -575,11 +588,8 @@ bool GraphicsGL::BindTexture(const Texture& texture, GLuint pos)
 	return false;
 }
 
-GraphicsGL::GraphicsGL(ServiceManager* serviceManager) : BaseService(serviceManager)
+GraphicsGL::GraphicsGL()
 {
 	glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &_maxTextureUnits);
 	_boundTextures.resize(_maxTextureUnits, (GLuint)0);
 }
-
-GraphicsGL::~GraphicsGL()
-= default;

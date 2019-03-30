@@ -114,7 +114,7 @@ void ConnectionSocket::DecodeStream(std::string stream)
 		if(!receiveQueue.empty() && receiveQueue.back().State() == NetworkMessageState::Incomplete)
 		{
 			//If the last message in the receive queue is incomplete, what we have now must be the data it's missing.
-			nextIndex = min(stream.length(), currentIndex + receiveQueue.back().MissingDataSize());//Make sure the amount of characters we use isn't more than the stream has left.
+			nextIndex = glm::min(stream.length(), currentIndex + receiveQueue.back().MissingDataSize());//Make sure the amount of characters we use isn't more than the stream has left.
 			receiveQueue.back().Append_Raw(stream.substr(currentIndex, nextIndex - currentIndex));
 		}
 		else
@@ -131,7 +131,7 @@ void ConnectionSocket::DecodeStream(std::string stream)
 			case NetworkMessageType::NameSet:
 			case NetworkMessageType::PropertySet:
 			case NetworkMessageType::InputFrame:
-				nextIndex = min(stream.length(), currentIndex + NetworkMessage::g_identifierSizes[(int)stream[currentIndex]]);
+				nextIndex = glm::min(stream.length(), currentIndex + NetworkMessage::g_identifierSizes[(int)stream[currentIndex]]);
 				receiveQueue.push(NetworkMessage(stream.substr(currentIndex, nextIndex - currentIndex)));
 				break;
 			default:

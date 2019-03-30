@@ -5,22 +5,13 @@
 #include "CharacterState.h"
 #include "Script.h"
 #include "ScriptMap.h"
-#include "ServiceManager.h"
+#include "GameInstance.h"
 #include "FightingGameManager.h"
-
-
-void CharacterEventComponent::Init()
-{
-}
-
-void CharacterEventComponent::Update()
-{
-}
 
 void CharacterEventComponent::HandleAttackHit(GameCharacter* otherCharacter, const AttackCollisionHit& attackHit, std::shared_ptr<BaseScriptVariable> hitReactionFlags)
 {
-	_owner->stateComponent()->_usedHitboxSequenceIDs.emplace(attackHit.hitbox.sequenceID());
-	_owner->stateComponent()->currentState()->script()->CallBoundFunction(
+	_gameCharacterOwner->stateComponent()->_usedHitboxSequenceIDs.emplace(attackHit.hitbox.sequenceID());
+	_gameCharacterOwner->stateComponent()->currentState()->script()->CallBoundFunction(
 		"HandleAttackHit", 
 		ScriptArgumentCollection
 		{
@@ -32,7 +23,7 @@ void CharacterEventComponent::HandleAttackHit(GameCharacter* otherCharacter, con
 
 std::shared_ptr<BaseScriptVariable> CharacterEventComponent::HandleAttackReceived(GameCharacter* otherCharacter, const AttackCollisionHit& attackReceived)
 {
-	return _owner->stateComponent()->currentState()->script()->CallBoundFunction(
+	return _gameCharacterOwner->stateComponent()->currentState()->script()->CallBoundFunction(
 		"HandleAttackReceived"
 		, ScriptArgumentCollection
 		{
@@ -43,7 +34,7 @@ std::shared_ptr<BaseScriptVariable> CharacterEventComponent::HandleAttackReceive
 
 bool CharacterEventComponent::ResolveTrade(GameCharacter* otherCharacter, const AttackCollisionHit& attackHit, const AttackCollisionHit& attackReceived)
 {
-	const std::shared_ptr<BaseScriptVariable> result = _owner->stateComponent()->currentState()->script()->CallBoundFunction(
+	const std::shared_ptr<BaseScriptVariable> result = _gameCharacterOwner->stateComponent()->currentState()->script()->CallBoundFunction(
 		"ResolveTrade"
 		, ScriptArgumentCollection
 		{
@@ -63,8 +54,8 @@ bool CharacterEventComponent::ResolveTrade(GameCharacter* otherCharacter, const 
 
 void CharacterEventComponent::HandleTradeUnresolved(GameCharacter* otherCharacter, const AttackCollisionHit& attackHit, const AttackCollisionHit& attackReceived)
 {
-	_owner->stateComponent()->_usedHitboxSequenceIDs.emplace(attackHit.hitbox.sequenceID());
-	_owner->stateComponent()->currentState()->script()->CallBoundFunction(
+	_gameCharacterOwner->stateComponent()->_usedHitboxSequenceIDs.emplace(attackHit.hitbox.sequenceID());
+	_gameCharacterOwner->stateComponent()->currentState()->script()->CallBoundFunction(
 		"HandleTradeUnresolved"
 		, ScriptArgumentCollection
 			{
@@ -76,8 +67,8 @@ void CharacterEventComponent::HandleTradeUnresolved(GameCharacter* otherCharacte
 
 void CharacterEventComponent::HandleTradeSuccess(GameCharacter* otherCharacter, const AttackCollisionHit& attackHit, std::shared_ptr<BaseScriptVariable> hitReactionFlags)
 {
-	_owner->stateComponent()->_usedHitboxSequenceIDs.emplace(attackHit.hitbox.sequenceID());
-	_owner->stateComponent()->currentState()->script()->CallBoundFunction(
+	_gameCharacterOwner->stateComponent()->_usedHitboxSequenceIDs.emplace(attackHit.hitbox.sequenceID());
+	_gameCharacterOwner->stateComponent()->currentState()->script()->CallBoundFunction(
 		"HandleTradeSuccess", 
 		ScriptArgumentCollection
 			{
@@ -85,10 +76,4 @@ void CharacterEventComponent::HandleTradeSuccess(GameCharacter* otherCharacter, 
 				hitReactionFlags
 			}
 	);
-}
-
-CharacterEventComponent::CharacterEventComponent(GameCharacter* owner, ServiceManager* serviceManager)
-	: GameCharacterComponent(owner, serviceManager)
-{
-
 }

@@ -1,20 +1,16 @@
 #include "InputDevice.h"
-#include "ServiceManager.h"
+#include "GameInstance.h"
 #include "FilesystemManager.h"
-#include "Time.h"
-#include "Screen.h"
+#include "ScreenManager.h"
 #include "InputFrame.h"
+#include "InputManager.h"
 #include "InputEvent.h"
 #include "InputMotion.h"
 #include "InputMotionComponent.h"
 #include <GLM/glm.hpp>
 #include "InputDeviceId.h"
 
-//Default input leniency. We want the first input of every move to only count if it's the latest one by default.
-#define INPUT_BUFFER_INIT 1
-#define INPUT_BUFFER_MID 8
-//1200 keeps track of the last 20 seconds of inputs, but it can easily be increased if that's not enough
-#define VE_INPUT_BUFFER_SIZE 1200
+VE_OBJECT_DEFINITION(InputDevice);
 
 const std::string& InputDevice::deviceName() const
 {
@@ -26,75 +22,54 @@ const InputBuffer* InputDevice::inputBuffer() const
 	return _inputBuffer.get();
 }
 
+void InputDevice::OnInit()
+{
+	_inputManager = _owningInstance->Input();
+	_filesystem = _owningInstance->Filesystem();
+
+	_inputBuffer = std::make_shared<InputBuffer>(_owningInstance->configData().inputConfigData.inputBufferSize);
+
+	switch(_deviceID)
+	{
+	case (int)InputDeviceId::Invalid:
+		_deviceName = "Invalid";
+		return;
+	case (int)InputDeviceId::Network:
+		_deviceName = "Network";
+		return;
+	case (int)InputDeviceId::Keyboard:
+		_deviceName = std::string("Keyboard");
+		break;
+	default:
+		_deviceName = std::string(glfwGetJoystickName(_deviceID));
+		break;
+	}
+	
+	_deviceFilename = _deviceName;
+
+	for(char& c : _deviceFilename)
+	{
+		if(std::string("\\/:?\"<>|").find(c) != std::string::npos)
+			c = '_';
+	}
+
+	_filesystem->LoadControlSettings("Settings/Input/" + _deviceFilename + ".vi", _directionMap, _buttonMap);
+}
+void InputDevice::OnDestroyed()
+{
+	
+}
+
 int InputDevice::deviceID() const
 {
 	return _deviceID;
 }
 
-InputDevice::InputDevice(int deviceID, ServiceManager* serviceManager)
-{
-	_time = serviceManager->Time();
-	_screen = serviceManager->Screen();
-	_filesystem = serviceManager->Filesystem();
-
-	_deviceID = deviceID;
-	if(deviceID == (int)InputDeviceId::Network)
-	{
-		this->_deviceName = std::string("Network");
-	}
-	else if(deviceID == (int)InputDeviceId::Invalid)
-	{
-		this->_deviceName = std::string("Invalid");
-	}
-	else
-	{
-		if(deviceID == (int)InputDeviceId::Keyboard)
-		{
-			this->_deviceName = std::string("Keyboard");
-		}
-		else
-		{
-			this->_deviceName = std::string(glfwGetJoystickName(deviceID));
-		}
-
-		this->_deviceFilename = this->_deviceName;
-
-		for(char& c : this->_deviceFilename)
-		{
-			if(std::string::npos != std::string("\\/:?\"<>|").find(c))
-				c = '_';
-		}
-
-		_filesystem->LoadControlSettings("Settings/Input/" + this->_deviceFilename + ".vi", _directionMap, _buttonMap);
-	}
-
-	_inputBuffer = std::make_shared<InputBuffer>(VE_INPUT_BUFFER_SIZE);
-}
-
-InputDevice::~InputDevice()
-= default;
-
 //Helper function for evaluating whether a specific input event is occuring.
 //Needed to abstract checking for buttons and axes to a single function with boolean output.
 bool InputDevice::EvaluateInput(const InputEvent& ie)
 {
-	switch(_deviceID)
-	{
-	case (int)InputDeviceId::Network:
-	case (int)InputDeviceId::Invalid:
-		return false;
-	case(int)InputDeviceId::Keyboard:
-		return glfwGetKey(_screen->window, ie._inputID) == GLFW_PRESS;
-	default:
-		if(!ie._isAxis)
-		{
-			return _cachedJoyButtons[ie._inputID] > 0;
-		}
-		else
-		{
-			return (glm::abs(_cachedJoyAxes[ie._inputID]) > ie._deadzone) && (glm::sign(_cachedJoyAxes[ie._inputID]) == glm::sign(ie._inputValue));
-		}
-	}
+	return _inputManager->EvaluateInput(this, ie);
 }
 
 //This function is fairly simple. It checks if a specific motion has been performed by validating every part of the motion based on the distance of its beginning.
@@ -105,7 +80,7 @@ bool InputDevice::EvaluateMotion(const InputMotion& motion)
 	if(motion._components.size() == 0)
 		return false;
 
-	int buf = motion._components.back().leniency > -1 ? motion._components.back().leniency : INPUT_BUFFER_INIT;
+	int buf = motion._components.back().leniency > -1 ? motion._components.back().leniency : _owningInstance->configData().inputConfigData.inputBufferLeniencyFirst;
 	int bufferIndex = _inputBuffer->position() - 1;
 
 	for(int i = motion._components.size() - 1; i >= 0;)
@@ -121,7 +96,7 @@ bool InputDevice::EvaluateMotion(const InputMotion& motion)
 			}
 			else
 			{
-				buf = motion._components[i].leniency > -1 ? motion._components[i].leniency : INPUT_BUFFER_MID;
+				buf = motion._components[i].leniency > -1 ? motion._components[i].leniency : _owningInstance->configData().inputConfigData.inputBufferLeniencyAny;
 			}
 		}
 		else
@@ -156,7 +131,7 @@ int InputDevice::InputMotionDistance(int currentIndex, InputMotionComponent moti
 					return 0;
 				}
 				//To prevent different inputs being counted as the same with motions not marked strict, change the checks to return false if the input changes at all.
-				if(motionComp.direction != 0)
+				if(motionComp.direction != InputDirection::None)
 				{
 					motionComp.direction = _inputBuffer->at(cind)._axisState;
 					motionComp.strict = true;
@@ -187,31 +162,35 @@ bool InputDevice::InputMotionFrameCheck(const InputMotionComponent& motionComp, 
 	InputFrame& inputFrame = _inputBuffer->at(index);//Current checked frame
 	InputFrame& inputFramePrevious = _inputBuffer->at(index - 1);//Current checked frame -1, to check for button events
 
-	if(motionComp.direction != 0)
+	if(motionComp.strict)
 	{
-		if((inputFrame._axisState&motionComp.direction) == 0)
+		if(inputFrame._axisState != motionComp.direction)
+		{
 			return false;
-		if(motionComp.strict && (inputFrame._axisState != motionComp.direction))
-			return false;
+		}
+	}
+	else if((motionComp.direction != InputDirection::None) && (inputFrame._axisState & motionComp.direction) == InputDirection::None)
+	{
+		return false;
 	}
 
 	for(auto& i : motionComp.buttons)
 	{
-		if((int)i.second & (int)InputTypeMask::Pressed)
+		if((i.second & InputTypeMask::Pressed) != InputTypeMask::None)
 		{
-			if(((inputFrame._buttonStates & i.first) != 0)
-				&& ((inputFramePrevious._buttonStates & i.first) == 0))
+			if(((inputFrame._buttonStates & i.first) != InputButton::None)
+				&& ((inputFramePrevious._buttonStates & i.first) == InputButton::None))
 				continue;
 		}
-		if((int)i.second & (int)InputTypeMask::Released)
+		if((i.second & InputTypeMask::Released) != InputTypeMask::None)
 		{
-			if(((inputFramePrevious._buttonStates & i.first) != 0)
-				&& ((inputFrame._buttonStates & i.first) == 0))
+			if(((inputFramePrevious._buttonStates & i.first) != InputButton::None)
+				&& ((inputFrame._buttonStates & i.first) == InputButton::None))
 				continue;
 		}
-		if((int)i.second & (int)InputTypeMask::Held)
+		if((i.second & InputTypeMask::Held) != InputTypeMask::None)
 		{
-			if((inputFrame._buttonStates & i.first))
+			if((inputFrame._buttonStates & i.first) != InputButton::None)
 				continue;
 		}
 		return false;
@@ -230,16 +209,12 @@ void InputDevice::UpdateJoyInputs()
 
 void InputDevice::PollInput()
 {
-	if(_cachedInputFrames.empty() || _time->lastUpdateTime + VE_FRAME_TIME * _cachedInputFrames.size() < glfwGetTime())
-	{
-		_cachedInputFrames.emplace_back(0, 0);
-	}
-
-	if(_deviceID >= (int)InputDeviceId::JoystickFirst && !glfwJoystickPresent(_deviceID))
+	_cachedInputFrames.emplace_back(InputButton::None, InputDirection::None);
+	if(_deviceID >= int(InputDeviceId::JoystickFirst) && !glfwJoystickPresent(_deviceID))
 		return;
 
 	glm::ivec2 dir;
-	_cachedInputFrames.back()._axisState = 0;
+	_cachedInputFrames.back()._axisState = InputDirection::None;
 	for(auto& i : _directionMap)
 	{
 		if(EvaluateInput(i.second))
@@ -258,24 +233,26 @@ void InputDevice::PollInput()
 			case InputDirection::Up:
 				dir.y += 1;
 				break;
+			default:
+				break;
 			}
 		}
 	}
 
 	if(dir.x > 0)
-		_cachedInputFrames.back()._axisState |= (unsigned char)(InputDirection::Right);
+		_cachedInputFrames.back()._axisState |= InputDirection::Right;
 	else if(dir.x < 0)
-		_cachedInputFrames.back()._axisState |= (unsigned char)(InputDirection::Left);
+		_cachedInputFrames.back()._axisState |= InputDirection::Left;
 	if(dir.y > 0)
-		_cachedInputFrames.back()._axisState |= (unsigned char)(InputDirection::Up);
+		_cachedInputFrames.back()._axisState |= InputDirection::Up;
 	else if(dir.y < 0)
-		_cachedInputFrames.back()._axisState |= (unsigned char)(InputDirection::Down);
+		_cachedInputFrames.back()._axisState |= InputDirection::Down;
 
 	for(auto& i : _buttonMap)
 	{
 		if(EvaluateInput(i.second))
 		{
-			_cachedInputFrames.back()._buttonStates |= (unsigned char)(i.first);
+			_cachedInputFrames.back()._buttonStates |= i.first;
 		}
 	}
 
@@ -290,17 +267,15 @@ void InputDevice::PushInputsToBuffer()
 	_cachedInputFrames.clear();
 }
 
-//Default settings are saved per input device type. This means your fightstick can remember its settings even if you plug it out.
-//Of course, support for temporary changes should be available in a finished product.
-std::string InputDevice::Serialize()
+std::string InputDevice::SerializeSettings()
 {
 	std::stringstream str;
 	str << "#BUTTONS\n";
 	for(auto& i : _buttonMap)
-		str << (int)i.first << ":" << (i.second._isAxis ? "t," : "f,") << i.second._inputID << "," << (int)glm::sign(i.second._inputValue) << "\n";
+		str << (int)i.first << ":" << (i.second.isAxis ? "t," : "f,") << i.second.inputID << "," << (int)glm::sign(i.second.inputValue) << "\n";
 
 	str << "#AXES\n";
 	for(auto& i : _directionMap)
-		str << (int)i.first << ":" << (i.second._isAxis ? "t," : "f,") << i.second._inputID << "," << (int)glm::sign(i.second._inputValue) << "\n";
+		str << (int)i.first << ":" << (i.second.isAxis ? "t," : "f,") << i.second.inputID << "," << (int)glm::sign(i.second.inputValue) << "\n";
 	return str.str();
 }

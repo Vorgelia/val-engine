@@ -2,9 +2,9 @@
 #include "GLIncludes.hpp"
 #include <GLM/glm.hpp>
 #include <unordered_map>
-#include <boost/filesystem.hpp>
+#include <filesystem>
 
-namespace FS = boost::filesystem;
+namespace fs = std::filesystem;
 
 class Texture;
 enum class TextAlignment
@@ -34,7 +34,7 @@ private:
 	GLuint _topBearing;
 
 	std::unordered_map <GLubyte, FontCharacter> _characters;
-	std::vector<std::unique_ptr<Texture>> _atlases;
+	std::vector<Texture> _atlases;
 
 public:
 	const std::string name;
@@ -46,7 +46,7 @@ public:
 	const GLuint height() const;
 	const GLuint topBearing() const;
 
-	Texture* GetAtlas(int index);
+	const Texture& GetAtlas(int index);
 	const FontCharacter* GetCharacter(GLubyte ch);
 
 	Font(std::string name, unsigned int textSize = 64, unsigned int atlasSize = 1024, unsigned int atlasPadding = 2);

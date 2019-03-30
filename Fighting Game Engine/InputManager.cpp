@@ -4,16 +4,59 @@
 #include "GLIncludes.hpp"
 #include "FilesystemManager.h"
 #include "InputDeviceId.h"
+#include "InputEvent.h"
+#include "TrackedUpdateFunction.h"
+#include "ScreenManager.h"
+#include "GameInstance.h"
 
-//Update list of valid input devices and have them poll for inputs
-void InputManager::FrameUpdate()
+VE_OBJECT_DEFINITION(InputManager);
+
+InputDevice* InputManager::AddInputDevice(int deviceID)
+{
+	InputDevice* inputDevice;
+
+	switch(deviceID)
+	{
+		case int(InputDeviceId::Network) :
+			inputDevice = _temporaryNetworkDevices.emplace_back(ObjectFactory::CreateObjectDeferred<InputDevice>()).get();
+			break;
+		default:
+			inputDevice = _inputDevices.emplace(deviceID, ObjectFactory::CreateObjectDeferred<InputDevice>()).first->second.get();;
+			break;
+	}
+	
+	inputDevice->_deviceID = deviceID;
+
+	ObjectFactory::InitializeObject(inputDevice, this);
+	return inputDevice;
+}
+
+void InputManager::OnInit()
+{
+	_screenManager = _owningInstance->ScreenManager();
+
+	VE_REGISTER_UPDATE_FUNCTION(UpdateGroup::TimingUpdate, UpdateType::AnyFixedGameUpdate, UpdateInputs);
+}
+
+void InputManager::OnServiceInit()
+{
+	AddInputDevice(int(InputDeviceId::Keyboard));
+}
+
+void InputManager::OnDestroyed()
+{
+	_inputDevices.clear();
+	_temporaryNetworkDevices.clear();
+}
+
+void InputManager::UpdateInputs()
 {
 	glfwPollEvents();
 	for(int i = GLFW_JOYSTICK_1; i < GLFW_JOYSTICK_LAST; ++i)
 	{
 		if(glfwJoystickPresent(i) == GLFW_TRUE && (_inputDevices.count(i) == 0))
 		{
-			InputDevice* addedDevice = _inputDevices.insert(std::pair<int, std::shared_ptr<InputDevice>>(i, std::make_shared<InputDevice>(i, _serviceManager))).first->second.get();
+			InputDevice* addedDevice = AddInputDevice(i);
 			DeviceAdded(addedDevice);
 		}
 		else if(glfwJoystickPresent(i) == GLFW_FALSE)
@@ -38,34 +81,45 @@ void InputManager::FrameUpdate()
 	}
 }
 
-void InputManager::Init()
+bool InputManager::IsKeyboardKeyPressed(int keyID) const
 {
-	_inputDevices[(int)InputDeviceId::Keyboard] = std::make_shared<InputDevice>((int)InputDeviceId::Keyboard, _serviceManager);
+	return glfwGetKey(_screenManager->window(), keyID) == GLFW_PRESS;
 }
 
-void InputManager::Update()
+bool InputManager::EvaluateInput(InputDevice* inputDevice, const InputEvent& inputEvent) const
 {
-}
+	if(inputDevice == nullptr)
+	{
+		return false;
+	}
 
-void InputManager::Cleanup()
-{
-	_inputDevices.clear();
-	_temporaryNetworkDevices.clear();
-}
+	switch(inputDevice->_deviceID)
+	{
+	case int(InputDeviceId::Network) :
+	case int(InputDeviceId::Invalid) :
+		return false;
 
-const std::unordered_map<int, std::shared_ptr<InputDevice>>& InputManager::inputDevices() const
-{
-	return _inputDevices;
+	case int(InputDeviceId::Keyboard) :
+		return glfwGetKey(_screenManager->window(), inputEvent.inputID) == GLFW_PRESS;
+
+	default:
+		if(!inputEvent.isAxis)
+		{
+			return inputDevice->_cachedJoyButtons[inputEvent.inputID] > 0;
+		}
+
+		return (glm::abs(inputDevice->_cachedJoyAxes[inputEvent.inputID]) > inputEvent.deadzone) && (glm::sign(inputDevice->_cachedJoyAxes[inputEvent.inputID]) == glm::sign(inputEvent.inputValue));
+	}
 }
 
 InputDevice* InputManager::GetInputDevice(int id)
 {
 	switch(id)
 	{
-	case (int)InputDeviceId::Invalid:
+	case int(InputDeviceId::Invalid):
 		return nullptr;
-	case (int)InputDeviceId::Network:
-		return GetTemporaryNetworkDevice();
+	case int(InputDeviceId::Network) :
+		return nullptr;
 	default:
 		auto& iter = _inputDevices.find(id);
 		if(iter == _inputDevices.end())
@@ -79,8 +133,7 @@ InputDevice* InputManager::GetInputDevice(int id)
 
 InputDevice* InputManager::GetTemporaryNetworkDevice()
 {
-	_temporaryNetworkDevices.emplace_back(std::make_unique<InputDevice>((int)InputDeviceId::Network, _serviceManager));
-	return _temporaryNetworkDevices.back().get();
+	return AddInputDevice(int(InputDeviceId::Network));
 }
 
 void InputManager::ReleaseTemporaryNetworkDevice(InputDevice* device)
@@ -93,10 +146,3 @@ void InputManager::ReleaseTemporaryNetworkDevice(InputDevice* device)
 		}
 	}
 }
-
-InputManager::InputManager(ServiceManager* serviceManager) : BaseService(serviceManager)
-{
-}
-
-InputManager::~InputManager()
-= default;

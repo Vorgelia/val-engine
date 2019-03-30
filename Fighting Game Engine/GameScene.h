@@ -4,85 +4,147 @@
 #include <string>
 #include <memory>
 #include <functional>
-#include <boost/filesystem.hpp>
+#include <filesystem>
+#include "BaseObject.h"
 
-#include "ResourceManager.h"
-#include "FilesystemManager.h"
+#include "GameInstance.h"
 
-namespace FS = boost::filesystem;
+namespace fs = std::filesystem;
 
-class Object;
-class Behaviour;
-class ServiceManager;
+class GameInstance;
 class RenderingGL;
 class ResourceManager;
+class FilesystemManager;
 class Debug;
+class BaseSceneBehavior;
 
-class GameScene
+class GameScene : public BaseObject
 {
+	VE_OBJECT_DECLARATION(GameScene);
+
+	friend class GameSceneManager;
+	friend class ObjectInitializer;
+
 protected:
-	ServiceManager* _serviceManager;
-	
 	Debug* _debug;
 	RenderingGL* _rendering;
 	ResourceManager* _resource;
-	FilesystemManager* _filesystem;
-
-private:
-	bool _shouldSortObjects;
 
 protected:
+	fs::path _dataPath;
 	std::string _name;
 
-	bool _initialized;
 	bool _loaded;
+	bool _updatedTiming = false;
 
-	FS::path _dataPath;
+	ve::unique_object_ptr<BaseSceneBehavior> _sceneBehavior;
 
-	std::vector<std::unique_ptr<Object>> _objects;
-	std::unordered_map<long, Object*> _objectLookup;
-	std::unordered_map<std::string, Object*> _objectNameLookup;
+	std::vector<ve::unique_object_ptr<GameObject>> _objects;
+	std::unordered_map<std::string, ObjectReference<GameObject>> _objectNameLookup;
 
-	std::vector<std::string> _postEffectsOrder;
+	TimeTracker _timeTracker;
 
-	void RunFunctionOnObjectBehaviours(std::function<void(Behaviour*)> func);
+	void RegisterObject(GameObject* obj);
+	void UnregisterObject(GameObject* obj);
 
-	void RegisterObject(Object* obj);
-	void UnregisterObject(Object* obj);
-
-	void SortObjects();
+	void LoadResources();
 
 public:
+	const fs::path& dataPath() const { return _dataPath; }
 	const std::string& name() const;
-
-	bool initialized() const;
 	bool loaded() const;
+	BaseSceneBehavior* sceneBehavior() const { return _sceneBehavior.get(); }
 
-	const std::vector<std::string>& postEffectsOrder() const;
+	const TimeTracker& GetTime() const { return _timeTracker; }
 
-	virtual void LoadResources();
-	virtual void OnLoaded();
+	virtual void OnInit() override;
+	virtual void OnDestroyed() override;
 
-	virtual void Init();
-	virtual void EngineUpdate();
-	virtual void GameUpdate();
-	virtual void LateGameUpdate();
-	virtual void LateEngineUpdate();
-	virtual void RenderObjects();
-	virtual void ApplyPostEffects();
-	virtual void RenderUI();
-	virtual void Cleanup();
+	void UpdateTiming();
 
-	Object* LoadObject(const std::string& prefabPath);
-	Object* AddObject(const json& jsonData);
+	template<typename ObjectT = GameObject>
+	ObjectReference<ObjectT> AddObject(const json& jsonData = json());
+	ObjectReference<GameObject> AddObjectFromJson(const json& jsonData = json());
+	ObjectReference<GameObject> LoadObject(const std::string& prefabPath);
 
-	void DestroyObject(Object* object);
-	void DestroyObject(int objectId);
+	GameObject* FindObject(const std::string& name);
+	template<typename ObjectT>
+	ObjectReference<ObjectT> FindObjectOfType();
+	template<typename ObjectT>
+	std::vector<ObjectReference<ObjectT>> FindObjectsOfType();
 
-	Object* FindObject(const std::string& name);
-	Object* FindObject(int id);
-	Behaviour* FindBehaviour(const std::string& name);
+	void DestroyObject(GameObject* object);
 
-	GameScene(const FS::path& path, ServiceManager* serviceManager);
-	virtual ~GameScene();
+	GameScene() = default;
+	virtual ~GameScene() = default;
 };
+
+template <typename ObjectT>
+ObjectReference<ObjectT> GameScene::AddObject(const json& jsonData)
+{
+	static_assert(std::is_base_of_v<GameObject, ObjectT>, "Objects added to a scene need to derive from GameObject.");
+	_objects.push_back(ObjectFactory::CreateObject<ObjectT>(this, jsonData));
+
+	ObjectT* result = _objects.back().get();
+	RegisterObject(result);
+
+	return ObjectReference<ObjectT>(result);
+}
+
+template <typename ObjectT>
+ObjectReference<ObjectT> GameScene::FindObjectOfType()
+{
+	for(auto& iter : _objects)
+	{
+		ObjectT* obj = nullptr;
+		if constexpr(std::is_base_of_v<ObjectComponent, ObjectT>)
+		{
+			obj = iter.get()->GetComponentOfType<ObjectT>().get();
+		}
+		else
+		{
+			obj = dynamic_cast<ObjectT*>(iter.get());
+		}
+
+		if(obj != nullptr)
+		{
+			return ObjectReference<ObjectT>(obj);
+		}
+	}
+
+	return ObjectReference<ObjectT>(nullptr);
+}
+
+template <typename ObjectT>
+std::vector<ObjectReference<ObjectT>> GameScene::FindObjectsOfType()
+{
+	std::vector<ObjectReference<ObjectT>> objects;
+
+	for(auto& iter : _objects)
+	{
+		if(iter.get() == nullptr)
+		{
+			__debugbreak();
+			continue;
+		}
+
+		if constexpr(std::is_base_of_v<ObjectComponent, ObjectT>)
+		{
+			std::vector<ObjectReference<ObjectT>> components = iter.get()->GetComponentsOfType<ObjectT>();
+			if(components.size() > 0)
+			{
+				objects.insert(objects.end(), std::make_move_iterator(components.begin()), std::make_move_iterator(components.end()));
+			}
+		}
+		else
+		{
+			ObjectT* obj = dynamic_cast<ObjectT>(iter.get());
+			if(obj != nullptr)
+			{
+				objects.push_back(ObjectReference<ObjectT>(obj));
+			}
+		}
+	}
+
+	return objects;
+}

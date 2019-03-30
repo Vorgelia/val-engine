@@ -13,12 +13,12 @@
 #include <thread>
 
 //boost
-#include <boost/filesystem.hpp>
+#include <filesystem>
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/algorithm.hpp>
 #include <boost/assign/list_of.hpp>
 #include <boost/algorithm/string.hpp>
-namespace FS = boost::filesystem;
+namespace fs = std::filesystem;
 
 //Math
 #include "MathIncludes.hpp"

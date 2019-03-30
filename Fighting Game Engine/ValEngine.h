@@ -1,12 +1,11 @@
 #pragma once
-#include <cstdint>
 #include "Math.h"
 
-//TODO: Add/move more stuff here.
+class BaseObject;
 
 namespace ValEngine
 {
-
+	bool IsValid(const BaseObject* object);
 }
 
 namespace ve = ValEngine;

@@ -1,10 +1,10 @@
 #pragma once
 #include <string>
 #include <glm/glm.hpp>
-#include <boost/filesystem.hpp>
+#include <filesystem>
 #include "GLIncludes.hpp"
 
-namespace FS = boost::filesystem;
+namespace fs = std::filesystem;
 
 class Texture
 {
@@ -12,7 +12,7 @@ class Texture
 
 private:
 	std::string _name;
-	FS::path _path;
+	fs::path _path;
 
 	glm::vec4 _size;
 	bool _valid;

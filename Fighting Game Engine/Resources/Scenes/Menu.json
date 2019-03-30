@@ -1,0 +1,84 @@
+{
+	"sceneBehavior":
+	{
+		"__ve_class" : "FightingStageBehaviour",
+		"stageBounds":{
+			"x": -60,
+			"y": 2,
+			"z": 60,
+			"w": 50
+		}
+	},
+	"objects":
+	[
+		{
+			"__ve_prefabPath" : "Prefabs/MenuManager.json"
+		},
+		{
+			"__ve_prefabPath" : "Prefabs/OrthoCamera.json"
+		},
+		{
+			"__ve_class" : "GameObject",
+			"id":1,
+			"name":"Background",
+			"enabled":true,
+			"localTransform":{
+				"position":{
+					"x":0,
+					"y":0,
+					"z":1
+				},
+				"scale":{
+					"x":240,
+					"y":180,
+					"z":1
+				},
+				"rotation":{
+					"x":0,
+					"y":0,
+					"z":0
+				}
+			},
+			"__ve_components":[
+				{
+					"__ve_class":"ParallaxRenderer",
+					"enabled":true,
+					"mesh":"Meshes/Base/quad_sprite.vm",
+					"material":"Materials/Menu/Menu_Test.vmat"
+				}
+			]
+		},
+		{
+			"__ve_class" : "GameObject",
+			"id":2,
+			"name":"Background_Distant",
+			"enabled":true,
+			"localTransform":{
+				"position":{
+					"x":5,
+					"y":-36,
+					"z":20
+				},
+				"scale":{
+					"x":145,
+					"y":145,
+					"z":1
+				},
+				"rotation":{
+					"x":0,
+					"y":0,
+					"z":0
+				}
+			},
+			"__ve_components":[
+				{
+					"__ve_class":"ParallaxRenderer",
+					"name":"Renderer",
+					"enabled":true,
+					"mesh":"Meshes/Base/quad_sprite.vm",
+					"material":"Materials/Menu/Menu_BG_Distant.vmat"
+				}
+			]
+		}
+	]
+}

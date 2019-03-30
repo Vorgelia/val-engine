@@ -1,0 +1,7 @@
+{
+	"sceneBehavior":
+	{
+		"__ve_class" : "IntroBehaviour",
+		"scriptPath" : "Scripts/Base/example.vscript"
+	}
+}

@@ -14,9 +14,3 @@ GLuint Mesh::elementAmount() const
 {
 	return _elementAmount;
 }
-
-Mesh::~Mesh()
-{
-	if(_meshData != nullptr)
-		_meshData->UnregisterOwner(this);
-}

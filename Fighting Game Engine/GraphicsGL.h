@@ -31,8 +31,10 @@ enum class GraphicsBufferType;
 
 class GraphicsGL : public BaseService
 {
+	VE_OBJECT_DECLARATION(GraphicsGL);
+
 private:
-	Debug* _debug;
+	ObjectReference<Debug> _debug;
 
 private:
 	GLint _maxTextureUnits;
@@ -59,31 +61,31 @@ private:
 	GLuint CreateShaderProgram(const std::vector<GLuint>& shaders, ShaderProgramType type) const;
 
 public:
-	void Init() override;
-	void Update() override;
-	void Cleanup() override;
+	void OnInit() override;
+	void OnServiceInit() override;
+	void OnDestroyed() override;
 
-	std::unique_ptr<Texture> CreateTexture(const std::string& name, const std::vector<unsigned char>& pixels, glm::ivec2 dimensions, int format = GL_RGBA16, GLuint filt = GL_NEAREST, GLuint edgeBehaviour = GL_REPEAT);
+	Texture CreateTexture(const std::string& name, const std::vector<unsigned char>& pixels, glm::ivec2 dimensions, int format = GL_RGBA16, GLuint filt = GL_NEAREST, GLuint edgeBehaviour = GL_REPEAT);
 	void UpdateTexture(Texture& texture, const std::vector<unsigned char>& pixels);
 	void DestroyTexture(Texture& texture) const;
 
-	std::unique_ptr<FrameBuffer> CreateFrameBuffer(glm::ivec2 size, int texAmount, bool depthStencil = true, GLint format = GL_RGBA16, glm::vec4 clearColor = glm::vec4(0, 0, 0, 0), GLint filtering = GL_LINEAR, GLuint clearFlags = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+	FrameBuffer CreateFrameBuffer(glm::ivec2 size, int texAmount, bool depthStencil = true, GLint format = GL_RGBA16, glm::vec4 clearColor = glm::vec4(0, 0, 0, 0), GLint filtering = GL_LINEAR, GLuint clearFlags = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	void UpdateFrameBuffer(FrameBuffer& frameBuffer);
 	void ClearFrameBuffer(FrameBuffer& frameBuffer);
 	void DestroyFrameBuffer(FrameBuffer& frameBuffer) const;
 
 	template<typename BufferT>
-	std::unique_ptr<BufferT> CreateGraphicsBuffer(GLuint defaultSize, GraphicsBufferType type);
+	BufferT CreateGraphicsBuffer(GLuint defaultSize, GraphicsBufferType type);
 	void UpdateGraphicsBuffer(const GraphicsBuffer& buffer) const;
 
-	std::unique_ptr<Font> CreateFont(std::string name);
+	Font CreateFont(std::string name);
 	void DestroyFont(Font& font) const;
 
 	template<typename ShaderT>
-	std::unique_ptr<ShaderT> CreateShader(const std::string& name, const std::vector<ShaderAttachment>& attachments);
+	ShaderT CreateShader(const std::string& name, const std::vector<ShaderAttachment>& attachments);
 	void DestroyShader(BaseShader& shader) const;
 
-	std::unique_ptr<Mesh> CreateMesh(const std::string& name, CachedMesh* meshData);
+	Mesh CreateMesh(const std::string& name, CachedMesh* meshData);
 	void DestroyMesh(Mesh& mesh) const;
 
 	bool BindTextureUnit(GLuint pos);
@@ -104,29 +106,29 @@ public:
 
 	void DispatchCompute(const ComputeShader& shader, unsigned int workGroupSizeX = 1, unsigned int workGroupSizeY = 1, unsigned int workGroupSizeZ = 1);
 
-	GraphicsGL(ServiceManager* serviceManager);
-	~GraphicsGL();
+	GraphicsGL();
+	~GraphicsGL() = default;
 };
 
 template<typename BufferT>
-inline std::unique_ptr<BufferT> GraphicsGL::CreateGraphicsBuffer(GLuint defaultSize, GraphicsBufferType type)
+inline BufferT GraphicsGL::CreateGraphicsBuffer(GLuint defaultSize, GraphicsBufferType type)
 {
 	GLuint bufferId;
 	glGenBuffers(1, &bufferId);
 
-	std::unique_ptr<BufferT> buffer = std::make_unique<BufferT>();
-	buffer->_dataSize = defaultSize;
-	buffer->_id = bufferId;
-	buffer->_type = type;
+	BufferT buffer = BufferT();
+	buffer._dataSize = defaultSize;
+	buffer._id = bufferId;
+	buffer._type = type;
 
 	switch(type)
 	{
 	case GraphicsBufferType::ShaderStorage:
-		BindGraphicsBuffer(*buffer, GL_SHADER_STORAGE_BUFFER);
+		BindGraphicsBuffer(buffer, GL_SHADER_STORAGE_BUFFER);
 		glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(float) * defaultSize, nullptr, GL_DYNAMIC_COPY);
 		break;
 	case GraphicsBufferType::Uniform:
-		BindGraphicsBuffer(*buffer, GL_UNIFORM_BUFFER);
+		BindGraphicsBuffer(buffer, GL_UNIFORM_BUFFER);
 		glBufferData(GL_UNIFORM_BUFFER, sizeof(float) * defaultSize, nullptr, GL_DYNAMIC_DRAW);
 		break;
 	}
@@ -135,22 +137,22 @@ inline std::unique_ptr<BufferT> GraphicsGL::CreateGraphicsBuffer(GLuint defaultS
 }
 
 template<>
-inline std::unique_ptr<SurfaceShader> GraphicsGL::CreateShader(const std::string & name, const std::vector<ShaderAttachment>& attachments)
+inline SurfaceShader GraphicsGL::CreateShader(const std::string & name, const std::vector<ShaderAttachment>& attachments)
 {
-	std::unique_ptr<SurfaceShader> shader = std::make_unique<SurfaceShader>(name, 0);
-	shader->_id = CombineShaderAttachments(attachments, shader->_type);
+	SurfaceShader shader = SurfaceShader(name, 0);
+	shader._id = CombineShaderAttachments(attachments, shader._type);
 	return shader;
 }
 
 template<>
-inline std::unique_ptr<ComputeShader> GraphicsGL::CreateShader(const std::string & name, const std::vector<ShaderAttachment>& attachments)
+inline ComputeShader GraphicsGL::CreateShader(const std::string & name, const std::vector<ShaderAttachment>& attachments)
 {
-	std::unique_ptr<ComputeShader> shader = std::make_unique<ComputeShader>(name, 0);
-	shader->_id = CombineShaderAttachments(attachments, shader->_type);
+	ComputeShader shader = ComputeShader(name, 0);
+	shader._id = CombineShaderAttachments(attachments, shader._type);
 
 	int workSize[3];
-	glGetProgramiv(shader->_id, GL_COMPUTE_WORK_GROUP_SIZE, workSize);
-	shader->_computeGroupSize = glm::ivec3(workSize[0], workSize[1], workSize[2]);
+	glGetProgramiv(shader._id, GL_COMPUTE_WORK_GROUP_SIZE, workSize);
+	shader._computeGroupSize = glm::ivec3(workSize[0], workSize[1], workSize[2]);
 
 	return shader;
 }

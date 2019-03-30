@@ -6,19 +6,26 @@
 #include <DbgHelp.h>
 #include "LogItem.h"
 #include <stdexcept>
-
 #include "BaseScriptVariable.h"
 #include "Script.h"
+#include "GameInstance.h"
 
-#include "ServiceManager.h"
+VE_OBJECT_DEFINITION(Debug)
 
-void Debug::Update() {}
-
-void Debug::Init()
+void Debug::OnInit()
 {
+
 }
 
-void Debug::Cleanup()
+void Debug::OnServiceInit()
+{
+	_endWrite.store(false);
+	_writeStream = std::ofstream("log_output.txt", std::ios::trunc);
+	_writeStream << "--Val Engine Output Log--";
+	_writeThread = std::thread([this]() { WriteThread(); });
+}
+
+void Debug::OnDestroyed()
 {
 	_endWrite.store(true);
 	_writeThread.join();
@@ -74,7 +81,7 @@ void Debug::WriteThread()
 			break;
 		}
 
-		_writeStream << "\n\n" << messagePrefix << "\n" << li.ToString();
+		_writeStream << "\n\n" << messagePrefix << "\n" << li.ToString(stackAmount);
 		std::clog << li.ToString(stackAmount) << std::endl << std::endl;
 	}
 }
@@ -156,16 +163,5 @@ std::shared_ptr<BaseScriptVariable> Debug::Log(const Script* script, std::vector
 	Log(str.str(), LogItem::Type::ScriptLog);
 	return nullptr;
 }
-
-Debug::Debug(ServiceManager* serviceManager) : BaseService(serviceManager)
-{
-	_endWrite.store(false);
-	_writeStream = std::ofstream("log_output.txt", std::ios::trunc);
-	_writeStream << "--Val Engine Output Log--";
-	_writeThread = std::thread([this]() { WriteThread(); });
-}
-
-Debug::~Debug()
-= default;
 
 #pragma endregion

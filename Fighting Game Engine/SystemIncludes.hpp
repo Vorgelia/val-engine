@@ -11,7 +11,6 @@
 #include "FrameBuffer.h"
 #include "Material.h"
 #include "Camera.h"
-#include "PostEffect.h"
 #include "Font.h"
 //Resource
 #include "ResourceManager.h"
