@@ -13,8 +13,8 @@ class BaseCamera : public ObjectComponent
 	friend class RenderingGL;
 
 protected:
-	RenderingGL* _rendering;
-	GraphicsGL* _graphics;
+	ObjectReference<RenderingGL> _rendering;
+	ObjectReference<GraphicsGL> _graphics;
 
 	FrameBuffer* _targetFrameBuffer;
 

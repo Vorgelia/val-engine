@@ -59,7 +59,7 @@ void BaseCamera::OnDestroyed()
 {
 	ObjectComponent::OnDestroyed();
 
-	if(_rendering != nullptr)
+	if(_rendering.IsValid())
 	{
 		_rendering->UnregisterCamera(this);
 	}
