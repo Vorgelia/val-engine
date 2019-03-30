@@ -7,7 +7,6 @@
 template<typename ResourceT>
 class ResourceWrapper
 {
-	friend class ResourceManager;
 
 protected:
 	std::unique_ptr<ResourceT> _resource;
@@ -15,17 +14,29 @@ protected:
 	bool _isPersistent;
 
 public:
-	ResourceT* Get() { return _resource.get(); }
+	ResourceT& get() { return *_resource.get(); }
+	bool isPersistent() const { return _isPersistent; }
 
-	ResourceWrapper(std::unique_ptr<ResourceT>&& resourcePtr, bool isPersistent = false);
+	bool IsReferencedInScene(const std::string& sceneName) const;
+
+	void RegisterSceneReference(const std::string& sceneName) { _referencedLevels.emplace(sceneName); }
+	void UnregisterSceneReference(const std::string& sceneName) { _referencedLevels.erase(sceneName); }
+
+	ResourceWrapper(ResourceT&& resource, bool isPersistent = false);
 	ResourceWrapper(ResourceWrapper<ResourceT>&& other) noexcept;
 	ResourceWrapper(ResourceWrapper<ResourceT>& other) = delete;
 	~ResourceWrapper() = default;
 };
 
 template <typename ResourceT>
-ResourceWrapper<ResourceT>::ResourceWrapper(std::unique_ptr<ResourceT>&& resourcePtr, bool isPersistent)
-	: _resource(std::move(resourcePtr))
+bool ResourceWrapper<ResourceT>::IsReferencedInScene(const std::string& sceneName) const
+{
+	return _referencedLevels.count(sceneName) != 0;
+}
+
+template <typename ResourceT>
+ResourceWrapper<ResourceT>::ResourceWrapper(ResourceT&& resource, bool isPersistent)
+	: _resource(std::make_unique<ResourceT>(std::move(resource)))
 	, _isPersistent(isPersistent)
 {
 	

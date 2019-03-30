@@ -45,12 +45,9 @@ void GameInstance::OnInit()
 	_updateDispatcher = ObjectFactory::CreateObject<UpdateDispatcher>(this);
 
 	_FilesystemManager = ObjectFactory::CreateObjectDeferred<FilesystemManager>();
-	std::unique_ptr<json> rawConfigDataPtr = _FilesystemManager->LoadFileResource<json>("EngineConfig.json");
-	if(rawConfigDataPtr != nullptr)
-	{
-		_rawConfigData = *rawConfigDataPtr;
-		_configData.Deserialize(_rawConfigData);
-	}
+
+	_rawConfigData = _FilesystemManager->GetFileResource<json>("EngineConfig.json");
+	_configData.Deserialize(_rawConfigData);
 
 	//Utilities
 	Debug();

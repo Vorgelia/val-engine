@@ -29,8 +29,12 @@ class FilesystemManager : public BaseService
 	VE_OBJECT_DECLARATION(FilesystemManager);
 
 private:
-	Debug* _debug;
-	ResourceManager* _resource;
+	ObjectReference<Debug> _debug;
+	ObjectReference<ResourceManager> _resource;
+
+protected:
+	template<typename ResourceT>
+	ResourceT LoadFileResource(const fs::path& path);
 
 public:
 	std::string LoadTextResource(int id, const std::string& type = "TEXT") const;
@@ -40,7 +44,7 @@ public:
 	std::vector<std::string> ReturnFileLines(const fs::path& dir, bool removeWhitespace = false) const;
 
 	template<typename ResourceT>
-	std::unique_ptr<ResourceT> LoadFileResource(const fs::path& path);
+	ResourceT GetFileResource(const fs::path& path);
 
 	void LoadTextureData(const fs::path & path, std::vector<unsigned char>& out_pixels, glm::ivec2& out_size) const;
 	void LoadControlSettings(const fs::path& path, std::unordered_map<InputDirection, InputEvent>& dir, std::unordered_map<InputButton, InputEvent>& bt) const;
@@ -57,18 +61,25 @@ public:
 };
 
 template<>
-std::unique_ptr<json> FilesystemManager::LoadFileResource(const fs::path& path);
+json FilesystemManager::LoadFileResource(const fs::path& path);
 template<>
-std::unique_ptr<CachedMesh> FilesystemManager::LoadFileResource(const fs::path& path);
+CachedMesh FilesystemManager::LoadFileResource(const fs::path& path);
 template<>
-std::unique_ptr<Material> FilesystemManager::LoadFileResource(const fs::path& path);
+Material FilesystemManager::LoadFileResource(const fs::path& path);
+
+template <typename ResourceT>
+ResourceT FilesystemManager::LoadFileResource(const fs::path& path)
+{
+	return ResourceT(ReturnFile(path));
+}
 
 template<typename ResourceT>
-inline std::unique_ptr<ResourceT> FilesystemManager::LoadFileResource(const fs::path & path)
+inline ResourceT FilesystemManager::GetFileResource(const fs::path & path)
 {
 	if(!fs::exists(path))
 	{
-		return std::unique_ptr<ResourceT>(nullptr);
+		throw std::exception(("File " + path.string() +" Not Found.").c_str());
 	}
-	return std::make_unique<ResourceT>(ReturnFile(path));
+
+	return LoadFileResource<ResourceT>(path);
 }

@@ -40,36 +40,36 @@ class RenderingGL : public BaseService
 	VE_OBJECT_DECLARATION(RenderingGL);
 
 private:
-	Debug* _debug{};
-	GraphicsGL* _graphics{};
-	ResourceManager* _resourceManager{};
-	ScreenManager* _screen{};
+	ObjectReference<Debug> _debug{};
+	ObjectReference<GraphicsGL> _graphics{};
+	ObjectReference<ResourceManager> _resourceManager{};
+	ObjectReference<ScreenManager> _screen{};
 
 private:
 	std::unordered_set<ObjectReference<BaseCamera>> _cameras;
 
-	std::unique_ptr<FrameBuffer> _mainBuffer;
+	FrameBuffer _mainBuffer;
 
-	std::vector<std::unique_ptr<FrameBuffer>> _temporaryFrameBuffers;
+	std::vector<FrameBuffer> _temporaryFrameBuffers;
 	std::unordered_set<FrameBuffer*> _reservedTemporaryFrameBuffers;
 
 	glm::mat4 _uiProjectionMatrix;
 
-	std::unique_ptr<TimeDataBuffer> _timeDataBuffer;
-	std::unique_ptr<RenderingDataBuffer> _renderingDataBuffer;
-	std::unique_ptr<Vec4Buffer> _commonComputeVec4Buffer;
+	TimeDataBuffer _timeDataBuffer;
+	RenderingDataBuffer _renderingDataBuffer;
+	Vec4Buffer _commonComputeVec4Buffer;
 
 	void RegisterCamera(BaseCamera* camera);
 	void UnregisterCamera(BaseCamera* camera);
 
 	void InitTextDrawing();
-	void DrawTextCharacter(glm::vec4 rect, glm::vec4 params, Texture* tex) const;
+	void DrawTextCharacter(glm::vec4 rect, glm::vec4 params, const Texture& tex) const;
 
 	void BindMaterialUniforms(const Material& material, int& inout_textureUnitOffset) const;
 	void BindShaderTextures(SurfaceShader* shader, const std::vector<MaterialTexture>& textures, int& inout_textureUnitOffset) const;
 	void BindBufferUniforms(SurfaceShader* shad, int& inout_textureUnitOffset);
 
-	void BindFrameBufferImages(const FrameBuffer* buffer, GLuint bindingPoint) const;
+	void BindFrameBufferImages(const FrameBuffer&buffer, GLuint bindingPoint) const;
 
 	void OnScreenResize();
 	
@@ -77,7 +77,7 @@ private:
 	void EndFrame();
 
 public:
-	FrameBuffer* mainBuffer() const { return _mainBuffer.get(); }
+	const FrameBuffer& mainBuffer() const { return _mainBuffer; }
 
 	void OnInit() override;
 	void OnServiceInit() override;

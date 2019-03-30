@@ -40,12 +40,14 @@ private:
 
 	GLuint _clearFlags;
 
-	std::vector<std::unique_ptr<Texture>> _textures;
+	std::vector<Texture>_textures;
 
 public:
 	FrameBufferFlags flags() const { return _flags; }
 	ve::ivec2 resolution() const { return _resolution; }
-	std::vector<Texture*> textures() const;
+
+	std::vector<Texture>& textures() { return _textures; }
+	const std::vector<Texture>& textures() const { return _textures; }
 
 	void SetResolution(ve::ivec2 resolution);
 
@@ -53,5 +55,6 @@ public:
 	bool IsDirty() const { return (_flags & FrameBufferFlags::Dirty) != FrameBufferFlags::None; }
 	
 	FrameBuffer(ve::ivec2 size, int texAmount, bool depthStencil, GLint format, glm::vec4 clearColor, GLint filtering, GLuint clearFlags);
+	FrameBuffer() = default;
 	~FrameBuffer() = default;
 };

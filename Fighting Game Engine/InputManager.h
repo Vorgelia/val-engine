@@ -15,7 +15,7 @@ class InputManager : public BaseService
 	VE_OBJECT_DECLARATION(InputManager);
 
 protected:
-	ScreenManager* _screenManager;
+	ObjectReference<ScreenManager> _screenManager;
 
 protected:
 	std::unordered_map<int, ve::unique_object_ptr<InputDevice>> _inputDevices;

@@ -7,6 +7,7 @@
 #include "ResourceWrapper.h"
 #include "GameSceneManager.h"
 #include "GameScene.h"
+#include "ResourceContainer.h"
 
 //TODO: Figure out a way to remove these and re-introduce the forward declarations
 #include "Mesh.h"
@@ -40,18 +41,16 @@ class ResourceManager : public BaseService
 	VE_OBJECT_DECLARATION(ResourceManager);
 
 private:
-	Debug* _debug;
-	GraphicsGL* _graphics;
-	FilesystemManager* _filesystem;
-	GameSceneManager* _gameSceneManager;
+	ObjectReference<Debug> _debug;
+	ObjectReference<GraphicsGL> _graphics;
+	ObjectReference<FilesystemManager>_filesystem;
+	ObjectReference<GameSceneManager> _gameSceneManager;
 
 private:
-	template <typename ResourceT>
-	using ResourceContainer = std::unordered_map<std::string, ResourceWrapper<ResourceT>>;
 
 #define ve_named_resource_container(ResourceType, ResourceName)\
 	private:\
-		ResourceContainer<ResourceType> _##ResourceName##Map;\
+		ResourceContainer<std::string, ResourceType> _##ResourceName##Map;\
 	public:\
 		ResourceType* Get##ResourceName(const std::string& key) { return GetResourceFromContainer<ResourceType>(_##ResourceName##Map, key); }\
 	private:
@@ -73,11 +72,11 @@ private:
 
 protected:
 	template<typename ResourceT>
-	std::unique_ptr<ResourceT> CreateResource(const std::string& key);
+	ResourceT CreateResource(const std::string& key);
 	template<typename ResourceT>
-	ResourceT* GetResourceFromContainer(ResourceContainer<ResourceT>& container, const std::string& key);
+	ResourceT* GetResourceFromContainer(ResourceContainer<std::string, ResourceT>& container, const std::string& key);
 	template<typename ResourceT>
-	void TrimContainer(ResourceContainer<ResourceT>& container);
+	void TrimContainer(ResourceContainer<std::string, ResourceT>& container);
 
 	void PreprocessTextSource(std::string& inoutShaderSource);
 
@@ -98,73 +97,56 @@ public:
 };
 
 template<>
-std::unique_ptr<Texture> ResourceManager::CreateResource(const std::string& key);
+Texture ResourceManager::CreateResource(const std::string& key);
 template<>
-std::unique_ptr<SurfaceShader> ResourceManager::CreateResource(const std::string& key);
+SurfaceShader ResourceManager::CreateResource(const std::string& key);
 template<>
-std::unique_ptr<ComputeShader> ResourceManager::CreateResource(const std::string& key);
+ComputeShader ResourceManager::CreateResource(const std::string& key);
 template<>
-std::unique_ptr<Mesh> ResourceManager::CreateResource(const std::string& key);
+Mesh ResourceManager::CreateResource(const std::string& key);
 template<>
-std::unique_ptr<Font> ResourceManager::CreateResource(const std::string& key);
+Font ResourceManager::CreateResource(const std::string& key);
 template<>
-std::unique_ptr<std::string> ResourceManager::CreateResource(const std::string& key);
+std::string ResourceManager::CreateResource(const std::string& key);
 
 template<class ResourceT>
-std::unique_ptr<ResourceT> ResourceManager::CreateResource(const std::string& key)
+ResourceT ResourceManager::CreateResource(const std::string& key)
 {
-	return _filesystem->LoadFileResource<ResourceT>(key);
+	return _filesystem->GetFileResource<ResourceT>(key);
 }
 
 template<class ResourceT>
-ResourceT* ResourceManager::GetResourceFromContainer(ResourceContainer<ResourceT>& container, const std::string& key)
+ResourceT* ResourceManager::GetResourceFromContainer(ResourceContainer<std::string, ResourceT>& container, const std::string& key)
 {
-	auto& iter = container.find(key);
-	if(iter != container.end())
+	GameScene* curScene = _gameSceneManager->currentScene();
+	std::string curSceneName = (curScene == nullptr) ? "" : curScene->dataPath().string();
+
+	ResourceT* existingResource;
+	if(container.TryGet(key, existingResource, curSceneName))
 	{
-		if(_gameSceneManager->currentScene() != nullptr)
-		{
-			iter->second._referencedLevels.emplace(_gameSceneManager->currentScene()->name());
-		}
-		return iter->second.Get();
+		return existingResource;
 	}
 
 	fs::path path = key;
+	bool isPersistent = (_gameSceneManager->currentScene() == nullptr) || (path.parent_path().stem().string() == "Base");
 
-	GameScene* curScene = _gameSceneManager->currentScene();
-
-	ResourceWrapper<ResourceT> resource = ResourceWrapper<ResourceT>(
-		std::move(CreateResource<ResourceT>(key)),
-		(_gameSceneManager->currentScene() == nullptr) || (path.parent_path().stem().string() == "Base"));
-	if(!resource._isPersistent)
-	{
-		resource._referencedLevels.emplace(_gameSceneManager->currentScene()->name());
-	}
-
-	return container.emplace(key, std::move(resource)).first->second.Get();
+	return &container.Add(key, CreateResource<ResourceT>(key), isPersistent, curSceneName);
 }
 
 template <typename ResourceT>
-void ResourceManager::TrimContainer(ResourceContainer<ResourceT>& container)
+void ResourceManager::TrimContainer(ResourceContainer<std::string, ResourceT>& container)
 {
-	std::vector<std::string> membersToErase;
-	for(auto& iter : container)
+	if(_gameSceneManager.IsValid() && _gameSceneManager->currentScene() != nullptr)
 	{
-		const ResourceWrapper<ResourceT>& resource = iter.second;
-		if(resource._isPersistent)
-		{
-			continue;
-		}
-
-		if((_gameSceneManager->currentScene() == nullptr)
-			|| (resource._referencedLevels.count(_gameSceneManager->currentScene()->name()) == 0))
-		{
-			membersToErase.emplace_back(iter.first);
-		}
+		const std::string& currentSceneName = _gameSceneManager->currentScene()->dataPath().string();
+		container.Cleanup(
+			[&](const ResourceWrapper<ResourceT>& resource) -> bool
+			{
+				return !resource.IsReferencedInScene(currentSceneName);
+			});
 	}
-
-	for(auto& iter : membersToErase)
+	else
 	{
-		container.erase(iter);
+		container.Cleanup();
 	}
 }

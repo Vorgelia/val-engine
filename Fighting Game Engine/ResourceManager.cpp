@@ -1,8 +1,8 @@
 #include "ResourceManager.h"
 #include "GameInstance.h"
-#include "ComputeShader.h"
 #include "FilesystemManager.h"
 #include "GraphicsGL.h"
+#include "DebugLog.h"
 
 #include "Mesh.h"
 #include "CachedMesh.h"
@@ -27,15 +27,13 @@ void ResourceManager::GenerateDefaultTextures()
 		0, 0, 0, 255,	 255, 0, 255, 255
 	};
 
-	ResourceWrapper<Texture> floof = ResourceWrapper<Texture>(_graphics->CreateTexture("base_texture", pixels, glm::ivec2(2, 2)), true);
-
-	_TextureMap.emplace(std::string("base_texture"), std::move(ResourceWrapper<Texture>(_graphics->CreateTexture("base_texture", pixels, glm::ivec2(2, 2)), true)));
+	_TextureMap.Add("base_texture", _graphics->CreateTexture("base_texture", pixels, glm::ivec2(2, 2)), true);
 
 	pixels = std::vector<unsigned char>{ 0, 0, 0, 255 };
-	_TextureMap.emplace("black", ResourceWrapper<Texture>(_graphics->CreateTexture("black", pixels, glm::ivec2(1, 1)), true));
+	_TextureMap.Add("black", _graphics->CreateTexture("black", pixels, glm::ivec2(1, 1)), true);
 
 	pixels = std::vector<unsigned char>{ 255, 255, 255, 255 };
-	_TextureMap.emplace("white", ResourceWrapper<Texture>(_graphics->CreateTexture("white", pixels, glm::ivec2(1, 1)), true));
+	_TextureMap.Add("white", _graphics->CreateTexture("white", pixels, glm::ivec2(1, 1)), true);
 }
 
 void ResourceManager::LoadDefaultResources()
@@ -92,7 +90,7 @@ void ResourceManager::PreprocessTextSource(std::string& inoutShaderSource)
 }
 
 template<>
-std::unique_ptr<Texture> ResourceManager::CreateResource(const std::string& key)
+Texture ResourceManager::CreateResource(const std::string& key)
 {
 	glm::ivec2 textureSize;
 	std::vector<unsigned char> textureData;
@@ -101,14 +99,14 @@ std::unique_ptr<Texture> ResourceManager::CreateResource(const std::string& key)
 }
 
 template<>
-std::unique_ptr<SurfaceShader> ResourceManager::CreateResource(const std::string& key)
+SurfaceShader ResourceManager::CreateResource(const std::string& key)
 {
 	std::string vertSource = _filesystem->ReturnFile(key + ".vert");
 	PreprocessTextSource(vertSource);
 	std::string fragSource = _filesystem->ReturnFile(key + ".frag");
 	PreprocessTextSource(fragSource);
 
-	return	_graphics->CreateShader<SurfaceShader>(
+	return _graphics->CreateShader<SurfaceShader>(
 		key,
 		std::vector<ShaderAttachment>{
 		ShaderAttachment(vertSource, GL_VERTEX_SHADER),
@@ -116,34 +114,37 @@ std::unique_ptr<SurfaceShader> ResourceManager::CreateResource(const std::string
 }
 
 template<>
-std::unique_ptr<ComputeShader> ResourceManager::CreateResource(const std::string& key)
+ComputeShader ResourceManager::CreateResource(const std::string& key)
 {
 	std::string shaderSource = _filesystem->ReturnFile(key + ".comp");
 	PreprocessTextSource(shaderSource);
 
-	return _graphics->CreateShader<ComputeShader>(key, std::vector<ShaderAttachment>{
-		ShaderAttachment(shaderSource, GL_COMPUTE_SHADER)
-	});
+	return _graphics->CreateShader<ComputeShader>(
+		key,
+		std::vector<ShaderAttachment>{
+			ShaderAttachment(shaderSource, GL_COMPUTE_SHADER)
+		}
+	);
 }
 
 template<>
-inline std::unique_ptr<Mesh> ResourceManager::CreateResource(const std::string& key)
+inline Mesh ResourceManager::CreateResource(const std::string& key)
 {
 	CachedMesh* cachedMesh = GetCachedMesh(key);
 	return _graphics->CreateMesh(key, cachedMesh);
 }
 
 template<>
-inline std::unique_ptr<Font> ResourceManager::CreateResource(const std::string& key)
+inline Font ResourceManager::CreateResource(const std::string& key)
 {
 	return _graphics->CreateFont(key);
 }
 
 template<>
-inline std::unique_ptr<std::string> ResourceManager::CreateResource(const std::string& key)
+inline std::string ResourceManager::CreateResource(const std::string& key)
 {
-	std::unique_ptr<std::string> resource = _filesystem->LoadFileResource<std::string>(key);
-	PreprocessTextSource(*resource);
+	std::string resource = _filesystem->GetFileResource<std::string>(key);
+	PreprocessTextSource(resource);
 	return resource;
 }
 

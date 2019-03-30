@@ -17,7 +17,7 @@ class InputManager;
 class GameSceneManager : public BaseService
 {
 private:
-	Debug* _debug;
+	ObjectReference<Debug> _debug;
 
 	ve::unique_object_ptr<GameScene> _currentScene;
 

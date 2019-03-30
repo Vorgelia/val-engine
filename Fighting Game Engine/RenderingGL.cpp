@@ -38,7 +38,7 @@ void RenderingGL::OnServiceInit()
 	//Generate the main buffer and the auxiliary buffers.
 	_mainBuffer = _graphics->CreateFrameBuffer(_screen->screenSize(), renderingConfigData.frameBufferTextureAmount, true, GL_RGBA16, glm::vec4(0, 0, 0, 1));
 
-	BindFrameBufferImages(_mainBuffer.get(), (GLuint)ImageBindingPoints::MainBufferAttachment0);
+	BindFrameBufferImages(_mainBuffer, (GLuint)ImageBindingPoints::MainBufferAttachment0);
 
 	//The ortho mat and the screen mat might be confusing. It's less that they set a rendering resolution and more that they map the -1 to 1 coordinates to what is specified.
 	//Why do we need two different ones? Screen mat maps the screen pixels from the top-left corner(0,0) to the bottom-right(1920,1080) and it's used with UI elements.
@@ -49,15 +49,15 @@ void RenderingGL::OnServiceInit()
 
 	//Create graphics buffers
 	_timeDataBuffer = _graphics->CreateGraphicsBuffer<TimeDataBuffer>(8, GraphicsBufferType::Uniform);
-	_graphics->BindBufferToBindingPoint(GLuint(UniformBlockBindingPoints::TimeDataBuffer), *_timeDataBuffer);
+	_graphics->BindBufferToBindingPoint(GLuint(UniformBlockBindingPoints::TimeDataBuffer), _timeDataBuffer);
 
 	_renderingDataBuffer = _graphics->CreateGraphicsBuffer<RenderingDataBuffer>(4, GraphicsBufferType::Uniform);
-	_graphics->BindBufferToBindingPoint(GLuint(UniformBlockBindingPoints::RenderingDataBuffer), *_renderingDataBuffer);
+	_graphics->BindBufferToBindingPoint(GLuint(UniformBlockBindingPoints::RenderingDataBuffer), _renderingDataBuffer);
 
 	_commonComputeVec4Buffer = _graphics->CreateGraphicsBuffer<Vec4Buffer>(4096 * 4, GraphicsBufferType::ShaderStorage);
-	_commonComputeVec4Buffer->SetupData(4096 * 4);
-	_graphics->UpdateGraphicsBuffer(*_commonComputeVec4Buffer);
-	_graphics->BindBufferToBindingPoint(GLuint(ShaderStorageBlockBindingPoints::CommonVec4Buffer), *_commonComputeVec4Buffer);
+	_commonComputeVec4Buffer.SetupData(4096 * 4);
+	_graphics->UpdateGraphicsBuffer(_commonComputeVec4Buffer);
+	_graphics->BindBufferToBindingPoint(GLuint(ShaderStorageBlockBindingPoints::CommonVec4Buffer), _commonComputeVec4Buffer);
 
 	//Register a callback for the screen resizing
 	_screen->ScreenUpdated += VE_DELEGATE_FUNC(ScreenManager::ScreenUpdateEventHandler, OnScreenResize);
@@ -69,7 +69,7 @@ void RenderingGL::OnServiceInit()
 
 void RenderingGL::OnDestroyed()
 {
-	_graphics->DestroyFrameBuffer(*_mainBuffer);
+	_graphics->DestroyFrameBuffer(_mainBuffer);
 }
 
 void RenderingGL::BeginFrame()
@@ -89,18 +89,18 @@ void RenderingGL::BeginFrame()
 
 	for(auto& iter : _temporaryFrameBuffers)
 	{
-		_graphics->ClearFrameBuffer(*iter);
+		_graphics->ClearFrameBuffer(iter);
 	}
 
-	_graphics->ClearFrameBuffer(*_mainBuffer);
+	_graphics->ClearFrameBuffer(_mainBuffer);
 
-	_timeDataBuffer->SetupData(
+	_timeDataBuffer.SetupData(
 		float(_owningInstance->timeTracker().time()),
 		float(_owningInstance->configData().gameConfigData.fixedGameUpdateInterval));
-	_renderingDataBuffer->SetupData(_screen->screenSize(), _screen->screenInvSize());
+	_renderingDataBuffer.SetupData(_screen->screenSize(), _screen->screenInvSize());
 
-	_graphics->UpdateGraphicsBuffer(*_timeDataBuffer);
-	_graphics->UpdateGraphicsBuffer(*_renderingDataBuffer);
+	_graphics->UpdateGraphicsBuffer(_timeDataBuffer);
+	_graphics->UpdateGraphicsBuffer(_renderingDataBuffer);
 }
 
 void RenderingGL::EndFrame()
@@ -113,7 +113,7 @@ void RenderingGL::EndFrame()
 
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-	DrawScreenMesh(glm::vec4(0, 0, 1920, 1080), _resourceManager->GetMesh("Meshes/Base/screenQuad.vm"), _mainBuffer.get(), _resourceManager->GetMaterial("Materials/Base/Screen_FB.vmat"));
+	DrawScreenMesh(glm::vec4(0, 0, 1920, 1080), _resourceManager->GetMesh("Meshes/Base/screenQuad.vm"), &_mainBuffer, _resourceManager->GetMaterial("Materials/Base/Screen_FB.vmat"));
 
 	if(_owningInstance->configData().renderingConfigData.useSingleBuffer)
 	{
@@ -129,16 +129,16 @@ FrameBuffer* RenderingGL::GetTemporaryFrameBuffer()
 {
 	for(auto& iter : _temporaryFrameBuffers)
 	{
-		if(_reservedTemporaryFrameBuffers.count(iter.get()) == 0)
+		if(_reservedTemporaryFrameBuffers.count(&iter) == 0)
 		{
-			_reservedTemporaryFrameBuffers.emplace(iter.get());
-			return iter.get();
+			_reservedTemporaryFrameBuffers.emplace(&iter);
+			return &iter;
 		}
 	}
 
 	_temporaryFrameBuffers.push_back(_graphics->CreateFrameBuffer(_screen->screenSize(), 3, true, GL_RGBA16, glm::vec4(0, 0, 0, 1)));
-	_reservedTemporaryFrameBuffers.emplace(_temporaryFrameBuffers.back().get());
-	return _temporaryFrameBuffers.back().get();
+	_reservedTemporaryFrameBuffers.emplace(&_temporaryFrameBuffers.back());
+	return &_temporaryFrameBuffers.back();
 }
 
 void RenderingGL::ReleaseTemporaryFrameBuffer(FrameBuffer* frameBuffer)
@@ -153,9 +153,9 @@ void RenderingGL::RenderCamera(const BaseCamera* camera)
 		return;
 	}
 
-	FrameBuffer* targetFrameBuffer =
+	const FrameBuffer* targetFrameBuffer =
 		camera->targetFrameBuffer() == nullptr
-		? _mainBuffer.get()
+		? &_mainBuffer
 		: camera->targetFrameBuffer();
 
 	if(targetFrameBuffer == nullptr)
@@ -219,8 +219,8 @@ void RenderingGL::RenderAllCameras()
 //Screen resize callback. Resize all framebuffers to match the screen size.
 void RenderingGL::OnScreenResize()
 {
-	_mainBuffer->SetResolution(_screen->screenSize());
-	_graphics->UpdateFrameBuffer(*_mainBuffer);
+	_mainBuffer.SetResolution(_screen->screenSize());
+	_graphics->UpdateFrameBuffer(_mainBuffer);
 }
 
 void RenderingGL::BindMaterialUniforms(const Material& material, int& inout_textureUnitOffset) const
@@ -283,27 +283,22 @@ void RenderingGL::BindShaderTextures(SurfaceShader* shader, const std::vector<Ma
 void RenderingGL::BindBufferUniforms(SurfaceShader* shad, int& inout_textureUnitOffset)
 {
 	//Bind the textures of every framebuffer to the shader.
-	for(unsigned int i = 0; i < _mainBuffer->_textures.size(); ++i)
+	for(unsigned int i = 0; i < _mainBuffer._textures.size(); ++i)
 	{
 		if(shad->UniformLocation("mainBuf_tex" + std::to_string(i)) > -1)
 		{
-			_graphics->BindTexture(*(_mainBuffer->_textures[i]), inout_textureUnitOffset);
+			_graphics->BindTexture(_mainBuffer._textures[i], inout_textureUnitOffset);
 			glUniform1i(shad->UniformLocation("mainBuf_tex" + std::to_string(i)), inout_textureUnitOffset);
 			inout_textureUnitOffset += 1;
 		}
 	}
 }
 
-void RenderingGL::BindFrameBufferImages(const FrameBuffer* buffer, GLuint bindingPoint) const
+void RenderingGL::BindFrameBufferImages(const FrameBuffer& buffer, GLuint bindingPoint) const
 {
-	if(buffer == nullptr)
+	for(size_t i = 0; i < buffer._textures.size(); ++i)
 	{
-		return;
-	}
-
-	for(size_t i = 0; i < buffer->_textures.size(); ++i)
-	{
-		_graphics->BindTextureToImageUnit(bindingPoint + i, *(buffer->_textures[i]));
+		_graphics->BindTextureToImageUnit(bindingPoint + i, buffer._textures[i]);
 	}
 }
 
@@ -313,7 +308,7 @@ void RenderingGL::DrawScreenMesh(glm::vec4 rect, Mesh* mesh, FrameBuffer* frameB
 	std::vector<MaterialTexture> textures;
 	for(auto& texture : frameBuffer->textures())
 	{
-		textures.emplace_back(texture, params);
+		textures.emplace_back(&texture, params);
 	}
 
 	DrawScreenMesh(rect, mesh, textures, mat);
@@ -499,14 +494,14 @@ void RenderingGL::InitTextDrawing()
 	_graphics->ApplyMaterial(*_resourceManager->GetMaterial("Materials/Base/Screen.vmat"));
 }
 
-void RenderingGL::DrawTextCharacter(glm::vec4 rect, glm::vec4 params, Texture* tex) const
+void RenderingGL::DrawTextCharacter(glm::vec4 rect, glm::vec4 params, const Texture& tex) const
 {
 	//Draw individual text characters while assuming things set by InitTextDrawing are still bound.
 	//So much more optimization could be put into this.
 	SurfaceShader* cShad = _resourceManager->GetSurfaceShader("Shaders/Base/Screen_Text");
 	Mesh* cMesh = _resourceManager->GetMesh("Meshes/Base/screenQuad.vm");
 
-	_graphics->BindTexture(*tex, 0);
+	_graphics->BindTexture(tex, 0);
 	glUniform1i(cShad->UniformLocation("tex0"), 0);
 	glUniform4f(cShad->UniformLocation("tex0_params"), params.x, params.y, params.z, params.w);
 

@@ -50,6 +50,7 @@ protected:
 	void LoadResources();
 
 public:
+	const fs::path& dataPath() const { return _dataPath; }
 	const std::string& name() const;
 	bool loaded() const;
 	BaseSceneBehavior* sceneBehavior() const { return _sceneBehavior.get(); }

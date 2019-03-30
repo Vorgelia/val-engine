@@ -111,45 +111,40 @@ std::vector<std::string> FilesystemManager::ReturnFileLines(const fs::path& dir,
 }
 
 template<>
-std::unique_ptr<json> FilesystemManager::LoadFileResource(const fs::path& path)
+json FilesystemManager::LoadFileResource(const fs::path& path)
 {
-	if(!fs::exists(path))
-	{
-		return std::unique_ptr<json>(nullptr);
-	}
-
 	std::string& file = ReturnFile(path);
 
-	std::unique_ptr<json> j;
+	json j;
 	try
 	{
-		j = std::make_unique<json>(json::parse(file));
+		j = json::parse(file);
 	}
 	catch(std::invalid_argument& err)
 	{
 		_debug->VE_LOG("Error when parsing JSON file " + path.string() + "\n\t" + err.what(), LogItem::Type::Error);
-		j->clear();
+		j.clear();
 	}
 	catch(...)
 	{
 		_debug->VE_LOG("Unhandled exception when loading JSON file " + path.string(), LogItem::Type::Error);
-		j->clear();
+		j.clear();
 	}
 
-	return std::move(j);
+	return j;
 }
 
 template<>
-std::unique_ptr<CachedMesh> FilesystemManager::LoadFileResource(const fs::path& path)
+CachedMesh FilesystemManager::LoadFileResource(const fs::path& path)
 {
 	if(!fs::exists(path))
 	{
-		return std::unique_ptr<CachedMesh>(nullptr);
+		return CachedMesh("invalid");
 	}
 
 	std::vector<std::string> lines = ReturnFileLines(path, true);
 
-	std::unique_ptr<CachedMesh> mesh = std::make_unique<CachedMesh>(path.string());
+	CachedMesh mesh = CachedMesh(path.string());
 
 	int readState = 0; //0 Attribs, 1 Vertices, 2 Elements
 
@@ -181,15 +176,15 @@ std::unique_ptr<CachedMesh> FilesystemManager::LoadFileResource(const fs::path& 
 				//Indiscriminately add stuff to the arrays based on readState
 			case 0:
 				for(unsigned int j = 0; j < split.size(); ++j)//Cheating yet again. Not splitting VertexAttributes by - and just taking the first and third characters.
-					mesh->vertexFormat.push_back(VertexAttribute((VertexAttributeLocation)(boost::lexical_cast<int>(split[j][0])), boost::lexical_cast<int>(split[j][2])));
+					mesh.vertexFormat.push_back(VertexAttribute((VertexAttributeLocation)(boost::lexical_cast<int>(split[j][0])), boost::lexical_cast<int>(split[j][2])));
 				break;//I bet your favourite format doesn't omit error checking
 			case 1:
 				for(unsigned int j = 0; j < split.size(); ++j)
-					mesh->verts.push_back(boost::lexical_cast<float>(split[j]));
+					mesh.verts.push_back(boost::lexical_cast<float>(split[j]));
 				break;
 			case 2:
 				for(unsigned int j = 0; j < split.size(); ++j)
-					mesh->elements.push_back(boost::lexical_cast<GLuint>(split[j]));
+					mesh.elements.push_back(boost::lexical_cast<GLuint>(split[j]));
 				break;
 			}
 		}
@@ -199,16 +194,16 @@ std::unique_ptr<CachedMesh> FilesystemManager::LoadFileResource(const fs::path& 
 }
 
 template<>
-std::unique_ptr<Material> FilesystemManager::LoadFileResource(const fs::path& path)
+Material FilesystemManager::LoadFileResource(const fs::path& path)
 {
 	if(!fs::exists(path))
 	{
-		return std::unique_ptr<Material>(nullptr);
+		return Material("invalid");
 	}
 
 	std::vector<std::string> lines = ReturnFileLines(path, true);
 
-	std::unique_ptr<Material> mat = std::make_unique<Material>(path.string());
+	Material mat = Material(path.string());
 
 	int readState = 0;//0 Properties, 1 Uniform Floats, 2 Uniform Vectors, 3 Uniform Textures
 
@@ -240,16 +235,16 @@ std::unique_ptr<Material> FilesystemManager::LoadFileResource(const fs::path& pa
 			{
 			case 0:
 				if(spl[0] == "properties")
-					mat->properties = Material::Properties(boost::lexical_cast<GLuint>(spl[1]));
+					mat.properties = Material::Properties(boost::lexical_cast<GLuint>(spl[1]));
 				else if(spl[0] == "shader")
-					mat->shader = _resource->GetSurfaceShader(spl[1]);
+					mat.shader = _resource->GetSurfaceShader(spl[1]);
 				break;
 			case 1:
-				mat->uniformFloats.insert(std::pair<std::string, GLfloat>(spl[0], boost::lexical_cast<GLfloat>(spl[1])));
+				mat.uniformFloats.insert(std::pair<std::string, GLfloat>(spl[0], boost::lexical_cast<GLfloat>(spl[1])));
 				break;
 			case 2:
 				boost::split(spl2, spl[1], boost::is_any_of(","), boost::token_compress_on);
-				mat->uniformVectors.insert(std::pair<std::string, glm::vec4>(spl[0],
+				mat.uniformVectors.insert(std::pair<std::string, glm::vec4>(spl[0],
 					glm::vec4(
 						boost::lexical_cast<GLfloat>(spl2[0]),
 						boost::lexical_cast<GLfloat>(spl2[1]),
@@ -264,7 +259,7 @@ std::unique_ptr<Material> FilesystemManager::LoadFileResource(const fs::path& pa
 					boost::split(spl2, spl[1], boost::is_any_of(","), boost::token_compress_on);
 					if(spl2.size() < 4)
 						continue;
-					mat->uniformTextures.at(lastTexture).params = glm::vec4(
+					mat.uniformTextures.at(lastTexture).params = glm::vec4(
 						boost::lexical_cast<float>(spl2[0]),
 						boost::lexical_cast<float>(spl2[1]),
 						boost::lexical_cast<float>(spl2[2]),
@@ -273,7 +268,7 @@ std::unique_ptr<Material> FilesystemManager::LoadFileResource(const fs::path& pa
 				}
 				else
 				{
-					mat->uniformTextures.insert(std::pair<std::string, MaterialTexture>(spl[0], MaterialTexture(_resource->GetTexture(spl[1]))));
+					mat.uniformTextures.insert(std::pair<std::string, MaterialTexture>(spl[0], MaterialTexture(_resource->GetTexture(spl[1]))));
 					lastTexture = spl[0];
 				}
 				break;

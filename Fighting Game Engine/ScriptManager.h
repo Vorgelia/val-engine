@@ -20,9 +20,9 @@ class ScriptManager : public BaseService
 	VE_OBJECT_DECLARATION(ScriptManager);
 
 protected:
-	Debug* _debug;
-	FilesystemManager* _filesystem;
-	ResourceManager* _resource;
+	ObjectReference<Debug> _debug;
+	ObjectReference<FilesystemManager> _filesystem;
+	ObjectReference<ResourceManager> _resource;
 
 private:
 	std::unordered_map<std::string, std::shared_ptr<BaseScriptVariable>> _globalVariables;

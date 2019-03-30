@@ -2,19 +2,6 @@
 #include "Texture.h"
 #include "GraphicsGL.h"
 
-std::vector<Texture*> FrameBuffer::textures() const
-{
-	std::vector<Texture*> outVector{};
-	outVector.reserve(_textures.size());
-
-	for(auto& iter : _textures)
-	{
-		outVector.push_back(iter.get());
-	}
-
-	return outVector;
-}
-
 void FrameBuffer::SetResolution(ve::ivec2 resolution)
 {
 	_resolution = resolution;

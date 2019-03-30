@@ -23,7 +23,7 @@ protected:
 public:
 	int renderingPriority;
 
-	FrameBuffer* targetFrameBuffer() const;
+	const FrameBuffer* targetFrameBuffer() const;
 
 	void OnInit() override;
 	void OnDestroyed() override;

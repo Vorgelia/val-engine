@@ -39,9 +39,9 @@ std::vector<RenderingCommand> BaseCamera::GatherRenderingCommands() const
 	return std::move(renderingCommands);
 }
 
-FrameBuffer* BaseCamera::targetFrameBuffer() const
+const FrameBuffer* BaseCamera::targetFrameBuffer() const
 {
-	return _targetFrameBuffer == nullptr ? _rendering->mainBuffer() : targetFrameBuffer();
+	return (_targetFrameBuffer == nullptr) ? &_rendering->mainBuffer() : targetFrameBuffer();
 }
 
 void BaseCamera::OnInit()
