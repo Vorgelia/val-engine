@@ -1,5 +1,6 @@
 #include "ScriptLinesView.h"
 #include "ScriptLine.h"
+#include <stdexcept>
 
 ScriptLine ScriptLinesView::operator[](std::vector<ScriptLine>::size_type index) const
 {
