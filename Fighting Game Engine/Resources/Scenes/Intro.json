@@ -1,4 +1,6 @@
 {
+	"__ve_class":"GameScene",
+	"name":"Intro",
 	"sceneBehavior":
 	{
 		"__ve_class" : "IntroBehaviour",

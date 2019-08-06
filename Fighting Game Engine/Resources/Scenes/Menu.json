@@ -1,4 +1,6 @@
 {
+	"__ve_class":"GameScene",
+	"name":"Menu",
 	"sceneBehavior":
 	{
 		"__ve_class" : "FightingStageBehaviour",

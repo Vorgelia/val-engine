@@ -14,7 +14,7 @@ function StateUpdate(dec frame) : void
 		  character_state_setFrame("fritz_5a_03")
 		  break
 		case 8
-		  character_physics_addForce(10, 0.7, 0)
+		  character_physics_addForce(10, 1, 0.5)
 		case 8->12
 		  character_state_setFrame("fritz_5a_04")
 		  break

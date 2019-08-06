@@ -3,7 +3,7 @@
       "gameName":"Val Engine",
       "gameManagerClassName":"FightingGameManager",
       "fixedGameUpdateInterval":0.01666666666,
-      "defaultScene":"Intro",
+      "defaultScene":"Scenes/Intro",
       "maxNetworkPlayers":16
    },
    "inputConfigData":{

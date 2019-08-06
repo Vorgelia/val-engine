@@ -1,6 +1,5 @@
 {
 	"__ve_class":"GameCharacter",
-	
 	"name":"Char_Fritz",
 	"enabled":true,
 	"dataPath":"Characters/Fritz/CharacterData.json",
@@ -8,11 +7,11 @@
 		"position":{
 			"x":0,
 			"y":0,
-			"z",0
+			"z":0
 		},
 		"scale":{
-			"x":100,
-			"y":100,
+			"x":1,
+			"y":1,
 			"z":1
 		},
 		"rotation":{
