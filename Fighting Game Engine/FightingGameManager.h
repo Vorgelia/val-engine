@@ -26,7 +26,7 @@ private:
 private:
 	FightingGameState _currentState;
 
-	std::unordered_set<GameCharacter*> _characters;
+	std::unordered_set<ObjectReference<GameCharacter>> _characters;
 
 	void HandleSceneLoaded(const GameScene* scene);
 	void ChangeState(FightingGameState state);
@@ -36,14 +36,14 @@ private:
 
 	void Update();
 
-	GameCharacter* AddCharacter(const std::string& path);
+	ObjectReference<GameCharacter> AddCharacter(const std::string& path);
 
 public:
 	typedef Delegate<FightingGameState> FightingGameStateEventHandler;
 	FightingGameStateEventHandler FightingGameStateChanged;
 
 	FightingGameState currentState() const { return _currentState; }
-	const std::unordered_set<GameCharacter*>& characters() const { return _characters; }
+	const std::unordered_set<ObjectReference<GameCharacter>>& characters() const { return _characters; }
 
 	FightingGameManager() = default;
 	~FightingGameManager() = default;

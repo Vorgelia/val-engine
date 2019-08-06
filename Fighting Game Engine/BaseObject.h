@@ -9,16 +9,16 @@ class GameInstance;
 
 #define VE_OBJECT_DECLARATION(ObjectT) \
 	public:\
-	virtual std::string className() const override { return #ObjectT; }\
+	std::string className() const override { return #ObjectT; }\
 	static BaseObject* StaticClass();\
-	virtual BaseObject* GetClass() const override;\
+	BaseObject* GetClass() const override;\
 	private:
 
 #define VE_OBJECT_DEFINITION(ObjectT)\
 	bool _registered##ObjectT = (ObjectT::StaticClass() != nullptr) && ObjectFactory::RegisterObjectGenerator<ObjectT>(#ObjectT);\
 	BaseObject* ObjectT::StaticClass()\
 	{\
-		static std::unique_ptr<ObjectT> _staticClass = std::make_unique<ObjectT>();\
+		static ve::unique_object_ptr<ObjectT> _staticClass { new ObjectT() };\
 		return _staticClass.get();\
 	}\
 	BaseObject* ObjectT::GetClass() const\
@@ -36,13 +36,15 @@ class BaseObject : public IReflectable
 {
 	friend class ObjectInitializer;
 	friend class ObjectReferenceManager;
+	friend struct ve::ObjectDeleter;
 
 private:
 	std::unordered_set<const ObjectReference<BaseObject>*> _references;
 
 	void RegisterReference(const ObjectReference<BaseObject>& reference);
 	void UnregisterReference(const ObjectReference<BaseObject>& reference);
-
+	void InvalidateReferences();
+	
 protected:
 	GameInstance* _owningInstance;
 	BaseObject* _outer;

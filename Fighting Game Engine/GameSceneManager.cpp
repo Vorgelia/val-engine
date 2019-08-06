@@ -24,6 +24,7 @@ bool GameSceneManager::isLoading() const
 void GameSceneManager::OnInit()
 {
 	_debug = _owningInstance->Debug();
+	_resource = _owningInstance->ResourceManager();
 
 	VE_REGISTER_UPDATE_FUNCTION(UpdateGroup::FrameEnd, UpdateType::LastFixedGameUpdate, UpdateService);
 }
@@ -33,26 +34,30 @@ void GameSceneManager::OnServiceInit()
 	LoadScene(_owningInstance->configData().gameConfigData.defaultScene);
 }
 
-void GameSceneManager::OnDestroyed()
+void GameSceneManager::OnServiceCleanup()
 {
-	
+	_currentScene.reset();
 }
 
 void GameSceneManager::UpdateService()
 {
 	if(!_sceneToLoad.empty())
 	{
+		json* sceneJson = _resource->GetJsonData(_sceneToLoad + ".json");
+		_sceneToLoad.clear();
+		if(sceneJson == nullptr)
+		{
+			return;
+		}
+
 		_debug->VE_LOG("----\n\n\n Loading Scene: " + _sceneToLoad + "\n\n\n----", LogItem::Type::Message);
 
 		_isLoading = true;
 
-		ve::unique_object_ptr<GameScene> newScene = ObjectFactory::CreateObjectDeferred<GameScene>();
-		_currentScene = std::move(newScene);
-		_currentScene->_dataPath = "Scenes/"+_sceneToLoad+".json";
-		ObjectFactory::InitializeObject(_currentScene.get(), this);
-		_sceneToLoad.clear();
-
+		_currentScene = ObjectFactory::CreateObjectFromJsonDeferred<GameScene>(this, *sceneJson);
+		ObjectFactory::InitializeObject(_currentScene.get(), this, *sceneJson);
 		SceneLoaded(_currentScene.get());
+
 		_isLoading = false;
 	}
 }

@@ -10,6 +10,7 @@ class BaseService : public BaseObject
 
 protected:
 	virtual void OnServiceInit() {}
+	virtual void OnServiceCleanup() {}
 
 public:
 	BaseService& operator=(BaseService&) = delete;
@@ -18,6 +19,6 @@ public:
 	BaseService(BaseService& service) = delete;
 	BaseService(BaseService&& service) = delete;
 
-	BaseService() = default;
+	BaseService()  = default;
 	virtual ~BaseService() = default;
 };

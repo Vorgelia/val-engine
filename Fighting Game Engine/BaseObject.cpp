@@ -14,6 +14,21 @@ void BaseObject::UnregisterReference(const ObjectReference<BaseObject>& referenc
 	_references.erase(&reference);
 }
 
+void BaseObject::InvalidateReferences()
+{
+	if (GetClass() != this)
+	{
+		for (auto& iter : _references)
+		{
+			iter->Invalidate();
+		}
+		if (ObjectReferenceManager::TryGet())
+		{
+			ObjectReferenceManager::Get().RemoveObject(this);
+		}
+	}
+}
+
 json BaseObject::Serialize() const
 {
 	json outJson = IReflectable::Serialize();
@@ -31,9 +46,5 @@ BaseObject::BaseObject()
 
 BaseObject::~BaseObject()
 {
-	for(auto& iter : _references)
-	{
-		iter->Invalidate();
-	}
-	ObjectReferenceManager::Get().RemoveObject(this);
+
 }

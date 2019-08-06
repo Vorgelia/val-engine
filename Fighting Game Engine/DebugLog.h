@@ -39,7 +39,7 @@ private:
 public:
 	void OnInit() override;
 	void OnServiceInit() override;
-	void OnDestroyed() override;
+	void OnServiceCleanup() override;
 
 	void Log(const std::string& data, std::string fileName, int fileLine, LogItem::Type type = LogItem::Type::Log);
 	std::shared_ptr<BaseScriptVariable> Log(const Script* script, std::vector<std::shared_ptr<BaseScriptVariable>>&);

@@ -20,6 +20,8 @@ protected:
 	//TODO: Make characters send scene events.
 	//void HandleSceneEvent();
 
+	void RegisterReflectionFields() const override;
+
 	typedef std::map <GameCharacter*, std::vector<CharacterCollisionResult>, CharacterSortingPredicate> CharacterCollisionResultMap;
 	virtual CharacterCollisionResultMap GenerateCharacterCollisionResults() const;
 

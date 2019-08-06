@@ -56,5 +56,4 @@ public:
 	
 	FrameBuffer(ve::ivec2 size, int texAmount, bool depthStencil, GLint format, glm::vec4 clearColor, GLint filtering, GLuint clearFlags);
 	FrameBuffer() = default;
-	~FrameBuffer() = default;
 };

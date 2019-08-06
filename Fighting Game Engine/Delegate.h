@@ -7,6 +7,9 @@
 #define VE_DELEGATE_FUNC(type, name) \
 	type::registered_func_t(this, type::func_t{[this](auto ...args){ name(args...); }})
 
+#define VE_REGISTER_DELEGATE_FUNC(dlg, funcName) \
+	dlg += decltype(dlg)::registered_func_t(this, decltype(dlg)::func_t{[this](auto ...args){ funcName(args...); }})
+
 class BaseObject;
 
 template<typename... argTypes>

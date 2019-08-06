@@ -12,6 +12,11 @@ ObjectReferenceManager& ObjectReferenceManager::Get()
 	return *_instance;
 }
 
+ObjectReferenceManager* ObjectReferenceManager::TryGet()
+{
+	return _instance.get();
+}
+
 void ObjectReferenceManager::AddObject(const BaseObject* object)
 {
 	_objectLookup.emplace(object);
@@ -45,5 +50,5 @@ bool ObjectReferenceManager::IsObjectValid(const BaseObject* object)
 
 ObjectReferenceManager::~ObjectReferenceManager()
 {
-	_instance = nullptr;
+	//_instance.reset();
 }

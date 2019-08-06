@@ -10,38 +10,11 @@
 
 VE_OBJECT_DEFINITION(GameScene);
 
-void GameScene::LoadResources()
+void GameScene::Deserialize(const json& j)
 {
-	_loaded = false;
-	if(_dataPath.empty())
-	{
-		_loaded = true;
-		return;
-	}
-
-	json* sceneData = _resource->GetJsonData(_dataPath.string());
-	if(sceneData == nullptr)
-	{
-		_loaded = true;
-		return;
-	}
-
-	json objectJson;
-	if(JSON::TryGetMember(*sceneData, "objects", objectJson))
-	{
-		for(const json& objData : objectJson)
-		{
-			AddObjectFromJson(objData);
-		}
-	}
-
-	json sceneBehaviorData;
-	if(JSON::TryGetMember(*sceneData, "sceneBehavior", sceneBehaviorData))
-	{
-		_sceneBehavior = ObjectFactory::CreateObjectFromJson<BaseSceneBehavior>(this, sceneBehaviorData);
-	}
-
-	_loaded = true;
+	_isLoaded = false;
+	BaseObject::Deserialize(j);
+	_dataJson = j;
 }
 
 void GameScene::OnInit()
@@ -51,17 +24,34 @@ void GameScene::OnInit()
 	_resource = _owningInstance->ResourceManager();
 	_rendering = _owningInstance->Rendering();
 
-	LoadResources();
+	json objectJson;
+	if (JSON::TryGetMember(_dataJson, "objects", objectJson))
+	{
+		for (const json& objData : objectJson)
+		{
+			AddObjectFromJson(objData);
+		}
+	}
+
+	json sceneBehaviorData;
+	if (JSON::TryGetMember(_dataJson, "sceneBehavior", sceneBehaviorData))
+	{
+		_sceneBehavior = ObjectFactory::CreateObjectFromJson<BaseSceneBehavior>(this, sceneBehaviorData);
+	}
 
 	VE_REGISTER_UPDATE_FUNCTION(UpdateGroup::TimingUpdate, UpdateType::EngineUpdate, UpdateTiming);
+
+	_isLoaded = true;
 }
 
 void GameScene::OnDestroyed()
 {
-	_objects.clear();
-	_objectNameLookup.clear();
+	_sceneBehavior.reset();
 
-	_loaded = false;
+	_objectNameLookup.clear();
+	_objects.clear();
+
+	_isLoaded = false;
 }
 
 void GameScene::UpdateTiming()
@@ -74,9 +64,10 @@ void GameScene::UpdateTiming()
 	_timeTracker.Update(_owningInstance->timeTracker());
 }
 
-bool GameScene::loaded() const
+void GameScene::RegisterReflectionFields() const
 {
-	return _loaded;
+	BaseObject::RegisterReflectionFields();
+	VE_PRIVATE_REFLECTION_VAR(Field, name);
 }
 
 void GameScene::RegisterObject(GameObject* obj)
@@ -87,11 +78,6 @@ void GameScene::RegisterObject(GameObject* obj)
 void GameScene::UnregisterObject(GameObject* obj)
 {
 	_objectNameLookup.erase(obj->name());
-}
-
-const std::string& GameScene::name() const
-{
-	return _name;
 }
 
 ObjectReference<GameObject> GameScene::AddObjectFromJson(const json& jsonData)

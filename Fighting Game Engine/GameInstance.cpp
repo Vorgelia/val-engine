@@ -79,6 +79,12 @@ void GameInstance::OnInit()
 
 void GameInstance::OnDestroyed()
 {
+	for (auto& iter : _activeServices)
+	{
+		iter->OnServiceCleanup();
+	}
+	_gameManager.reset();
+	_activeServices.clear();
 }
 
 void GameInstance::UpdateServices()
@@ -89,5 +95,5 @@ void GameInstance::UpdateServices()
 
 GameInstance::GameInstance()
 {
-	_GameSceneManager.reset();
+
 }

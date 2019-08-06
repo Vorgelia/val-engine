@@ -15,6 +15,7 @@
 
 void CharacterStateComponent::OnInit()
 {
+	BaseGameCharacterComponent::OnInit();
 	_input = _owningInstance->Input();
 	_scriptManager = _owningInstance->ScriptManager();
 	_filesystem = _owningInstance->Filesystem();

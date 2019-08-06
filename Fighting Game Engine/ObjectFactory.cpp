@@ -5,6 +5,7 @@
 void ve::ObjectDeleter::operator()(BaseObject* object) const
 {
 	object->OnDestroyed();
+	object->InvalidateReferences();
 	delete object;
 }
 

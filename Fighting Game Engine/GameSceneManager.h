@@ -18,6 +18,7 @@ class GameSceneManager : public BaseService
 {
 private:
 	ObjectReference<Debug> _debug;
+	ObjectReference<ResourceManager> _resource;
 
 	ve::unique_object_ptr<GameScene> _currentScene;
 
@@ -33,7 +34,7 @@ public:
 
 	void OnInit() override;
 	void OnServiceInit() override;
-	void OnDestroyed() override;
+	void OnServiceCleanup() override;
 
 	void UpdateService();
 

@@ -25,6 +25,27 @@ void GameCharacter::OnInit()
 	_stateComponent = AddComponentOfType<CharacterStateComponent>().get();
 	_physicsComponent = AddComponentOfType<CharacterPhysicsComponent>().get();
 	_eventComponent = AddComponentOfType<CharacterEventComponent>().get();
+
+	json* dataJson = _resource->GetJsonData(_dataPath);
+	if (dataJson != nullptr)
+	{
+		_characterData = std::make_unique<GameCharacterData>(*dataJson);
+
+		std::string scriptPath;
+		if (JSON::TryGetMember(*dataJson, "characterScript", scriptPath))
+		{
+			_characterScript = _scriptManager->GetScript(scriptPath);
+			_scriptManager->HandleScriptCharacterBindings(*this, _characterScript);
+		}
+
+		_stateComponent->CacheCharacterData();
+	}
+
+	if (_characterScript != nullptr && _characterScript->HasFunction("CharacterInit"))
+	{
+		_characterScript->ExecuteFunction("CharacterInit");
+	}
+	_initialized = true;
 }
 
 void GameCharacter::OnDestroyed()
@@ -34,25 +55,7 @@ void GameCharacter::OnDestroyed()
 
 void GameCharacter::Deserialize(const json& j)
 {
-	std::string dataPath;
-	if(JSON::TryGetMember<std::string>(j, "dataPath", dataPath))
-	{
-		json* dataJson = _resource->GetJsonData(dataPath);
-		if(dataJson != nullptr)
-		{
-			_characterData = std::make_unique<GameCharacterData>(*dataJson);
-
-			std::string scriptPath;
-			if(JSON::TryGetMember(*dataJson, "characterScript", scriptPath))
-			{
-				_characterScript = _scriptManager->GetScript(scriptPath);
-				_scriptManager->HandleScriptCharacterBindings(*this, _characterScript);
-			}
-
-			_stateComponent->CacheCharacterData();
-		}
-	}
-
+	JSON::TryGetMember<std::string>(j, "dataPath", _dataPath);
 	GameObject::Deserialize(j);
 }
 
@@ -119,20 +122,10 @@ CharacterCollisionResult GameCharacter::GenerateCollisions(const GameCharacter* 
 
 void GameCharacter::CharacterInit()
 {
-	if(_characterScript != nullptr && _characterScript->HasFunction("CharacterInit"))
-	{
-		_characterScript->ExecuteFunction("CharacterInit");
-	}
-	_initialized = true;
 }
 
 void GameCharacter::CharacterUpdate()
 {
-	if(!_initialized)
-	{
-		CharacterInit();
-	}
-
 	_stateComponent->EvaluateNextState();
 
 	if(_characterScript != nullptr)

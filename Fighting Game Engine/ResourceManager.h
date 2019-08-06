@@ -9,7 +9,6 @@
 #include "GameScene.h"
 #include "ResourceContainer.h"
 
-//TODO: Figure out a way to remove these and re-introduce the forward declarations
 #include "Mesh.h"
 #include "CachedMesh.h"
 #include "SurfaceShader.h"
@@ -19,16 +18,6 @@
 #include "Font.h"
 #include "FilesystemManager.h"
 #include "GraphicsGL.h"
-
-////TODO: PUT BACK RIGHT NOW!!!
-//class CachedMesh;
-//class Mesh;
-//class Texture;
-//class Material;
-//class SurfaceShader;
-//class ComputeShader;
-//class Font;
-//class ShaderAttachment;
 
 namespace fs = std::filesystem;
 
@@ -46,13 +35,18 @@ private:
 	ObjectReference<FilesystemManager>_filesystem;
 	ObjectReference<GameSceneManager> _gameSceneManager;
 
-private:
+protected:
+	template<typename ResourceT>
+	ResourceT* GetResourceOfType(const std::string& key) { return nullptr; }
 
+private:
 #define ve_named_resource_container(ResourceType, ResourceName)\
 	private:\
 		ResourceContainer<std::string, ResourceType> _##ResourceName##Map;\
 	public:\
 		ResourceType* Get##ResourceName(const std::string& key) { return GetResourceFromContainer<ResourceType>(_##ResourceName##Map, key); }\
+		template<>\
+		ResourceType* GetResourceOfType<ResourceType>(const std::string& key) { return GetResourceFromContainer<ResourceType>(_##ResourceName##Map, key); }\
 	private:
 #define ve_resource_container(ResourceType) ve_named_resource_container(ResourceType, ResourceType)
 
@@ -88,9 +82,9 @@ protected:
 	void TrimContainers();
 public:
 
-	virtual void OnInit() override;
+	void OnInit() override;
 	void OnServiceInit() override;
-	virtual void OnDestroyed() override;
+	void OnDestroyed() override;
 
 	ResourceManager() = default;
 	~ResourceManager() = default;
@@ -119,7 +113,7 @@ template<class ResourceT>
 ResourceT* ResourceManager::GetResourceFromContainer(ResourceContainer<std::string, ResourceT>& container, const std::string& key)
 {
 	GameScene* curScene = _gameSceneManager->currentScene();
-	std::string curSceneName = (curScene == nullptr) ? "" : curScene->dataPath().string();
+	std::string curSceneName = (curScene == nullptr) ? "" : curScene->name();
 
 	ResourceT* existingResource;
 	if(container.TryGet(key, existingResource, curSceneName))
@@ -138,7 +132,7 @@ void ResourceManager::TrimContainer(ResourceContainer<std::string, ResourceT>& c
 {
 	if(_gameSceneManager.IsValid() && _gameSceneManager->currentScene() != nullptr)
 	{
-		const std::string& currentSceneName = _gameSceneManager->currentScene()->dataPath().string();
+		const std::string& currentSceneName = _gameSceneManager->currentScene()->name();
 		container.Cleanup(
 			[&](const ResourceWrapper<ResourceT>& resource) -> bool
 			{

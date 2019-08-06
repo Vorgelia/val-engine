@@ -34,7 +34,9 @@ protected:
 	fs::path _dataPath;
 	std::string _name;
 
-	bool _loaded;
+	json _dataJson;
+
+	bool _isLoaded;
 	bool _updatedTiming = false;
 
 	ve::unique_object_ptr<BaseSceneBehavior> _sceneBehavior;
@@ -44,15 +46,17 @@ protected:
 
 	TimeTracker _timeTracker;
 
+	void RegisterReflectionFields() const override;
+
+	void Deserialize(const json& j) override;
+
 	void RegisterObject(GameObject* obj);
 	void UnregisterObject(GameObject* obj);
 
-	void LoadResources();
-
 public:
-	const fs::path& dataPath() const { return _dataPath; }
-	const std::string& name() const;
-	bool loaded() const;
+	const fs::path& dataPath() const { return _name; }
+	const std::string& name() const { return _name; }
+	bool isLoaded() const { return _isLoaded; }
 	BaseSceneBehavior* sceneBehavior() const { return _sceneBehavior.get(); }
 
 	const TimeTracker& GetTime() const { return _timeTracker; }

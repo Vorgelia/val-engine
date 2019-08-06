@@ -25,7 +25,7 @@ void Debug::OnServiceInit()
 	_writeThread = std::thread([this]() { WriteThread(); });
 }
 
-void Debug::OnDestroyed()
+void Debug::OnServiceCleanup()
 {
 	_endWrite.store(true);
 	_writeThread.join();

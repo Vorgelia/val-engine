@@ -10,20 +10,27 @@
 
 VE_OBJECT_DEFINITION(FightingStageBehaviour);
 
+void FightingStageBehaviour::RegisterReflectionFields() const
+{
+	BaseSceneBehavior::RegisterReflectionFields();
+
+	VE_PRIVATE_REFLECTION_VAR(Field, stageBounds);
+}
+
 FightingStageBehaviour::CharacterCollisionResultMap FightingStageBehaviour::GenerateCharacterCollisionResults() const
 {
-	std::unordered_set<GameCharacter*> handledCharacters;
+	std::unordered_set<ObjectReference<GameCharacter>> handledCharacters;
 	CharacterCollisionResultMap collisionResults;
-	for(GameCharacter* thisCharacter : _gameManager->characters())
+	for(const ObjectReference<GameCharacter>& thisCharacter : _gameManager->characters())
 	{
-		if(!ve::IsValid(thisCharacter))
+		if(!thisCharacter.IsValid())
 		{
 			continue;
 		}
 
-		for(GameCharacter* otherCharacter : _gameManager->characters())
+		for(const ObjectReference<GameCharacter>& otherCharacter : _gameManager->characters())
 		{
-			if(ve::IsValid(otherCharacter))
+			if(!otherCharacter.IsValid())
 			{
 				continue;
 			}
@@ -38,7 +45,7 @@ FightingStageBehaviour::CharacterCollisionResultMap FightingStageBehaviour::Gene
 				continue;
 			}
 
-			CharacterCollisionResult collisionResult = thisCharacter->GenerateCollisions(otherCharacter);
+			CharacterCollisionResult collisionResult = thisCharacter->GenerateCollisions(otherCharacter.get());
 			auto addResultLambda = [&](GameCharacter* character, const CharacterCollisionResult& result)
 			{
 				auto iter = collisionResults.find(character);
@@ -51,10 +58,10 @@ FightingStageBehaviour::CharacterCollisionResultMap FightingStageBehaviour::Gene
 				iter->second.emplace_back(result);
 			};
 
-			addResultLambda(thisCharacter, collisionResult);
+			addResultLambda(thisCharacter.get(), collisionResult);
 			std::swap(collisionResult.attackHit, collisionResult.attackReceived);
-			collisionResult.otherCharacter = thisCharacter;
-			addResultLambda(otherCharacter, collisionResult);
+			collisionResult.otherCharacter = thisCharacter.get();
+			addResultLambda(otherCharacter.get(), collisionResult);
 		}
 
 		handledCharacters.emplace(thisCharacter);
@@ -100,7 +107,9 @@ void FightingStageBehaviour::GameUpdate()
 {
 	for(auto& iter : _gameManager->characters())
 	{
-		iter->CharacterUpdate();
+		if (iter->_initialized) {
+			iter->CharacterUpdate();
+		}
 	}
 }
 

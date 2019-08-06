@@ -14,6 +14,7 @@ protected:
 
 public:
 	static ObjectReferenceManager& Get();
+	static ObjectReferenceManager* TryGet();
 
 protected:
 	std::unordered_set<const BaseObject*> _objectLookup;
@@ -65,7 +66,7 @@ public:
 
 	explicit ObjectReference(ObjectT* object);
 	ObjectReference(const ObjectReference<ObjectT>& object);
-	ObjectReference(ObjectReference<ObjectT>&& object) noexcept;
+	ObjectReference(ObjectReference<ObjectT>&& object);
 	ObjectReference();
 	~ObjectReference();
 };
@@ -125,7 +126,7 @@ ObjectReference<ObjectT>::ObjectReference(const ObjectReference<ObjectT>& object
 }
 
 template <typename ObjectT>
-ObjectReference<ObjectT>::ObjectReference(ObjectReference<ObjectT>&& object) noexcept
+ObjectReference<ObjectT>::ObjectReference(ObjectReference<ObjectT>&& object)
 {
 	Reset(object.get());
 }
@@ -140,7 +141,8 @@ ObjectReference<ObjectT>::ObjectReference()
 template <typename ObjectT>
 ObjectReference<ObjectT>::~ObjectReference()
 {
-	ObjectReferenceManager::Get().UnregisterReferenceToObject(_referencedObject, *this);
+	if(_referencedObject != nullptr && ObjectReferenceManager::TryGet() != nullptr)
+		ObjectReferenceManager::Get().UnregisterReferenceToObject(_referencedObject, *this);
 }
 
 namespace std

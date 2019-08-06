@@ -54,7 +54,7 @@ void FightingGameManager::ChangeState(FightingGameState state)
 	case FightingGameState::InGame:
 	{
 		//PLACEHOLDER
-		GameCharacter* char1Character = AddCharacter("Characters/Fritz/Prefab.json");
+		ObjectReference<GameCharacter> char1Character = AddCharacter("Characters/Fritz/Prefab.json");
 		char1Character->SetOwner(_playerManager->AddPlayer(0, -1));
 		break;
 	}
@@ -69,7 +69,7 @@ void FightingGameManager::OnInit()
 {
 	_playerManager = _owningInstance->PlayerManager();
 	_gameSceneManager = _owningInstance->GameSceneManager();
-	_gameSceneManager->SceneLoaded += VE_DELEGATE_FUNC(GameSceneManager::GameSceneEventHandler, HandleSceneLoaded);
+	VE_REGISTER_DELEGATE_FUNC(_gameSceneManager->SceneLoaded, HandleSceneLoaded);
 
 	ChangeState(FightingGameState::None);
 }
@@ -84,19 +84,19 @@ void FightingGameManager::Update()
 	if(_currentState == FightingGameState::InGame && glfwGetKey(_owningInstance->ScreenManager()->window(), GLFW_KEY_B) == GLFW_PRESS)
 	{
 		ChangeState(FightingGameState::None);
-		_gameSceneManager->LoadScene("Intro");
+		_gameSceneManager->LoadScene("Scenes/Intro");
 	}
 }
 
-GameCharacter* FightingGameManager::AddCharacter(const std::string& path)
+ObjectReference<GameCharacter> FightingGameManager::AddCharacter(const std::string& path)
 {
-	GameCharacter* object = dynamic_cast<GameCharacter*>(_gameSceneManager->currentScene()->LoadObject(path).get());
+	ObjectReference<GameCharacter> character = _gameSceneManager->currentScene()->LoadObject(path);
 
-	if(object == nullptr)
+	if(!character.IsValid())
 	{
-		return nullptr;
+		return ObjectReference<GameCharacter>();
 	}
 
-	_characters.emplace(object);
-	return object;
+	_characters.emplace(character);
+	return character;
 }

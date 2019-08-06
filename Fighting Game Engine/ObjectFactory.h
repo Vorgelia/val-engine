@@ -42,9 +42,13 @@ public:
 	static ve::unique_object_ptr<ObjectT> CreateObjectDeferred();
 
 	template<typename ObjectT = BaseObject>
-	static ve::unique_object_ptr<ObjectT> CreateObjectOfClass(const std::string& className, BaseObject* outer, const json& j = json());
+	static ve::unique_object_ptr<ObjectT> CreateObjectOfClass(const std::string & className, BaseObject* outer, const json& j = json());
+	template<typename ObjectT = BaseObject>
+	static ve::unique_object_ptr<ObjectT> CreateObjectOfClassDeferred(const std::string& className);
 	template<typename ObjectT = BaseObject>
 	static ve::unique_object_ptr<ObjectT> CreateObjectFromJson(BaseObject* outer, const json& j = json());
+	template<typename ObjectT = BaseObject>
+	static ve::unique_object_ptr<ObjectT> CreateObjectFromJsonDeferred(BaseObject * outer, const json& j);
 
 	static void InitializeObject(BaseObject* object, BaseObject* outer, const json& j = json());
 
@@ -81,23 +85,7 @@ ve::unique_object_ptr<ObjectT> ObjectFactory::CreateObjectDeferred()
 template <typename ObjectT>
 ve::unique_object_ptr<ObjectT> ObjectFactory::CreateObjectOfClass(const std::string& className, BaseObject* outer, const json& j)
 {
-	static_assert(std::is_base_of_v<BaseObject, ObjectT>);
-
-	const auto* generators = objectGenerators();
-
-	auto& generatorIter = generators->find(className);
-	if(generatorIter == generators->end())
-	{
-		__debugbreak();
-		return nullptr;
-	}
-
-	ve::unique_object_ptr<ObjectT> object{ dynamic_cast<ObjectT*>(generatorIter->second()) };
-	if(object.get() == nullptr)
-	{
-		__debugbreak();
-		return nullptr;
-	}
+	ve::unique_object_ptr<ObjectT> object = CreateObjectOfClassDeferred<ObjectT>(className);
 
 	InitializeObject(object.get(), outer, j);
 
@@ -105,16 +93,50 @@ ve::unique_object_ptr<ObjectT> ObjectFactory::CreateObjectOfClass(const std::str
 }
 
 template <typename ObjectT>
-ve::unique_object_ptr<ObjectT> ObjectFactory::CreateObjectFromJson(BaseObject* outer, const json& j)
+ve::unique_object_ptr<ObjectT> ObjectFactory::CreateObjectOfClassDeferred(const std::string& className)
 {
-	const std::string& classPropertyName = GetEngineConfigData(outer).serializationConfigData.objectClassPropertyName;
+	static_assert(std::is_base_of_v<BaseObject, ObjectT>);
 
-	std::string className{};
-	if(!JSON::TryGetMember(j, classPropertyName, className))
+	const auto* generators = objectGenerators();
+
+	auto& generatorIter = generators->find(className);
+	if (generatorIter == generators->end())
 	{
 		__debugbreak();
 		return nullptr;
 	}
 
-	return CreateObjectOfClass<ObjectT>(className, outer, j);
+	ve::unique_object_ptr<ObjectT> object{ dynamic_cast<ObjectT*>(generatorIter->second()) };
+	if (object.get() == nullptr)
+	{
+		__debugbreak();
+		return nullptr;
+	}
+
+	return object;
+}
+
+template <typename ObjectT>
+ve::unique_object_ptr<ObjectT> ObjectFactory::CreateObjectFromJson(BaseObject* outer, const json& j)
+{
+	ve::unique_object_ptr<ObjectT> object = CreateObjectFromJsonDeferred<ObjectT>(outer, j);
+
+	InitializeObject(object.get(), outer, j); 
+	
+	return object;
+}
+
+template<typename ObjectT>
+inline ve::unique_object_ptr<ObjectT> ObjectFactory::CreateObjectFromJsonDeferred(BaseObject* outer, const json& j)
+{
+	const std::string& classPropertyName = GetEngineConfigData(outer).serializationConfigData.objectClassPropertyName;
+
+	std::string className{};
+	if (!JSON::TryGetMember(j, classPropertyName, className))
+	{
+		__debugbreak();
+		return nullptr;
+	}
+
+	return CreateObjectOfClassDeferred<ObjectT>(className);
 }

@@ -36,6 +36,7 @@ private:
 
 private:
 	bool _initialized;
+	std::string _dataPath;
 	std::unique_ptr<GameCharacterData> _characterData;
 
 	GamePlayer* _playerOwner;

@@ -60,4 +60,6 @@ int main()
 			glfwSetWindowShouldClose(screen->window(), GLFW_TRUE);
 		}
 	}
+
+	gameInstance.reset();
 }
