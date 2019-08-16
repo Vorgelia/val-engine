@@ -37,7 +37,7 @@ public:
 
 class OrthoCamera : public BaseCamera
 {
-	VE_OBJECT_DECLARATION(OrthoCamera);
+	VE_OBJECT_DECLARATION(OrthoCamera, BaseCamera);
 
 protected:
 	ve::vec2 _renderingScale;
@@ -53,7 +53,7 @@ public:
 	virtual glm::mat4 GetProjectionMatrix() const override;
 
 	virtual void RegisterReflectionFields() const override;
-	virtual void Deserialize(const json& j) override;
+	void OnDeserialized(BaseSerializationProxy& proxy) override;
 
 	OrthoCamera();
 };

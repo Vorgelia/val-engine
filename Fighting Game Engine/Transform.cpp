@@ -1,4 +1,5 @@
 #include "Transform.h"
+#include "SerializationProxy.h"
 #include "JSON.h"
 
 ve::mat4 Transform::GetMatrix() const
@@ -115,10 +116,8 @@ void Transform::RegisterReflectionFields() const
 	VE_PRIVATE_REFLECTION_VAR(Field, rotation);
 }
 
-void Transform::Deserialize(const json& j)
+void Transform::OnDeserialized(BaseSerializationProxy& proxy)
 {
-	IReflectable::Deserialize(j);
-
 	_updateFlags = UpdateFlags::All;
 }
 

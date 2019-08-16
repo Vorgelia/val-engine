@@ -83,10 +83,9 @@ void OrthoCamera::RegisterReflectionFields() const
 	AddReflectionField(VE_PRIVATE_REFLECTION_ARG(zoomLevel));
 }
 
-void OrthoCamera::Deserialize(const json& j)
+void OrthoCamera::OnDeserialized(BaseSerializationProxy& proxy)
 {
-	BaseCamera::Deserialize(j);
-	if(_renderingScale.x <= 0 || _renderingScale.y <= 0)
+	if (_renderingScale.x <= 0 || _renderingScale.y <= 0)
 	{
 		_renderingScale = _owningInstance->configData().renderingConfigData.worldRenderingScale;
 	}

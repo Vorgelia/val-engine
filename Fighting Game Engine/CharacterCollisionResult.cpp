@@ -1,4 +1,5 @@
 ﻿#include "CharacterCollisionResult.h"
+#include "SerializationProxy.h"
 #include <optional>
 
 void AttackCollisionHit::RegisterReflectionFields() const

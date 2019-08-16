@@ -18,17 +18,15 @@ public:
 
 class Renderer : public BaseRenderer
 {
-	VE_OBJECT_DECLARATION(Renderer)
+	VE_OBJECT_DECLARATION(Renderer, BaseRenderer)
 
 protected:
 	Mesh* _mesh = nullptr;
 	Material* _material = nullptr;
 
 public:
-	virtual json Serialize() const;
-	virtual void Deserialize(const json& j);
-
 	std::vector<RenderingCommand> GetRenderingCommands(const BaseCamera* camera) const override;
+	void OnDeserialized(BaseSerializationProxy& proxy) override;
 
 	Renderer() = default;
 	~Renderer() = default;
@@ -36,7 +34,7 @@ public:
 
 class ParallaxRenderer : public Renderer
 {
-	VE_OBJECT_DECLARATION(ParallaxRenderer)
+	VE_OBJECT_DECLARATION(ParallaxRenderer, Renderer)
 
 protected:
 	float _parallaxScale = 1.0f;

@@ -131,6 +131,9 @@
     <Filter Include="Val Engine\Game\Services">
       <UniqueIdentifier>{6490bb19-f282-4a97-9f02-c55c6f72f33d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Val Engine\Engine\Serialization">
+      <UniqueIdentifier>{4fe302d2-faac-42d6-bcbd-7a9d49011032}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameScene.cpp">
@@ -421,6 +424,11 @@
     <ClCompile Include="BaseGameManager.cpp" />
     <ClCompile Include="BaseSceneBehavior.cpp" />
     <ClCompile Include="BaseGameCharacterComponent.cpp" />
+    <ClCompile Include="LuaUtil.cpp" />
+    <ClCompile Include="SerializationProxy.cpp">
+      <Filter>Val Engine\Engine\Serialization</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectPtr.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FGIncludes.hpp">
@@ -699,15 +707,6 @@
     <ClInclude Include="TemplateUtils.h">
       <Filter>Val Engine\Engine\Utilities\Data</Filter>
     </ClInclude>
-    <ClInclude Include="IReflectable.h">
-      <Filter>Val Engine\Engine\Utilities\Data\Reflection</Filter>
-    </ClInclude>
-    <ClInclude Include="ReflectionField.h">
-      <Filter>Val Engine\Engine\Utilities\Data\Reflection</Filter>
-    </ClInclude>
-    <ClInclude Include="ReflectionTraits.h">
-      <Filter>Val Engine\Engine\Utilities\Data\Reflection</Filter>
-    </ClInclude>
     <ClInclude Include="Math.h">
       <Filter>Val Engine\Engine\Utilities\Math</Filter>
     </ClInclude>
@@ -778,6 +777,33 @@
       <Filter>Val Engine</Filter>
     </ClInclude>
     <ClInclude Include="BaseGameCharacterComponent.h">
+      <Filter>Val Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="LuaUtil.h">
+      <Filter>Val Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="SerializationProxy.h">
+      <Filter>Val Engine\Engine\Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="IReflectable.h">
+      <Filter>Val Engine\Engine\Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="ReflectionField.h">
+      <Filter>Val Engine\Engine\Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="ReflectionTraits.h">
+      <Filter>Val Engine\Engine\Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseSerializationProxy_Impl.h">
+      <Filter>Val Engine\Engine\Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="JsonSerializationProxy_Impl.h">
+      <Filter>Val Engine\Engine\Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="LuaSerializationProxy_Impl.h">
+      <Filter>Val Engine\Engine\Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectPtr.h">
       <Filter>Val Engine</Filter>
     </ClInclude>
   </ItemGroup>

@@ -27,7 +27,7 @@ class FilesystemManager;
 
 class ResourceManager : public BaseService
 {
-	VE_OBJECT_DECLARATION(ResourceManager);
+	VE_OBJECT_DECLARATION(ResourceManager, BaseService);
 
 private:
 	ObjectReference<Debug> _debug;

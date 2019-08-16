@@ -9,28 +9,16 @@
 VE_OBJECT_DEFINITION(Renderer);
 VE_OBJECT_DEFINITION(ParallaxRenderer);
 
-json Renderer::Serialize() const
+void Renderer::OnDeserialized(BaseSerializationProxy& proxy)
 {
-	json outJson = BaseRenderer::Serialize();
-	if(_material != nullptr)
-	{
-		outJson.emplace("material", _material->name);
-	}
-	if(_mesh != nullptr)
-	{
-		outJson.emplace("mesh", _mesh->name);
-	}
-	return outJson;
-}
+	BaseRenderer::OnDeserialized(proxy);
 
-void Renderer::Deserialize(const json& j)
-{
 	std::string resourcePath;
-	if(JSON::TryGetMember(j, "material", resourcePath))
+	if (proxy.Get("material", resourcePath))
 	{
 		_material = _owningInstance->ResourceManager()->GetMaterial(resourcePath);
 	}
-	if(JSON::TryGetMember(j, "mesh", resourcePath))
+	if (proxy.Get("mesh", resourcePath))
 	{
 		_mesh = _owningInstance->ResourceManager()->GetMesh(resourcePath);
 	}

@@ -34,7 +34,6 @@
    },
    "serializationConfigData":{
       "objectClassPropertyName":"__ve_class",
-      "componentListPropertyName":"__ve_components",
       "prefabPathPropertyName":"__ve_prefabPath"
    }
 }

@@ -12,7 +12,7 @@ class ScreenManager;
 
 class MenuBehaviour : public ObjectComponent
 {
-	VE_OBJECT_DECLARATION(MenuBehaviour);
+	VE_OBJECT_DECLARATION(MenuBehaviour, ObjectComponent);
 
 private:
 	ScreenManager* _screen;

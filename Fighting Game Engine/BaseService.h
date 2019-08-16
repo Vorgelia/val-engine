@@ -6,7 +6,7 @@ class BaseService : public BaseObject
 {
 	friend class GameInstance;
 
-	VE_OBJECT_DECLARATION(BaseService);
+	VE_OBJECT_DECLARATION(BaseService, BaseObject);
 
 protected:
 	virtual void OnServiceInit() {}

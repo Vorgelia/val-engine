@@ -21,7 +21,7 @@ class InputDevice : public BaseObject
 	friend class GamePlayer;
 	friend class InputManager;
 
-	VE_OBJECT_DECLARATION(InputDevice)
+	VE_OBJECT_DECLARATION(InputDevice, BaseObject)
 
 private:
 	InputManager* _inputManager;

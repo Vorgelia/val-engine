@@ -37,7 +37,7 @@ class RenderingGL : public BaseService
 	friend class GameSceneManager;
 	friend class BaseCamera;
 
-	VE_OBJECT_DECLARATION(RenderingGL);
+	VE_OBJECT_DECLARATION(RenderingGL, RenderingGL);
 
 private:
 	ObjectReference<Debug> _debug{};

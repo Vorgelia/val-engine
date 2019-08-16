@@ -1,13 +1,8 @@
 ﻿#include "ObjectFactory.h"
 #include "GameInstance.h"
-#include "GameObject.h"
-
-void ve::ObjectDeleter::operator()(BaseObject* object) const
-{
-	object->OnDestroyed();
-	object->InvalidateReferences();
-	delete object;
-}
+#include "BaseObject.h"
+#include "SerializationProxy.h"
+#include "ResourceManager.h"
 
 ObjectFactory::BaseObjectGeneratorMap* ObjectFactory::objectGenerators()
 {
@@ -20,14 +15,32 @@ const EngineConfigData& ObjectFactory::GetEngineConfigData(BaseObject* contextOb
 	return contextObject->owningInstance()->configData();
 }
 
-void ObjectFactory::InitializeObject(BaseObject* object, BaseObject* outer, const json& j)
+json* ObjectFactory::GetJsonResource(const std::string& name, BaseObject* contextObject)
+{
+	return contextObject->owningInstance()->ResourceManager()->GetJsonData(name);
+}
+
+void ObjectFactory::InitializeObject(BaseObject* object, BaseObject* outer, BaseSerializationProxy* proxy)
 {
 	ObjectInitializer objectInitializer{ outer };
 	objectInitializer.InitializeObject(object);
 
-	if(!j.empty())
+	if(proxy != nullptr)
 	{
-		object->Deserialize(j);
+		const SerializationConfigData& serializationData = GetEngineConfigData(outer).serializationConfigData;
+
+		std::string prefabPath;
+		if (proxy->Get<std::string>(serializationData.prefabPathPropertyName, prefabPath))
+		{
+			json* j = GetJsonResource(prefabPath, outer);
+			if (j != nullptr)
+			{
+				JsonSerializationProxy jsonProxy(*j);
+				static_cast<IReflectable*>(object)->DeserializeProxy(jsonProxy);
+			}
+		}
+
+		static_cast<IReflectable*>(object)->DeserializeProxy(*proxy);
 	}
 
 	object->OnInit();

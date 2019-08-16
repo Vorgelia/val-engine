@@ -53,10 +53,10 @@ void GameCharacter::OnDestroyed()
 	
 }
 
-void GameCharacter::Deserialize(const json& j)
+void GameCharacter::OnDeserialized(BaseSerializationProxy& proxy)
 {
-	JSON::TryGetMember<std::string>(j, "dataPath", _dataPath);
-	GameObject::Deserialize(j);
+	GameObject::OnDeserialized(proxy);
+	proxy.Get<std::string>("dataPath", _dataPath);
 }
 
 void GameCharacter::SetOwner(GamePlayer* owner)

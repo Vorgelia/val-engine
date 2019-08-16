@@ -9,7 +9,7 @@ class BaseCamera;
 
 class ComputeShaderEffect :	public ObjectComponent
 {
-	VE_OBJECT_DECLARATION(ComputeShaderEffect);
+	VE_OBJECT_DECLARATION(ComputeShaderEffect, ObjectComponent);
 
 protected:
 	GraphicsGL* _graphics;
@@ -23,7 +23,7 @@ protected:
 	ve::vec3 _lastCameraPos;
 	ve::vec3 _cameraUVDelta;
 
-	void Deserialize(const json& j) override;
+	void OnDeserialized(BaseSerializationProxy& proxy) override;
 
 public:
 	void OnInit() override;

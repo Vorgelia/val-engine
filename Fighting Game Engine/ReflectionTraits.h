@@ -27,7 +27,7 @@ enum class ReflectionFieldType
 template<typename VariableT>
 struct ReflectionFieldTraits
 {
-	static constexpr const ReflectionFieldType field_type = ReflectionFieldType::Unknown;
+	static constexpr ReflectionFieldType field_type = ReflectionFieldType::Unknown;
 };
 
 template<ReflectionFieldType TypeE>

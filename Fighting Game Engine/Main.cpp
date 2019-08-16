@@ -42,13 +42,29 @@ TODO: ValScript is a horrible mess. Do something about it.
 #include "GLIncludes.hpp"
 #include "GameInstance.h"
 #include "ScreenManager.h"
+#include "lua.hpp"
+#include "selene/selene.h"
+
 
 int main()
 {
 	std::setlocale(LC_NUMERIC, "C");
 
-	ve::unique_object_ptr<GameInstance> gameInstance = ObjectFactory::CreateObject<GameInstance>(nullptr);
+	sel::State state;
+	state["package.path"] = "Scripting/Libraries";
+	state.Load("Scripting/example.lua");
+	state["yoink"](43);
+	auto& selector = state["blep"];
+	auto& selector2 = state["bleap"];
+	bool b1 = selector.exists();
+	bool b2 = selector2.exists();
+	int i1 = selector;
+	int i2 = 10;
+	i2 = selector2;
+	auto& arr1 = state["yarr"];
+	int i3 = arr1[0];
 
+	ve::unique_object_ptr<GameInstance> gameInstance = ObjectFactory::CreateObject<GameInstance>(nullptr);
 	ScreenManager* screen = gameInstance->ScreenManager();
 
 	while(!glfwWindowShouldClose(screen->window()))

@@ -50,13 +50,11 @@ struct GameConfigData : public IReflectable
 struct SerializationConfigData : public IReflectable
 {
 	std::string objectClassPropertyName;
-	std::string componentListPropertyName;
 	std::string prefabPathPropertyName;
 
 	void RegisterReflectionFields() const override
 	{
 		VE_REFLECTION_VAR(Field, objectClassPropertyName);
-		VE_REFLECTION_VAR(Field, componentListPropertyName);
 		VE_REFLECTION_VAR(Field, prefabPathPropertyName);
 	}
 };
@@ -66,7 +64,6 @@ struct InputConfigData : public IReflectable
 	int inputBufferLeniencyFirst;
 	int inputBufferLeniencyAny;
 	int inputBufferSize;
-
 	void RegisterReflectionFields() const override
 	{
 		VE_REFLECTION_VAR(Field, inputBufferLeniencyAny);

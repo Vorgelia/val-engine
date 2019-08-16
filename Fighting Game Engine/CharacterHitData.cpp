@@ -1,4 +1,5 @@
 #include "CharacterHitData.h"
+#include "SerializationProxy.h"
 
 bool CharacterHitData::CanCollideWith_Impl(const CharacterHitData& other) const
 {
@@ -23,7 +24,7 @@ bool CharacterHitData::CanCollideWith_Impl(const CharacterHitData& other) const
 
 void CharacterHitData::RegisterReflectionFields() const
 {
-	AddReflectionJsonField("data", _data);
+	VE_PRIVATE_REFLECTION_VAR(Field, data);
 }
 
 bool CharacterHitData::CanCollideWith(const CharacterHitData & other) const

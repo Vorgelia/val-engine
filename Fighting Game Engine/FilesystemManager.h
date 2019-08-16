@@ -26,7 +26,7 @@ enum class InputDirection : uint8_t;
 
 class FilesystemManager : public BaseService
 {
-	VE_OBJECT_DECLARATION(FilesystemManager);
+	VE_OBJECT_DECLARATION(FilesystemManager, BaseService);
 
 private:
 	ObjectReference<Debug> _debug;

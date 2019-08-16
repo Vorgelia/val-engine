@@ -3,6 +3,7 @@
 #include "ScriptOperator.h"
 #include "ScriptToken.h"
 #include "IReflectable.h"
+#include "SerializationProxy.h"
 
 const std::unordered_map<std::string, ScriptVariableType> BaseScriptVariable::variableTypeLookup =
 {
@@ -68,7 +69,10 @@ BaseScriptVariable::BaseScriptVariable(const json & j)
 }
 
 BaseScriptVariable::BaseScriptVariable(const IReflectable& reflectable)
-	: BaseScriptVariable(reflectable.Serialize())
 {
-	
+	json j;
+	JsonSerializationProxy proxy{ j };
+	reflectable.SerializeProxy(proxy);
+	proxy.Get("ve_const", _const);
+	proxy.Get("ve_initialized", _initialized);
 }

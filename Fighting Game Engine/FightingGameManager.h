@@ -16,7 +16,7 @@ class FightingStageBehaviour;
 
 class FightingGameManager : public BaseGameManager
 {
-	VE_OBJECT_DECLARATION(FightingGameManager);
+	VE_OBJECT_DECLARATION(FightingGameManager, BaseGameManager);
 
 	friend class ScriptManager;
 private:

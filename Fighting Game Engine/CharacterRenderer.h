@@ -14,7 +14,7 @@ class RenderingGL;
 class CharacterRenderer :
 	public Renderer
 {
-	VE_OBJECT_DECLARATION(CharacterRenderer);
+	VE_OBJECT_DECLARATION(CharacterRenderer, Renderer);
 
 private:
 	ResourceManager* _resource;

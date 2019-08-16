@@ -2,6 +2,7 @@
 #include <nlohmann/json.hpp>
 #include "ValEngine.h"
 
+class JsonSerializationProxy;
 class IReflectable;
 
 namespace JSON
@@ -67,8 +68,9 @@ T JSON::Get(const json_t & j)
 	}
 	else if constexpr(std::is_base_of_v<IReflectable, T>)
 	{
+		JsonSerializationProxy proxy{ j };
 		T val;
-		val.Deserialize(j);
+		val.DeserializeProxy(proxy);
 		return val;
 	}
 	else
@@ -95,7 +97,10 @@ JSON::json_t JSON::ToJson(const ValueT& value)
 {
 	if constexpr(std::is_base_of_v<IReflectable, ValueT>)
 	{
-		return value.Serialize();
+		json_t j;
+		JsonSerializationProxy proxy{ j };
+		value.SerializeProxy(proxy);
+		return j;
 	}
 	else
 	{

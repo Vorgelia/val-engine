@@ -54,8 +54,9 @@ void GameSceneManager::UpdateService()
 
 		_isLoading = true;
 
-		_currentScene = ObjectFactory::CreateObjectFromJsonDeferred<GameScene>(this, *sceneJson);
-		ObjectFactory::InitializeObject(_currentScene.get(), this, *sceneJson);
+		JsonSerializationProxy proxy{ *sceneJson };
+		_currentScene = ObjectFactory::CreateObjectFromDataDeferred<GameScene>(this, proxy);
+		ObjectFactory::InitializeObject(_currentScene.get(), this, &proxy);
 		SceneLoaded(_currentScene.get());
 
 		_isLoading = false;

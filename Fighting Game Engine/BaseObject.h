@@ -7,7 +7,9 @@
 class GameScene;
 class GameInstance;
 
-#define VE_OBJECT_DECLARATION(ObjectT) \
+#define VE_OBJECT_DECLARATION(ObjectT, SuperClass) \
+	private:\
+	typedef SuperClass Super;\
 	public:\
 	std::string className() const override { return #ObjectT; }\
 	static BaseObject* StaticClass();\
@@ -58,7 +60,7 @@ public:
 
 	GameInstance* owningInstance() const { return _owningInstance; }
 
-	virtual json Serialize() const override;
+	virtual void OnSerialized(BaseSerializationProxy& proxy) const override;
 
 	virtual void OnInit() {}
 	virtual void OnDestroyed() {}

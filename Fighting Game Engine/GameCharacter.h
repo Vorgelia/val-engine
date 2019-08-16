@@ -22,7 +22,7 @@ class ResourceManager;
 
 class GameCharacter : public GameObject
 {
-	VE_OBJECT_DECLARATION(GameCharacter);
+	VE_OBJECT_DECLARATION(GameCharacter, GameObject);
 
 	friend class ScriptManager;
 	friend class CharacterRenderer;
@@ -66,7 +66,7 @@ public:
 	void OnInit() override;
 	void OnDestroyed() override;
 
-	void Deserialize(const json& j) override;
+	void OnDeserialized(BaseSerializationProxy& proxy) override;
 
 	void SetOwner(GamePlayer* owner);
 

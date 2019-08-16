@@ -54,8 +54,8 @@ public:
 
 	Transform operator*(const Transform& rhs) const;
 
-	virtual void RegisterReflectionFields() const override;
-	void Deserialize(const json& j) override;
+	void RegisterReflectionFields() const override;
+	void OnDeserialized(BaseSerializationProxy& proxy) override;
 
 	Transform(ve::vec3 position = ve::vec3(0,0,0), ve::vec3 eulerRotation = ve::vec3(0,0,0), ve::vec3 scale = ve::vec3(1,1,1));
 	Transform(ve::vec3 position, ve::quat quat, ve::vec3 scale);

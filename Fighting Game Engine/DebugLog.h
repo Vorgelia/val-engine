@@ -20,7 +20,7 @@ class Script;
 
 class Debug : public BaseService
 {
-	VE_OBJECT_DECLARATION(Debug);
+	VE_OBJECT_DECLARATION(Debug, BaseService);
 
 private:
 	//The thread containing the write loop.

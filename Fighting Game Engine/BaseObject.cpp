@@ -4,6 +4,11 @@
 
 VE_OBJECT_DEFINITION(BaseObject)
 
+void BaseObject::OnSerialized(BaseSerializationProxy& proxy) const
+{
+	proxy.Set<std::string>(_owningInstance->configData().serializationConfigData.objectClassPropertyName, className());
+}
+
 void BaseObject::RegisterReference(const ObjectReference<BaseObject>& reference)
 {
 	_references.emplace(&reference);
@@ -27,13 +32,6 @@ void BaseObject::InvalidateReferences()
 			ObjectReferenceManager::Get().RemoveObject(this);
 		}
 	}
-}
-
-json BaseObject::Serialize() const
-{
-	json outJson = IReflectable::Serialize();
-	outJson.emplace(_owningInstance->configData().serializationConfigData.objectClassPropertyName, className());
-	return outJson;
 }
 
 BaseObject::BaseObject()

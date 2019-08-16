@@ -3,7 +3,7 @@
 	"__ve_class":"GameObject",
 	"name":"Manager",
 	"enabled":true,
-	"__ve_components":[
+	"components":[
 		{
 			"__ve_class":"MenuBehaviour",
 			"enabled":true

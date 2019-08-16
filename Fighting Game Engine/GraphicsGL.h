@@ -31,7 +31,7 @@ enum class GraphicsBufferType;
 
 class GraphicsGL : public BaseService
 {
-	VE_OBJECT_DECLARATION(GraphicsGL);
+	VE_OBJECT_DECLARATION(GraphicsGL, BaseService);
 
 private:
 	ObjectReference<Debug> _debug;

@@ -12,7 +12,7 @@ struct InputEvent;
 
 class InputManager : public BaseService
 {
-	VE_OBJECT_DECLARATION(InputManager);
+	VE_OBJECT_DECLARATION(InputManager, BaseService);
 
 protected:
 	ObjectReference<ScreenManager> _screenManager;

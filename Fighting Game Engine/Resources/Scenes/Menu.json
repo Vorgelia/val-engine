@@ -41,7 +41,7 @@
 					"z":0
 				}
 			},
-			"__ve_components":[
+			"components":[
 				{
 					"__ve_class":"ParallaxRenderer",
 					"enabled":true,
@@ -72,7 +72,7 @@
 					"z":0
 				}
 			},
-			"__ve_components":[
+			"components":[
 				{
 					"__ve_class":"ParallaxRenderer",
 					"name":"Renderer",

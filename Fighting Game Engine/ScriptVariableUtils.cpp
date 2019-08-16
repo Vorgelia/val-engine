@@ -6,6 +6,7 @@
 #include "ScriptMap.h"
 #include <fmt/format.h>
 #include "IReflectable.h"
+#include "SerializationProxy.h"
 
 namespace ScriptVariableUtils
 {
@@ -144,7 +145,10 @@ std::shared_ptr<BaseScriptVariable> ScriptVariableUtils::FromJson(const json& j)
 
 std::shared_ptr<BaseScriptVariable> ScriptVariableUtils::FromReflectable(const IReflectable& reflectable)
 {
-	return FromJson(reflectable.Serialize());
+	json j;
+	JsonSerializationProxy proxy{ j };
+	reflectable.SerializeProxy(proxy);
+	return FromJson(j);
 }
 
 bool ScriptVariableUtils::JsonIsScriptVariableObject(const json & j)

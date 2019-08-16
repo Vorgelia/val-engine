@@ -47,7 +47,8 @@ void GameInstance::OnInit()
 	_FilesystemManager = ObjectFactory::CreateObjectDeferred<FilesystemManager>();
 
 	_rawConfigData = _FilesystemManager->GetFileResource<json>("EngineConfig.json");
-	_configData.Deserialize(_rawConfigData);
+	JsonSerializationProxy proxy{ _rawConfigData };
+	_configData.DeserializeProxy(proxy);
 
 	//Utilities
 	Debug();
@@ -67,7 +68,7 @@ void GameInstance::OnInit()
 	GameSceneManager();
 	PlayerManager();
 
-	for(auto& iter : _activeServices)
+	for (auto& iter : _activeServices)
 	{
 		iter->OnServiceInit();
 	}

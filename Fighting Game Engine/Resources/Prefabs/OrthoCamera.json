@@ -3,7 +3,7 @@
 	"__ve_class":"GameObject",
 	"name":"OrthoCamera",
 	"enabled":true,
-	"__ve_components":[
+	"components":[
 		{
 			"__ve_class":"OrthoCamera",
 			"enabled":true

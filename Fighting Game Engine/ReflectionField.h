@@ -1,20 +1,23 @@
 #pragma once
 #include <string>
 #include "JSON.h"
-#include "IReflectable.h"
 #include "ReflectionTraits.h"
 
 class IReflectable;
+class BaseObject;
+class BaseSerializationProxy;
 
 class BaseReflectionField
 {
+	friend class BaseSerializationProxy;
 public:
 	const std::string name;
 	const ReflectionFieldType type;
 
-	//TODO: Replace json with SerializationProxy
-	virtual void Deserialize(const JSON::json_t& j) = 0;
-	virtual json Serialize() = 0;
+	virtual void* data() const = 0;
+
+	virtual void DeserializeProxy(BaseSerializationProxy& proxy) = 0;
+	virtual void SerializeProxy(BaseSerializationProxy& proxy) = 0;
 
 	BaseReflectionField(std::string name, ReflectionFieldType type)
 		: name(std::move(name)), type(type) { }
@@ -25,69 +28,55 @@ public:
 template<typename ValueT>
 class ReflectionField : public BaseReflectionField
 {
+	friend class BaseSerializationProxy;
 protected:
 	ValueT* const _data;
 
 public:
-	virtual void Deserialize(const json& j) override
+	void* data() const override { return _data; }
+
+	virtual void DeserializeProxy(BaseSerializationProxy& proxy) override
 	{
-		if constexpr(std::is_pointer_v<ValueT> && std::is_base_of_v<BaseObject, std::remove_pointer_t<ValueT>>)
-		{
-			BaseObject* objectPtr = static_cast<BaseObject*>(*_data);
-			if(ve::IsValid(objectPtr))
-			{
-				objectPtr->Deserialize(j);
-			}
-		}
-		else if constexpr(std::is_base_of_v<IReflectable, ValueT>)
-		{
-			reinterpret_cast<IReflectable*>(_data)->Deserialize(j);
-		}
-		else
-		{
-			*_data = JSON::Get<ValueT>(j);
-		}
+		proxy.Get<ValueT>(name, *_data);
 	}
 
-	virtual json Serialize() override
+	virtual void SerializeProxy(BaseSerializationProxy& proxy) override
 	{
-		if constexpr(std::is_pointer_v<ValueT> && std::is_base_of_v<BaseObject, std::remove_pointer_t<ValueT>>)
-		{
-			BaseObject* objectPtr = static_cast<BaseObject*>(*_data);
-			return ve::IsValid(objectPtr) ? objectPtr->Serialize() : json();
-		}
-		else
-		{
-			return JSON::ToJson<ValueT>(*_data);
-		}
+		proxy.Set<ValueT>(name, *_data);
 	}
 
 	ReflectionField(std::string name, ValueT* data)
-		: BaseReflectionField(std::move(name), ReflectionFieldTraits<ValueT>::field_type)
+		: BaseReflectionField(std::move(name), ReflectionFieldTraits<ve::remove_object_ptr_t<ValueT>>::field_type)
 		, _data(data)
 	{
 	}
 };
 
-class JsonReflectionField : public BaseReflectionField
+template<typename ValueT>
+class ObjectReflectionField : public BaseReflectionField
 {
+	friend class BaseSerializationProxy;
 protected:
-	json* const _data;
+	ve::unique_object_ptr<ValueT>* const _data;
+	BaseObject* _outer;
 
 public:
-	virtual void Deserialize(const JSON::json_t& j) override
+	void* data() const override { return _data; }
+
+	void DeserializeProxy(BaseSerializationProxy& proxy) override
 	{
-		*_data = j;
+		proxy.GetObject<ValueT>(name, *_data, _outer);
 	}
 
-	virtual json Serialize() override
+	void SerializeProxy(BaseSerializationProxy& proxy) override
 	{
-		return *_data;
+		proxy.Set<ve::unique_object_ptr<ValueT>>(name, *_data);
 	}
 
-	JsonReflectionField(std::string name, json* data)
-		: BaseReflectionField(std::move(name), ReflectionFieldType::Json)
+	ObjectReflectionField(std::string name, ve::unique_object_ptr<ValueT>* data, BaseObject* outer)
+		: BaseReflectionField(std::move(name), ReflectionFieldTraits<ve::remove_object_ptr_t<ValueT>>::field_type)
 		, _data(data)
+		, _outer(outer)
 	{
 	}
 };
@@ -95,29 +84,23 @@ public:
 template<typename ValueT>
 class ArrayReflectionField : public BaseReflectionField
 {
+	friend class BaseSerializationProxy;
 protected:
 	std::vector<ValueT>* const _data;
 
 public:
-	virtual void Deserialize(const json& j) override
-	{
-		_data->clear();
-		for(const json& iter : j)
-		{
-			_data->emplace_back(JSON::Get<ValueT>(iter));
-		}
-	}
-	virtual json Serialize() override
-	{
-		json j = json::array();
-		for(const ValueT& iter : *_data)
-		{
-			j.emplace_back(JSON::ToJson<ValueT>(iter));
-		}
+	void* data() const override { return _data; }
 
-		return j;
+	void DeserializeProxy(BaseSerializationProxy& proxy) override
+	{
+		proxy.GetArray<ValueT>(name, *_data);
 	}
-	
+
+	void SerializeProxy(BaseSerializationProxy& proxy) override
+	{
+		proxy.SetArray<ValueT>(name, *_data);
+	}
+
 	ArrayReflectionField(std::string name, std::vector<ValueT>* data)
 		: BaseReflectionField(std::move(name), ReflectionFieldType::Array)
 		, _data(data)
@@ -125,61 +108,57 @@ public:
 	}
 };
 
+template<typename ValueT>
+class ObjectArrayReflectionField : public BaseReflectionField
+{
+	friend class BaseSerializationProxy;
+protected:
+	std::vector<ValueT>* const _data;
+	BaseObject* _outer;
+
+public:
+	void* data() const override { return _data; }
+
+	void DeserializeProxy(BaseSerializationProxy& proxy) override
+	{
+		proxy.FillObjectArray<ValueT>(name, *_data, _outer);
+	}
+
+	void SerializeProxy(BaseSerializationProxy& proxy) override
+	{
+		proxy.SetArray<ValueT>(name, *_data);
+	}
+
+	ObjectArrayReflectionField(std::string name, std::vector<ValueT>* data, BaseObject* outer)
+		: BaseReflectionField(std::move(name), ReflectionFieldType::Array)
+		, _data(data)
+		, _outer(outer)
+	{
+	}
+};
+
 template<typename KeyT, typename ValueT>
 class MapReflectionField : public BaseReflectionField
 {
+	friend class BaseSerializationProxy;
 protected:
 	std::unordered_map<KeyT, ValueT>* const _data;
 
 public:
-	virtual void Deserialize(const json& j) override
+	void* data() const override { return _data; }
+
+	void DeserializeProxy(BaseSerializationProxy& proxy) override
 	{
-		_data->clear();
-		for(auto iter = j.begin() ; iter != j.end() ; ++iter)
-		{
-			_data->emplace(JSON::Get<KeyT>(iter.key()), JSON::Get<ValueT>(iter.value()));
-		}
+		proxy.GetMap<KeyT, ValueT>(name, *_data);
 	}
-	virtual json Serialize() override
+	void SerializeProxy(BaseSerializationProxy& proxy) override
 	{
-		json j = {};
-		for(auto& iter : *_data)
-		{
-			j.emplace(JSON::ToJson<KeyT>(iter.first), JSON::ToJson<ValueT>(iter.second));
-		}
-		
-		return j;
+		proxy.SetMap<KeyT, ValueT>(name, *_data);
 	}
 
 	MapReflectionField(std::string name, std::unordered_map<KeyT, ValueT>* data)
 		: BaseReflectionField(std::move(name), ReflectionFieldType::Map)
 		, _data(data)
 	{
-	}
-};
-
-class LambdaReflectionField : public BaseReflectionField
-{
-protected:
-	std::function<void(const json&)> _deserializeLambda;
-	std::function<json()> _serializeLambda;
-
-public:
-	virtual void Deserialize(const JSON::json_t& j) override
-	{
-		_deserializeLambda(j);
-	}
-
-	virtual json Serialize() override
-	{
-		return _serializeLambda();
-	}
-
-	LambdaReflectionField(std::string name, std::function<void(const json&)> deserializeLambda, std::function<json()> serializeLambda)
-		: BaseReflectionField(name, ReflectionFieldType::Lambda)
-		, _serializeLambda(std::move(serializeLambda))
-		, _deserializeLambda(std::move(deserializeLambda))
-	{
-		
 	}
 };

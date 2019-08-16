@@ -14,7 +14,7 @@ class ObjectComponent;
 
 class GameObject : public SceneObject
 {
-	VE_OBJECT_DECLARATION(GameObject);
+	VE_OBJECT_DECLARATION(GameObject, SceneObject);
 
 	friend class GameScene;
 
@@ -23,25 +23,23 @@ protected:
 
 public:
 	template<typename ComponentT>
-	ObjectReference<ComponentT> AddComponentOfType(const json& j = json());
-	ObjectReference<ObjectComponent> AddComponentFromJson(const json& j = json());
+	ObjectReference<ComponentT> AddComponentOfType(BaseSerializationProxy* proxy = nullptr);
 
 	template<typename ComponentT>
 	ObjectReference<ComponentT> GetComponentOfType() const;
 	template<typename ComponentT>
 	std::vector<ObjectReference<ComponentT>> GetComponentsOfType() const;
 
-	virtual json Serialize() const override;
-	void Deserialize(const json& j) override;
+	void RegisterReflectionFields() const override;
 
 	GameObject() = default;
 	~GameObject() = default;
 };
 
 template <typename ComponentT>
-ObjectReference<ComponentT> GameObject::AddComponentOfType(const json& j)
+ObjectReference<ComponentT> GameObject::AddComponentOfType(BaseSerializationProxy* proxy)
 {
-	_components.push_back(ObjectFactory::CreateObject<ComponentT>(this, j));
+	_components.push_back(ObjectFactory::CreateObject<ComponentT>(this, proxy));
 	ComponentT* result = reinterpret_cast<ComponentT*>(_components.back().get());
 
 	return ObjectReference<ComponentT>(result);
@@ -50,10 +48,10 @@ ObjectReference<ComponentT> GameObject::AddComponentOfType(const json& j)
 template <typename ComponentT>
 ObjectReference<ComponentT> GameObject::GetComponentOfType() const
 {
-	for(auto& iter : _components)
+	for (auto& iter : _components)
 	{
 		ComponentT* component = dynamic_cast<ComponentT*>(iter.get());
-		if(component != nullptr)
+		if (component != nullptr)
 		{
 			return ObjectReference<ComponentT>(component);
 		}
@@ -67,10 +65,10 @@ std::vector<ObjectReference<ComponentT>> GameObject::GetComponentsOfType() const
 {
 	std::vector<ObjectReference<ComponentT>> outComponents;
 
-	for(auto& iter : _components)
+	for (auto& iter : _components)
 	{
 		ComponentT* component = dynamic_cast<ComponentT*>(iter.get());
-		if(component != nullptr)
+		if (component != nullptr)
 		{
 			outComponents.emplace_back(component);
 		}

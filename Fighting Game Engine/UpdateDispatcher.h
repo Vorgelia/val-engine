@@ -8,7 +8,7 @@ class GameScene;
 
 class UpdateDispatcher : public BaseObject
 {
-	VE_OBJECT_DECLARATION(UpdateDispatcher)
+	VE_OBJECT_DECLARATION(UpdateDispatcher, BaseObject)
 
 protected:
 	std::vector<TrackedUpdateFunction> _boundFunctions;

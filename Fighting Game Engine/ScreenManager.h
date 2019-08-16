@@ -6,7 +6,7 @@
 
 class ScreenManager : public BaseService
 {
-	VE_OBJECT_DECLARATION(ScreenManager);
+	VE_OBJECT_DECLARATION(ScreenManager, BaseService);
 
 protected:
 	glm::ivec2 _nativeFramebufferSize;

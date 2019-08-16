@@ -10,7 +10,7 @@ class FightingGameManager;
 
 class FightingStageBehaviour : public BaseSceneBehavior
 {
-	VE_OBJECT_DECLARATION(FightingStageBehaviour);
+	VE_OBJECT_DECLARATION(FightingStageBehaviour, BaseSceneBehavior);
 
 protected:
 	FightingGameManager* _gameManager;

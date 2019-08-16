@@ -19,7 +19,7 @@ class BaseGameManager;
 
 class GameInstance : public BaseObject
 {
-	VE_OBJECT_DECLARATION(GameInstance);
+	VE_OBJECT_DECLARATION(GameInstance, BaseObject);
 
 private:
 	VE_SERVICE(Debug);

@@ -17,7 +17,7 @@ class ResourceManager;
 
 class ScriptManager : public BaseService
 {
-	VE_OBJECT_DECLARATION(ScriptManager);
+	VE_OBJECT_DECLARATION(ScriptManager, BaseService);
 
 protected:
 	ObjectReference<Debug> _debug;

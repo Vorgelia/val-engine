@@ -9,7 +9,7 @@ class ResourceManager;
 
 class IntroBehaviour : public BaseSceneBehavior
 {
-	VE_OBJECT_DECLARATION(IntroBehaviour)
+	VE_OBJECT_DECLARATION(IntroBehaviour, BaseSceneBehavior)
 
 private:
 	GameSceneManager* _gameSceneManager;

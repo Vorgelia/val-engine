@@ -24,14 +24,16 @@ void ComputeShaderEffect::UpdateEffect()
 	_graphics->DispatchCompute(*_computeShader, 1, 1);
 }
 
-void ComputeShaderEffect::Deserialize(const json& j)
+void ComputeShaderEffect::OnDeserialized(BaseSerializationProxy& proxy)
 {
+	ObjectComponent::OnDeserialized(proxy);
+
 	_resource = _owningInstance->ResourceManager();
 	_graphics = _owningInstance->Graphics();
 	_rendering = _owningInstance->Rendering();
 
 	std::string shaderPath;
-	if(JSON::TryGetMember(j, "shaderPath", shaderPath))
+	if(proxy.Get("shaderPath", shaderPath))
 	{
 		_computeShader = _resource->GetComputeShader(shaderPath);
 	}

@@ -20,7 +20,7 @@ class BaseSceneBehavior;
 
 class GameScene : public BaseObject
 {
-	VE_OBJECT_DECLARATION(GameScene);
+	VE_OBJECT_DECLARATION(GameScene, BaseObject);
 
 	friend class GameSceneManager;
 	friend class ObjectInitializer;
@@ -48,7 +48,7 @@ protected:
 
 	void RegisterReflectionFields() const override;
 
-	void Deserialize(const json& j) override;
+	void OnDeserialized(BaseSerializationProxy& proxy) override;
 
 	void RegisterObject(GameObject* obj);
 	void UnregisterObject(GameObject* obj);
@@ -67,8 +67,8 @@ public:
 	void UpdateTiming();
 
 	template<typename ObjectT = GameObject>
-	ObjectReference<ObjectT> AddObject(const json& jsonData = json());
-	ObjectReference<GameObject> AddObjectFromJson(const json& jsonData = json());
+	ObjectReference<ObjectT> AddObject(json& jsonData = json());
+	ObjectReference<GameObject> AddObjectFromJson(json& jsonData = json());
 	ObjectReference<GameObject> LoadObject(const std::string& prefabPath);
 
 	GameObject* FindObject(const std::string& name);
@@ -84,10 +84,11 @@ public:
 };
 
 template <typename ObjectT>
-ObjectReference<ObjectT> GameScene::AddObject(const json& jsonData)
+ObjectReference<ObjectT> GameScene::AddObject(json& jsonData)
 {
 	static_assert(std::is_base_of_v<GameObject, ObjectT>, "Objects added to a scene need to derive from GameObject.");
-	_objects.push_back(ObjectFactory::CreateObject<ObjectT>(this, jsonData));
+	JsonSerializationProxy proxy{ jsonData };
+	_objects.push_back(ObjectFactory::CreateObject<ObjectT>(this, proxy));
 
 	ObjectT* result = _objects.back().get();
 	RegisterObject(result);
